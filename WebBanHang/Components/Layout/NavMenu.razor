@@ -1,83 +1,114 @@
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">WebBanHang</a>
+<div class="nav-menu-wrapper">
+    <!-- 1. HEADER BRAND -->
+    <div class="top-row px-3 navbar navbar-dark d-flex align-items-center justify-content-between">
+        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-decoration-none" href="">
+            <i class="bi bi-shop fs-4 text-warning"></i>
+            <span>WebBanHang</span>
+        </a>
+        <input type="checkbox" title="Navigation menu" class="navbar-toggler d-md-none" />
     </div>
-</div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <!-- 2. SCROLLABLE NAVIGATION LINKS -->
+    <div class="nav-scrollable flex-grow-1" onclick="document.querySelector('.navbar-toggler')?.click()">
+        <nav class="flex-column p-2">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <i class="bi bi-house-door-fill fs-5"></i>
+                    <span>Tổng Quan (Dashboard)</span>
+                </NavLink>
+            </div>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
+            <div class="nav-item">
+                <NavLink class="nav-link" href="create-invoice">
+                    <i class="bi bi-cart-plus-fill fs-5"></i>
+                    <span>Lập Hóa Đơn Bán Hàng</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item">
+                <NavLink class="nav-link" href="invoices">
+                    <i class="bi bi-receipt-cutoff fs-5"></i>
+                    <span>Danh Sách Hóa Đơn & In</span>
+                </NavLink>
+            </div>
+
+            <div class="nav-item">
+                <NavLink class="nav-link" href="manage-products">
+                    <i class="bi bi-box-seam-fill fs-5"></i>
+                    <span>Quản Lý Sản Phẩm & Kho</span>
+                </NavLink>
+            </div>
+
+            <!-- PHÂN HỆ DÀNH RIÊNG CHO KẾ TOÁN -->
+            <AuthorizeView Roles="Accountant">
+                <Authorized>
+                    <div class="nav-divider text-uppercase px-3 mt-3 mb-2 fw-bold">
+                        Quản Trị Công Nợ & Kế Toán
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="manage-customers">
+                            <i class="bi bi-people-fill fs-5"></i>
+                            <span>Quản Lý Khách Hàng (AI)</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="payments">
+                            <i class="bi bi-cash-stack fs-5"></i>
+                            <span>Thu Tiền Phân Bổ (FIFO)</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="payment-history">
+                            <i class="bi bi-clock-history fs-5"></i>
+                            <span>Lịch Sử Phiếu Thu & In</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="customer-ledger">
+                            <i class="bi bi-journal-text fs-5"></i>
+                            <span>Sổ Chi Tiết Công Nợ</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="aging-report">
+                            <i class="bi bi-bar-chart-line-fill fs-5"></i>
+                            <span>Báo Cáo Tuổi Nợ 4 Xô</span>
+                        </NavLink>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+        </nav>
+    </div>
+
+    <!-- 3. FOOTER: NÚT ĐĂNG NHẬP / TÀI KHOẢN ĐẶT Ở GÓC DƯỚI BÊN TRÁI -->
+    <div class="nav-footer p-3 mt-auto">
         <AuthorizeView>
             <Authorized>
-                <div class="nav-item px-3 text-white py-2">
-                    <small>Xin chào, @context.User.Identity?.Name (@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</small><br/>
-                    <a href="/api/auth/logout" class="btn btn-sm btn-outline-light mt-1">Đăng xuất</a>
+                <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded bg-dark bg-opacity-50">
+                    <i class="bi bi-person-circle fs-3 text-info"></i>
+                    <div class="overflow-hidden">
+                        <div class="fw-bold text-white small text-truncate" title="@context.User.Identity?.Name">
+                            @context.User.Identity?.Name
+                        </div>
+                        <span class="badge bg-primary small">@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                    </div>
                 </div>
+                <a href="/api/auth/logout" class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center gap-2 py-2">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Đăng xuất</span>
+                </a>
             </Authorized>
             <NotAuthorized>
-                <div class="nav-item px-3 py-2">
-                    <a href="/login" class="btn btn-sm btn-primary">Đăng nhập</a>
-                </div>
+                <a href="/login" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm text-decoration-none">
+                    <i class="bi bi-box-arrow-in-right fs-5"></i>
+                    <span class="fw-bold">Đăng nhập hệ thống</span>
+                </a>
             </NotAuthorized>
         </AuthorizeView>
-
-        <div class="nav-item px-3 mt-2">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="create-invoice">
-                <span class="bi bi-file-earmark-plus-nav-menu" aria-hidden="true"></span> Lập Hóa Đơn
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="invoices">
-                <span class="bi bi-receipt-cutoff-nav-menu" aria-hidden="true"></span> Danh Sách Hóa Đơn & In
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="manage-products">
-                <span class="bi bi-box-seam-nav-menu" aria-hidden="true"></span> Quản Lý Sản Phẩm & Kho
-            </NavLink>
-        </div>
-
-        <AuthorizeView Roles="Accountant">
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="manage-customers">
-                        <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span> Quản lý Khách Hàng
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="payments">
-                        <span class="bi bi-cash-coin-nav-menu" aria-hidden="true"></span> Thu Tiền (FIFO)
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="payment-history">
-                        <span class="bi bi-clock-history-nav-menu" aria-hidden="true"></span> Lịch Sử Thu Tiền
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="customer-ledger">
-                        <span class="bi bi-journal-text-nav-menu" aria-hidden="true"></span> Sổ Chi Tiết Công Nợ
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="aging-report">
-                        <span class="bi bi-bar-chart-fill-nav-menu" aria-hidden="true"></span> Báo Cáo Tuổi Nợ
-                    </NavLink>
-                </div>
-            </Authorized>
-        </AuthorizeView>
-    </nav>
+    </div>
 </div>
