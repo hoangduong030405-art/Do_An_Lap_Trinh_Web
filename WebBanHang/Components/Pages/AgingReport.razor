@@ -7,9 +7,11 @@
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.Components.Controls
 @using WebBanHang.UseCases.AI
+@using WebBanHang.Services
 
 @inject IGetCustomerAgingReportUseCase GetCustomerAgingReportUseCase
 @inject IDraftDebtReminderEmailUseCase DraftDebtReminderEmailUseCase
+@inject IEmailSenderService EmailSenderService
 @inject IJSRuntime JSRuntime
 
 <h3>Báo Cáo Tuổi Nợ 4 Xô</h3>
@@ -51,16 +53,36 @@ else
             <button class="btn btn-warning" @onclick="DraftAiEmail">🤖 AI Soạn Thư Nhắc Nợ</button>
         </div>
 
+        @if (!string.IsNullOrEmpty(emailSendingMessage))
+        {
+            <div class="alert @(emailSuccess ? "alert-success" : "alert-danger") alert-dismissible fade show mb-3">
+                <i class="bi @(emailSuccess ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill") me-2"></i>
+                @emailSendingMessage
+                <button type="button" class="btn-close" @onclick="() => emailSendingMessage = null"></button>
+            </div>
+        }
+
         @if (!string.IsNullOrEmpty(aiEmailContent))
         {
             <div class="card border-warning mb-3 shadow-sm">
-                <div class="card-header bg-warning text-dark fw-bold">
-                    Bản thảo thư nhắc nợ (AI tự động soạn)
+                <div class="card-header bg-warning text-dark fw-bold d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-robot me-1"></i> Bản thảo thư nhắc nợ (AI tự động soạn)</span>
+                    <button class="btn btn-sm btn-outline-dark" @onclick="() => aiEmailContent = string.Empty">Đóng</button>
                 </div>
                 <div class="card-body">
-                    <textarea class="form-control mb-3" rows="10" @bind="aiEmailContent"></textarea>
-                    <div class="text-end">
-                        <button class="btn btn-primary" @onclick="SendEmail">✉️ Duyệt & Gửi Email</button>
+                    <textarea class="form-control mb-3 font-monospace" rows="10" @bind="aiEmailContent"></textarea>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Bạn có toàn quyền hiệu chỉnh nội dung thư trước khi phê duyệt gửi đi.</small>
+                        <button class="btn btn-primary" @onclick="SendEmail" disabled="@isSendingEmail">
+                            @if (isSendingEmail)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1"></span> <span>Đang gửi email...</span>
+                            }
+                            else
+                            {
+                                <span>✉️ Duyệt & Gửi Email Nhắc Nợ</span>
+                            }
+                        </button>
                     </div>
                 </div>
             </div>
@@ -120,6 +142,9 @@ else
     private IEnumerable<CustomerAgingReportDto>? reports;
     private CustomerAgingReportDto? selectedReport;
     private string aiEmailContent = "";
+    private bool isSendingEmail = false;
+    private string? emailSendingMessage;
+    private bool emailSuccess = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,12 +156,14 @@ else
         reports = await GetCustomerAgingReportUseCase.ExecuteAsync(asOfDate);
         selectedReport = null;
         aiEmailContent = "";
+        emailSendingMessage = null;
     }
 
     private void ViewDetails(int customerId)
     {
         selectedReport = reports?.FirstOrDefault(r => r.CustomerId == customerId);
         aiEmailContent = "";
+        emailSendingMessage = null;
     }
 
     private async Task DraftAiEmail()
@@ -144,14 +171,37 @@ else
         if (selectedReport != null)
         {
             aiEmailContent = await DraftDebtReminderEmailUseCase.ExecuteAsync(selectedReport.CustomerId);
+            emailSendingMessage = null;
         }
     }
 
     private async Task SendEmail()
     {
-        // Giả lập gửi email thành công
-        aiEmailContent = "";
-        await JSRuntime.InvokeVoidAsync("alert", "Đã gửi email nhắc nợ thành công!");
+        if (string.IsNullOrWhiteSpace(aiEmailContent) || selectedReport == null) return;
+
+        isSendingEmail = true;
+        emailSendingMessage = null;
+        try
+        {
+            var subject = $"[ECO2415] THÔNG BÁO NHẮC NỢ & ĐỐI SOÁT CÔNG NỢ - {selectedReport.CustomerName.ToUpper()}";
+            var targetEmail = "khachhang@congty.com"; // Email mẫu của khách hàng
+            var result = await EmailSenderService.SendEmailAsync(targetEmail, subject, aiEmailContent);
+            emailSuccess = result.Success;
+            emailSendingMessage = result.Message;
+            if (result.Success)
+            {
+                aiEmailContent = "";
+            }
+        }
+        catch (Exception ex)
+        {
+            emailSuccess = false;
+            emailSendingMessage = $"Lỗi gửi email: {ex.Message}";
+        }
+        finally
+        {
+            isSendingEmail = false;
+        }
     }
 
     private async Task ExportCSV()

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using WebBanHang.UseCases.AI;
+using WebBanHang.UseCases.Dashboard;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -35,6 +36,15 @@ builder.Services.AddTransient<IRecordPaymentAndAllocateUseCase, RecordPaymentAnd
 builder.Services.AddTransient<IGetCustomerAgingReportUseCase, GetCustomerAgingReportUseCase>();
 builder.Services.AddTransient<IAiDebtReminderService, MockAiDebtReminderService>();
 builder.Services.AddTransient<IDraftDebtReminderEmailUseCase, DraftDebtReminderEmailUseCase>();
+builder.Services.AddTransient<IGetDashboardDataUseCase, GetDashboardDataUseCase>();
+builder.Services.AddTransient<IViewInvoiceListUseCase, ViewInvoiceListUseCase>();
+builder.Services.AddTransient<IViewInvoiceDetailUseCase, ViewInvoiceDetailUseCase>();
+builder.Services.AddTransient<IManageProductUseCase, ManageProductUseCase>();
+builder.Services.AddTransient<IViewPaymentHistoryUseCase, ViewPaymentHistoryUseCase>();
+builder.Services.AddTransient<IViewCustomerLedgerUseCase, ViewCustomerLedgerUseCase>();
+builder.Services.AddTransient<IAiCreditRiskService, MockAiCreditRiskService>();
+builder.Services.AddTransient<IAssessCreditRiskUseCase, AssessCreditRiskUseCase>();
+builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>

@@ -49,3 +49,26 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+/* Media Print Styling for Invoice & Receipt Printing */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #printableInvoiceArea, #printableInvoiceArea * {
+        visibility: visible;
+    }
+    #printableInvoiceArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .modal-footer, .btn-close, .modal-header, .sidebar, .top-row, nav {
+        display: none !important;
+    }
+}

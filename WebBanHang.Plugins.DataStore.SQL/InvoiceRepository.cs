@@ -3,8 +3,10 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebBanHang.CoreBusiness.Entities;
+using WebBanHang.UseCases.DTOs;
 using WebBanHang.UseCases.PluginInterfaces.DataStore;
 
 namespace WebBanHang.Plugins.DataStore.SQL
@@ -93,6 +95,81 @@ namespace WebBanHang.Plugins.DataStore.SQL
                 transaction.Rollback();
                 throw;
             }
+        }
+
+        public async Task<IEnumerable<InvoiceListDto>> GetInvoicesWithCustomerAsync(string? keyword = null, string? status = null)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            var sql = @"
+                SELECT i.Id, i.InvoiceNumber, i.CustomerId, c.CustomerCode, c.FullName AS CustomerName,
+                       i.InvoiceDate, i.DueDate, i.TotalAmount, i.PaidAmount, i.Balance, i.Status
+                FROM Invoices i
+                INNER JOIN Customers c ON i.CustomerId = c.Id
+                WHERE (@Keyword IS NULL OR i.InvoiceNumber LIKE @KeywordSearch OR c.FullName LIKE @KeywordSearch OR c.CustomerCode LIKE @KeywordSearch)
+                  AND (@Status IS NULL OR i.Status = @Status)
+                ORDER BY i.InvoiceDate DESC";
+
+            return await connection.QueryAsync<InvoiceListDto>(sql, new
+            {
+                Keyword = keyword,
+                KeywordSearch = string.IsNullOrWhiteSpace(keyword) ? null : $"%{keyword}%",
+                Status = status
+            });
+        }
+
+        public async Task<InvoiceDetailDto?> GetInvoiceDetailByIdAsync(int id)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            var headerSql = @"
+                SELECT i.Id, i.InvoiceNumber, i.InvoiceDate, i.DueDate, i.TotalAmount, i.PaidAmount, i.Balance, i.Status,
+                       i.CustomerId, c.CustomerCode, c.FullName AS CustomerName, c.PhoneNumber AS CustomerPhone, c.Address AS CustomerAddress
+                FROM Invoices i
+                INNER JOIN Customers c ON i.CustomerId = c.Id
+                WHERE i.Id = @Id";
+
+            var dto = await connection.QuerySingleOrDefaultAsync<InvoiceDetailDto>(headerSql, new { Id = id });
+            if (dto == null) return null;
+
+            var linesSql = @"
+                SELECT l.ProductId, p.ProductCode, p.Name AS ProductName, p.Unit, l.Quantity, l.UnitPrice
+                FROM InvoiceLines l
+                INNER JOIN Products p ON l.ProductId = p.Id
+                WHERE l.InvoiceId = @Id";
+
+            var lines = await connection.QueryAsync<InvoiceLineDetailDto>(linesSql, new { Id = id });
+            dto.Lines = lines.ToList();
+
+            return dto;
+        }
+
+        public async Task<IEnumerable<TopSellingProductDto>> GetTopSellingProductsAsync(int top = 5)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            var sql = @"
+                SELECT TOP (@Top) l.ProductId, p.ProductCode, p.Name AS ProductName,
+                       SUM(l.Quantity) AS TotalQuantitySold, SUM(l.Quantity * l.UnitPrice) AS TotalRevenue
+                FROM InvoiceLines l
+                INNER JOIN Products p ON l.ProductId = p.Id
+                GROUP BY l.ProductId, p.ProductCode, p.Name
+                ORDER BY TotalQuantitySold DESC";
+
+            return await connection.QueryAsync<TopSellingProductDto>(sql, new { Top = top });
+        }
+
+        public async Task<IEnumerable<MonthlyRevenueDto>> GetMonthlyRevenueStatisticsAsync(int months = 6)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            var sql = @"
+                SELECT 
+                    FORMAT(i.InvoiceDate, 'MM/yyyy') AS MonthLabel,
+                    SUM(i.TotalAmount) AS Revenue,
+                    SUM(i.PaidAmount) AS Collected
+                FROM Invoices i
+                WHERE i.InvoiceDate >= DATEADD(month, -@Months, GETDATE())
+                GROUP BY FORMAT(i.InvoiceDate, 'MM/yyyy'), YEAR(i.InvoiceDate), MONTH(i.InvoiceDate)
+                ORDER BY YEAR(i.InvoiceDate) ASC, MONTH(i.InvoiceDate) ASC";
+
+            return await connection.QueryAsync<MonthlyRevenueDto>(sql, new { Months = months });
         }
     }
 }

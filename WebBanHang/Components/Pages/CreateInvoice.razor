@@ -10,10 +10,12 @@
 @using WebBanHang.CoreBusiness.Exceptions
 @using WebBanHang.Services
 @using WebBanHang.Components.Controls
+@using WebBanHang.UseCases.DTOs
 
 @inject ICreateInvoiceUseCase CreateInvoiceUseCase
 @inject IViewCustomerListUseCase ViewCustomerListUseCase
 @inject IViewProductCatalogUseCase ViewProductCatalogUseCase
+@inject IAssessCreditRiskUseCase AssessCreditRiskUseCase
 @inject ICustomerRepository CustomerRepository
 @inject DraftInvoiceStateService State
 
@@ -47,10 +49,40 @@
             <div class="mt-2">
                 <strong>Hạn mức tín dụng: </strong> @State.SelectedCustomer.CreditLimit.ToString("N0") đ <br />
                 <strong>Công nợ hiện tại: </strong> @currentDebt.ToString("N0") đ <br />
-                <CustomerDebtBadge 
-                    CreditLimit="@State.SelectedCustomer.CreditLimit" 
-                    CurrentDebt="@currentDebt" 
-                    OnBadgeClick="() => {}" />
+                <div class="d-flex align-items-center gap-2 mt-1">
+                    <CustomerDebtBadge 
+                        CreditLimit="@State.SelectedCustomer.CreditLimit" 
+                        CurrentDebt="@currentDebt" 
+                        OnBadgeClick="() => {}" />
+                    
+                    @if (customerRisk != null)
+                    {
+                        @if (customerRisk.RatingGrade == "A")
+                        {
+                            <span class="badge bg-success" title="@customerRisk.Recommendation">
+                                <i class="bi bi-robot"></i> AI Tín Nhiệm: Hạng A (@customerRisk.CreditScore/100)
+                            </span>
+                        }
+                        else if (customerRisk.RatingGrade == "B")
+                        {
+                            <span class="badge bg-primary" title="@customerRisk.Recommendation">
+                                <i class="bi bi-robot"></i> AI Tín Nhiệm: Hạng B (@customerRisk.CreditScore/100)
+                            </span>
+                        }
+                        else if (customerRisk.RatingGrade == "C")
+                        {
+                            <span class="badge bg-warning text-dark" title="@customerRisk.Recommendation">
+                                <i class="bi bi-robot"></i> AI Tín Nhiệm: Hạng C (@customerRisk.CreditScore/100)
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger" title="@customerRisk.Recommendation">
+                                <i class="bi bi-robot"></i> AI Tín Nhiệm: Hạng D (@customerRisk.CreditScore/100 - Báo Động)
+                            </span>
+                        }
+                    }
+                </div>
             </div>
         }
     </div>
@@ -120,6 +152,7 @@
     private IEnumerable<Customer>? customers;
     private IEnumerable<Product>? products;
     private decimal currentDebt;
+    private CreditRiskAssessmentDto? customerRisk;
     private string errorMessage = "";
     private string successMessage = "";
 
@@ -146,12 +179,21 @@
             {
                 State.SetCustomer(customer);
                 currentDebt = await CustomerRepository.GetTotalOutstandingDebtAsync(customerId);
+                try
+                {
+                    customerRisk = await AssessCreditRiskUseCase.ExecuteAsync(customerId);
+                }
+                catch
+                {
+                    customerRisk = null;
+                }
             }
         }
         else
         {
             State.Clear();
             currentDebt = 0;
+            customerRisk = null;
         }
     }
 
