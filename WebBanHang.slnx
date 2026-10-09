@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="WebBanHang.CoreBusiness/WebBanHang.CoreBusiness.csproj" />
+  <Project Path="WebBanHang.Plugins.DataStore.SQL/WebBanHang.Plugins.DataStore.SQL.csproj" />
+  <Project Path="WebBanHang.UseCases/WebBanHang.UseCases.csproj" />
+  <Project Path="WebBanHang/WebBanHang.csproj" />
+</Solution>
