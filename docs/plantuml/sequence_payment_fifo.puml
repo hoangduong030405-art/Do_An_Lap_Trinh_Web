@@ -1,0 +1,37 @@
+@startuml Sequence_PaymentFIFO_WebBanHang
+autonumber
+actor "Kế toán Công nợ\n(Accountant)" as User
+boundary "Payments.razor" as UI
+control "RecordPaymentAndAllocateUseCase" as UC
+database "IInvoiceRepository" as InvRepo
+database "IPaymentRepository" as PayRepo
+
+User -> UI : Nhập số tiền thu & bấm "Ghi nhận thanh toán (FIFO)"
+UI -> UC : ExecuteAsync(customerId, paymentAmount, paymentDate, note)
+
+note over UC, InvRepo #LightYellow
+  **KIỂM TRA LUẬT NGHIỆP VỤ 2 (FIFO):**
+  Lấy danh sách hóa đơn còn nợ xếp theo ngày cũ nhất lên trước (InvoiceDate ASC)
+end note
+
+UC -> InvRepo : GetUnpaidInvoicesByCustomerOrderedByDateAsync(customerId)
+InvRepo --> UC : unpaidInvoices (Sorted ASC)
+
+loop Từng hóa đơn theo thứ tự cũ nhất
+    alt Còn tiền thu (remainingAmount > 0)
+        UC -> UC : Cấn trừ tiền vào invoice.Balance & tăng invoice.PaidAmount
+        UC -> UC : Tạo PaymentAllocation & cập nhật trạng thái hóa đơn
+    end
+end
+
+note over UC #LightCyan
+  Kiểm tra ràng buộc:
+  Tổng phân bổ <= Số tiền thu
+end note
+
+UC -> PayRepo : RecordPaymentWithAllocationsAsync(\n  payment, allocations, updatedInvoices)\n  [THỰC THI TRONG 1 TRANSACTION]
+PayRepo --> UC : paymentId
+
+UC --> UI : Trả về paymentId
+UI --> User : Hiển thị thông báo thu tiền & phân bổ thành công
+@enduml

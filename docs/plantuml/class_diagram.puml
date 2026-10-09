@@ -1,0 +1,119 @@
+@startuml ClassDiagram_WebBanHang
+skinparam classAttributeIconSize 0
+
+package "1. WebBanHang.CoreBusiness (Domain Layer)" {
+    class Customer {
+        +int Id
+        +string CustomerCode
+        +string FullName
+        +string PhoneNumber
+        +string Address
+        +decimal CreditLimit
+        +int PaymentTermsDays
+    }
+
+    class Product {
+        +int Id
+        +string ProductCode
+        +string Name
+        +string Unit
+        +decimal UnitPrice
+        +int StockQuantity
+        +string ImageUrl
+        +string Description
+    }
+
+    class Invoice {
+        +int Id
+        +string InvoiceNumber
+        +int CustomerId
+        +DateTime InvoiceDate
+        +DateTime DueDate
+        +decimal TotalAmount
+        +decimal PaidAmount
+        +decimal Balance
+        +InvoiceStatus Status
+    }
+
+    class InvoiceLine {
+        +int Id
+        +int InvoiceId
+        +int ProductId
+        +int Quantity
+        +decimal UnitPrice
+        +decimal LineTotal
+    }
+
+    class Payment {
+        +int Id
+        +string PaymentNumber
+        +int CustomerId
+        +DateTime PaymentDate
+        +decimal Amount
+        +decimal UnallocatedAmount
+        +string Note
+    }
+
+    class PaymentAllocation {
+        +int Id
+        +int PaymentId
+        +int InvoiceId
+        +decimal AllocatedAmount
+        +DateTime AllocationDate
+    }
+
+    enum InvoiceStatus {
+        Unpaid
+        PartiallyPaid
+        Paid
+        Cancelled
+    }
+
+    Customer "1" *-- "0..*" Invoice
+    Customer "1" *-- "0..*" Payment
+    Invoice "1" *-- "1..*" InvoiceLine
+    Payment "1" *-- "0..*" PaymentAllocation
+    Invoice "1" *-- "0..*" PaymentAllocation
+    Invoice --> InvoiceStatus
+}
+
+package "2. WebBanHang.UseCases (Application Layer)" {
+    interface ICustomerRepository
+    interface IProductRepository
+    interface IInvoiceRepository
+    interface IPaymentRepository
+
+    class CreateInvoiceUseCase {
+        -ICustomerRepository _customerRepository
+        -IInvoiceRepository _invoiceRepository
+        +ExecuteAsync(customerId, invoiceDate, lines)
+    }
+
+    class RecordPaymentAndAllocateUseCase {
+        -IInvoiceRepository _invoiceRepository
+        -IPaymentRepository _paymentRepository
+        +ExecuteAsync(customerId, paymentAmount, paymentDate, note)
+    }
+
+    class GetCustomerAgingReportUseCase {
+        +ExecuteAsync(asOfDate)
+    }
+}
+
+package "3. WebBanHang.Plugins.DataStore.SQL (Plugin Layer)" {
+    class CustomerRepository implements ICustomerRepository
+    class ProductRepository implements IProductRepository
+    class InvoiceRepository implements IInvoiceRepository
+    class PaymentRepository implements IPaymentRepository
+}
+
+package "4. WebBanHang (Presentation Layer)" {
+    class DraftInvoiceStateService {
+        +int? SelectedCustomerId
+        +List<DraftInvoiceItem> Items
+        +AddProduct(p, qty)
+        +UpdateQuantity(id, qty)
+        +Clear()
+    }
+}
+@enduml

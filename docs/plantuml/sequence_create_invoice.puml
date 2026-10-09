@@ -1,0 +1,34 @@
+@startuml Sequence_CreateInvoice_WebBanHang
+autonumber
+actor "Nhân viên Bán hàng\n(Sales Staff)" as User
+boundary "CreateInvoice.razor" as UI
+control "CreateInvoiceUseCase" as UC
+database "ICustomerRepository" as CustRepo
+database "IInvoiceRepository" as InvRepo
+
+User -> UI : Bấm nút "Xác Nhận Lập Hóa Đơn"
+UI -> UC : ExecuteAsync(customerId, invoiceDate, lines)
+
+UC -> CustRepo : GetByIdAsync(customerId)
+CustRepo --> UC : customer
+
+UC -> CustRepo : GetTotalOutstandingDebtAsync(customerId)
+CustRepo --> UC : currentDebt
+
+note over UC #LightYellow
+  **KIỂM TRA LUẬT NGHIỆP VỤ 1:**
+  (currentDebt + newInvoiceAmount) > customer.CreditLimit ?
+end note
+
+alt Vi phạm hạn mức tín dụng
+    UC --> UI : Ném CreditLimitExceededException
+    UI --> User : Hiển thị Alert đỏ thân thiện (K3.3)
+else Đủ hạn mức tín dụng
+    UC -> UC : Khởi tạo Invoice Header & tính DueDate
+    UC -> InvRepo : CreateInvoiceWithLinesAsync(invoice, lines)\n[THỰC THI TRONG 1 TRANSACTION]
+    InvRepo --> UC : invoiceId
+    UC --> UI : Trả về invoiceId thành công
+    UI --> User : Hiển thị thông báo thành công & reset giỏ hàng
+end
+
+@enduml

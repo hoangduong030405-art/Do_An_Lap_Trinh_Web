@@ -1,0 +1,35 @@
+@startuml UseCaseDiagram_WebBanHang
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "Nhân viên Bán hàng\n(Sales Staff)" as Sales
+actor "Kế toán Công nợ\n(Accountant / Admin)" as Accountant
+
+rectangle "Hệ Thống Bán Hàng & Quản Lý Công Nợ (WebBanHang)" {
+    
+    package "Phân hệ Bán Hàng (Sales)" {
+        usecase "Xem danh mục hàng hóa & tồn kho" as UC_ViewProducts
+        usecase "Tra cứu công nợ & hạn mức khách" as UC_CheckCredit
+        usecase "Lập hóa đơn bán buôn (Draft Invoice)" as UC_CreateInvoice
+        usecase "Kiểm tra Hạn mức Tín dụng (Luật 1)" as UC_Rule1
+    }
+
+    package "Phân hệ Kế Toán Công Nợ (Accounting)" {
+        usecase "Lập Phiếu thu tiền (Payment)" as UC_RecordPayment
+        usecase "Phân bổ nợ tự động theo FIFO (Luật 2)" as UC_Rule2
+        usecase "Báo cáo Tuổi nợ (Aging Report 4 xô)" as UC_AgingReport
+        usecase "Đối soát tính toàn vẹn công nợ" as UC_IntegrityCheck
+    }
+
+    Sales --> UC_ViewProducts
+    Sales --> UC_CheckCredit
+    Sales --> UC_CreateInvoice
+    UC_CreateInvoice ..> UC_Rule1 : <<include>>
+
+    Accountant --> UC_RecordPayment
+    Accountant --> UC_AgingReport
+    UC_RecordPayment ..> UC_Rule2 : <<include>>
+    UC_AgingReport ..> UC_IntegrityCheck : <<include>>
+}
+@enduml
