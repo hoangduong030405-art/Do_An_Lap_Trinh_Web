@@ -1,0 +1,366 @@
+@page "/invoices"
+@rendermode InteractiveServer
+
+@using WebBanHang.UseCases.Invoices
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.CoreBusiness.Entities
+@inject IViewInvoiceListUseCase ViewInvoiceListUseCase
+@inject IViewInvoiceDetailUseCase ViewInvoiceDetailUseCase
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+
+<PageTitle>Quản Lý Hóa Đơn & In Ấn</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-primary">📑 Danh Sách Hóa Đơn Bán Hàng</h2>
+        <p class="text-muted mb-0">Theo dõi trạng thái thanh toán, tra cứu chi tiết và in ấn hóa đơn kèm mã VietQR</p>
+    </div>
+    <div>
+        <a href="/create-invoice" class="btn btn-primary shadow-sm">
+            <i class="bi bi-cart-plus me-1"></i> + Lập Hóa Đơn Mới
+        </a>
+    </div>
+</div>
+
+<!-- BỘ LỌC TÌM KIẾM -->
+<div class="card border-0 shadow-sm mb-4 p-3 bg-light">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-5">
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Tìm kiếm theo số HĐ, tên hoặc mã khách hàng..."
+                       @bind="searchKeyword" @bind:event="oninput" @onkeyup="HandleSearch" />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <select class="form-select" @bind="selectedStatus" @bind:after="LoadInvoices">
+                <option value="">-- Tất cả trạng thái --</option>
+                <option value="Unpaid">Chưa thanh toán (Còn nợ)</option>
+                <option value="Overdue">Đã quá hạn thanh toán</option>
+                <option value="Paid">Đã thanh toán đủ</option>
+            </select>
+        </div>
+        <div class="col-md-3 text-end">
+            <button class="btn btn-outline-secondary w-100" @onclick="ResetFilters">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Đặt lại bộ lọc
+            </button>
+        </div>
+    </div>
+</div>
+
+@if (loading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Đang tải danh sách hóa đơn...</p>
+    </div>
+}
+else if (invoices == null || !invoices.Any())
+{
+    <div class="alert alert-info text-center py-4">
+        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+        Không tìm thấy hóa đơn nào phù hợp với điều kiện tìm kiếm.
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Số Hóa Đơn</th>
+                        <th>Khách Hàng</th>
+                        <th>Ngày Lập</th>
+                        <th>Hạn Thu</th>
+                        <th>Tổng Tiền</th>
+                        <th>Đã Thu</th>
+                        <th>Còn Nợ</th>
+                        <th>Trạng Thái</th>
+                        <th class="text-center">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var inv in invoices)
+                    {
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-primary">@inv.InvoiceNumber</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold">@inv.CustomerName</div>
+                                <small class="text-muted">@inv.CustomerCode</small>
+                            </td>
+                            <td>@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <span>@inv.DueDate.ToString("dd/MM/yyyy")</span>
+                                @if (inv.OverdueDays > 0)
+                                {
+                                    <span class="badge bg-danger ms-1">Trễ @inv.OverdueDays ngày</span>
+                                }
+                            </td>
+                            <td class="fw-bold">@inv.TotalAmount.ToString("N0") đ</td>
+                            <td class="text-success">@inv.PaidAmount.ToString("N0") đ</td>
+                            <td class="fw-bold @(inv.Balance > 0 ? "text-danger" : "text-muted")">
+                                @inv.Balance.ToString("N0") đ
+                            </td>
+                            <td>
+                                @if (inv.Balance <= 0)
+                                {
+                                    <span class="badge bg-success">Đã thu đủ</span>
+                                }
+                                else if (inv.OverdueDays > 0)
+                                {
+                                    <span class="badge bg-danger">Quá hạn</span>
+                                }
+                                else if (inv.PaidAmount > 0)
+                                {
+                                    <span class="badge bg-warning text-dark">Thu một phần</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Chưa thanh toán</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => OpenInvoiceDetail(inv.Id)">
+                                    <i class="bi bi-eye me-1"></i> Chi Tiết & In
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- MODAL XEM CHI TIẾT & IN HÓA ĐƠN -->
+@if (selectedInvoiceDetail != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-file-earmark-text me-2"></i>Hóa Đơn Bán Hàng #@selectedInvoiceDetail.InvoiceNumber
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body p-4" id="printableInvoiceArea">
+                    <!-- KHUNG HÓA ĐƠN CHUẨN IN -->
+                    <div class="border p-4 rounded bg-white shadow-sm">
+                        <!-- HEADER CÔNG TY -->
+                        <div class="row border-bottom pb-3 mb-3">
+                            <div class="col-8">
+                                <h4 class="fw-bold text-primary mb-1">CÔNG TY CỔ PHẦN CÔNG NGHỆ & THƯƠNG MẠI ECO2415</h4>
+                                <div class="small text-muted">Địa chỉ: 123 Đường Công Nghệ, Quận Tân Bình, TP. Hồ Chí Minh</div>
+                                <div class="small text-muted">Hotline: 1900 6868 | Email: sales@eco2415.vn</div>
+                                <div class="small text-muted">Mã số thuế: 0312345678</div>
+                            </div>
+                            <div class="col-4 text-end">
+                                <h5 class="fw-bold text-dark mb-1">HÓA ĐƠN BÁN HÀNG</h5>
+                                <div class="fw-bold text-danger">Số: @selectedInvoiceDetail.InvoiceNumber</div>
+                                <div class="small text-muted">Ngày: @selectedInvoiceDetail.InvoiceDate.ToString("dd/MM/yyyy")</div>
+                                <div class="small text-muted">Hạn trả: @selectedInvoiceDetail.DueDate.ToString("dd/MM/yyyy")</div>
+                            </div>
+                        </div>
+
+                        <!-- THÔNG TIN KHÁCH HÀNG -->
+                        <div class="bg-light p-3 rounded mb-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-1"><strong>Khách hàng:</strong> @selectedInvoiceDetail.CustomerName</div>
+                                    <div class="mb-1"><strong>Mã khách hàng:</strong> @selectedInvoiceDetail.CustomerCode</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-1"><strong>Điện thoại:</strong> @selectedInvoiceDetail.CustomerPhone</div>
+                                    <div class="mb-1"><strong>Địa chỉ:</strong> @selectedInvoiceDetail.CustomerAddress</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BẢNG CHI TIẾT SẢN PHẨM -->
+                        <table class="table table-bordered align-middle mb-3">
+                            <thead class="table-light text-center">
+                                <tr>
+                                    <th style="width: 50px;">STT</th>
+                                    <th>Mã SP</th>
+                                    <th>Tên Hàng Hóa / Dịch Vụ</th>
+                                    <th>ĐVT</th>
+                                    <th style="width: 80px;">SL</th>
+                                    <th style="width: 130px;">Đơn Giá</th>
+                                    <th style="width: 140px;">Thành Tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int index = 1; }
+                                @foreach (var line in selectedInvoiceDetail.Lines)
+                                {
+                                    <tr>
+                                        <td class="text-center">@(index++)</td>
+                                        <td>@line.ProductCode</td>
+                                        <td class="fw-bold">@line.ProductName</td>
+                                        <td class="text-center">@line.Unit</td>
+                                        <td class="text-center">@line.Quantity</td>
+                                        <td class="text-end">@line.UnitPrice.ToString("N0") đ</td>
+                                        <td class="text-end fw-bold">@line.LineTotal.ToString("N0") đ</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" class="text-end fw-bold">TỔNG CỘNG TIỀN HÀNG:</td>
+                                    <td class="text-end fw-bold text-primary fs-6">@selectedInvoiceDetail.TotalAmount.ToString("N0") đ</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" class="text-end">Đã thanh toán:</td>
+                                    <td class="text-end text-success">@selectedInvoiceDetail.PaidAmount.ToString("N0") đ</td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td colspan="6" class="text-end fw-bold text-danger">CÒN PHẢI THANH TOÁN:</td>
+                                    <td class="text-end fw-bold text-danger fs-5">@selectedInvoiceDetail.Balance.ToString("N0") đ</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <!-- MÃ QR THANH TOÁN VIETQR & CHỮ KÝ -->
+                        <div class="row align-items-center mt-3 pt-3 border-top">
+                            <div class="col-md-6 text-center text-md-start">
+                                @if (selectedInvoiceDetail.Balance > 0)
+                                {
+                                    <div class="d-inline-flex align-items-center border p-2 rounded bg-light">
+                                        <img src="https://img.vietqr.io/image/970436-101870000001-compact2.png?amount=@Convert.ToInt64(selectedInvoiceDetail.Balance)&addInfo=HD%20@selectedInvoiceDetail.InvoiceNumber&accountName=CONG%20TY%20ECO2415"
+                                             alt="Mã VietQR Chuyển Khoản"
+                                             style="width: 130px; height: 130px; object-fit: contain;" />
+                                        <div class="ms-3 text-start small">
+                                            <div class="fw-bold text-primary"><i class="bi bi-qr-code-scan"></i> QUÉT MÃ VIETQR</div>
+                                            <div class="text-muted">Ngân hàng: Vietcombank</div>
+                                            <div class="text-muted">STK: <strong>101870000001</strong></div>
+                                            <div class="text-muted">Số tiền: <strong>@selectedInvoiceDetail.Balance.ToString("N0") đ</strong></div>
+                                            <div class="text-muted">Nội dung: <strong>HD @selectedInvoiceDetail.InvoiceNumber</strong></div>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="badge bg-success p-3 fs-6">
+                                        <i class="bi bi-check-circle-fill me-1"></i> HÓA ĐƠN ĐÃ THANH TOÁN ĐỦ
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-6 text-center mt-3 mt-md-0">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="fw-bold small">NGƯỜI MUA HÀNG</div>
+                                        <div class="text-muted small fst-italic">(Ký, ghi rõ họ tên)</div>
+                                        <div style="height: 60px;"></div>
+                                        <div class="fw-bold small text-muted">@selectedInvoiceDetail.CustomerName</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="fw-bold small">NGƯỜI LẬP PHIẾU</div>
+                                        <div class="text-muted small fst-italic">(Ký, đóng dấu)</div>
+                                        <div style="height: 60px;"></div>
+                                        <div class="fw-bold small text-primary">Kế Toán Bán Hàng</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Đóng</button>
+                    <button type="button" class="btn btn-success" @onclick="PrintInvoice">
+                        <i class="bi bi-printer me-1"></i> 🖨️ In Hóa Đơn & Mã VietQR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<InvoiceListDto>? allInvoices;
+    private IEnumerable<InvoiceListDto>? invoices;
+    private InvoiceDetailDto? selectedInvoiceDetail;
+    private bool loading = true;
+    private string searchKeyword = "";
+    private string selectedStatus = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadInvoices();
+    }
+
+    private async Task LoadInvoices()
+    {
+        loading = true;
+        try
+        {
+            allInvoices = await ViewInvoiceListUseCase.ExecuteAsync();
+            ApplyFilter();
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void HandleSearch()
+    {
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (allInvoices == null) return;
+
+        var query = allInvoices.AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(searchKeyword))
+        {
+            var kw = searchKeyword.Trim().ToLower();
+            query = query.Where(i => i.InvoiceNumber.ToLower().Contains(kw) ||
+                                     i.CustomerName.ToLower().Contains(kw) ||
+                                     i.CustomerCode.ToLower().Contains(kw));
+        }
+
+        if (selectedStatus == "Unpaid")
+        {
+            query = query.Where(i => i.Balance > 0);
+        }
+        else if (selectedStatus == "Overdue")
+        {
+            query = query.Where(i => i.OverdueDays > 0);
+        }
+        else if (selectedStatus == "Paid")
+        {
+            query = query.Where(i => i.Balance <= 0);
+        }
+
+        invoices = query.ToList();
+    }
+
+    private void ResetFilters()
+    {
+        searchKeyword = "";
+        selectedStatus = "";
+        ApplyFilter();
+    }
+
+    private async Task OpenInvoiceDetail(int invoiceId)
+    {
+        selectedInvoiceDetail = await ViewInvoiceDetailUseCase.ExecuteAsync(invoiceId);
+    }
+
+    private void CloseModal()
+    {
+        selectedInvoiceDetail = null;
+    }
+
+    private async Task PrintInvoice()
+    {
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+}
