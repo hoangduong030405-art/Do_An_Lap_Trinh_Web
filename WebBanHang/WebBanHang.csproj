@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebBanHang.UseCases\WebBanHang.UseCases.csproj" />
+    <ProjectReference Include="..\WebBanHang.CoreBusiness\WebBanHang.CoreBusiness.csproj" />
+    <ProjectReference Include="..\WebBanHang.Plugins.DataStore.SQL\WebBanHang.Plugins.DataStore.SQL.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

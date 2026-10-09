@@ -1,0 +1,102 @@
+@page "/payments"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Accountant")]
+
+@using WebBanHang.UseCases.Customers
+@using WebBanHang.UseCases.Payments
+@using WebBanHang.CoreBusiness.Entities
+
+@inject IViewCustomerListUseCase ViewCustomerListUseCase
+@inject IRecordPaymentAndAllocateUseCase RecordPaymentUseCase
+
+<h3>Thu Tiền Phân Bổ (FIFO)</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<div class="card p-3 mb-4 shadow-sm">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Khách Hàng</label>
+            <select class="form-select" @bind="selectedCustomerId">
+                <option value="0">-- Chọn khách hàng --</option>
+                @if (customers != null)
+                {
+                    @foreach (var c in customers)
+                    {
+                        <option value="@c.Id">@c.FullName - @c.CustomerCode</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Số Tiền Thu</label>
+            <input type="number" class="form-control" @bind="paymentAmount" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label class="form-label">Ngày Thu</label>
+            <input type="date" class="form-control" @bind="paymentDate" />
+        </div>
+        <div class="col-md-12 mb-3">
+            <label class="form-label">Ghi Chú</label>
+            <input type="text" class="form-control" @bind="note" />
+        </div>
+    </div>
+    <div class="text-end">
+        <button class="btn btn-primary" @onclick="RecordPayment">Ghi nhận thanh toán (FIFO)</button>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<Customer>? customers;
+    private int selectedCustomerId;
+    private decimal paymentAmount;
+    private DateTime paymentDate = DateTime.Now;
+    private string note = "";
+    private string errorMessage = "";
+    private string successMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await ViewCustomerListUseCase.ExecuteAsync();
+    }
+
+    private async Task RecordPayment()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        if (selectedCustomerId <= 0)
+        {
+            errorMessage = "Vui lòng chọn khách hàng.";
+            return;
+        }
+
+        if (paymentAmount <= 0)
+        {
+            errorMessage = "Số tiền thu phải lớn hơn 0.";
+            return;
+        }
+
+        try
+        {
+            var paymentId = await RecordPaymentUseCase.ExecuteAsync(selectedCustomerId, paymentAmount, paymentDate, note);
+            successMessage = $"Thu tiền thành công! Mã phiếu thu mới: #{paymentId}";
+            
+            selectedCustomerId = 0;
+            paymentAmount = 0;
+            note = "";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

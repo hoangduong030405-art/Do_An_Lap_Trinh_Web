@@ -1,0 +1,180 @@
+@page "/aging-report"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Accountant")]
+
+@using WebBanHang.UseCases.Reports
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.Components.Controls
+@using WebBanHang.UseCases.AI
+
+@inject IGetCustomerAgingReportUseCase GetCustomerAgingReportUseCase
+@inject IDraftDebtReminderEmailUseCase DraftDebtReminderEmailUseCase
+@inject IJSRuntime JSRuntime
+
+<h3>Báo Cáo Tuổi Nợ 4 Xô</h3>
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <label class="form-label">Tính đến ngày:</label>
+        <div class="d-flex">
+            <input type="date" class="form-control me-2" @bind="asOfDate" style="max-width:200px;" />
+            <button class="btn btn-primary me-2" @onclick="LoadReport">Xem</button>
+            <button class="btn btn-success" @onclick="ExportCSV">📥 Xuất Báo Cáo Tuổi Nợ (CSV)</button>
+        </div>
+    </div>
+</div>
+
+@if (reports == null)
+{
+    <p><em>Đang tải dữ liệu...</em></p>
+}
+else if (!reports.Any())
+{
+    <div class="alert alert-info">Không có khách hàng nào đang nợ.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var report in reports)
+        {
+            <div class="col-md-6">
+                <AgingSummaryCard Report="report" OnViewDetails="ViewDetails" />
+            </div>
+        }
+    </div>
+    
+    @if (selectedReport != null)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+            <h4 class="mb-0">Chi Tiết Các Hóa Đơn Đang Nợ (Khách Hàng: @selectedReport.CustomerName)</h4>
+            <button class="btn btn-warning" @onclick="DraftAiEmail">🤖 AI Soạn Thư Nhắc Nợ</button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(aiEmailContent))
+        {
+            <div class="card border-warning mb-3 shadow-sm">
+                <div class="card-header bg-warning text-dark fw-bold">
+                    Bản thảo thư nhắc nợ (AI tự động soạn)
+                </div>
+                <div class="card-body">
+                    <textarea class="form-control mb-3" rows="10" @bind="aiEmailContent"></textarea>
+                    <div class="text-end">
+                        <button class="btn btn-primary" @onclick="SendEmail">✉️ Duyệt & Gửi Email</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Mã Hóa Đơn</th>
+                    <th>Ngày HĐ</th>
+                    <th>Hạn Thu</th>
+                    <th>Tổng Tiền</th>
+                    <th>Đã Trả</th>
+                    <th>Còn Nợ</th>
+                    <th>Số Ngày Quá Hạn</th>
+                    <th>Phân Loại Tuổi Nợ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var inv in selectedReport.Invoices)
+                {
+                    <tr>
+                        <td>@inv.InvoiceNumber</td>
+                        <td>@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                        <td>@inv.DueDate.ToString("dd/MM/yyyy")</td>
+                        <td>@inv.TotalAmount.ToString("N0")</td>
+                        <td>@inv.PaidAmount.ToString("N0")</td>
+                        <td class="text-danger fw-bold">@inv.Balance.ToString("N0")</td>
+                        <td>@inv.OverdueDays</td>
+                        <td>
+                            @if (inv.AgingCategory == "0-30")
+                            {
+                                <span class="badge bg-success">@inv.AgingCategory</span>
+                            }
+                            else if (inv.AgingCategory == "31-60")
+                            {
+                                <span class="badge bg-warning text-dark">@inv.AgingCategory</span>
+                            }
+                            else if (inv.AgingCategory == "61-90")
+                            {
+                                <span class="badge text-white" style="background-color: #fd7e14;">@inv.AgingCategory</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">@inv.AgingCategory</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private DateTime asOfDate = DateTime.Now;
+    private IEnumerable<CustomerAgingReportDto>? reports;
+    private CustomerAgingReportDto? selectedReport;
+    private string aiEmailContent = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReport();
+    }
+
+    private async Task LoadReport()
+    {
+        reports = await GetCustomerAgingReportUseCase.ExecuteAsync(asOfDate);
+        selectedReport = null;
+        aiEmailContent = "";
+    }
+
+    private void ViewDetails(int customerId)
+    {
+        selectedReport = reports?.FirstOrDefault(r => r.CustomerId == customerId);
+        aiEmailContent = "";
+    }
+
+    private async Task DraftAiEmail()
+    {
+        if (selectedReport != null)
+        {
+            aiEmailContent = await DraftDebtReminderEmailUseCase.ExecuteAsync(selectedReport.CustomerId);
+        }
+    }
+
+    private async Task SendEmail()
+    {
+        // Giả lập gửi email thành công
+        aiEmailContent = "";
+        await JSRuntime.InvokeVoidAsync("alert", "Đã gửi email nhắc nợ thành công!");
+    }
+
+    private async Task ExportCSV()
+    {
+        var csvContent = "Mã KH,Tên Khách Hàng,Tổng Nợ,0-30 Ngày,31-60 Ngày,61-90 Ngày,>90 Ngày\n";
+        if (reports != null)
+        {
+            foreach (var r in reports)
+            {
+                csvContent += $"{r.CustomerCode},{r.CustomerName},{r.TotalOutstandingDebt},{r.Bucket0To30},{r.Bucket31To60},{r.Bucket61To90},{r.BucketOver90}\n";
+            }
+        }
+        
+        var bytes = System.Text.Encoding.UTF8.GetBytes(csvContent);
+        var base64 = Convert.ToBase64String(bytes);
+        
+        await JSRuntime.InvokeVoidAsync("eval", $@"
+            var a = document.createElement('a');
+            a.href = 'data:text/csv;base64,{base64}';
+            a.download = 'AgingReport_{DateTime.Now:yyyyMMdd}.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        ");
+    }
+}

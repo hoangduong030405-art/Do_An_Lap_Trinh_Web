@@ -1,0 +1,23 @@
+@if (CurrentDebt > CreditLimit)
+{
+    <span class="badge bg-danger" style="cursor:pointer;" @onclick="OnBadgeClick">VƯỢT HẠN MỨC TÍN DỤNG (Vượt @((CurrentDebt - CreditLimit).ToString("N0")) đ)</span>
+}
+else if (CurrentDebt >= CreditLimit * 0.8m)
+{
+    <span class="badge bg-warning text-dark" style="cursor:pointer;" @onclick="OnBadgeClick">CẬN HẠN MỨC (>= 80%)</span>
+}
+else
+{
+    <span class="badge bg-success" style="cursor:pointer;" @onclick="OnBadgeClick">HẠN MỨC AN TOÀN</span>
+}
+
+@code {
+    [Parameter]
+    public decimal CreditLimit { get; set; }
+
+    [Parameter]
+    public decimal CurrentDebt { get; set; }
+
+    [Parameter]
+    public EventCallback OnBadgeClick { get; set; }
+}

@@ -1,0 +1,220 @@
+@page "/create-invoice"
+@rendermode InteractiveServer
+@implements IDisposable
+
+@using WebBanHang.UseCases.Invoices
+@using WebBanHang.UseCases.Customers
+@using WebBanHang.UseCases.Products
+@using WebBanHang.UseCases.PluginInterfaces.DataStore
+@using WebBanHang.CoreBusiness.Entities
+@using WebBanHang.CoreBusiness.Exceptions
+@using WebBanHang.Services
+@using WebBanHang.Components.Controls
+
+@inject ICreateInvoiceUseCase CreateInvoiceUseCase
+@inject IViewCustomerListUseCase ViewCustomerListUseCase
+@inject IViewProductCatalogUseCase ViewProductCatalogUseCase
+@inject ICustomerRepository CustomerRepository
+@inject DraftInvoiceStateService State
+
+<h3>Lập Hóa Đơn</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h4>1. Chọn Khách Hàng</h4>
+        <select class="form-select mb-2" @onchange="OnCustomerSelected">
+            <option value="">-- Chọn khách hàng --</option>
+            @if (customers != null)
+            {
+                @foreach (var c in customers)
+                {
+                    <option value="@c.Id" selected="@(c.Id == State.SelectedCustomerId)">@c.FullName - @c.CustomerCode</option>
+                }
+            }
+        </select>
+        
+        @if (State.SelectedCustomer != null)
+        {
+            <div class="mt-2">
+                <strong>Hạn mức tín dụng: </strong> @State.SelectedCustomer.CreditLimit.ToString("N0") đ <br />
+                <strong>Công nợ hiện tại: </strong> @currentDebt.ToString("N0") đ <br />
+                <CustomerDebtBadge 
+                    CreditLimit="@State.SelectedCustomer.CreditLimit" 
+                    CurrentDebt="@currentDebt" 
+                    OnBadgeClick="() => {}" />
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h4>2. Hóa Đơn Nháp</h4>
+        <InvoiceLineEditor 
+            Items="@State.Items" 
+            OnIncrement="HandleIncrement" 
+            OnDecrement="HandleDecrement" 
+            OnRemove="HandleRemove" />
+            
+        @if (State.Items.Any())
+        {
+            <div class="text-end mt-2">
+                <h5>Tổng Số Lượng: @State.TotalItemCount</h5>
+                <h4 class="text-danger">Tổng Tiền: @State.TotalAmount.ToString("N0") đ</h4>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h4>3. Sản Phẩm Khả Dụng</h4>
+        @if (products != null && products.Any())
+        {
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã SP</th>
+                        <th>Tên SP</th>
+                        <th>ĐVT</th>
+                        <th>Đơn Giá</th>
+                        <th>Tồn Kho</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in products)
+                    {
+                        <tr>
+                            <td>@p.ProductCode</td>
+                            <td>@p.Name</td>
+                            <td>@p.Unit</td>
+                            <td>@p.UnitPrice.ToString("N0")</td>
+                            <td>@p.StockQuantity</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" @onclick="() => State.AddProduct(p, 1)">+ Thêm</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@if (State.Items.Any() && State.SelectedCustomerId.HasValue)
+{
+    <button class="btn btn-success btn-lg mb-5" @onclick="SubmitInvoice">Xác Nhận Lập Hóa Đơn</button>
+}
+
+@code {
+    private IEnumerable<Customer>? customers;
+    private IEnumerable<Product>? products;
+    private decimal currentDebt;
+    private string errorMessage = "";
+    private string successMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        State.OnChange += StateHasChanged;
+        customers = await ViewCustomerListUseCase.ExecuteAsync();
+        products = await ViewProductCatalogUseCase.ExecuteAsync();
+    }
+
+    public void Dispose()
+    {
+        State.OnChange -= StateHasChanged;
+    }
+
+    private async Task OnCustomerSelected(ChangeEventArgs e)
+    {
+        errorMessage = "";
+        successMessage = "";
+        if (int.TryParse(e.Value?.ToString(), out int customerId))
+        {
+            var customer = customers?.FirstOrDefault(c => c.Id == customerId);
+            if (customer != null)
+            {
+                State.SetCustomer(customer);
+                currentDebt = await CustomerRepository.GetTotalOutstandingDebtAsync(customerId);
+            }
+        }
+        else
+        {
+            State.Clear();
+            currentDebt = 0;
+        }
+    }
+
+    private void HandleIncrement(int productId)
+    {
+        var item = State.Items.FirstOrDefault(i => i.ProductId == productId);
+        if (item != null)
+        {
+            State.UpdateQuantity(productId, item.Quantity + 1);
+        }
+    }
+
+    private void HandleDecrement(int productId)
+    {
+        var item = State.Items.FirstOrDefault(i => i.ProductId == productId);
+        if (item != null)
+        {
+            State.UpdateQuantity(productId, item.Quantity - 1);
+        }
+    }
+
+    private void HandleRemove(int productId)
+    {
+        State.RemoveProduct(productId);
+    }
+
+    private async Task SubmitInvoice()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        if (!State.SelectedCustomerId.HasValue)
+        {
+            errorMessage = "Vui lòng chọn khách hàng.";
+            return;
+        }
+
+        try
+        {
+            var lines = State.Items.Select(i => new InvoiceLine
+            {
+                ProductId = i.ProductId,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice
+            }).ToList();
+
+            var invoiceId = await CreateInvoiceUseCase.ExecuteAsync(State.SelectedCustomerId.Value, DateTime.Now, lines);
+            
+            successMessage = $"Lập hóa đơn thành công! Mã hóa đơn mới tạo là: #{invoiceId}.";
+            State.Clear();
+            currentDebt = await CustomerRepository.GetTotalOutstandingDebtAsync(State.SelectedCustomerId.Value);
+        }
+        catch (CreditLimitExceededException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (BusinessRuleException ex)
+        {
+            errorMessage = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Đã xảy ra lỗi không xác định: {ex.Message}";
+        }
+    }
+}

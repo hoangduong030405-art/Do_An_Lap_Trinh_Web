@@ -1,0 +1,22 @@
+<CascadingAuthenticationState>
+    <Router AppAssembly="typeof(Program).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated == true)
+                    {
+                        <WebBanHang.Components.Pages.AccessDenied />
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning m-4">
+                            <h4>Yêu cầu đăng nhập</h4>
+                            <p>Bạn cần <a href="/login">đăng nhập</a> để truy cập trang này.</p>
+                        </div>
+                    }
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+    </Router>
+</CascadingAuthenticationState>

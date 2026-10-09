@@ -1,0 +1,187 @@
+@page "/manage-customers"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Accountant")]
+
+@using WebBanHang.UseCases.Customers
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.CoreBusiness.Entities
+
+@inject IViewCustomerListUseCase ViewCustomerListUseCase
+@inject IManageCustomerUseCase ManageCustomerUseCase
+
+<h3>Quản Lý Khách Hàng</h3>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">@(customerModel.Id == 0 ? "Thêm Khách Hàng Mới" : "Sửa Khách Hàng")</h5>
+            </div>
+            <div class="card-body">
+                <EditForm Model="@customerModel" OnValidSubmit="HandleSaveCustomer">
+                    <DataAnnotationsValidator />
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Mã khách hàng</label>
+                        <InputText @bind-Value="customerModel.CustomerCode" class="form-control" disabled="@(customerModel.Id > 0)" />
+                        <ValidationMessage For="() => customerModel.CustomerCode" class="text-danger small" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Họ tên khách hàng</label>
+                        <InputText @bind-Value="customerModel.FullName" class="form-control" />
+                        <ValidationMessage For="() => customerModel.FullName" class="text-danger small" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <InputText @bind-Value="customerModel.PhoneNumber" class="form-control" />
+                        <ValidationMessage For="() => customerModel.PhoneNumber" class="text-danger small" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ</label>
+                        <InputText @bind-Value="customerModel.Address" class="form-control" />
+                        <ValidationMessage For="() => customerModel.Address" class="text-danger small" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Hạn mức tín dụng (đ)</label>
+                        <InputNumber @bind-Value="customerModel.CreditLimit" class="form-control" />
+                        <ValidationMessage For="() => customerModel.CreditLimit" class="text-danger small" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số ngày nợ tối đa (ngày)</label>
+                        <InputNumber @bind-Value="customerModel.PaymentTermsDays" class="form-control" />
+                        <ValidationMessage For="() => customerModel.PaymentTermsDays" class="text-danger small" />
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-success">Lưu Khách Hàng</button>
+                        @if (customerModel.Id > 0)
+                        {
+                            <button type="button" class="btn btn-secondary" @onclick="ResetForm">Hủy</button>
+                        }
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Danh Sách Khách Hàng</h5>
+            </div>
+            <div class="card-body p-0">
+                @if (customers == null)
+                {
+                    <p class="p-3"><em>Đang tải...</em></p>
+                }
+                else
+                {
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã KH</th>
+                                <th>Tên</th>
+                                <th>SĐT</th>
+                                <th>Hạn mức (đ)</th>
+                                <th>Hạn nợ (Ngày)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in customers)
+                            {
+                                <tr>
+                                    <td>@c.CustomerCode</td>
+                                    <td>@c.FullName</td>
+                                    <td>@c.PhoneNumber</td>
+                                    <td>@c.CreditLimit.ToString("N0")</td>
+                                    <td>@c.PaymentTermsDays</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" @onclick="() => EditCustomer(c)">Sửa hạn mức</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CustomerInputModel customerModel = new();
+    private IEnumerable<Customer>? customers;
+    private string successMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCustomers();
+    }
+
+    private async Task LoadCustomers()
+    {
+        customers = await ViewCustomerListUseCase.ExecuteAsync();
+    }
+
+    private async Task HandleSaveCustomer()
+    {
+        successMessage = "";
+        
+        var customer = new Customer
+        {
+            Id = customerModel.Id,
+            CustomerCode = customerModel.CustomerCode,
+            FullName = customerModel.FullName,
+            PhoneNumber = customerModel.PhoneNumber,
+            Address = customerModel.Address,
+            CreditLimit = customerModel.CreditLimit,
+            PaymentTermsDays = customerModel.PaymentTermsDays
+        };
+
+        if (customer.Id == 0)
+        {
+            await ManageCustomerUseCase.AddCustomerAsync(customer);
+            successMessage = "Thêm khách hàng thành công!";
+        }
+        else
+        {
+            await ManageCustomerUseCase.UpdateCustomerAsync(customer);
+            successMessage = "Cập nhật thông tin khách hàng thành công!";
+        }
+
+        ResetForm();
+        await LoadCustomers();
+    }
+
+    private void EditCustomer(Customer customer)
+    {
+        customerModel = new CustomerInputModel
+        {
+            Id = customer.Id,
+            CustomerCode = customer.CustomerCode,
+            FullName = customer.FullName,
+            PhoneNumber = customer.PhoneNumber,
+            Address = customer.Address,
+            CreditLimit = customer.CreditLimit,
+            PaymentTermsDays = customer.PaymentTermsDays
+        };
+        successMessage = "";
+    }
+
+    private void ResetForm()
+    {
+        customerModel = new CustomerInputModel();
+    }
+}

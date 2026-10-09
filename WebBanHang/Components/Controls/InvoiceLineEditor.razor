@@ -1,0 +1,56 @@
+@using WebBanHang.Services
+
+@if (Items != null && Items.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Mã SP</th>
+                <th>Tên SP</th>
+                <th>ĐVT</th>
+                <th>Đơn Giá</th>
+                <th>Số Lượng</th>
+                <th>Thành Tiền</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Items)
+            {
+                <tr>
+                    <td>@item.ProductCode</td>
+                    <td>@item.ProductName</td>
+                    <td>@item.Unit</td>
+                    <td>@item.UnitPrice.ToString("N0")</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => OnDecrement.InvokeAsync(item.ProductId)">-</button>
+                        <span class="mx-2">@item.Quantity</span>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => OnIncrement.InvokeAsync(item.ProductId)">+</button>
+                    </td>
+                    <td>@item.LineTotal.ToString("N0")</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" @onclick="() => OnRemove.InvokeAsync(item.ProductId)">x</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">Giỏ hàng rỗng. Hãy thêm sản phẩm!</div>
+}
+
+@code {
+    [Parameter]
+    public List<DraftInvoiceItem> Items { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<int> OnIncrement { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnDecrement { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnRemove { get; set; }
+}

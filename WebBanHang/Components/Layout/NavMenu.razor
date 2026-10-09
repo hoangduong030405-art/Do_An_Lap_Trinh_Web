@@ -1,0 +1,59 @@
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">WebBanHang</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3 text-white py-2">
+                    <small>Xin chào, @context.User.Identity?.Name (@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value)</small><br/>
+                    <a href="/api/auth/logout" class="btn btn-sm btn-outline-light mt-1">Đăng xuất</a>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3 py-2">
+                    <a href="/login" class="btn btn-sm btn-primary">Đăng nhập</a>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+
+        <div class="nav-item px-3 mt-2">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="create-invoice">
+                <span class="bi bi-file-earmark-plus-nav-menu" aria-hidden="true"></span> Lập Hóa Đơn
+            </NavLink>
+        </div>
+
+        <AuthorizeView Roles="Accountant">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="manage-customers">
+                        <span class="bi bi-people-fill-nav-menu" aria-hidden="true"></span> Quản lý Khách Hàng
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="payments">
+                        <span class="bi bi-cash-coin-nav-menu" aria-hidden="true"></span> Thu Tiền (FIFO)
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="aging-report">
+                        <span class="bi bi-bar-chart-fill-nav-menu" aria-hidden="true"></span> Báo Cáo Tuổi Nợ
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+    </nav>
+</div>

@@ -1,0 +1,29 @@
+@page "/login"
+
+<h3>Đăng nhập</h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" action="/api/auth/login">
+            <AntiforgeryToken />
+            <div class="mb-3">
+                <label>Tên đăng nhập</label>
+                <input name="username" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label>Mật khẩu</label>
+                <input name="password" type="password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        </form>
+
+        <hr />
+        <div class="alert alert-info mt-3">
+            <strong>Gợi ý tài khoản Demo thi:</strong>
+            <ul>
+                <li>Bán hàng: <code>sales</code> / <code>123456</code></li>
+                <li>Kế toán: <code>accountant</code> / <code>123456</code></li>
+            </ul>
+        </div>
+    </div>
+</div>
