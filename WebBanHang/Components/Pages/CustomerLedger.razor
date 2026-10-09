@@ -1,0 +1,226 @@
+@page "/customer-ledger"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Accountant")]
+
+@using WebBanHang.UseCases.Customers
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.CoreBusiness.Entities
+@inject IViewCustomerListUseCase ViewCustomerListUseCase
+@inject IViewCustomerLedgerUseCase ViewCustomerLedgerUseCase
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Sổ Chi Tiết Công Nợ Khách Hàng</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-primary">📖 Sổ Chi Tiết Công Nợ Khách Hàng (AR Ledger)</h2>
+        <p class="text-muted mb-0">Theo dõi dòng giao dịch phát sinh nợ/có, số dư lũy kế và in biên bản đối soát công nợ</p>
+    </div>
+    @if (ledger != null && ledger.Entries.Any())
+    {
+        <div>
+            <button class="btn btn-outline-success shadow-sm" @onclick="PrintLedger">
+                <i class="bi bi-printer me-1"></i> 🖨️ In Bảng Đối Soát Công Nợ
+            </button>
+        </div>
+    }
+</div>
+
+<!-- KHUNG CHỌN KHÁCH HÀNG -->
+<div class="card border-0 shadow-sm p-3 mb-4 bg-light">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Chọn Khách Hàng Cần Tra Cứu Đối Soát:</label>
+            <select class="form-select form-select-lg" @bind="selectedCustomerId" @bind:after="LoadLedger">
+                <option value="0">-- Vui lòng chọn một khách hàng --</option>
+                @if (customers != null)
+                {
+                    @foreach (var c in customers)
+                    {
+                        <option value="@c.Id">@c.CustomerCode - @c.FullName (@c.PhoneNumber)</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-6 text-end">
+            @if (ledger != null && selectedCustomerId > 0)
+            {
+                <div class="d-inline-flex gap-3 text-start bg-white p-2 rounded border">
+                    <div>
+                        <small class="text-muted d-block">Tổng Mua Hàng (+)</small>
+                        <span class="fw-bold text-primary">@ledger.TotalDebit.ToString("N0") đ</span>
+                    </div>
+                    <div class="border-start ps-3">
+                        <small class="text-muted d-block">Đã Thanh Toán (-)</small>
+                        <span class="fw-bold text-success">@ledger.TotalCredit.ToString("N0") đ</span>
+                    </div>
+                    <div class="border-start ps-3">
+                        <small class="text-muted d-block">DƯ NỢ CÒN LẠI</small>
+                        <span class="fw-bold fs-6 @(ledger.EndingBalance > 0 ? "text-danger" : "text-muted")">
+                            @ledger.EndingBalance.ToString("N0") đ
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (loading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Đang truy vấn sổ cái công nợ khách hàng...</p>
+    </div>
+}
+else if (selectedCustomerId == 0)
+{
+    <div class="alert alert-secondary text-center py-5">
+        <i class="bi bi-person-lines-fill fs-1 d-block mb-2 text-muted"></i>
+        Vui lòng chọn một khách hàng ở khung bên trên để hiển thị sổ chi tiết công nợ.
+    </div>
+}
+else if (ledger != null)
+{
+    <div id="printableInvoiceArea">
+        <!-- KHUNG SỔ CHI TIẾT IN ẤN -->
+        <div class="card border-0 shadow-sm p-4">
+            <!-- HEADER THÔNG TIN KHÁCH HÀNG -->
+            <div class="row border-bottom pb-3 mb-3">
+                <div class="col-7">
+                    <h4 class="fw-bold text-primary mb-1">CÔNG TY CỔ PHẦN CÔNG NGHỆ & THƯƠNG MẠI ECO2415</h4>
+                    <div class="small text-muted">SỔ CHI TIẾT CÔNG NỢ PHẢI THU KHÁCH HÀNG</div>
+                    <div class="small text-muted">Thời điểm lập sổ: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+                <div class="col-5 text-end">
+                    <h5 class="fw-bold text-dark mb-1">@ledger.CustomerName</h5>
+                    <div class="small">Mã khách hàng: <strong>@ledger.CustomerCode</strong></div>
+                    <div class="small">Số điện thoại: @ledger.CustomerPhone</div>
+                    <div class="small">Hạn mức nợ được cấp: <strong>@ledger.CreditLimit.ToString("N0") đ</strong></div>
+                </div>
+            </div>
+
+            <!-- BẢNG GIAO DỊCH LŨY KẾ -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle mb-4">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th style="width: 110px;">Ngày</th>
+                            <th style="width: 120px;">Chứng Từ</th>
+                            <th>Số Hiệu</th>
+                            <th>Diễn Giải Giao Dịch</th>
+                            <th style="width: 140px;" class="text-end">Phát Sinh Nợ (+)</th>
+                            <th style="width: 140px;" class="text-end">Phát Sinh Có (-)</th>
+                            <th style="width: 150px;" class="text-end">Dư Nợ Lũy Kế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ledger.Entries.Any())
+                        {
+                            @foreach (var entry in ledger.Entries)
+                            {
+                                <tr>
+                                    <td class="text-center">@entry.TransactionDate.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-center">
+                                        @if (entry.DocumentType == "Hóa Đơn")
+                                        {
+                                            <span class="badge bg-primary">Hóa Đơn</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Phiếu Thu</span>
+                                        }
+                                    </td>
+                                    <td class="fw-bold">@entry.DocumentNumber</td>
+                                    <td>@entry.Description</td>
+                                    <td class="text-end text-primary">
+                                        @(entry.Debit > 0 ? entry.Debit.ToString("N0") + " đ" : "-")
+                                    </td>
+                                    <td class="text-end text-success">
+                                        @(entry.Credit > 0 ? entry.Credit.ToString("N0") + " đ" : "-")
+                                    </td>
+                                    <td class="text-end fw-bold @(entry.RunningBalance > 0 ? "text-danger" : "text-muted")">
+                                        @entry.RunningBalance.ToString("N0") đ
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">Khách hàng chưa phát sinh giao dịch nào.</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light fw-bold">
+                            <td colspan="4" class="text-end">TỔNG CỘNG PHÁT SINH:</td>
+                            <td class="text-end text-primary fs-6">@ledger.TotalDebit.ToString("N0") đ</td>
+                            <td class="text-end text-success fs-6">@ledger.TotalCredit.ToString("N0") đ</td>
+                            <td class="text-end fs-6"></td>
+                        </tr>
+                        <tr class="table-warning fw-bold">
+                            <td colspan="4" class="text-end text-danger fs-6">SỐ DƯ NỢ CUỐI KỲ CẦN THU HỒI:</td>
+                            <td colspan="3" class="text-end text-danger fs-5">
+                                @ledger.EndingBalance.ToString("N0") đ
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- CHỮ KÝ BIÊN BẢN ĐỐI SOÁT CÔNG NỢ -->
+            <div class="row text-center mt-4 pt-3 border-top">
+                <div class="col-6">
+                    <div class="fw-bold">ĐẠI DIỆN KHÁCH HÀNG</div>
+                    <div class="text-muted small fst-italic">(Ký, ghi rõ họ tên và đóng dấu xác nhận)</div>
+                    <div style="height: 70px;"></div>
+                    <div class="fw-bold">@ledger.CustomerName</div>
+                </div>
+                <div class="col-6">
+                    <div class="fw-bold">ĐẠI DIỆN PHÒNG KẾ TOÁN ECO2415</div>
+                    <div class="text-muted small fst-italic">(Ký, ghi rõ họ tên và đóng dấu)</div>
+                    <div style="height: 70px;"></div>
+                    <div class="fw-bold text-primary">Kế Toán Công Nợ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<Customer>? customers;
+    private int selectedCustomerId = 0;
+    private CustomerLedgerDto? ledger;
+    private bool loading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await ViewCustomerListUseCase.ExecuteAsync();
+    }
+
+    private async Task LoadLedger()
+    {
+        if (selectedCustomerId <= 0)
+        {
+            ledger = null;
+            return;
+        }
+
+        loading = true;
+        try
+        {
+            ledger = await ViewCustomerLedgerUseCase.ExecuteAsync(selectedCustomerId);
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task PrintLedger()
+    {
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+}

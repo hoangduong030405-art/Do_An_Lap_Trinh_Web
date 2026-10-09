@@ -1,0 +1,258 @@
+@page "/payment-history"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Accountant")]
+
+@using WebBanHang.UseCases.Payments
+@using WebBanHang.UseCases.DTOs
+@inject IViewPaymentHistoryUseCase ViewPaymentHistoryUseCase
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Lịch Sử Phiếu Thu Tiền</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-primary">💵 Lịch Sử Thu Tiền & Phân Bổ (FIFO)</h2>
+        <p class="text-muted mb-0">Theo dõi dòng tiền thực thu, các khoản cấn trừ hóa đơn và in phiếu thu tiền mặt / chuyển khoản</p>
+    </div>
+    <div>
+        <a href="/payments" class="btn btn-success shadow-sm">
+            <i class="bi bi-cash-stack me-1"></i> + Lập Phiếu Thu Tiền
+        </a>
+    </div>
+</div>
+
+@if (loading)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 text-muted">Đang tải lịch sử thu tiền...</p>
+    </div>
+}
+else if (payments == null || !payments.Any())
+{
+    <div class="alert alert-info text-center py-4">
+        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+        Chưa có phiếu thu tiền nào được ghi nhận trong hệ thống.
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã Phiếu Thu</th>
+                        <th>Ngày Thu</th>
+                        <th>Khách Hàng</th>
+                        <th class="text-end">Số Tiền Thu</th>
+                        <th class="text-end">Tiền Chưa Phân Bổ</th>
+                        <th>Ghi Chú</th>
+                        <th class="text-center">Số HĐ Cấn Trừ</th>
+                        <th class="text-center">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in payments)
+                    {
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-primary">@p.PaymentNumber</span>
+                            </td>
+                            <td>@p.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <div class="fw-bold">@p.CustomerName</div>
+                                <small class="text-muted">@p.CustomerCode</small>
+                            </td>
+                            <td class="text-end fw-bold text-success fs-6">
+                                @p.Amount.ToString("N0") đ
+                            </td>
+                            <td class="text-end">
+                                @if (p.UnallocatedAmount > 0)
+                                {
+                                    <span class="badge bg-warning text-dark">+@p.UnallocatedAmount.ToString("N0") đ</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">0 đ</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="small text-muted">@(string.IsNullOrEmpty(p.Note) ? "Thu tiền công nợ" : p.Note)</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-info text-dark">@p.Allocations.Count Hóa đơn</span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-outline-primary" @onclick="() => OpenPaymentDetail(p)">
+                                    <i class="bi bi-eye me-1"></i> Chi Tiết & In
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<!-- MODAL CHI TIẾT & IN PHIẾU THU -->
+@if (selectedPayment != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-receipt me-2"></i>Chi Tiết Phiếu Thu #@selectedPayment.PaymentNumber
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body p-4" id="printableInvoiceArea">
+                    <div class="border p-4 rounded bg-white shadow-sm">
+                        <!-- HEADER CÔNG TY -->
+                        <div class="row border-bottom pb-3 mb-3">
+                            <div class="col-8">
+                                <h5 class="fw-bold text-primary mb-1">CÔNG TY CỔ PHẦN CÔNG NGHỆ & THƯƠNG MẠI ECO2415</h5>
+                                <div class="small text-muted">Địa chỉ: 123 Đường Công Nghệ, Quận Tân Bình, TP. Hồ Chí Minh</div>
+                                <div class="small text-muted">Mã số thuế: 0312345678</div>
+                            </div>
+                            <div class="col-4 text-end">
+                                <h4 class="fw-bold text-success mb-1">PHIẾU THU TIỀN</h4>
+                                <div class="fw-bold text-dark">Số: @selectedPayment.PaymentNumber</div>
+                                <div class="small text-muted">Ngày: @selectedPayment.PaymentDate.ToString("dd/MM/yyyy HH:mm")</div>
+                            </div>
+                        </div>
+
+                        <!-- THÔNG TIN NGƯỜI NỘP TIỀN -->
+                        <div class="bg-light p-3 rounded mb-3">
+                            <div class="mb-1"><strong>Họ tên người nộp tiền:</strong> @selectedPayment.CustomerName (@selectedPayment.CustomerCode)</div>
+                            <div class="mb-1"><strong>Địa chỉ:</strong> @selectedPayment.CustomerAddress</div>
+                            <div class="mb-1"><strong>Lý do nộp:</strong> @(string.IsNullOrEmpty(selectedPayment.Note) ? "Thanh toán công nợ theo phương pháp FIFO" : selectedPayment.Note)</div>
+                            <div class="mb-1">
+                                <strong>Số tiền thu:</strong>
+                                <span class="fs-5 fw-bold text-success ms-1">@selectedPayment.Amount.ToString("N0") VNĐ</span>
+                            </div>
+                        </div>
+
+                        <!-- BẢNG CÁC HÓA ĐƠN ĐƯỢC PHÂN BỔ (FIFO) -->
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-list-check me-1"></i>Chi tiết các hóa đơn được thanh toán cấn trừ:</h6>
+                        <table class="table table-bordered align-middle mb-3">
+                            <thead class="table-light text-center">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Số Hóa Đơn</th>
+                                    <th>Ngày HĐ</th>
+                                    <th class="text-end">Tổng Tiền HĐ</th>
+                                    <th class="text-end">Tiền Cấn Trừ Đợt Này</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int i = 1; }
+                                @foreach (var alloc in selectedPayment.Allocations)
+                                {
+                                    <tr>
+                                        <td class="text-center">@(i++)</td>
+                                        <td class="fw-bold text-primary">@alloc.InvoiceNumber</td>
+                                        <td class="text-center">@alloc.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="text-end">@alloc.InvoiceTotal.ToString("N0") đ</td>
+                                        <td class="text-end fw-bold text-success">@alloc.AllocatedAmount.ToString("N0") đ</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-end fw-bold">Tổng tiền đã cấn trừ:</td>
+                                    <td class="text-end fw-bold text-success fs-6">
+                                        @selectedPayment.Allocations.Sum(a => a.AllocatedAmount).ToString("N0") đ
+                                    </td>
+                                </tr>
+                                @if (selectedPayment.UnallocatedAmount > 0)
+                                {
+                                    <tr class="table-info">
+                                        <td colspan="4" class="text-end fw-bold">Tiền dư giữ lại (Chưa phân bổ):</td>
+                                        <td class="text-end fw-bold text-primary">
+                                            @selectedPayment.UnallocatedAmount.ToString("N0") đ
+                                        </td>
+                                    </tr>
+                                }
+                            </tfoot>
+                        </table>
+
+                        <!-- CHỮ KÝ PHIẾU THU -->
+                        <div class="row text-center mt-4 pt-3 border-top">
+                            <div class="col-3">
+                                <div class="fw-bold small">Giám Đốc</div>
+                                <div class="text-muted small fst-italic">(Ký, họ tên)</div>
+                                <div style="height: 50px;"></div>
+                            </div>
+                            <div class="col-3">
+                                <div class="fw-bold small">Kế Toán Trưởng</div>
+                                <div class="text-muted small fst-italic">(Ký, họ tên)</div>
+                                <div style="height: 50px;"></div>
+                            </div>
+                            <div class="col-3">
+                                <div class="fw-bold small">Người Nộp Tiền</div>
+                                <div class="text-muted small fst-italic">(Ký, họ tên)</div>
+                                <div style="height: 50px;"></div>
+                                <div class="small text-muted">@selectedPayment.CustomerName</div>
+                            </div>
+                            <div class="col-3">
+                                <div class="fw-bold small">Thủ Quỹ</div>
+                                <div class="text-muted small fst-italic">(Ký, họ tên)</div>
+                                <div style="height: 50px;"></div>
+                                <div class="small text-success fw-bold">Đã Thu Đủ Tiền</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Đóng</button>
+                    <button type="button" class="btn btn-success" @onclick="PrintReceipt">
+                        <i class="bi bi-printer me-1"></i> 🖨️ In Phiếu Thu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private IEnumerable<PaymentHistoryDto>? payments;
+    private PaymentHistoryDto? selectedPayment;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPaymentHistory();
+    }
+
+    private async Task LoadPaymentHistory()
+    {
+        loading = true;
+        try
+        {
+            payments = await ViewPaymentHistoryUseCase.ExecuteAsync();
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void OpenPaymentDetail(PaymentHistoryDto p)
+    {
+        selectedPayment = p;
+    }
+
+    private void CloseModal()
+    {
+        selectedPayment = null;
+    }
+
+    private async Task PrintReceipt()
+    {
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+}
