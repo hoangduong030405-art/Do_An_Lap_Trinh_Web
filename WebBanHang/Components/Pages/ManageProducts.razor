@@ -1,0 +1,323 @@
+@page "/manage-products"
+@rendermode InteractiveServer
+
+@using WebBanHang.UseCases.Products
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.CoreBusiness.Entities
+@inject IViewProductCatalogUseCase ViewProductCatalogUseCase
+@inject IManageProductUseCase ManageProductUseCase
+
+<PageTitle>Quản Lý Sản Phẩm & Tồn Kho</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-primary">📦 Quản Trị Danh Mục Hàng Hóa & Tồn Kho</h2>
+        <p class="text-muted mb-0">Quản lý danh sách sản phẩm, giá bán và cảnh báo mức tồn kho an toàn</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@successMessage
+        <button type="button" class="btn-close" @onclick="() => successMessage = null"></button>
+    </div>
+}
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>@errorMessage
+        <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- CỘT 1: FORM THÊM / SỬA SẢN PHẨM -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi @(productModel.Id == 0 ? "bi-plus-circle" : "bi-pencil-square") me-2"></i>
+                    @(productModel.Id == 0 ? "Thêm Sản Phẩm Mới" : "Cập Nhật Sản Phẩm")
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <EditForm Model="@productModel" OnValidSubmit="HandleSaveProduct">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mã sản phẩm <span class="text-danger">*</span></label>
+                        <InputText @bind-Value="productModel.ProductCode" class="form-control" placeholder="VD: SP006, LAP01..." />
+                        <ValidationMessage For="() => productModel.ProductCode" class="text-danger small" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên sản phẩm <span class="text-danger">*</span></label>
+                        <InputText @bind-Value="productModel.Name" class="form-control" placeholder="Tên hàng hóa chi tiết..." />
+                        <ValidationMessage For="() => productModel.Name" class="text-danger small" />
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Đơn vị tính <span class="text-danger">*</span></label>
+                            <InputText @bind-Value="productModel.Unit" class="form-control" placeholder="Cái, Bộ, Hộp..." />
+                            <ValidationMessage For="() => productModel.Unit" class="text-danger small" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold">Số lượng tồn kho</label>
+                            <InputNumber @bind-Value="productModel.StockQuantity" class="form-control" />
+                            <ValidationMessage For="() => productModel.StockQuantity" class="text-danger small" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Đơn giá bán (VNĐ) <span class="text-danger">*</span></label>
+                        <InputNumber @bind-Value="productModel.UnitPrice" class="form-control" />
+                        <ValidationMessage For="() => productModel.UnitPrice" class="text-danger small" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mô tả sản phẩm</label>
+                        <InputTextArea @bind-Value="productModel.Description" class="form-control" rows="3" placeholder="Ghi chú chi tiết quy cách, tính năng..." />
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary fw-bold py-2">
+                            <i class="bi bi-save me-1"></i> @(productModel.Id == 0 ? "Thêm Vào Kho" : "Lưu Thay Đổi")
+                        </button>
+                        @if (productModel.Id > 0)
+                        {
+                            <button type="button" class="btn btn-outline-secondary" @onclick="ResetForm">
+                                <i class="bi bi-x-circle me-1"></i> Hủy chỉnh sửa
+                            </button>
+                        }
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỘT 2: BẢNG DANH MỤC HÀNG HÓA -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-3">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-dark">
+                    <i class="bi bi-boxes text-primary me-2"></i>Danh Sách Hàng Hóa Trong Kho
+                </h5>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-danger">Sắp hết: @lowStockCount</span>
+                    <span class="badge bg-primary">Tổng: @(products?.Count() ?? 0) SP</span>
+                </div>
+            </div>
+            <div class="p-3 bg-light border-top border-bottom">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Tìm theo tên hoặc mã sản phẩm..."
+                           @bind="searchKeyword" @bind:event="oninput" @onkeyup="HandleSearch" />
+                    @if (!string.IsNullOrEmpty(searchKeyword))
+                    {
+                        <button class="btn btn-outline-secondary" @onclick="ClearSearch">Xóa</button>
+                    }
+                </div>
+            </div>
+            <div class="card-body p-0">
+                @if (loading)
+                {
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-2 text-muted">Đang tải danh mục sản phẩm...</p>
+                    </div>
+                }
+                else if (products == null || !products.Any())
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-box-seam fs-1 d-block mb-2 text-secondary"></i>
+                        Không có sản phẩm nào trong kho.
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã SP</th>
+                                    <th>Tên Hàng Hóa</th>
+                                    <th>ĐVT</th>
+                                    <th class="text-end">Đơn Giá</th>
+                                    <th class="text-center">Tồn Kho</th>
+                                    <th class="text-center">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in products)
+                                {
+                                    <tr>
+                                        <td><span class="badge bg-dark">@p.ProductCode</span></td>
+                                        <td>
+                                            <div class="fw-bold">@p.Name</div>
+                                            @if (!string.IsNullOrEmpty(p.Description))
+                                            {
+                                                <small class="text-muted text-truncate d-inline-block" style="max-width: 200px;">@p.Description</small>
+                                            }
+                                        </td>
+                                        <td>@p.Unit</td>
+                                        <td class="text-end fw-bold text-primary">@p.UnitPrice.ToString("N0") đ</td>
+                                        <td class="text-center">
+                                            @if (p.StockQuantity <= 5)
+                                            {
+                                                <span class="badge bg-danger" title="Cần nhập hàng ngay!">
+                                                    <i class="bi bi-exclamation-circle-fill"></i> Còn @p.StockQuantity
+                                                </span>
+                                            }
+                                            else if (p.StockQuantity <= 15)
+                                            {
+                                                <span class="badge bg-warning text-dark" title="Sắp hết hàng">
+                                                    Còn @p.StockQuantity
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">
+                                                    Còn @p.StockQuantity
+                                                </span>
+                                            }
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" @onclick="() => EditProduct(p)">
+                                                    <i class="bi bi-pencil"></i> Sửa
+                                                </button>
+                                                <button class="btn btn-outline-danger" @onclick="() => DeleteProduct(p.Id, p.Name)">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<Product>? allProducts;
+    private IEnumerable<Product>? products;
+    private ProductInputModel productModel = new();
+    private bool loading = true;
+    private string searchKeyword = "";
+    private string? successMessage;
+    private string? errorMessage;
+    private int lowStockCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        loading = true;
+        try
+        {
+            allProducts = await ViewProductCatalogUseCase.ExecuteAsync();
+            lowStockCount = allProducts.Count(p => p.StockQuantity <= 15);
+            ApplyFilter();
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void HandleSearch()
+    {
+        ApplyFilter();
+    }
+
+    private void ClearSearch()
+    {
+        searchKeyword = "";
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (allProducts == null) return;
+
+        if (string.IsNullOrWhiteSpace(searchKeyword))
+        {
+            products = allProducts.ToList();
+        }
+        else
+        {
+            var kw = searchKeyword.Trim().ToLower();
+            products = allProducts.Where(p => p.Name.ToLower().Contains(kw) || p.ProductCode.ToLower().Contains(kw)).ToList();
+        }
+    }
+
+    private void EditProduct(Product p)
+    {
+        productModel = new ProductInputModel
+        {
+            Id = p.Id,
+            ProductCode = p.ProductCode,
+            Name = p.Name,
+            Unit = p.Unit,
+            UnitPrice = p.UnitPrice,
+            StockQuantity = p.StockQuantity,
+            Description = p.Description
+        };
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private void ResetForm()
+    {
+        productModel = new ProductInputModel();
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private async Task HandleSaveProduct()
+    {
+        try
+        {
+            if (productModel.Id == 0)
+            {
+                await ManageProductUseCase.AddProductAsync(productModel);
+                successMessage = $"Đã thêm sản phẩm \"{productModel.Name}\" vào danh mục thành công!";
+            }
+            else
+            {
+                await ManageProductUseCase.UpdateProductAsync(productModel);
+                successMessage = $"Đã cập nhật sản phẩm \"{productModel.Name}\" thành công!";
+            }
+
+            ResetForm();
+            await LoadProducts();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Lỗi khi lưu sản phẩm: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteProduct(int id, string name)
+    {
+        try
+        {
+            await ManageProductUseCase.DeleteProductAsync(id);
+            successMessage = $"Đã xóa sản phẩm \"{name}\" khỏi danh mục.";
+            await LoadProducts();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Không thể xóa sản phẩm do đã có trong hóa đơn bán hàng: {ex.Message}";
+        }
+    }
+}
