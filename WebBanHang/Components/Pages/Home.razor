@@ -1,7 +1,389 @@
-﻿@page "/"
+@page "/"
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+@using WebBanHang.UseCases.Dashboard
+@using WebBanHang.UseCases.DTOs
+@inject IGetDashboardDataUseCase GetDashboardDataUseCase
+@inject NavigationManager Navigation
 
-<h1>Hello, world!</h1>
+<PageTitle>Tổng Quan - Dashboard Quản Trị Bán Hàng & Công Nợ</PageTitle>
 
-Welcome to your new app.
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1 text-primary">📊 Dashboard Bán Hàng & Quản Trị Công Nợ</h2>
+        <p class="text-muted mb-0">Hệ thống giám sát doanh số, theo dõi rủi ro hạn mức tín dụng và thu hồi nợ tự động</p>
+    </div>
+    <div>
+        <button class="btn btn-outline-primary btn-sm me-2" @onclick="LoadDashboard">
+            <i class="bi bi-arrow-clockwise"></i> Làm mới dữ liệu
+        </button>
+        <span class="badge bg-light text-dark border p-2">
+            <i class="bi bi-clock"></i> Cập nhật: @lastUpdated.ToString("HH:mm:ss dd/MM/yyyy")
+        </span>
+    </div>
+</div>
+
+@if (loading)
+{
+    <div class="text-center my-5 py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Đang tải...</span>
+        </div>
+        <p class="mt-2 text-muted">Đang nạp dữ liệu thống kê từ hệ thống CSDL...</p>
+    </div>
+}
+else if (dashboard != null)
+{
+    <!-- 1. KPI STAT CARDS -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 bg-primary text-white p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small fw-bold opacity-75">Tổng Doanh Thu</div>
+                        <div class="fs-4 fw-bold mt-1">@dashboard.TotalRevenue.ToString("N0") đ</div>
+                        <small class="opacity-75">Từ @dashboard.TotalInvoicesCount hóa đơn phát hành</small>
+                    </div>
+                    <div class="fs-1 opacity-50">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 bg-warning text-dark p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small fw-bold opacity-75">Tổng Nợ Phải Thu</div>
+                        <div class="fs-4 fw-bold mt-1">@dashboard.TotalOutstandingDebt.ToString("N0") đ</div>
+                        <small class="opacity-75">Đã thu: @dashboard.TotalCollectedAmount.ToString("N0") đ</small>
+                    </div>
+                    <div class="fs-1 opacity-50">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 bg-danger text-white p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small fw-bold opacity-75">Hóa Đơn Quá Hạn</div>
+                        <div class="fs-4 fw-bold mt-1">@dashboard.OverdueInvoicesCount Đơn</div>
+                        <small class="opacity-75">Cần ưu tiên thu hồi nợ</small>
+                    </div>
+                    <div class="fs-1 opacity-50">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-3 bg-info text-dark p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small fw-bold opacity-75">Khách Hàng / Hàng Hóa</div>
+                        <div class="fs-4 fw-bold mt-1">@dashboard.TotalCustomersCount KH / @dashboard.TotalProductsCount SP</div>
+                        <small class="opacity-75">Danh mục đang hoạt động</small>
+                    </div>
+                    <div class="fs-1 opacity-50">
+                        <i class="bi bi-people"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CHARTS & CƠ CẤU NỢ 4 XÔ -->
+    <div class="row g-3 mb-4">
+        <!-- Cơ cấu nợ 4 xô -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-pie-chart text-primary me-2"></i>Cơ Cấu Tuổi Nợ Toàn Hệ Thống (4 Xô)
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (dashboard.TotalOutstandingDebt > 0)
+                    {
+                        var p0 = (dashboard.OverallAging.Bucket0To30 / dashboard.TotalOutstandingDebt) * 100;
+                        var p30 = (dashboard.OverallAging.Bucket31To60 / dashboard.TotalOutstandingDebt) * 100;
+                        var p60 = (dashboard.OverallAging.Bucket61To90 / dashboard.TotalOutstandingDebt) * 100;
+                        var p90 = (dashboard.OverallAging.BucketOver90 / dashboard.TotalOutstandingDebt) * 100;
+
+                        <div class="progress mb-4" style="height: 25px; border-radius: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @p0%" title="0-30 ngày: @dashboard.OverallAging.Bucket0To30.ToString("N0") đ">
+                                @(p0 > 10 ? $"{p0:N0}%" : "")
+                            </div>
+                            <div class="progress-bar bg-warning text-dark" role="progressbar" style="width: @p30%" title="31-60 ngày: @dashboard.OverallAging.Bucket31To60.ToString("N0") đ">
+                                @(p30 > 10 ? $"{p30:N0}%" : "")
+                            </div>
+                            <div class="progress-bar text-white" role="progressbar" style="background-color: #fd7e14; width: @p60%" title="61-90 ngày: @dashboard.OverallAging.Bucket61To90.ToString("N0") đ">
+                                @(p60 > 10 ? $"{p60:N0}%" : "")
+                            </div>
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: @p90%" title=">90 ngày: @dashboard.OverallAging.BucketOver90.ToString("N0") đ">
+                                @(p90 > 10 ? $"{p90:N0}%" : "")
+                            </div>
+                        </div>
+
+                        <div class="row text-center g-2">
+                            <div class="col-3">
+                                <div class="border rounded p-2 bg-light">
+                                    <span class="badge bg-success mb-1">0 - 30 Ngày</span>
+                                    <div class="fw-bold text-success small">@dashboard.OverallAging.Bucket0To30.ToString("N0") đ</div>
+                                    <small class="text-muted">(@p0.ToString("N1")%)</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="border rounded p-2 bg-light">
+                                    <span class="badge bg-warning text-dark mb-1">31 - 60 Ngày</span>
+                                    <div class="fw-bold text-warning small">@dashboard.OverallAging.Bucket31To60.ToString("N0") đ</div>
+                                    <small class="text-muted">(@p30.ToString("N1")%)</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="border rounded p-2 bg-light">
+                                    <span class="badge text-white mb-1" style="background-color: #fd7e14;">61 - 90 Ngày</span>
+                                    <div class="fw-bold text-orange small" style="color: #fd7e14;">@dashboard.OverallAging.Bucket61To90.ToString("N0") đ</div>
+                                    <small class="text-muted">(@p60.ToString("N1")%)</small>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="border rounded p-2 bg-light">
+                                    <span class="badge bg-danger mb-1">> 90 Ngày</span>
+                                    <div class="fw-bold text-danger small">@dashboard.OverallAging.BucketOver90.ToString("N0") đ</div>
+                                    <small class="text-muted">(@p90.ToString("N1")%)</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success text-center mb-0">
+                            🎉 Tuyệt vời! Hiện không có công nợ nào tồn đọng trong hệ thống.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Thống kê doanh số theo tháng -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-bar-chart-line text-success me-2"></i>Doanh Số & Tiền Thu Hồi Gần Đây
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (dashboard.MonthlyRevenues.Any())
+                    {
+                        var maxRev = dashboard.MonthlyRevenues.Max(m => Math.Max(m.Revenue, m.Collected));
+                        if (maxRev <= 0) maxRev = 1;
+
+                        <div class="d-flex flex-column gap-3">
+                            @foreach (var m in dashboard.MonthlyRevenues)
+                            {
+                                var revPercent = (m.Revenue / maxRev) * 100;
+                                var colPercent = (m.Collected / maxRev) * 100;
+                                <div>
+                                    <div class="d-flex justify-content-between small fw-bold mb-1">
+                                        <span>Tháng @m.MonthLabel</span>
+                                        <span>
+                                            <span class="text-primary me-2">Doanh thu: @m.Revenue.ToString("N0") đ</span>
+                                            <span class="text-success">Đã thu: @m.Collected.ToString("N0") đ</span>
+                                        </span>
+                                    </div>
+                                    <div class="progress mb-1" style="height: 12px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: @revPercent%"></div>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: @colPercent%"></div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted text-center py-4">Chưa có giao dịch trong các tháng gần nhất.</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. TOP DEBTORS & TOP PRODUCTS -->
+    <div class="row g-3 mb-4">
+        <!-- Top Debtors -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-danger">
+                        <i class="bi bi-shield-exclamation me-2"></i>Top 5 Khách Hàng Nợ Lớn Nhất
+                    </h5>
+                    <a href="/aging-report" class="btn btn-sm btn-outline-danger">Xem Báo Cáo Nợ</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Khách Hàng</th>
+                                    <th>Dư Nợ Hiện Tại</th>
+                                    <th>Tỷ Lệ / Hạn Mức</th>
+                                    <th>Quá Hạn</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (dashboard.TopDebtors.Any())
+                                {
+                                    @foreach (var d in dashboard.TopDebtors)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold">@d.CustomerName</div>
+                                                <small class="text-muted">@d.CustomerCode</small>
+                                            </td>
+                                            <td class="text-danger fw-bold">
+                                                @d.CurrentDebt.ToString("N0") đ
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <div class="progress flex-grow-1" style="height: 6px;">
+                                                        <div class="progress-bar @(d.DebtRatio >= 100 ? "bg-danger" : d.DebtRatio >= 80 ? "bg-warning" : "bg-success")"
+                                                             style="width: @(Math.Min(d.DebtRatio, 100))%"></div>
+                                                    </div>
+                                                    <small class="fw-bold text-nowrap">@d.DebtRatio.ToString("N0")%</small>
+                                                </div>
+                                                <small class="text-muted">HM: @d.CreditLimit.ToString("N0") đ</small>
+                                            </td>
+                                            <td>
+                                                @if (d.OverdueDays > 0)
+                                                {
+                                                    <span class="badge bg-danger">@d.OverdueDays ngày</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">Trong hạn</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">Không có khách hàng nào đang nợ.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Selling Products -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-success">
+                        <i class="bi bi-trophy text-warning me-2"></i>Top 5 Sản Phẩm Bán Chạy Nhất
+                    </h5>
+                    <a href="/create-invoice" class="btn btn-sm btn-outline-success">Lập Đơn Bán Hàng</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sản Phẩm</th>
+                                    <th>Số Lượng Bán</th>
+                                    <th>Doanh Thu Đem Lại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (dashboard.TopProducts.Any())
+                                {
+                                    @foreach (var p in dashboard.TopProducts)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold">@p.ProductName</div>
+                                                <small class="text-muted">@p.ProductCode</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary fs-6">@p.TotalQuantitySold</span>
+                                            </td>
+                                            <td class="text-success fw-bold">
+                                                @p.TotalRevenue.ToString("N0") đ
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-3">Chưa có sản phẩm nào được bán.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. QUICK ACTIONS -->
+    <div class="card border-0 shadow-sm bg-light p-3">
+        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-lightning-charge text-warning me-1"></i>Thao Tác Nhanh Nghiệp Vụ:</h6>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/create-invoice" class="btn btn-primary">
+                <i class="bi bi-cart-plus me-1"></i> Lập Hóa Đơn Bán Hàng
+            </a>
+            <a href="/invoices" class="btn btn-secondary">
+                <i class="bi bi-receipt me-1"></i> Danh Sách Hóa Đơn & In
+            </a>
+            <a href="/payments" class="btn btn-success">
+                <i class="bi bi-cash-coin me-1"></i> Thu Tiền Cấn Trừ (FIFO)
+            </a>
+            <a href="/aging-report" class="btn btn-warning text-dark">
+                <i class="bi bi-bar-chart-fill me-1"></i> Báo Cáo Tuổi Nợ 4 Xô
+            </a>
+            <a href="/manage-customers" class="btn btn-info text-dark">
+                <i class="bi bi-person-lines-fill me-1"></i> Quản Lý Khách Hàng
+            </a>
+        </div>
+    </div>
+}
+
+@code {
+    private DashboardSummaryDto? dashboard;
+    private bool loading = true;
+    private DateTime lastUpdated = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboard();
+    }
+
+    private async Task LoadDashboard()
+    {
+        loading = true;
+        try
+        {
+            dashboard = await GetDashboardDataUseCase.ExecuteAsync();
+            lastUpdated = DateTime.Now;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}
