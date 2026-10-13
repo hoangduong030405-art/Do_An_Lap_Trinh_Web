@@ -1,29 +1,177 @@
 @page "/login"
+@attribute [AllowAnonymous]
+@inject NavigationManager Navigation
 
-<h3>Đăng nhập</h3>
+<PageTitle>Đăng Nhập - Nền Tảng Phân Phối B2B & Quản Trị Tín Dụng</PageTitle>
 
-<div class="row">
-    <div class="col-md-4">
-        <form method="post" action="/api/auth/login">
-            <AntiforgeryToken />
-            <div class="mb-3">
-                <label>Tên đăng nhập</label>
-                <input name="username" class="form-control" required />
+<div class="login-wrapper min-vh-100 d-flex align-items-center justify-content-center py-5 px-3">
+    <div class="login-card-container w-100" style="max-width: 960px;">
+        <!-- LOGO & BRAND HEADER -->
+        <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-4 bg-primary text-white shadow-lg mb-3">
+                <i class="bi bi-shield-check fs-1"></i>
             </div>
-            <div class="mb-3">
-                <label>Mật khẩu</label>
-                <input name="password" type="password" class="form-control" required />
-            </div>
-            <button type="submit" class="btn btn-primary">Đăng nhập</button>
-        </form>
+            <h3 class="fw-extrabold text-slate-navy mb-1 tracking-tight">
+                NỀN TẢNG PHÂN PHỐI SỈ B2B & QUẢN TRỊ TÍN DỤNG THƯƠNG MẠI
+            </h3>
+            <p class="text-muted small mb-0">
+                B2B Wholesale & Trade Credit Distribution Platform • Capstone 18 (Bán Hàng & Quản Trị Công Nợ)
+            </p>
+        </div>
 
-        <hr />
-        <div class="alert alert-info mt-3">
-            <strong>Gợi ý tài khoản Demo thi:</strong>
-            <ul>
-                <li>Bán hàng: <code>sales</code> / <code>123456</code></li>
-                <li>Kế toán: <code>accountant</code> / <code>123456</code></li>
-            </ul>
+        <div class="row g-4 align-items-stretch">
+            <!-- CỘT 1: FORM ĐĂNG NHẬP THỦ CÔNG -->
+            <div class="col-12 col-lg-5">
+                <div class="card border-0 shadow-lg rounded-4 p-4 h-100 bg-white">
+                    <h5 class="fw-bold text-slate-navy mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-box-arrow-in-right text-primary"></i> Đăng Nhập Hệ Thống
+                    </h5>
+
+                    @if (Navigation.Uri.Contains("error=true"))
+                    {
+                        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3 border-danger d-flex align-items-center gap-2">
+                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                            <span>Tên đăng nhập hoặc mật khẩu không chính xác!</span>
+                        </div>
+                    }
+
+                    <form method="post" action="/api/auth/login" id="loginForm">
+                        <AntiforgeryToken />
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Tên Đăng Nhập</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <input id="usernameInput"
+                                       name="username"
+                                       class="form-control bg-light border-start-0"
+                                       placeholder="sales / accountant / customer"
+                                       required />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-muted">Mật Khẩu</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted">
+                                    <i class="bi bi-lock"></i>
+                                </span>
+                                <input id="passwordInput"
+                                       name="password"
+                                       type="password"
+                                       class="form-control bg-light border-start-0"
+                                       placeholder="••••••"
+                                       required />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2.5 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Xác Nhận Đăng Nhập</span>
+                        </button>
+                    </form>
+
+                    <div class="mt-4 pt-3 border-top text-center text-muted small">
+                        <i class="bi bi-info-circle me-1"></i>Hệ thống tự động điều hướng theo phân quyền vai trò.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CỘT 2: 3 THẺ GỢI Ý TÀI KHOẢN MẪU ĐÁNH GIÁ NHANH -->
+            <div class="col-12 col-lg-7">
+                <div class="card border-0 shadow-lg rounded-4 p-4 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-slate-navy mb-0 d-flex align-items-center gap-2">
+                            <i class="bi bi-people-fill text-warning"></i> Tài Khoản Trải Nghiệm 1-Click
+                        </h5>
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 small">
+                            Dành cho Hội đồng thi
+                        </span>
+                    </div>
+                    <p class="text-muted small mb-3">
+                        Bấm <strong>"Đăng Nhập Ngay"</strong> tại bất kỳ vai trò nào bên dưới để hệ thống tự điền thông tin và đăng nhập tức thì:
+                    </p>
+
+                    <div class="d-flex flex-column gap-3">
+                        <!-- THẺ 1: SALES -->
+                        <div class="p-3 rounded-3 border role-card transition-all bg-light hover-shadow">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="badge bg-primary px-2 py-1">Nhân Viên Bán Hàng (Sales)</span>
+                                        <code class="text-dark small">sales / 123456</code>
+                                    </div>
+                                    <div class="small text-muted">
+                                        Trần Văn B • Lập hóa đơn bán buôn, kiểm tra hạn mức tín dụng & quản lý kho sỉ
+                                    </div>
+                                </div>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold flex-shrink-0"
+                                        onclick="fillAndSubmit('sales', '123456')">
+                                    Đăng Nhập <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- THẺ 2: ACCOUNTANT -->
+                        <div class="p-3 rounded-3 border role-card transition-all bg-light hover-shadow">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="badge bg-warning text-dark px-2 py-1">Kế Toán Công Nợ (Accountant)</span>
+                                        <code class="text-dark small">accountant / 123456</code>
+                                    </div>
+                                    <div class="small text-muted">
+                                        Nguyễn Văn A • Thu tiền phân bổ FIFO, tuổi nợ 4 xô, đối soát sổ cái & AI đòi nợ
+                                    </div>
+                                </div>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-semibold flex-shrink-0"
+                                        onclick="fillAndSubmit('accountant', '123456')">
+                                    Đăng Nhập <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- THẺ 3: CUSTOMER (B2B AGENT / PORTAL) - NỔI BẬT THEO YÊU CẦU ĐỀ TÀI -->
+                        <div class="p-3 rounded-3 border border-success role-card transition-all bg-success-subtle hover-shadow">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <span class="badge bg-success px-2 py-1">Đại Lý B2B (Customer Portal)</span>
+                                        <code class="text-dark small">customer / 123456</code>
+                                    </div>
+                                    <div class="small text-dark fw-semibold mb-1">
+                                        Tạp Hóa Bà Ba - Chợ Đông Ba (Mã: KH001)
+                                    </div>
+                                    <div class="small text-muted">
+                                        Cổng tự phục vụ: Đặt hàng sỉ trực tuyến ghi nợ, kiểm tra trần hạn mức & quét VietQR
+                                    </div>
+                                </div>
+                                <button type="button"
+                                        class="btn btn-sm btn-success rounded-pill px-3 fw-bold flex-shrink-0 shadow-sm"
+                                        onclick="fillAndSubmit('customer', '123456')">
+                                    Đăng Nhập <i class="bi bi-arrow-right ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function fillAndSubmit(user, pass) {
+        var u = document.getElementById('usernameInput');
+        var p = document.getElementById('passwordInput');
+        if (u && p) {
+            u.value = user;
+            p.value = pass;
+            var form = document.getElementById('loginForm');
+            if (form) form.submit();
+        }
+    }
+</script>

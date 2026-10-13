@@ -1,55 +1,121 @@
-<div class="nav-menu-wrapper">
-    <!-- 1. HEADER BRAND -->
+<div class="nav-menu-wrapper d-flex flex-column h-100">
+    <!-- 1. HEADER BRAND: DEEP SLATE NAVY ENTERPRISE SAAS -->
     <div class="top-row px-3 navbar navbar-dark d-flex align-items-center justify-content-between">
         <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-decoration-none" href="">
-            <i class="bi bi-shop fs-4 text-warning"></i>
-            <span>WebBanHang</span>
+            <div class="brand-logo-badge rounded-3 bg-primary text-white d-flex align-items-center justify-content-center shadow-xs">
+                <i class="bi bi-diagram-3-fill fs-5"></i>
+            </div>
+            <div class="lh-sm">
+                <span class="d-block text-white fw-extrabold letter-spacing-wide">B2B TRADE CREDIT</span>
+                <small class="text-slate-light opacity-75 font-monospace" style="font-size: 0.65rem;">PLATFORM ECO2415</small>
+            </div>
         </a>
         <input type="checkbox" title="Navigation menu" class="navbar-toggler d-md-none" />
     </div>
 
-    <!-- 2. SCROLLABLE NAVIGATION LINKS -->
+    <!-- 2. SCROLLABLE NAVIGATION LINKS THEO ROLE -->
     <div class="nav-scrollable flex-grow-1" onclick="document.querySelector('.navbar-toggler')?.click()">
         <nav class="flex-column p-2">
-            <div class="nav-item">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <i class="bi bi-house-door-fill fs-5"></i>
-                    <span>Tổng Quan (Dashboard)</span>
-                </NavLink>
-            </div>
 
-            <div class="nav-item">
-                <NavLink class="nav-link" href="create-invoice">
-                    <i class="bi bi-cart-plus-fill fs-5"></i>
-                    <span>Lập Hóa Đơn Bán Hàng</span>
-                </NavLink>
-            </div>
+            <!-- ================= ROLE: CUSTOMER (ĐẠI LÝ B2B) ================= -->
+            <AuthorizeView Roles="Customer">
+                <Authorized>
+                    <div class="nav-divider text-uppercase px-3 mt-2 mb-2 fw-bold text-warning small">
+                        <i class="bi bi-building me-1"></i> Cổng Đại Lý Tự Phục Vụ
+                    </div>
 
-            <div class="nav-item">
-                <NavLink class="nav-link" href="invoices">
-                    <i class="bi bi-receipt-cutoff fs-5"></i>
-                    <span>Danh Sách Hóa Đơn & In</span>
-                </NavLink>
-            </div>
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="portal/dashboard" Match="NavLinkMatch.All">
+                            <i class="bi bi-speedometer2 fs-5"></i>
+                            <span>Trang Chủ Đại Lý</span>
+                        </NavLink>
+                    </div>
 
-            <div class="nav-item">
-                <NavLink class="nav-link" href="manage-products">
-                    <i class="bi bi-box-seam-fill fs-5"></i>
-                    <span>Quản Lý Sản Phẩm & Kho</span>
-                </NavLink>
-            </div>
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="portal/store">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span>Mua Hàng Sỉ B2B</span>
+                        </NavLink>
+                    </div>
 
-            <!-- PHÂN HỆ DÀNH RIÊNG CHO KẾ TOÁN -->
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="portal/invoices">
+                            <i class="bi bi-receipt-cutoff fs-5"></i>
+                            <span>Hóa Đơn & Quét VietQR</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="portal/ledger">
+                            <i class="bi bi-journal-text fs-5"></i>
+                            <span>Sổ Đối Soát Công Nợ</span>
+                        </NavLink>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+
+            <!-- ================= ROLE: SALES (BÁN HÀNG) ================= -->
+            <AuthorizeView Roles="Sales">
+                <Authorized>
+                    <div class="nav-divider text-uppercase px-3 mt-2 mb-2 fw-bold text-info small">
+                        <i class="bi bi-bag-check me-1"></i> Phân Hệ Bán Hàng Sỉ
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <i class="bi bi-speedometer2 fs-5"></i>
+                            <span>Tổng Quan (Dashboard)</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="create-invoice">
+                            <i class="bi bi-cart-plus-fill fs-5"></i>
+                            <span>Lập Hóa Đơn Bán Hàng</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="invoices">
+                            <i class="bi bi-receipt-cutoff fs-5"></i>
+                            <span>Danh Sách Hóa Đơn & In</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="manage-products">
+                            <i class="bi bi-box-seam-fill fs-5"></i>
+                            <span>Danh Mục Sản Phẩm & Kho</span>
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="manage-customers">
+                            <i class="bi bi-shield-check fs-5"></i>
+                            <span>Đánh Giá Rủi Ro AI</span>
+                        </NavLink>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
+
+            <!-- ================= ROLE: ACCOUNTANT (KẾ TOÁN CÔNG NỢ) ================= -->
             <AuthorizeView Roles="Accountant">
                 <Authorized>
-                    <div class="nav-divider text-uppercase px-3 mt-3 mb-2 fw-bold">
-                        Quản Trị Công Nợ & Kế Toán
+                    <div class="nav-divider text-uppercase px-3 mt-2 mb-2 fw-bold text-warning small">
+                        <i class="bi bi-coin me-1"></i> Quản Trị Công Nợ & Kế Toán
+                    </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                            <i class="bi bi-speedometer2 fs-5"></i>
+                            <span>Tổng Quan (Dashboard)</span>
+                        </NavLink>
                     </div>
 
                     <div class="nav-item">
                         <NavLink class="nav-link" href="manage-customers">
                             <i class="bi bi-people-fill fs-5"></i>
-                            <span>Quản Lý Khách Hàng (AI)</span>
+                            <span>Hạn Mức Khách Hàng (AI)</span>
                         </NavLink>
                     </div>
 
@@ -80,33 +146,57 @@
                             <span>Báo Cáo Tuổi Nợ 4 Xô</span>
                         </NavLink>
                     </div>
+
+                    <div class="nav-item">
+                        <NavLink class="nav-link" href="invoices">
+                            <i class="bi bi-envelope-exclamation-fill fs-5"></i>
+                            <span>Hóa Đơn & Đòi Nợ AI</span>
+                        </NavLink>
+                    </div>
                 </Authorized>
             </AuthorizeView>
+
+            <!-- ================= GUEST / NOT AUTHORIZED ================= -->
+            <AuthorizeView>
+                <NotAuthorized>
+                    <div class="p-3 text-center text-slate-light small opacity-75">
+                        <i class="bi bi-lock fs-2 d-block mb-2"></i>
+                        Vui lòng đăng nhập để truy cập tính năng theo vai trò.
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
+
         </nav>
     </div>
 
-    <!-- 3. FOOTER: NÚT ĐĂNG NHẬP / TÀI KHOẢN ĐẶT Ở GÓC DƯỚI BÊN TRÁI -->
+    <!-- 3. FOOTER CỐ ĐỊNH Ở GÓC DƯỚI BÊN TRÁI -->
     <div class="nav-footer p-3 mt-auto">
         <AuthorizeView>
             <Authorized>
-                <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded bg-dark bg-opacity-50">
-                    <i class="bi bi-person-circle fs-3 text-info"></i>
-                    <div class="overflow-hidden">
+                <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded-3 bg-dark bg-opacity-40 border border-white border-opacity-10">
+                    <div class="user-avatar-circle bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-xs flex-shrink-0" style="width: 36px; height: 36px;">
+                        @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                    </div>
+                    <div class="overflow-hidden flex-grow-1">
                         <div class="fw-bold text-white small text-truncate" title="@context.User.Identity?.Name">
                             @context.User.Identity?.Name
                         </div>
-                        <span class="badge bg-primary small">@context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small fw-semibold" style="font-size: 0.7rem;">
+                                @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <a href="/api/auth/logout" class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center gap-2 py-2">
+                <a href="/api/auth/logout" class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-pill shadow-xs">
                     <i class="bi bi-box-arrow-right"></i>
-                    <span>Đăng xuất</span>
+                    <span class="fw-semibold">Đăng xuất</span>
                 </a>
             </Authorized>
             <NotAuthorized>
-                <a href="/login" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2 shadow-sm text-decoration-none">
+                <a href="/login" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-pill shadow-sm text-decoration-none fw-bold">
                     <i class="bi bi-box-arrow-in-right fs-5"></i>
-                    <span class="fw-bold">Đăng nhập hệ thống</span>
+                    <span>Đăng nhập hệ thống</span>
                 </a>
             </NotAuthorized>
         </AuthorizeView>

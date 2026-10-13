@@ -47,6 +47,9 @@ builder.Services.AddTransient<IAiCreditRiskService, MockAiCreditRiskService>();
 builder.Services.AddTransient<IAssessCreditRiskUseCase, AssessCreditRiskUseCase>();
 builder.Services.AddTransient<IGetCustomerDebtUseCase, GetCustomerDebtUseCase>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
+builder.Services.AddTransient<IGetCustomerPortalInfoUseCase, GetCustomerPortalInfoUseCase>();
+builder.Services.AddTransient<IGetCustomerMyInvoicesUseCase, GetCustomerMyInvoicesUseCase>();
+builder.Services.AddTransient<ICreateCustomerPortalOrderUseCase, CreateCustomerPortalOrderUseCase>();
 
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>
@@ -82,21 +85,44 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.MapPost("/api/auth/login", async (HttpContext httpContext, IFormCollection form) => {
-    string username = form["username"]!;
-    string password = form["password"]!;
-    if ((username == "sales" && password == "123456") || (username == "accountant" && password == "123456"))
+    string username = form["username"].ToString().Trim().ToLowerInvariant();
+    string password = form["password"].ToString().Trim();
+
+    if ((username == "sales" && password == "123456") || 
+        (username == "accountant" && password == "123456") ||
+        ((username == "customer" || username == "baba") && password == "123456"))
     {
-        string role = username == "accountant" ? "Accountant" : "Sales";
-        string fullName = username == "accountant" ? "Kế Toán Nguyễn Văn A" : "Nhân Viên Trần Văn B";
+        string role = username == "accountant" ? "Accountant" : (username == "customer" || username == "baba") ? "Customer" : "Sales";
+        string fullName = username == "accountant" ? "Kế Toán Nguyễn Văn A" : (username == "customer" || username == "baba") ? "Tạp Hóa Bà Ba - Chợ Đông Ba" : "Nhân Viên Trần Văn B";
+        string nameId = (username == "customer" || username == "baba") ? "customer" : username;
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.Name, fullName),
-            new(ClaimTypes.NameIdentifier, username),
+            new(ClaimTypes.NameIdentifier, nameId),
             new(ClaimTypes.Role, role)
         };
+
+        if (role == "Customer")
+        {
+            claims.Add(new Claim("CustomerId", "1"));
+        }
+
         var identity = new ClaimsIdentity(claims, "Cookies");
         await httpContext.SignInAsync("Cookies", new ClaimsPrincipal(identity));
-        return Results.Redirect(role == "Accountant" ? "/aging-report" : "/create-invoice");
+
+        if (role == "Customer")
+        {
+            return Results.Redirect("/portal/dashboard");
+        }
+        else if (role == "Accountant")
+        {
+            return Results.Redirect("/aging-report");
+        }
+        else
+        {
+            return Results.Redirect("/create-invoice");
+        }
     }
     return Results.Redirect("/login?error=true");
 }).DisableAntiforgery();

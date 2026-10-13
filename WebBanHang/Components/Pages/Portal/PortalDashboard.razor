@@ -1,0 +1,271 @@
+@page "/portal/dashboard"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using WebBanHang.UseCases.Customers
+@using WebBanHang.UseCases.Invoices
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.Components.Controls
+
+@attribute [Authorize(Roles = "Customer")]
+@inject IGetCustomerPortalInfoUseCase GetCustomerPortalInfoUseCase
+@inject IGetCustomerMyInvoicesUseCase GetCustomerMyInvoicesUseCase
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+
+<PageTitle>Cổng Đại Lý B2B - Tổng Quan Hạn Mức & Đơn Hàng</PageTitle>
+
+<div class="portal-container py-3">
+    <!-- 1. BREADCRUMB & WELCOME HEADER -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary px-2.5 py-1.5 fw-semibold"><i class="bi bi-box-seam me-1"></i>B2B PORTAL</span>
+                <span class="text-muted small">Cổng Dịch Vụ Khách Hàng Doanh Nghiệp & Đại Lý</span>
+            </div>
+            <h2 class="fw-bold mb-0 text-slate-navy">
+                Kính Chào Quý Đại Lý: <span class="text-primary">@(customerInfo?.FullName ?? "Tạp Hóa Bà Ba")</span>
+            </h2>
+            <p class="text-muted small mb-0 mt-1">
+                Hệ thống bán buôn phân phối ghi công nợ thương mại & đối soát tự phục vụ 24/7
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm" @onclick="LoadDataAsync">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới dữ liệu
+            </button>
+            <a href="/portal/store" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm fw-semibold">
+                <i class="bi bi-cart-plus me-1"></i> Đặt hàng sỉ ngay
+            </a>
+        </div>
+    </div>
+
+    @if (loading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Đang truy vấn hồ sơ hạn mức tín dụng của Quý đại lý...</p>
+        </div>
+    }
+    else
+    {
+        <!-- 2. THANH TIỆN ÍCH TÍN DỤNG TỨC THÌ (CREDIT STATUS BAR) -->
+        <CreditStatusBar CustomerInfo="@customerInfo" />
+
+        <!-- 3. CÁC NÚT TÁC VỤ NHANH CHUẨN DOANH NGHIỆP -->
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift transition-all p-3 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="portal-action-icon rounded-3 bg-primary-subtle text-primary p-3 fs-3">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1 text-slate-navy">Đặt Hàng Sỉ Trực Tuyến</h6>
+                            <p class="text-muted small mb-2">Xem danh mục hàng, giá sỉ chiết khấu & ghi nợ tự động</p>
+                            <a href="/portal/store" class="btn btn-sm btn-outline-primary rounded-pill fw-semibold">
+                                Vào Cửa Hàng <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift transition-all p-3 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="portal-action-icon rounded-3 bg-warning-subtle text-warning p-3 fs-3">
+                            <i class="bi bi-receipt-cutoff"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1 text-slate-navy">Hóa Đơn & Quét VietQR</h6>
+                            <p class="text-muted small mb-2">Tra cứu hóa đơn nợ & thanh toán Napas 24/7 cấn trừ FIFO</p>
+                            <a href="/portal/invoices" class="btn btn-sm btn-outline-warning text-dark rounded-pill fw-semibold">
+                                Tra Cứu Hóa Đơn <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift transition-all p-3 bg-white">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="portal-action-icon rounded-3 bg-success-subtle text-success p-3 fs-3">
+                            <i class="bi bi-journal-check"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-1 text-slate-navy">Sổ Đối Soát Công Nợ</h6>
+                            <p class="text-muted small mb-2">Sao kê chi tiết phát sinh nợ/có & in biên bản ký đối soát</p>
+                            <a href="/portal/ledger" class="btn btn-sm btn-outline-success rounded-pill fw-semibold">
+                                Xem Sổ Cái Nợ <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. HÓA ĐƠN CHỜ THANH TOÁN GẦN ĐÂY -->
+        <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white">
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history text-primary fs-5"></i>
+                    <h6 class="fw-bold mb-0 text-slate-navy">Hóa Đơn Mua Hàng Gần Đây Của Đại Lý</h6>
+                </div>
+                <a href="/portal/invoices" class="btn btn-link btn-sm text-decoration-none fw-semibold">
+                    Xem toàn bộ (@(recentInvoices.Count)) <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Số Hóa Đơn</th>
+                            <th>Ngày Xuất</th>
+                            <th>Hạn Thanh Toán</th>
+                            <th class="text-end">Tổng Tiền</th>
+                            <th class="text-end">Đã Trả</th>
+                            <th class="text-end">Còn Nợ</th>
+                            <th class="text-center">Trạng Thái</th>
+                            <th class="text-center pe-4">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!recentInvoices.Any())
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-1"></i>
+                                    Chưa có giao dịch hóa đơn nào được ghi nhận.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var inv in recentInvoices.Take(5))
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-primary">@inv.InvoiceNumber</td>
+                                    <td>@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <span>@inv.DueDate.ToString("dd/MM/yyyy")</span>
+                                        @if (inv.IsOverdue)
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger ms-1">Trễ @inv.OverdueDays ngày</span>
+                                        }
+                                    </td>
+                                    <td class="text-end fw-semibold">@inv.TotalAmount.ToString("N0") đ</td>
+                                    <td class="text-end text-success">@inv.PaidAmount.ToString("N0") đ</td>
+                                    <td class="text-end fw-bold @(inv.Balance > 0 ? "text-danger" : "text-muted")">
+                                        @inv.Balance.ToString("N0") đ
+                                    </td>
+                                    <td class="text-center">
+                                        @if (inv.Balance <= 0)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Đã tất toán</span>
+                                        }
+                                        else if (inv.IsOverdue)
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Quá hạn</span>
+                                        }
+                                        else if (inv.PaidAmount > 0)
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Trả 1 phần</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">Chưa trả</span>
+                                        }
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        @if (inv.Balance > 0)
+                                        {
+                                            <a href="/portal/invoices" class="btn btn-sm btn-outline-danger py-1 px-2.5 rounded-pill shadow-xs">
+                                                <i class="bi bi-qr-code me-1"></i> Trả VietQR
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/portal/invoices" class="btn btn-sm btn-outline-secondary py-1 px-2 rounded-pill">
+                                                <i class="bi bi-eye"></i> Xem
+                                            </a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 5. CHÍNH SÁCH BÁN BUÔN & HỖ TRỢ ĐẠI LÝ -->
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <div class="card border-0 shadow-sm rounded-3 p-4 bg-light h-100">
+                    <h6 class="fw-bold text-slate-navy mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-check text-primary fs-5"></i> Chính Sách Hạn Mức Tín Dụng B2B
+                    </h6>
+                    <ul class="list-unstyled small mb-0 text-muted d-flex flex-column gap-2">
+                        <li><i class="bi bi-check2-circle text-success me-2"></i><strong>Hạn mức cấp:</strong> @(customerInfo?.CreditLimit.ToString("N0") ?? "20.000.000") đ theo hợp đồng phân phối ký kết.</li>
+                        <li><i class="bi bi-check2-circle text-success me-2"></i><strong>Thời hạn nợ:</strong> @(customerInfo?.PaymentTermsDays ?? 30) ngày kể từ ngày giao nhận hàng hóa.</li>
+                        <li><i class="bi bi-check2-circle text-success me-2"></i><strong>Cơ chế cấn trừ:</strong> Hệ thống tự động phân bổ thu nợ theo nguyên tắc FIFO (hóa đơn cũ nhất được cấn trừ trước).</li>
+                        <li><i class="bi bi-check2-circle text-success me-2"></i><strong>Nâng hạn mức:</strong> Đại lý có lịch sử thanh toán đúng hạn liên tục 3 tháng được xét tăng 30% hạn mức nợ.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="card border-0 shadow-sm rounded-3 p-4 bg-light h-100">
+                    <h6 class="fw-bold text-slate-navy mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-headset text-primary fs-5"></i> Bộ Phận Hỗ Trợ Khách Hàng Đại Lý
+                    </h6>
+                    <div class="small text-muted d-flex flex-column gap-2">
+                        <div><strong class="text-dark">Giám sát bán buôn phụ trách:</strong> Trần Văn B — 0909 888 999</div>
+                        <div><strong class="text-dark">Kế toán quản trị công nợ:</strong> Nguyễn Văn A — 0908 111 222</div>
+                        <div><strong class="text-dark">Hotline hỗ trợ kỹ thuật đặt hàng:</strong> 1900 6868 (Phím 2)</div>
+                        <div class="mt-2 text-primary fw-semibold">
+                            <i class="bi bi-envelope me-1"></i> Email tiếp nhận khiếu nại đối soát: ketoan.ar@eco2415.vn
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool loading = true;
+    private CustomerPortalInfoDto? customerInfo;
+    private List<CustomerPortalInvoiceDto> recentInvoices = new();
+    private int customerId = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var claim = user.FindFirst("CustomerId")?.Value;
+        if (int.TryParse(claim, out var id))
+        {
+            customerId = id;
+        }
+
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        loading = true;
+        try
+        {
+            customerInfo = await GetCustomerPortalInfoUseCase.ExecuteAsync(customerId);
+            var invoices = await GetCustomerMyInvoicesUseCase.ExecuteAsync(customerId);
+            recentInvoices = invoices.ToList();
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

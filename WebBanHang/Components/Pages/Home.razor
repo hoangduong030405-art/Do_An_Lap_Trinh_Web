@@ -3,8 +3,10 @@
 
 @using WebBanHang.UseCases.Dashboard
 @using WebBanHang.UseCases.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IGetDashboardDataUseCase GetDashboardDataUseCase
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Tổng Quan - Dashboard Quản Trị Bán Hàng & Công Nợ</PageTitle>
 
@@ -370,6 +372,13 @@ else if (dashboard != null)
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.IsInRole("Customer"))
+        {
+            Navigation.NavigateTo("/portal/dashboard");
+            return;
+        }
+
         await LoadDashboard();
     }
 

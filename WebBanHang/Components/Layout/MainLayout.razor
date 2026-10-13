@@ -1,16 +1,44 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+    <main class="main-content-wrapper">
+        <div class="top-row px-4 d-flex justify-content-between align-items-center bg-white border-bottom shadow-xs">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1 rounded-pill small fw-semibold d-flex align-items-center gap-1.5">
+                    <span class="status-pulse-dot"></span>
+                    <span>CSDLBANHANG Online</span>
+                </span>
+                <span class="text-muted small d-none d-md-inline">|</span>
+                <span class="text-slate-navy small fw-semibold d-none d-md-inline">
+                    Hệ Thống Bán Buôn & Quản Trị Tín Dụng Thương Mại B2B
+                </span>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="text-muted small d-none d-sm-inline">Đang đăng nhập:</span>
+                            <span class="fw-bold text-slate-navy small">@context.User.Identity?.Name</span>
+                            <span class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small">
+                                @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                            </span>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="/login" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập
+                        </a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
         </div>
 
-        <article class="content px-4">
+        <article class="content px-4 py-3">
             @Body
         </article>
     </main>

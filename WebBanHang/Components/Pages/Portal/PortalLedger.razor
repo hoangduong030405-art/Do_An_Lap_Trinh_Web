@@ -1,0 +1,260 @@
+@page "/portal/ledger"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using WebBanHang.UseCases.Customers
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.Components.Controls
+
+@attribute [Authorize(Roles = "Customer")]
+@inject IGetCustomerPortalInfoUseCase GetCustomerPortalInfoUseCase
+@inject IViewCustomerLedgerUseCase ViewCustomerLedgerUseCase
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Sổ Đối Soát Công Nợ Đại Lý</PageTitle>
+
+<div class="portal-container py-3">
+    <!-- 1. HEADER & ACTIONS -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 d-print-none">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a href="/portal/dashboard" class="text-decoration-none text-muted">Cổng Đại Lý</a></li>
+                    <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">Sổ Đối Soát Công Nợ</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mb-0 text-slate-navy">
+                <i class="bi bi-journal-text text-primary me-2"></i>Sổ Đối Soát Công Nợ Tự Phục Vụ
+            </h3>
+            <p class="text-muted small mb-0">
+                Minh bạch toàn bộ dòng tiền mua hàng (Ghi Nợ), nộp tiền (Ghi Có) và số dư nợ lũy kế sau từng giao dịch
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-xs" @onclick="LoadLedgerAsync">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới sổ cái
+            </button>
+            <button class="btn btn-success btn-sm rounded-pill px-3 shadow-xs fw-semibold" @onclick="PrintLedger">
+                <i class="bi bi-printer me-1"></i> 🖨️ In Biên Bản Đối Soát Nợ
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. CREDIT STATUS BAR -->
+    <div class="d-print-none">
+        <CreditStatusBar CustomerInfo="@customerInfo" />
+    </div>
+
+    @if (loading)
+    {
+        <div class="text-center py-5 d-print-none">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Đang kết xuất sổ cái chi tiết công nợ đại lý...</p>
+        </div>
+    }
+    else if (ledger != null)
+    {
+        <!-- 3. KHUNG BIÊN BẢN ĐỐI SOÁT CÔNG NỢ (HỖ TRỢ IN ẤN CHUẨN DOANH NGHIỆP) -->
+        <div class="card border-0 shadow-sm rounded-3 bg-white p-4 mb-4 printable-area" id="printableInvoiceArea">
+            <!-- HEADER TIÊU CHUẨN IN ẤN -->
+            <div class="text-center mb-4 pb-3 border-bottom">
+                <div class="fw-bold small text-uppercase">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                <div class="small fst-italic">Độc lập - Tự do - Hạnh phúc</div>
+                <div class="my-2">——————— ★ ———————</div>
+                <h4 class="fw-bold text-slate-navy mt-3 mb-1 text-uppercase">
+                    BIÊN BẢN ĐỐI SOÁT CÔNG NỢ THƯƠNG MẠI
+                </h4>
+                <div class="small text-muted">
+                    Thời điểm kết xuất: <strong>@DateTime.Now.ToString("HH:mm - dd/MM/yyyy")</strong> • Đơn vị tính: <strong>VNĐ</strong>
+                </div>
+            </div>
+
+            <!-- THÔNG TIN HAI BÊN KÝ KẾT ĐỐI SOÁT -->
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3 h-100 border">
+                        <div class="fw-bold text-primary mb-2 text-uppercase small">
+                            <i class="bi bi-building me-1"></i>BÊN BÁN (BÊN A): CÔNG TY ECO2415
+                        </div>
+                        <div class="small text-muted mb-1"><strong>Tên doanh nghiệp:</strong> CÔNG TY CP CÔNG NGHỆ & THƯƠNG MẠI ECO2415</div>
+                        <div class="small text-muted mb-1"><strong>Địa chỉ:</strong> 123 Đường Công Nghệ, Quận Tân Bình, TP. Hồ Chí Minh</div>
+                        <div class="small text-muted mb-1"><strong>Mã số thuế:</strong> 0312345678</div>
+                        <div class="small text-muted"><strong>Hotline bán buôn:</strong> 1900 6868 | <strong>Email:</strong> ketoan.ar@eco2415.vn</div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3 h-100 border">
+                        <div class="fw-bold text-success mb-2 text-uppercase small">
+                            <i class="bi bi-shop me-1"></i>BÊN MUA (BÊN B): ĐẠI LÝ ĐỐI TÁC
+                        </div>
+                        <div class="small text-muted mb-1"><strong>Tên đại lý:</strong> <span class="fw-bold text-dark">@ledger.CustomerName</span></div>
+                        <div class="small text-muted mb-1"><strong>Mã khách hàng:</strong> <span class="font-monospace fw-bold text-primary">@ledger.CustomerCode</span></div>
+                        <div class="small text-muted mb-1"><strong>Điện thoại:</strong> @ledger.CustomerPhone</div>
+                        <div class="small text-muted"><strong>Địa chỉ giao dịch:</strong> @ledger.CustomerAddress</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TỔNG HỢP CÔNG NỢ -->
+            <div class="row g-3 mb-4">
+                <div class="col-3">
+                    <div class="p-3 bg-light border rounded-3 text-center">
+                        <small class="text-muted d-block text-uppercase">Hạn Mức Tín Dụng</small>
+                        <span class="fs-5 fw-bold text-dark">@ledger.CreditLimit.ToString("N0") đ</span>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="p-3 bg-light border rounded-3 text-center">
+                        <small class="text-muted d-block text-uppercase">Tổng Mua Hàng (Nợ +)</small>
+                        <span class="fs-5 fw-bold text-primary">@ledger.TotalDebit.ToString("N0") đ</span>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="p-3 bg-light border rounded-3 text-center">
+                        <small class="text-muted d-block text-uppercase">Tổng Đã Trả (Có -)</small>
+                        <span class="fs-5 fw-bold text-success">@ledger.TotalCredit.ToString("N0") đ</span>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="p-3 border rounded-3 text-center @(ledger.EndingBalance > 0 ? "bg-danger-subtle border-danger" : "bg-success-subtle border-success")">
+                        <small class="fw-bold d-block text-uppercase @(ledger.EndingBalance > 0 ? "text-danger" : "text-success")">DƯ NỢ CUỐI KỲ</small>
+                        <span class="fs-5 fw-bold @(ledger.EndingBalance > 0 ? "text-danger" : "text-success")">@ledger.EndingBalance.ToString("N0") đ</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BẢNG KÊ CHI TIẾT SỔ CÁI GIAO DỊCH -->
+            <h6 class="fw-bold text-slate-navy mb-2">
+                <i class="bi bi-list-check me-1"></i>Bảng Kê Chi Tiết Các Giao Dịch Phát Sinh
+            </h6>
+            <div class="table-responsive border rounded-3 mb-4">
+                <table class="table table-bordered table-hover align-middle mb-0">
+                    <thead class="table-light text-center small">
+                        <tr>
+                            <th style="width: 50px;">STT</th>
+                            <th style="width: 110px;">Ngày Chứng Từ</th>
+                            <th style="width: 110px;">Loại Chứng Từ</th>
+                            <th style="width: 140px;">Số Chứng Từ</th>
+                            <th>Diễn Giải Giao Dịch</th>
+                            <th style="width: 140px;" class="text-end">Phát Sinh Nợ (+)</th>
+                            <th style="width: 140px;" class="text-end">Phát Sinh Có (-)</th>
+                            <th style="width: 150px;" class="text-end">Số Dư Lũy Kế</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small">
+                        @if (!ledger.Entries.Any())
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-4 text-muted">
+                                    Không có giao dịch nợ/có nào phát sinh trong kỳ.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            int stt = 1;
+                            foreach (var item in ledger.Entries)
+                            {
+                                <tr>
+                                    <td class="text-center">@(stt++)</td>
+                                    <td class="text-center">@item.TransactionDate.ToString("dd/MM/yyyy")</td>
+                                    <td class="text-center">
+                                        @if (item.DocumentType == "Hóa Đơn")
+                                        {
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Hóa Đơn</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">Phiếu Thu</span>
+                                        }
+                                    </td>
+                                    <td class="font-monospace fw-bold text-center">@item.DocumentNumber</td>
+                                    <td>@item.Description</td>
+                                    <td class="text-end fw-semibold @(item.Debit > 0 ? "text-primary" : "text-muted")">
+                                        @(item.Debit > 0 ? item.Debit.ToString("N0") + " đ" : "-")
+                                    </td>
+                                    <td class="text-end fw-semibold @(item.Credit > 0 ? "text-success" : "text-muted")">
+                                        @(item.Credit > 0 ? item.Credit.ToString("N0") + " đ" : "-")
+                                    </td>
+                                    <td class="text-end fw-bold @(item.RunningBalance > 0 ? "text-danger" : "text-dark")">
+                                        @item.RunningBalance.ToString("N0") đ
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                    <tfoot class="table-light fw-bold small">
+                        <tr>
+                            <td colspan="5" class="text-end">TỔNG CỘNG PHÁT SINH TRONG KỲ:</td>
+                            <td class="text-end text-primary">@ledger.TotalDebit.ToString("N0") đ</td>
+                            <td class="text-end text-success">@ledger.TotalCredit.ToString("N0") đ</td>
+                            <td class="text-end text-danger fs-6">@ledger.EndingBalance.ToString("N0") đ</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- CAM KẾT & CHỮ KÝ XÁC NHẬN HAI BÊN -->
+            <div class="mb-4 small text-muted">
+                <strong>Cam kết xác nhận:</strong> Hai bên cùng đối soát và thống nhất xác nhận toàn bộ số liệu công nợ tính đến ngày hôm nay là hoàn toàn chính xác. Bên B cam kết thực hiện nghĩa vụ thanh toán đối với số dư nợ đến hạn theo đúng các điều khoản trong Hợp đồng mua bán phân phối sỉ đã ký kết.
+            </div>
+
+            <div class="row text-center mt-5 pt-3">
+                <div class="col-6">
+                    <div class="fw-bold small text-uppercase">ĐẠI DIỆN BÊN MUA (BÊN B)</div>
+                    <div class="text-muted small fst-italic">(Ký, ghi rõ họ tên, đóng dấu nếu có)</div>
+                    <div style="height: 80px;"></div>
+                    <div class="fw-bold text-dark">@ledger.CustomerName</div>
+                </div>
+                <div class="col-6">
+                    <div class="fw-bold small text-uppercase">ĐẠI DIỆN BÊN BÁN (BÊN A)</div>
+                    <div class="text-muted small fst-italic">(Kế toán trưởng / Giám đốc ký tên)</div>
+                    <div style="height: 80px;"></div>
+                    <div class="fw-bold text-primary">Kế Toán Phụ Trách Công Nợ AR</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool loading = true;
+    private CustomerPortalInfoDto? customerInfo;
+    private CustomerLedgerDto? ledger;
+    private int customerId = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var claim = user.FindFirst("CustomerId")?.Value;
+        if (int.TryParse(claim, out var id))
+        {
+            customerId = id;
+        }
+
+        await LoadLedgerAsync();
+    }
+
+    private async Task LoadLedgerAsync()
+    {
+        loading = true;
+        try
+        {
+            customerInfo = await GetCustomerPortalInfoUseCase.ExecuteAsync(customerId);
+            ledger = await ViewCustomerLedgerUseCase.ExecuteAsync(customerId);
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private async Task PrintLedger()
+    {
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+}

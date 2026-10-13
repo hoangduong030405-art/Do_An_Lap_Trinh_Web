@@ -171,5 +171,12 @@ namespace WebBanHang.Plugins.DataStore.SQL
 
             return await connection.QueryAsync<MonthlyRevenueDto>(sql, new { Months = months });
         }
+
+        public async Task<IEnumerable<Invoice>> GetInvoicesByCustomerIdAsync(int customerId)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            var query = "SELECT * FROM Invoices WHERE CustomerId = @CustomerId ORDER BY InvoiceDate DESC";
+            return await connection.QueryAsync<Invoice>(query, new { CustomerId = customerId });
+        }
     }
 }
