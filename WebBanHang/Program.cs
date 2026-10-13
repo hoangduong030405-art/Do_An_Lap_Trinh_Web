@@ -39,11 +39,13 @@ builder.Services.AddTransient<IDraftDebtReminderEmailUseCase, DraftDebtReminderE
 builder.Services.AddTransient<IGetDashboardDataUseCase, GetDashboardDataUseCase>();
 builder.Services.AddTransient<IViewInvoiceListUseCase, ViewInvoiceListUseCase>();
 builder.Services.AddTransient<IViewInvoiceDetailUseCase, ViewInvoiceDetailUseCase>();
+builder.Services.AddTransient<IGetUnpaidInvoicesUseCase, GetUnpaidInvoicesUseCase>();
 builder.Services.AddTransient<IManageProductUseCase, ManageProductUseCase>();
 builder.Services.AddTransient<IViewPaymentHistoryUseCase, ViewPaymentHistoryUseCase>();
 builder.Services.AddTransient<IViewCustomerLedgerUseCase, ViewCustomerLedgerUseCase>();
 builder.Services.AddTransient<IAiCreditRiskService, MockAiCreditRiskService>();
 builder.Services.AddTransient<IAssessCreditRiskUseCase, AssessCreditRiskUseCase>();
+builder.Services.AddTransient<IGetCustomerDebtUseCase, GetCustomerDebtUseCase>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 builder.Services.AddAuthentication("Cookies")

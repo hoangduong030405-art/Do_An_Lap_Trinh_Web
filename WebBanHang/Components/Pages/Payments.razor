@@ -5,58 +5,241 @@
 
 @using WebBanHang.UseCases.Customers
 @using WebBanHang.UseCases.Payments
+@using WebBanHang.UseCases.Invoices
 @using WebBanHang.CoreBusiness.Entities
 
 @inject IViewCustomerListUseCase ViewCustomerListUseCase
 @inject IRecordPaymentAndAllocateUseCase RecordPaymentUseCase
+@inject IGetCustomerDebtUseCase GetCustomerDebtUseCase
+@inject IGetUnpaidInvoicesUseCase GetUnpaidInvoicesUseCase
 
-<h3>Thu Tiền Phân Bổ (FIFO)</h3>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="fw-bold text-primary mb-1">Thu Tiền & Phân Bổ Nợ (Thuật Toán FIFO)</h3>
+        <p class="text-muted small mb-0">Hệ thống tự động cấn trừ công nợ theo thứ tự hóa đơn phát sinh cũ nhất trước, mới nhất sau.</p>
+    </div>
+    <a href="/payments/history" class="btn btn-outline-secondary">
+        <i class="bi bi-clock-history me-1"></i> Xem lịch sử phiếu thu
+    </a>
+</div>
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger">@errorMessage</div>
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+        <button type="button" class="btn-close" @onclick="() => errorMessage = string.Empty"></button>
+    </div>
 }
 @if (!string.IsNullOrEmpty(successMessage))
 {
-    <div class="alert alert-success">@successMessage</div>
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @successMessage
+        <button type="button" class="btn-close" @onclick="() => successMessage = string.Empty"></button>
+    </div>
 }
 
-<div class="card p-3 mb-4 shadow-sm">
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Khách Hàng</label>
-            <select class="form-select" @bind="selectedCustomerId">
-                <option value="0">-- Chọn khách hàng --</option>
-                @if (customers != null)
+<div class="row">
+    <!-- Form Ghi Nhận Phiếu Thu -->
+    <div class="col-lg-5 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="card-title mb-0 fw-semibold">
+                    <i class="bi bi-cash-stack me-2"></i> Thông Tin Phiếu Thu Tiền
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">1. Chọn Khách Hàng Nộp Tiền <span class="text-danger">*</span></label>
+                    <select class="form-select form-select-lg" @onchange="OnCustomerSelected">
+                        <option value="0">-- Chọn khách hàng --</option>
+                        @if (customers != null)
+                        {
+                            @foreach (var c in customers)
+                            {
+                                <option value="@c.Id" selected="@(c.Id == selectedCustomerId)">@c.FullName (@c.CustomerCode)</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                @if (selectedCustomer != null)
                 {
-                    @foreach (var c in customers)
-                    {
-                        <option value="@c.Id">@c.FullName - @c.CustomerCode</option>
-                    }
+                    <div class="card bg-light border-0 mb-3 p-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Hạn mức tín dụng:</span>
+                            <span class="fw-bold">@selectedCustomer.CreditLimit.ToString("N0") đ</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Thời hạn thanh toán:</span>
+                            <span class="fw-bold">@selectedCustomer.PaymentTermsDays ngày</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Tổng công nợ còn lại:</span>
+                            <span class="badge @(currentDebt > 0 ? "bg-danger" : "bg-success") fs-6">
+                                @currentDebt.ToString("N0") đ
+                            </span>
+                        </div>
+                    </div>
                 }
-            </select>
-        </div>
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Số Tiền Thu</label>
-            <input type="number" class="form-control" @bind="paymentAmount" />
-        </div>
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Ngày Thu</label>
-            <input type="date" class="form-control" @bind="paymentDate" />
-        </div>
-        <div class="col-md-12 mb-3">
-            <label class="form-label">Ghi Chú</label>
-            <input type="text" class="form-control" @bind="note" />
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label fw-bold mb-0">2. Số Tiền Thu (VNĐ) <span class="text-danger">*</span></label>
+                        @if (currentDebt > 0)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-primary py-0" @onclick="FillFullDebt">
+                                Trả hết nợ (@currentDebt.ToString("N0") đ)
+                            </button>
+                        }
+                    </div>
+                    <div class="input-group">
+                        <input type="number" class="form-control form-control-lg text-end fw-bold text-success" 
+                               step="1000" min="1" @bind="paymentAmount" placeholder="0" />
+                        <span class="input-group-text">đ</span>
+                    </div>
+                    @if (paymentAmount > 0)
+                    {
+                        <div class="form-text text-end text-muted">
+                            Bằng chữ số: @paymentAmount.ToString("N0") đ
+                        </div>
+                    }
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">3. Ngày Thu Tiền <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" @bind="paymentDate" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold">4. Ghi Chú / Nội Dung Thu</label>
+                    <input type="text" class="form-control" placeholder="VD: Khách trả nợ đợt 1 chuyển khoản qua VCB..." @bind="note" />
+                </div>
+
+                <button class="btn btn-primary btn-lg w-100 shadow-sm" @onclick="RecordPayment" disabled="@(selectedCustomerId <= 0 || paymentAmount <= 0)">
+                    <i class="bi bi-check2-circle me-1"></i> Xác Nhận Thu Tiền & Tự Động Gạch Nợ FIFO
+                </button>
+            </div>
         </div>
     </div>
-    <div class="text-end">
-        <button class="btn btn-primary" @onclick="RecordPayment">Ghi nhận thanh toán (FIFO)</button>
+
+    <!-- Danh Sách Hóa Đơn Sẽ Được Gạch Nợ (Mô Phỏng FIFO) -->
+    <div class="col-lg-7 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 fw-semibold text-secondary">
+                    <i class="bi bi-list-check me-2"></i> Hóa Đơn Chưa Thu (Thứ tự ưu tiên FIFO)
+                </h5>
+                @if (unpaidInvoices != null && unpaidInvoices.Any())
+                {
+                    <span class="badge bg-warning text-dark">@unpaidInvoices.Count hóa đơn chưa tất toán</span>
+                }
+            </div>
+            <div class="card-body p-0">
+                @if (selectedCustomerId <= 0)
+                {
+                    <div class="p-5 text-center text-muted">
+                        <i class="bi bi-person-fill-exclamation fs-1 text-secondary opacity-50 mb-2"></i>
+                        <p>Vui lòng chọn khách hàng bên trái để xem danh sách hóa đơn cần gạch nợ.</p>
+                    </div>
+                }
+                else if (unpaidInvoices == null || !unpaidInvoices.Any())
+                {
+                    <div class="p-5 text-center text-success">
+                        <i class="bi bi-patch-check-fill fs-1 mb-2"></i>
+                        <h5>Khách hàng này hiện không còn nợ!</h5>
+                        <p class="text-muted small">Tất cả các hóa đơn đã được thanh toán đầy đủ.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info rounded-0 border-start-0 border-end-0 mb-0 py-2 px-3 small">
+                        <i class="bi bi-info-circle-fill me-1"></i> 
+                        <strong>Nguyên tắc FIFO:</strong> Số tiền thu sẽ được thanh toán lần lượt từ Hóa đơn ưu tiên #1 (cũ nhất), phần còn dư tiếp tục trừ vào các hóa đơn tiếp theo.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center" style="width: 100px;">Ưu tiên</th>
+                                    <th>Số HĐ</th>
+                                    <th>Ngày HĐ / Hạn trả</th>
+                                    <th class="text-end">Tổng Tiền</th>
+                                    <th class="text-end">Đã Trả</th>
+                                    <th class="text-end text-danger fw-bold">Còn Nợ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int priority = 1;
+                                    decimal remainingSimulatedPayment = paymentAmount;
+                                }
+                                @foreach (var inv in unpaidInvoices)
+                                {
+                                    decimal willPay = 0;
+                                    if (remainingSimulatedPayment > 0)
+                                    {
+                                        willPay = Math.Min(remainingSimulatedPayment, inv.Balance);
+                                        remainingSimulatedPayment -= willPay;
+                                    }
+                                    <tr class="@(willPay > 0 ? "table-success" : "")">
+                                        <td class="text-center">
+                                            @if (priority == 1)
+                                            {
+                                                <span class="badge bg-danger shadow-sm">Ưu tiên #1</span>
+                                            }
+                                            else if (priority == 2)
+                                            {
+                                                <span class="badge bg-warning text-dark">Ưu tiên #2</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Ưu tiên #@priority</span>
+                                            }
+                                        </td>
+                                        <td class="fw-semibold">
+                                            @inv.InvoiceNumber
+                                            @if (willPay > 0)
+                                            {
+                                                <br />
+                                                <small class="badge bg-success-subtle text-success border border-success">
+                                                    Sẽ gạch: -@willPay.ToString("N0") đ
+                                                </small>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div>@inv.InvoiceDate.ToString("dd/MM/yyyy")</div>
+                                            <small class="text-muted">Hạn: @inv.DueDate.ToString("dd/MM/yyyy")</small>
+                                        </td>
+                                        <td class="text-end">@inv.TotalAmount.ToString("N0") đ</td>
+                                        <td class="text-end text-muted">@inv.PaidAmount.ToString("N0") đ</td>
+                                        <td class="text-end text-danger fw-bold">
+                                            @inv.Balance.ToString("N0") đ
+                                        </td>
+                                    </tr>
+                                    priority++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+            @if (selectedCustomerId > 0 && unpaidInvoices != null && unpaidInvoices.Any())
+            {
+                <div class="card-footer bg-light py-3 d-flex justify-content-between">
+                    <span class="text-muted">Tổng nợ cần thu tất cả hóa đơn:</span>
+                    <span class="fw-bold text-danger fs-5">@currentDebt.ToString("N0") đ</span>
+                </div>
+            }
+        </div>
     </div>
 </div>
 
 @code {
     private IEnumerable<Customer>? customers;
+    private Customer? selectedCustomer;
     private int selectedCustomerId;
+    private decimal currentDebt;
+    private List<Invoice>? unpaidInvoices;
     private decimal paymentAmount;
     private DateTime paymentDate = DateTime.Now;
     private string note = "";
@@ -66,6 +249,39 @@
     protected override async Task OnInitializedAsync()
     {
         customers = await ViewCustomerListUseCase.ExecuteAsync();
+    }
+
+    private async Task OnCustomerSelected(ChangeEventArgs e)
+    {
+        errorMessage = "";
+        successMessage = "";
+        paymentAmount = 0;
+        
+        if (int.TryParse(e.Value?.ToString(), out int cId) && cId > 0)
+        {
+            selectedCustomerId = cId;
+            selectedCustomer = customers?.FirstOrDefault(c => c.Id == cId);
+            await LoadCustomerInvoicesAsync(cId);
+        }
+        else
+        {
+            selectedCustomerId = 0;
+            selectedCustomer = null;
+            unpaidInvoices = null;
+            currentDebt = 0;
+        }
+    }
+
+    private async Task LoadCustomerInvoicesAsync(int customerId)
+    {
+        currentDebt = await GetCustomerDebtUseCase.ExecuteAsync(customerId);
+        var invoices = await GetUnpaidInvoicesUseCase.ExecuteAsync(customerId);
+        unpaidInvoices = invoices.ToList();
+    }
+
+    private void FillFullDebt()
+    {
+        paymentAmount = currentDebt;
     }
 
     private async Task RecordPayment()
@@ -88,15 +304,18 @@
         try
         {
             var paymentId = await RecordPaymentUseCase.ExecuteAsync(selectedCustomerId, paymentAmount, paymentDate, note);
-            successMessage = $"Thu tiền thành công! Mã phiếu thu mới: #{paymentId}";
+            successMessage = $"Thu tiền thành công! Phiếu thu #{paymentId} đã hoàn tất phân bổ gạch nợ theo FIFO.";
             
-            selectedCustomerId = 0;
+            var savedCustomerId = selectedCustomerId;
             paymentAmount = 0;
             note = "";
+            
+            // Tải lại hóa đơn và công nợ sau khi gạch nợ
+            await LoadCustomerInvoicesAsync(savedCustomerId);
         }
         catch (Exception ex)
         {
-            errorMessage = ex.Message;
+            errorMessage = $"Lỗi khi ghi nhận phiếu thu: {ex.Message}";
         }
     }
 }

@@ -5,7 +5,6 @@
 @using WebBanHang.UseCases.Invoices
 @using WebBanHang.UseCases.Customers
 @using WebBanHang.UseCases.Products
-@using WebBanHang.UseCases.PluginInterfaces.DataStore
 @using WebBanHang.CoreBusiness.Entities
 @using WebBanHang.CoreBusiness.Exceptions
 @using WebBanHang.Services
@@ -16,7 +15,7 @@
 @inject IViewCustomerListUseCase ViewCustomerListUseCase
 @inject IViewProductCatalogUseCase ViewProductCatalogUseCase
 @inject IAssessCreditRiskUseCase AssessCreditRiskUseCase
-@inject ICustomerRepository CustomerRepository
+@inject IGetCustomerDebtUseCase GetCustomerDebtUseCase
 @inject DraftInvoiceStateService State
 
 <h3>Lập Hóa Đơn</h3>
@@ -178,7 +177,7 @@
             if (customer != null)
             {
                 State.SetCustomer(customer);
-                currentDebt = await CustomerRepository.GetTotalOutstandingDebtAsync(customerId);
+                currentDebt = await GetCustomerDebtUseCase.ExecuteAsync(customerId);
                 try
                 {
                     customerRisk = await AssessCreditRiskUseCase.ExecuteAsync(customerId);
@@ -233,6 +232,7 @@
 
         try
         {
+            var customerId = State.SelectedCustomerId.Value;
             var lines = State.Items.Select(i => new InvoiceLine
             {
                 ProductId = i.ProductId,
@@ -240,11 +240,13 @@
                 UnitPrice = i.UnitPrice
             }).ToList();
 
-            var invoiceId = await CreateInvoiceUseCase.ExecuteAsync(State.SelectedCustomerId.Value, DateTime.Now, lines);
+            var invoiceId = await CreateInvoiceUseCase.ExecuteAsync(customerId, DateTime.Now, lines);
             
-            successMessage = $"Lập hóa đơn thành công! Mã hóa đơn mới tạo là: #{invoiceId}.";
+            successMessage = $"Lập hóa đơn thành công! Mã hóa đơn mới tạo là: #{invoiceId}. Tồn kho và công nợ đã được cập nhật.";
             State.Clear();
-            currentDebt = await CustomerRepository.GetTotalOutstandingDebtAsync(State.SelectedCustomerId.Value);
+            currentDebt = 0;
+            customerRisk = null;
+            products = await ViewProductCatalogUseCase.ExecuteAsync();
         }
         catch (CreditLimitExceededException ex)
         {
