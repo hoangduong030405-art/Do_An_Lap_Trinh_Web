@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgSimply" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="goldenOil" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="30%" stop-color="#f59e0b"/>
+      <stop offset="70%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="greenCap" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#14532d"/>
+      <stop offset="50%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <filter id="shadowOil" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- NỀN TRANG TRÍ -->
+  <rect width="400" height="400" rx="24" fill="url(#bgSimply)"/>
+  
+  <!-- BÓNG ĐỔ CHAI DẦU -->
+  <ellipse cx="200" cy="345" rx="55" ry="12" fill="#000000" opacity="0.2"/>
+
+  <!-- CHAI DẦU ĂN SIMPLY 1 LÍT -->
+  <g filter="url(#shadowOil)">
+    <!-- Nắp chai xanh lá cây -->
+    <rect x="186" y="55" width="28" height="22" rx="3" fill="url(#greenCap)"/>
+    <rect x="183" y="73" width="34" height="6" rx="2" fill="#15803d"/>
+
+    <!-- Cổ chai trong suốt -->
+    <path d="M 190 79 L 190 105 L 160 145 L 160 330 Q 160 340 175 340 L 225 340 Q 240 340 240 330 L 240 145 L 210 105 L 210 79 Z" fill="url(#goldenOil)"/>
+    
+    <!-- Lớp vỏ nhựa trong phản chiếu ánh sáng -->
+    <path d="M 166 150 L 166 325" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- NHÃN CHAI DẦU ĂN SIMPLY -->
+    <rect x="162" y="175" width="76" height="120" rx="4" fill="#ffffff" stroke="#fde68a" stroke-width="1"/>
+    
+    <!-- Dải đỏ trái tim Simply -->
+    <rect x="162" y="178" width="76" height="26" fill="#dc2626"/>
+    <text x="200" y="196" font-family="'Arial Black', Impact, sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">Simply</text>
+    
+    <!-- Biểu tượng đậu nành & tim xanh -->
+    <circle cx="200" cy="222" r="14" fill="#16a34a"/>
+    <circle cx="197" cy="221" r="5" fill="#fde047"/>
+    <circle cx="203" cy="223" r="5" fill="#fde047"/>
+
+    <text x="200" y="250" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="900" fill="#15803d" text-anchor="middle">100% ĐẬU NÀNH</text>
+    <text x="200" y="261" font-family="'Segoe UI', sans-serif" font-size="7" font-weight="bold" fill="#b45309" text-anchor="middle">NGUYÊN CHẤT</text>
+    <text x="200" y="274" font-family="'Segoe UI', sans-serif" font-size="7" font-weight="bold" fill="#dc2626" text-anchor="middle">GIÀU OMEGA 3-6-9</text>
+    <text x="200" y="288" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="900" fill="#1e293b" text-anchor="middle">1 LÍT</text>
+  </g>
+
+  <!-- HUY HIỆU QUY CÁCH B2B -->
+  <g transform="translate(20, 20)">
+    <rect width="110" height="28" rx="14" fill="#d97706"/>
+    <text x="55" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">CHAI 1 LÍT</text>
+  </g>
+  <g transform="translate(245, 20)">
+    <rect width="135" height="28" rx="14" fill="#ffffff" stroke="#fcd34d" stroke-width="1.5"/>
+    <text x="312" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#d97706" text-anchor="middle">DẦU ĐẬU NÀNH SIMPLY</text>
+  </g>
+</svg>

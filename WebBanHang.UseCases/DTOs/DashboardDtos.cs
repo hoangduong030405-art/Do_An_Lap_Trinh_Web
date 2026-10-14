@@ -35,6 +35,7 @@ namespace WebBanHang.UseCases.DTOs
         public int ProductId { get; set; }
         public string ProductCode { get; set; } = string.Empty;
         public string ProductName { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
         public int TotalQuantitySold { get; set; }
         public decimal TotalRevenue { get; set; }
     }

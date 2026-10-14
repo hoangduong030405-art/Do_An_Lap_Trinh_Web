@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff1f2"/>
+      <stop offset="100%" stop-color="#fee2e2"/>
+    </linearGradient>
+    <linearGradient id="canBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#991b1b"/>
+      <stop offset="25%" stop-color="#dc2626"/>
+      <stop offset="60%" stop-color="#ef4444"/>
+      <stop offset="85%" stop-color="#b91c1c"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="40%" stop-color="#e2e8f0"/>
+      <stop offset="70%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- NỀN TRANG TRÍ -->
+  <rect width="400" height="400" rx="24" fill="url(#bg)"/>
+  
+  <!-- BÓNG ĐỔ LON -->
+  <ellipse cx="200" cy="340" rx="75" ry="14" fill="#000000" opacity="0.2"/>
+
+  <!-- THÂN LON COCA-COLA SLEEK 320ML -->
+  <g filter="url(#shadow)">
+    <!-- Đỉnh lon kim loại -->
+    <ellipse cx="200" cy="72" rx="48" ry="10" fill="url(#metal)"/>
+    <ellipse cx="200" cy="70" rx="42" ry="7" fill="#cbd5e1"/>
+    <!-- Nắp mở lon -->
+    <ellipse cx="200" cy="69" rx="16" ry="4" fill="#64748b"/>
+    <circle cx="206" cy="69" r="3" fill="#475569"/>
+
+    <!-- Thân lon thon cao Sleek -->
+    <path d="M 152 72 L 150 310 Q 150 324 168 324 L 232 324 Q 250 324 250 310 L 248 72 Z" fill="url(#canBody)"/>
+
+    <!-- Đáy lon kim loại -->
+    <path d="M 160 322 Q 200 330 240 322 L 236 332 Q 200 338 164 332 Z" fill="url(#metal)"/>
+
+    <!-- VỆT SÓNG TRẮNG ĐẶC TRƯNG COCA-COLA -->
+    <path d="M 150 160 Q 180 185 210 145 T 250 175 L 250 200 Q 210 175 180 215 T 150 185 Z" fill="#ffffff" opacity="0.95"/>
+    <path d="M 150 178 Q 185 205 215 165 T 250 195 L 250 202 Q 215 172 185 212 T 150 185 Z" fill="#e2e8f0" opacity="0.6"/>
+
+    <!-- CHỮ COCA-COLA NỔI BẬT DỌC THEO THÂN LON -->
+    <g transform="translate(182, 230) rotate(-90)">
+      <text x="0" y="0" font-family="'Brush Script MT', 'Segoe Script', cursive, sans-serif" font-size="34" font-weight="bold" fill="#ffffff" letter-spacing="1">Coca-Cola</text>
+    </g>
+
+    <!-- CHI TIẾT LON NHỎ -->
+    <text x="200" y="278" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold" fill="#ffffff" opacity="0.9" text-anchor="middle" letter-spacing="2">ORIGINAL TASTE</text>
+    <text x="200" y="295" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="900" fill="#fef08a" text-anchor="middle">320 ml</text>
+  </g>
+
+  <!-- HUY HIỆU QUY CÁCH ĐÓNG THÙNG B2B -->
+  <g transform="translate(20, 20)">
+    <rect width="130" height="28" rx="14" fill="#dc2626"/>
+    <text x="65" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">THÙNG 24 LON</text>
+  </g>
+  <g transform="translate(280, 20)">
+    <rect width="100" height="28" rx="14" fill="#ffffff" stroke="#fca5a5" stroke-width="1.5"/>
+    <text x="330" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#dc2626" text-anchor="middle">SLEEK 320ML</text>
+  </g>
+</svg>

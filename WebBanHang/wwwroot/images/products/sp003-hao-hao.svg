@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgHaoHao" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fdf2f8"/>
+      <stop offset="100%" stop-color="#fce7f3"/>
+    </linearGradient>
+    <linearGradient id="packPink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="50%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <linearGradient id="goldNoodles" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadowPack" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- NỀN TRANG TRÍ -->
+  <rect width="400" height="400" rx="24" fill="url(#bgHaoHao)"/>
+  
+  <!-- BÓNG ĐỔ GÓI MÌ -->
+  <ellipse cx="200" cy="340" rx="110" ry="16" fill="#000000" opacity="0.2"/>
+
+  <!-- GÓI MÌ HẢO HẢO HỒNG ĐẶC TRƯNG -->
+  <g filter="url(#shadowPack)">
+    <!-- Túi mì hình chữ nhật bo góc phồng 3D -->
+    <rect x="90" y="80" width="220" height="245" rx="16" fill="url(#packPink)"/>
+
+    <!-- Viền răng cưa mép trên và dưới gói mì -->
+    <path d="M 90 80 L 100 74 L 110 80 L 120 74 L 130 80 L 140 74 L 150 80 L 160 74 L 170 80 L 180 74 L 190 80 L 200 74 L 210 80 L 220 74 L 230 80 L 240 74 L 250 80 L 260 74 L 270 80 L 280 74 L 290 80 L 300 74 L 310 80" stroke="#be123c" stroke-width="4" fill="none"/>
+    <path d="M 90 325 L 100 331 L 110 325 L 120 331 L 130 325 L 140 331 L 150 325 L 160 331 L 170 325 L 180 331 L 190 325 L 200 331 L 210 325 L 220 331 L 230 325 L 240 331 L 250 325 L 260 331 L 270 325 L 280 331 L 290 325 L 300 331 L 310 325" stroke="#be123c" stroke-width="4" fill="none"/>
+
+    <!-- LOGO ACECOOK ĐẦU BẾP NHỎ GÓC TRÊN TRÁI -->
+    <rect x="105" y="90" width="45" height="18" rx="4" fill="#ffffff"/>
+    <text x="127" y="103" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="900" fill="#dc2626" text-anchor="middle">Acecook</text>
+
+    <!-- KHỐI CHỮ "HẢO HẢO" CHỮ ĐỎ VIỀN VÀNG TRẮNG ĐẶC TRƯNG -->
+    <rect x="105" y="115" width="190" height="52" rx="8" fill="#ffffff" opacity="0.95"/>
+    <text x="200" y="152" font-family="'Arial Black', Impact, sans-serif" font-size="34" font-weight="900" fill="#dc2626" text-anchor="middle" letter-spacing="1">Hảo Hảo</text>
+
+    <!-- BANNER VÀNG "MÌ TÔM CHUA CAY" -->
+    <path d="M 100 174 L 300 174 L 290 200 L 110 200 Z" fill="#fbbf24"/>
+    <text x="200" y="193" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="900" fill="#78350f" text-anchor="middle" letter-spacing="1">MÌ TÔM CHUA CAY</text>
+
+    <!-- MINH HỌA TÔ MÌ NGON HẤP DẪN CÓ TÔM & ỚT -->
+    <g transform="translate(200, 260)">
+      <!-- Tô sứ trắng -->
+      <ellipse cx="0" cy="15" rx="65" ry="25" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+      <path d="M -60 15 Q 0 65 60 15 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+      <!-- Sợi mì vàng óng -->
+      <ellipse cx="0" cy="10" rx="52" ry="18" fill="url(#goldNoodles)"/>
+      <!-- Con tôm đỏ tươi -->
+      <path d="M -20 0 Q 0 -15 25 5 Q 10 15 -10 5 Z" fill="#ef4444"/>
+      <circle cx="20" cy="5" r="2" fill="#000000"/>
+      <!-- Ớt tươi & hành xanh -->
+      <circle cx="-25" cy="12" r="4" fill="#22c55e"/>
+      <circle cx="30" cy="8" r="4" fill="#22c55e"/>
+      <polygon points="5,8 15,14 10,18" fill="#dc2626"/>
+      <!-- Hơi nóng bốc lên -->
+      <path d="M -15 -10 Q -10 -25 -15 -35" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M 15 -10 Q 20 -25 15 -35" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
+    </g>
+
+    <!-- KHỐI LƯỢNG GÓI -->
+    <text x="285" y="315" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="900" fill="#ffffff">75g</text>
+  </g>
+
+  <!-- HUY HIỆU QUY CÁCH ĐÓNG THÙNG B2B -->
+  <g transform="translate(20, 20)">
+    <rect width="130" height="28" rx="14" fill="#e11d48"/>
+    <text x="65" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">THÙNG 30 GÓI</text>
+  </g>
+  <g transform="translate(255, 20)">
+    <rect width="125" height="28" rx="14" fill="#ffffff" stroke="#fda4af" stroke-width="1.5"/>
+    <text x="317" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#e11d48" text-anchor="middle">ACECOOK HẢO HẢO</text>
+  </g>
+</svg>

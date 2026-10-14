@@ -316,8 +316,16 @@ else if (dashboard != null)
                                     {
                                         <tr>
                                             <td>
-                                                <div class="fw-bold">@p.ProductName</div>
-                                                <small class="text-muted">@p.ProductCode</small>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/products/sp001-coca-cola.svg" : p.ImageUrl)" 
+                                                         alt="@p.ProductName" 
+                                                         style="width: 36px; height: 36px; object-fit: contain;" 
+                                                         class="rounded border bg-light p-1 shadow-xs" />
+                                                    <div>
+                                                        <div class="fw-bold">@p.ProductName</div>
+                                                        <small class="text-muted">@p.ProductCode</small>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
                                                 <span class="badge bg-primary fs-6">@p.TotalQuantitySold</span>

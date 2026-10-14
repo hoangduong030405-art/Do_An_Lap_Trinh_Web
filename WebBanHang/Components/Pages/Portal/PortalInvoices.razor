@@ -174,6 +174,10 @@
                                                 <i class="bi bi-eye me-1"></i> Chi tiết
                                             </button>
 
+                                            <a href="/invoices/print/@inv.Id" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-2.5" title="In Hóa Đơn A4">
+                                                <i class="bi bi-printer me-1"></i> In
+                                            </a>
+
                                             @if (inv.Balance > 0)
                                             {
                                                 <button class="btn btn-sm btn-danger rounded-pill px-2.5 shadow-xs fw-semibold"
@@ -342,7 +346,10 @@
                     </div>
                 </div>
 
-                <div class="modal-footer bg-light py-2 px-4">
+                <div class="modal-footer bg-light py-2 px-4 d-flex justify-content-between align-items-center">
+                    <a href="/invoices/print/@selectedInvoiceDetail.Id" target="_blank" class="btn btn-outline-primary rounded-pill btn-sm px-3">
+                        <i class="bi bi-printer me-1"></i> In Hóa Đơn A4
+                    </a>
                     <button type="button" class="btn btn-secondary rounded-pill btn-sm px-4" @onclick="CloseDetailModal">
                         Đóng
                     </button>

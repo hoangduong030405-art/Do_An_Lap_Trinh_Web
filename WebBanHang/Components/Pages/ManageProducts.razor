@@ -77,8 +77,13 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Hình ảnh sản phẩm (URL hoặc đường dẫn ảnh)</label>
+                        <InputText @bind-Value="productModel.ImageUrl" class="form-control" placeholder="VD: /images/products/sp001-coca-cola.svg" />
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label fw-bold">Mô tả sản phẩm</label>
-                        <InputTextArea @bind-Value="productModel.Description" class="form-control" rows="3" placeholder="Ghi chú chi tiết quy cách, tính năng..." />
+                        <InputTextArea @bind-Value="productModel.Description" class="form-control" rows="2" placeholder="Ghi chú chi tiết quy cách, tính năng..." />
                     </div>
 
                     <div class="d-grid gap-2">
@@ -141,6 +146,7 @@
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
                                 <tr>
+                                    <th style="width: 60px;" class="text-center">Ảnh</th>
                                     <th>Mã SP</th>
                                     <th>Tên Hàng Hóa</th>
                                     <th>ĐVT</th>
@@ -153,7 +159,13 @@
                                 @foreach (var p in products)
                                 {
                                     <tr>
-                                        <td><span class="badge bg-dark">@p.ProductCode</span></td>
+                                        <td class="text-center">
+                                            <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/products/sp001-coca-cola.svg" : p.ImageUrl)" 
+                                                 alt="@p.Name" 
+                                                 style="width: 44px; height: 44px; object-fit: contain;" 
+                                                 class="rounded border bg-white p-1 shadow-xs" />
+                                        </td>
+                                        <td><span class="badge bg-dark font-monospace">@p.ProductCode</span></td>
                                         <td>
                                             <div class="fw-bold">@p.Name</div>
                                             @if (!string.IsNullOrEmpty(p.Description))
@@ -270,6 +282,7 @@
             Unit = p.Unit,
             UnitPrice = p.UnitPrice,
             StockQuantity = p.StockQuantity,
+            ImageUrl = p.ImageUrl ?? "",
             Description = p.Description
         };
         successMessage = null;

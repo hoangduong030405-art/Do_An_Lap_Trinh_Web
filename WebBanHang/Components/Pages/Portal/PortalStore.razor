@@ -119,6 +119,14 @@
                                             }
                                         </div>
 
+                                        <!-- HÌNH ẢNH SẢN PHẨM CHUẨN XÁC B2B -->
+                                        <div class="product-img-box bg-light rounded-3 p-2 mb-2 text-center position-relative d-flex align-items-center justify-content-center border" style="height: 150px;">
+                                            <img src="@(string.IsNullOrEmpty(prod.ImageUrl) ? "/images/products/sp001-coca-cola.svg" : prod.ImageUrl)" 
+                                                 alt="@prod.Name" 
+                                                 class="img-fluid h-100 object-fit-contain" 
+                                                 loading="lazy" />
+                                        </div>
+
                                         <!-- Tên SP -->
                                         <h6 class="fw-bold text-slate-navy mb-1 line-clamp-2" title="@prod.Name">
                                             @prod.Name

@@ -146,11 +146,11 @@ namespace WebBanHang.Plugins.DataStore.SQL
         {
             using var connection = new SqlConnection(_connectionString);
             var sql = @"
-                SELECT TOP (@Top) l.ProductId, p.ProductCode, p.Name AS ProductName,
+                SELECT TOP (@Top) l.ProductId, p.ProductCode, p.Name AS ProductName, p.ImageUrl,
                        SUM(l.Quantity) AS TotalQuantitySold, SUM(l.Quantity * l.UnitPrice) AS TotalRevenue
                 FROM InvoiceLines l
                 INNER JOIN Products p ON l.ProductId = p.Id
-                GROUP BY l.ProductId, p.ProductCode, p.Name
+                GROUP BY l.ProductId, p.ProductCode, p.Name, p.ImageUrl
                 ORDER BY TotalQuantitySold DESC";
 
             return await connection.QueryAsync<TopSellingProductDto>(sql, new { Top = top });

@@ -25,5 +25,6 @@ namespace WebBanHang.UseCases.DTOs
         public int StockQuantity { get; set; } = 0;
 
         public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }

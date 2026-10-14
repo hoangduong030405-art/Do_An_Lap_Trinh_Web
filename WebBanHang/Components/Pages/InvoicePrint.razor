@@ -1,0 +1,234 @@
+@page "/invoices/print/{Id:int}"
+@rendermode InteractiveServer
+
+@using WebBanHang.UseCases.Invoices
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.CoreBusiness.Entities
+
+@inject IViewInvoiceDetailUseCase ViewInvoiceDetailUseCase
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>In Hóa Đơn @(invoice?.InvoiceNumber ?? "") - ECO2415</PageTitle>
+
+<!-- THANH CÔNG CỤ ĐIỀU KHIỂN (ẨN KHI IN) -->
+<div class="d-print-none bg-white border-bottom shadow-sm py-2 px-4 mb-4 sticky-top">
+    <div class="d-flex justify-content-between align-items-center max-w-print mx-auto">
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" @onclick="GoBack">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại
+            </button>
+            <span class="text-muted small">|</span>
+            <span class="fw-bold text-slate-navy">Bản In Hóa Đơn Bán Hàng & Phiếu Thu</span>
+            @if (invoice != null)
+            {
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace">@invoice.InvoiceNumber</span>
+            }
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-primary btn-sm rounded-pill px-4 fw-bold shadow-sm" @onclick="TriggerPrint">
+                <i class="bi bi-printer-fill me-1.5"></i> In Hóa Đơn / Lưu PDF (Ctrl + P)
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="print-container mx-auto px-3 pb-5">
+    @if (loading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Đang tải bản in hóa đơn...</p>
+        </div>
+    }
+    else if (invoice == null)
+    {
+        <div class="alert alert-danger text-center my-5">
+            <i class="bi bi-exclamation-triangle fs-2 d-block mb-2"></i>
+            <h5>Không tìm thấy thông tin hóa đơn này!</h5>
+            <p class="text-muted small">Hóa đơn có thể đã bị xóa hoặc mã số không tồn tại trong hệ thống.</p>
+            <button class="btn btn-outline-primary btn-sm" @onclick="GoBack">Quay lại danh sách</button>
+        </div>
+    }
+    else
+    {
+        <!-- KHUNG HÓA ĐƠN TIÊU CHUẨN A4 -->
+        <div class="invoice-a4-sheet bg-white p-5 border rounded-3 shadow-sm" id="printableInvoiceArea">
+            <!-- HEADER CÔNG TY PHÂN PHỐI -->
+            <div class="row pb-3 mb-3 border-bottom border-2 border-dark align-items-center">
+                <div class="col-7">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <div class="bg-primary text-white p-2 rounded-2 d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="bi bi-building fs-5"></i>
+                        </div>
+                        <h5 class="fw-bold text-primary mb-0">CÔNG TY CỔ PHẦN PHÂN PHỐI B2B ECO2415</h5>
+                    </div>
+                    <div class="small text-muted">Địa chỉ: 123 Đường Công Nghệ, Quận Tân Bình, TP. Hồ Chí Minh</div>
+                    <div class="small text-muted">Hotline: 1900 6868 • Email: sales@eco2415.vn</div>
+                    <div class="small text-muted">Mã số thuế: <strong>0312345678</strong> • TK VCB: 101870000001</div>
+                </div>
+                <div class="col-5 text-end">
+                    <h4 class="fw-extrabold text-slate-navy mb-1 tracking-tight">HÓA ĐƠN BÁN HÀNG</h4>
+                    <div class="font-monospace fw-bold text-danger fs-6">SỐ: @invoice.InvoiceNumber</div>
+                    <div class="small text-muted">Ngày lập: <strong>@invoice.InvoiceDate.ToString("dd/MM/yyyy HH:mm")</strong></div>
+                    <div class="small text-danger fw-semibold">Hạn thanh toán: @invoice.DueDate.ToString("dd/MM/yyyy")</div>
+                </div>
+            </div>
+
+            <!-- THÔNG TIN ĐẠI LÝ / KHÁCH HÀNG MUA HÀNG -->
+            <div class="p-3 rounded-2 bg-light border mb-4">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="small"><span class="text-muted">Đơn vị mua hàng:</span> <strong class="fs-6 text-dark">@invoice.CustomerName</strong></div>
+                        <div class="small"><span class="text-muted">Mã đại lý:</span> <strong class="font-monospace">@invoice.CustomerCode</strong></div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="small"><span class="text-muted">Điện thoại:</span> <strong>@invoice.CustomerPhone</strong></div>
+                        <div class="small"><span class="text-muted">Địa chỉ nhận hàng:</span> <strong>@invoice.CustomerAddress</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BẢNG CHI TIẾT CÁC MẶT HÀNG -->
+            <table class="table table-bordered align-middle mb-4">
+                <thead class="table-light text-center border-dark">
+                    <tr>
+                        <th style="width: 50px;">STT</th>
+                        <th style="width: 110px;">Mã Hàng</th>
+                        <th>Tên Hàng Hóa / Quy Cách</th>
+                        <th style="width: 80px;">ĐVT</th>
+                        <th style="width: 70px;">SL</th>
+                        <th style="width: 140px;" class="text-end">Đơn Giá</th>
+                        <th style="width: 150px;" class="text-end">Thành Tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int idx = 1; }
+                    @foreach (var line in invoice.Lines)
+                    {
+                        <tr>
+                            <td class="text-center text-muted small">@(idx++)</td>
+                            <td class="font-monospace text-muted small">@line.ProductCode</td>
+                            <td class="fw-semibold">@line.ProductName</td>
+                            <td class="text-center">@line.Unit</td>
+                            <td class="text-center fw-bold">@line.Quantity</td>
+                            <td class="text-end">@line.UnitPrice.ToString("N0") đ</td>
+                            <td class="text-end fw-bold text-dark">@line.LineTotal.ToString("N0") đ</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot class="border-dark">
+                    <tr>
+                        <td colspan="6" class="text-end fw-bold">TỔNG CỘNG TIỀN HÀNG:</td>
+                        <td class="text-end fw-bold text-primary fs-6">@invoice.TotalAmount.ToString("N0") đ</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="text-end text-muted">Đã thanh toán / cấn trừ:</td>
+                        <td class="text-end text-success fw-semibold">@invoice.PaidAmount.ToString("N0") đ</td>
+                    </tr>
+                    <tr class="table-light">
+                        <td colspan="6" class="text-end fw-bold text-danger fs-6">CÒN PHẢI THANH TOÁN (CÔNG NỢ):</td>
+                        <td class="text-end fw-bold text-danger fs-5">@invoice.Balance.ToString("N0") đ</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- PHẦN VIETQR THANH TOÁN & CHỮ KÝ XÁC NHẬN -->
+            <div class="row align-items-center pt-2">
+                <div class="col-6">
+                    @if (invoice.Balance > 0)
+                    {
+                        <div class="border rounded-3 p-3 bg-light d-flex align-items-center gap-3">
+                            <img src="https://img.vietqr.io/image/970436-101870000001-compact2.png?amount=@Convert.ToInt64(invoice.Balance)&addInfo=HD%20@invoice.InvoiceNumber&accountName=CONG%20TY%20ECO2415"
+                                 alt="VietQR Napas 247"
+                                 style="width: 125px; height: 125px; object-fit: contain;" />
+                            <div class="small">
+                                <div class="fw-bold text-primary mb-1"><i class="bi bi-qr-code-scan"></i> QUÉT MÃ VIETQR NAPAS 24/7</div>
+                                <div>Ngân hàng: <strong>Vietcombank (VCB)</strong></div>
+                                <div>Số TK: <strong>101870000001</strong></div>
+                                <div>Số tiền: <strong class="text-danger">@invoice.Balance.ToString("N0") đ</strong></div>
+                                <div>Nội dung: <strong class="font-monospace text-primary">HD @invoice.InvoiceNumber</strong></div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success d-flex align-items-center gap-2 mb-0 py-3">
+                            <i class="bi bi-check-circle-fill fs-3"></i>
+                            <div>
+                                <strong class="d-block">HÓA ĐƠN ĐÃ ĐƯỢC TẤT TOÁN ĐỦ</strong>
+                                <small>Không còn số dư công nợ phải thu cho hóa đơn này.</small>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="col-6 text-center">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="fw-bold small text-uppercase">Đại Diện Người Mua</div>
+                            <div class="text-muted small fst-italic">(Ký & ghi rõ họ tên)</div>
+                            <div style="height: 75px;"></div>
+                            <div class="fw-bold small text-dark">@invoice.CustomerName</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="fw-bold small text-uppercase">Kế Toán Bán Hàng</div>
+                            <div class="text-muted small fst-italic">(Ký, đóng dấu)</div>
+                            <div style="height: 75px;"></div>
+                            <div class="fw-bold small text-primary">Bộ Phận AR / Kế Toán</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER HÓA ĐƠN -->
+            <div class="mt-4 pt-3 border-top text-center text-muted small fst-italic">
+                Cảm ơn Quý khách hàng đã đồng hành cùng Công ty Cổ phần Phân phối B2B ECO2415! Mọi thắc mắc xin liên hệ tổng đài 1900 6868.
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .max-w-print {
+        max-width: 860px;
+    }
+    .print-container {
+        max-width: 860px;
+    }
+    .invoice-a4-sheet {
+        min-height: 297mm;
+        box-sizing: border-box;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private InvoiceDetailDto? invoice;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        try
+        {
+            invoice = await ViewInvoiceDetailUseCase.ExecuteAsync(Id);
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/invoices");
+    }
+
+    private async Task TriggerPrint()
+    {
+        await JSRuntime.InvokeVoidAsync("window.print");
+    }
+}

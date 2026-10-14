@@ -111,28 +111,41 @@
         <h4>3. Sản Phẩm Khả Dụng</h4>
         @if (products != null && products.Any())
         {
-            <table class="table table-hover">
-                <thead>
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
                     <tr>
+                        <th style="width: 60px;" class="text-center">Ảnh</th>
                         <th>Mã SP</th>
                         <th>Tên SP</th>
                         <th>ĐVT</th>
-                        <th>Đơn Giá</th>
-                        <th>Tồn Kho</th>
-                        <th></th>
+                        <th class="text-end">Đơn Giá</th>
+                        <th class="text-center">Tồn Kho</th>
+                        <th class="text-center">Thao Tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var p in products)
                     {
                         <tr>
-                            <td>@p.ProductCode</td>
-                            <td>@p.Name</td>
+                            <td class="text-center">
+                                <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/products/sp001-coca-cola.svg" : p.ImageUrl)" 
+                                     alt="@p.Name" 
+                                     style="width: 44px; height: 44px; object-fit: contain;" 
+                                     class="rounded border bg-white p-1 shadow-xs" />
+                            </td>
+                            <td><span class="badge bg-dark font-monospace">@p.ProductCode</span></td>
+                            <td class="fw-semibold">@p.Name</td>
                             <td>@p.Unit</td>
-                            <td>@p.UnitPrice.ToString("N0")</td>
-                            <td>@p.StockQuantity</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" @onclick="() => State.AddProduct(p, 1)">+ Thêm</button>
+                            <td class="text-end fw-bold text-primary">@p.UnitPrice.ToString("N0") đ</td>
+                            <td class="text-center">
+                                <span class="badge @(p.StockQuantity <= 10 ? "bg-warning text-dark" : "bg-success")">
+                                    @p.StockQuantity
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-sm rounded-pill px-3" @onclick="() => State.AddProduct(p, 1)">
+                                    <i class="bi bi-cart-plus me-1"></i> + Thêm
+                                </button>
                             </td>
                         </tr>
                     }

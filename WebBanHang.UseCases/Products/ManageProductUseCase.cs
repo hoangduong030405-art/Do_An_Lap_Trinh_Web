@@ -23,6 +23,7 @@ namespace WebBanHang.UseCases.Products
                 Unit = model.Unit,
                 UnitPrice = model.UnitPrice,
                 StockQuantity = model.StockQuantity,
+                ImageUrl = model.ImageUrl,
                 Description = model.Description
             };
             return await _productRepository.AddAsync(product);
@@ -38,6 +39,7 @@ namespace WebBanHang.UseCases.Products
                 Unit = model.Unit,
                 UnitPrice = model.UnitPrice,
                 StockQuantity = model.StockQuantity,
+                ImageUrl = model.ImageUrl,
                 Description = model.Description
             };
             await _productRepository.UpdateAsync(product);

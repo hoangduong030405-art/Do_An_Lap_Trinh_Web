@@ -56,6 +56,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     Unit = @Unit, 
                     UnitPrice = @UnitPrice, 
                     StockQuantity = @StockQuantity, 
+                    ImageUrl = @ImageUrl,
                     Description = @Description
                 WHERE Id = @Id";
             await connection.ExecuteAsync(sql, product);

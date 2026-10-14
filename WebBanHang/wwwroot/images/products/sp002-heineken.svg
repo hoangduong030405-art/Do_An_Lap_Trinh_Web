@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgHeineken" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+    <linearGradient id="silverCan" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="25%" stop-color="#cbd5e1"/>
+      <stop offset="50%" stop-color="#f8fafc"/>
+      <stop offset="75%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <linearGradient id="heinekenGreen" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="50%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#065f46"/>
+    </linearGradient>
+    <filter id="shadowH" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- NỀN TRANG TRÍ -->
+  <rect width="400" height="400" rx="24" fill="url(#bgHeineken)"/>
+  
+  <!-- BÓNG ĐỔ LON -->
+  <ellipse cx="200" cy="340" rx="75" ry="14" fill="#000000" opacity="0.2"/>
+
+  <!-- THÂN LON HEINEKEN SILVER 330ML -->
+  <g filter="url(#shadowH)">
+    <!-- Đỉnh lon kim loại -->
+    <ellipse cx="200" cy="72" rx="48" ry="10" fill="url(#silverCan)"/>
+    <ellipse cx="200" cy="70" rx="42" ry="7" fill="#e2e8f0"/>
+    <ellipse cx="200" cy="69" rx="16" ry="4" fill="#94a3b8"/>
+    <circle cx="206" cy="69" r="3" fill="#64748b"/>
+
+    <!-- Thân lon bạc ánh kim Heineken Silver -->
+    <path d="M 152 72 L 150 310 Q 150 324 168 324 L 232 324 Q 250 324 250 310 L 248 72 Z" fill="url(#silverCan)"/>
+
+    <!-- Dải sọc xanh lục bảo Heineken đặc trưng -->
+    <rect x="150" y="145" width="100" height="95" fill="url(#heinekenGreen)"/>
+
+    <!-- Đáy lon kim loại -->
+    <path d="M 160 322 Q 200 330 240 322 L 236 332 Q 200 338 164 332 Z" fill="url(#silverCan)"/>
+
+    <!-- NGÔI SAO ĐỎ HEINEKEN BIỂU TƯỢNG -->
+    <g transform="translate(200, 122) scale(0.9)">
+      <polygon points="0,-16 4.7,-4.8 16.8,-4.8 7.3,2.4 10.8,14.4 0,7.2 -10.8,14.4 -7.3,2.4 -16.8,-4.8 -4.7,-4.8" fill="#dc2626"/>
+    </g>
+
+    <!-- CHỮ HEINEKEN TRẮNG TRÊN DẢI XANH -->
+    <g transform="translate(182, 222) rotate(-90)">
+      <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-size="25" font-weight="900" fill="#ffffff" letter-spacing="2">Heineken</text>
+    </g>
+
+    <!-- DÒNG CHỮ SILVER NỔI BẬT -->
+    <text x="200" y="270" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="900" fill="#047857" text-anchor="middle" letter-spacing="3">SILVER</text>
+    <text x="200" y="288" font-family="'Segoe UI', Roboto, sans-serif" font-size="8" font-weight="bold" fill="#64748b" text-anchor="middle" letter-spacing="1">EXTRA REFRESHING</text>
+    <text x="200" y="306" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="900" fill="#065f46" text-anchor="middle">330 ml</text>
+  </g>
+
+  <!-- HUY HIỆU QUY CÁCH ĐÓNG THÙNG B2B -->
+  <g transform="translate(20, 20)">
+    <rect width="130" height="28" rx="14" fill="#047857"/>
+    <text x="65" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">THÙNG 24 LON</text>
+  </g>
+  <g transform="translate(265, 20)">
+    <rect width="115" height="28" rx="14" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+    <text x="322" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#047857" text-anchor="middle">HEINEKEN SILVER</text>
+  </g>
+</svg>

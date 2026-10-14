@@ -124,9 +124,14 @@ else
                                 }
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-outline-primary" @onclick="() => OpenInvoiceDetail(inv.Id)">
-                                    <i class="bi bi-eye me-1"></i> Chi Tiết & In
-                                </button>
+                                <div class="d-flex justify-content-center gap-1">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-2.5" @onclick="() => OpenInvoiceDetail(inv.Id)">
+                                        <i class="bi bi-eye me-1"></i> Chi Tiết
+                                    </button>
+                                    <a href="/invoices/print/@inv.Id" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-2.5" title="In Hóa Đơn A4">
+                                        <i class="bi bi-printer me-1"></i> In
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -269,11 +274,16 @@ else
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Đóng</button>
-                    <button type="button" class="btn btn-success" @onclick="PrintInvoice">
-                        <i class="bi bi-printer me-1"></i> 🖨️ In Hóa Đơn & Mã VietQR
-                    </button>
+                <div class="modal-footer bg-light d-flex justify-content-between align-items-center">
+                    <a href="/invoices/print/@selectedInvoiceDetail.Id" target="_blank" class="btn btn-outline-primary rounded-pill btn-sm px-3">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Mở Trang In Toàn Màn Hình (A4)
+                    </a>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary rounded-pill btn-sm px-3" @onclick="CloseModal">Đóng</button>
+                        <button type="button" class="btn btn-success rounded-pill btn-sm px-3 fw-bold" @onclick="PrintInvoice">
+                            <i class="bi bi-printer me-1"></i> 🖨️ In Nhanh Tại Đây
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

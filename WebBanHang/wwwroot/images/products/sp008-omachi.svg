@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgOmachi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fdf4ff"/>
+      <stop offset="100%" stop-color="#fae8ff"/>
+    </linearGradient>
+    <linearGradient id="packOmachi" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#831843"/>
+      <stop offset="50%" stop-color="#500724"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="goldFont" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <filter id="shadowOmachi" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- NỀN TRANG TRÍ -->
+  <rect width="400" height="400" rx="24" fill="url(#bgOmachi)"/>
+  
+  <!-- BÓNG ĐỔ GÓI MÌ -->
+  <ellipse cx="200" cy="340" rx="110" ry="16" fill="#000000" opacity="0.22"/>
+
+  <!-- GÓI MÌ OMACHI ĐEN SANG TRỌNG -->
+  <g filter="url(#shadowOmachi)">
+    <!-- Túi mì hình chữ nhật bo góc phồng 3D -->
+    <rect x="90" y="80" width="220" height="245" rx="16" fill="url(#packOmachi)"/>
+
+    <!-- Viền răng cưa mép trên và dưới gói mì -->
+    <path d="M 90 80 L 100 74 L 110 80 L 120 74 L 130 80 L 140 74 L 150 80 L 160 74 L 170 80 L 180 74 L 190 80 L 200 74 L 210 80 L 220 74 L 230 80 L 240 74 L 250 80 L 260 74 L 270 80 L 280 74 L 290 80 L 300 74 L 310 80" stroke="#831843" stroke-width="4" fill="none"/>
+    <path d="M 90 325 L 100 331 L 110 325 L 120 331 L 130 325 L 140 331 L 150 325 L 160 331 L 170 325 L 180 331 L 190 325 L 200 331 L 210 325 L 220 331 L 230 325 L 240 331 L 250 325 L 260 331 L 270 325 L 280 331 L 290 325 L 300 331 L 310 325" stroke="#831843" stroke-width="4" fill="none"/>
+
+    <!-- LOGO MASAN NHỎ -->
+    <text x="110" y="102" font-family="'Segoe UI', sans-serif" font-size="8.5" font-weight="900" fill="#fbcfe8">MASAN</text>
+
+    <!-- CHỮ OMACHI VÀNG KIM NỔI BẬT -->
+    <text x="200" y="145" font-family="'Arial Black', Impact, sans-serif" font-size="34" font-weight="900" fill="url(#goldFont)" text-anchor="middle" letter-spacing="2">omachi</text>
+    
+    <!-- SUBTITLE KHOAI TÂY -->
+    <text x="200" y="165" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#fde047" text-anchor="middle" letter-spacing="1">MÌ KHOAI TÂY • SỢI DAI KHÔNG LO NÓNG</text>
+
+    <!-- BANNER NỔI BẬT "XỐT BÒ HẦM" -->
+    <rect x="110" y="176" width="180" height="26" rx="13" fill="#dc2626"/>
+    <text x="200" y="194" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">XỐT BÒ HẦM</text>
+
+    <!-- MINH HỌA BÁT MÌ XỐT BÒ HẦM NGON ĐẬM ĐÀ -->
+    <g transform="translate(200, 260)">
+      <!-- Tô sứ nâu đen cao cấp -->
+      <ellipse cx="0" cy="15" rx="65" ry="25" fill="#18181b" stroke="#71717a" stroke-width="2"/>
+      <path d="M -60 15 Q 0 65 60 15 Z" fill="#27272a" stroke="#71717a" stroke-width="2"/>
+      <!-- Sợi mì khoai tây vàng óng -->
+      <ellipse cx="0" cy="10" rx="52" ry="18" fill="url(#goldFont)"/>
+      <!-- Thịt bò hầm xốt đậm đà -->
+      <rect x="-15" y="-2" width="22" height="14" rx="4" fill="#7f1d1d"/>
+      <rect x="5" y="4" width="20" height="12" rx="4" fill="#881337"/>
+      <!-- Rau ngò & ớt đỏ -->
+      <circle cx="-25" cy="8" r="4" fill="#22c55e"/>
+      <circle cx="28" cy="8" r="4" fill="#22c55e"/>
+      <!-- Hơi khói nghi ngút -->
+      <path d="M -15 -10 Q -10 -25 -15 -35" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M 15 -10 Q 20 -25 15 -35" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6"/>
+    </g>
+
+    <!-- KHỐI LƯỢNG GÓI -->
+    <text x="285" y="315" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="900" fill="#fde047">80g</text>
+  </g>
+
+  <!-- HUY HIỆU QUY CÁCH B2B -->
+  <g transform="translate(20, 20)">
+    <rect width="130" height="28" rx="14" fill="#831843"/>
+    <text x="65" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">THÙNG 30 GÓI</text>
+  </g>
+  <g transform="translate(245, 20)">
+    <rect width="135" height="28" rx="14" fill="#ffffff" stroke="#f472b6" stroke-width="1.5"/>
+    <text x="312" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#831843" text-anchor="middle">OMACHI XỐT BÒ HẦM</text>
+  </g>
+</svg>

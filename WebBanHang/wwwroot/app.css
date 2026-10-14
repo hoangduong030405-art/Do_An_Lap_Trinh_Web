@@ -211,23 +211,105 @@ a, .btn-link {
 
 /* Media Print Styling for Invoice & Receipt & Reconciliation Printing */
 @media print {
-    body * {
-        visibility: hidden;
+    @page {
+        size: A4 portrait;
+        margin: 10mm;
     }
-    #printableInvoiceArea, #printableInvoiceArea * {
-        visibility: visible;
+
+    /* Ẩn tất cả thành phần giao diện không thuộc nội dung in */
+    .sidebar, 
+    .top-row, 
+    nav, 
+    .navbar, 
+    .btn, 
+    .btn-close, 
+    .modal-header, 
+    .modal-footer, 
+    .d-print-none, 
+    #blazor-error-ui, 
+    .breadcrumb, 
+    .alert,
+    .nav-footer {
+        display: none !important;
     }
+
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 12pt !important;
+    }
+
+    /* Reset các khung bọc bên ngoài để chiếm trọn trang in */
+    .page, 
+    .main-content-wrapper, 
+    article.content {
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        background: #ffffff !important;
+    }
+
+    /* Khi in từ Modal: Chuyển modal từ fixed layer thành khối văn bản in trực tiếp */
+    .modal {
+        position: static !important;
+        display: block !important;
+        overflow: visible !important;
+        background: transparent !important;
+        width: 100% !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .modal-dialog {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        transform: none !important;
+    }
+
+    .modal-content {
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .modal-body {
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
     #printableInvoiceArea {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
+        position: static !important;
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
     }
-    .modal-footer, .btn-close, .modal-header, .sidebar, .top-row, nav, .d-print-none {
-        display: none !important;
+
+    /* Bảng biểu và chi tiết hóa đơn */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    table th, table td {
+        border-color: #444444 !important;
+        color: #000000 !important;
+        padding: 6px 8px !important;
+    }
+
+    /* Giữ màu sắc chuẩn cho mã VietQR và badge khi in */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
