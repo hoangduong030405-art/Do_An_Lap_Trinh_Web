@@ -3,148 +3,154 @@
 @inject NavigationManager Navigation
 @implements IDisposable
 
-<div class="misa-app-container @(LayoutState.IsSidebarCollapsed ? "layout-collapsed" : "layout-expanded")">
+<div class="misa-app-root">
     
-    <!-- 1. LEFT SIDEBAR (MISA DARK SLATE THEME) -->
-    <aside class="misa-sidebar">
-        <NavMenu />
-    </aside>
-
-    <!-- 2. MAIN APPLICATION CONTENT AREA -->
-    <div class="misa-main-area d-flex flex-column">
+    <!-- 1. MISA ENTERPRISE TOP HEADER BAR (FULL WIDTH AT TOP) -->
+    <header class="misa-topbar px-3 d-flex align-items-center justify-content-between flex-shrink-0">
         
-        <!-- 2.1 MISA ENTERPRISE TOP HEADER BAR -->
-        <header class="misa-topbar px-3 d-flex align-items-center justify-content-between flex-shrink-0">
-            
-            <!-- LEFT: BRAND + COMPANY SELECTOR + FISCAL BADGE -->
-            <div class="d-flex align-items-center gap-3 overflow-hidden">
-                <!-- Brand Logo & Name -->
-                <a href="" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0">
-                    <img src="/images/misa-logo.svg" alt="MISA Logo" class="misa-brand-logo-img" />
-                    <span class="misa-brand-text fw-bold">Kế toán</span>
-                </a>
+        <!-- LEFT: 9-DOTS WAFFLE TOGGLE + BRAND + COMPANY SELECTOR + FISCAL BADGE -->
+        <div class="d-flex align-items-center gap-2 overflow-hidden">
+            <!-- 9-Dots Waffle App Launcher & Sidebar Toggle Button -->
+            <button class="misa-waffle-btn" 
+                    title="Ẩn / Hiện thanh điều hướng (Menu)" 
+                    @onclick="LayoutState.ToggleSidebar">
+                <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
+            </button>
 
-                <span class="misa-header-divider d-none d-md-inline"></span>
+            <!-- Brand Logo & Name -->
+            <a href="" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0 ms-1">
+                <img src="/images/misa-logo.svg" alt="MISA Logo" class="misa-brand-logo-img" />
+                <span class="misa-brand-text fw-bold">Kế toán</span>
+            </a>
 
-                <!-- Company Selector Dropdown -->
-                <div class="misa-company-selector d-none d-md-flex align-items-center gap-1 text-truncate" 
-                     title="@LayoutState.SelectedCompany">
-                    <span class="fw-semibold text-truncate text-slate-navy small">@LayoutState.SelectedCompany</span>
-                    <i class="bi bi-chevron-down text-muted small ms-0.5"></i>
-                </div>
+            <span class="misa-header-divider d-none d-md-inline ms-1"></span>
 
-                <!-- Fiscal Year Green Badge -->
-                <div class="misa-fiscal-badge d-none d-lg-inline-flex align-items-center gap-1.5 flex-shrink-0">
-                    <span class="misa-fiscal-dot"></span>
-                    <span>Dữ liệu kế toán @LayoutState.FiscalYear</span>
-                </div>
+            <!-- Company Selector Dropdown -->
+            <div class="misa-company-selector d-none d-md-flex align-items-center gap-1 text-truncate" 
+                 title="@LayoutState.SelectedCompany">
+                <span class="fw-semibold text-truncate text-slate-navy small">@LayoutState.SelectedCompany</span>
+                <i class="bi bi-chevron-down text-muted small ms-0.5"></i>
             </div>
 
-            <!-- RIGHT: GLOBAL AI SEARCH + ACTION TOOLBAR + USER PROFILE -->
-            <div class="d-flex align-items-center gap-2.5">
+            <!-- Fiscal Year Green Badge -->
+            <div class="misa-fiscal-badge d-none d-lg-inline-flex align-items-center gap-1.5 flex-shrink-0">
+                <span class="misa-fiscal-dot"></span>
+                <span>Dữ liệu kế toán @LayoutState.FiscalYear</span>
+            </div>
+        </div>
+
+        <!-- RIGHT: GLOBAL AI SEARCH + ACTION TOOLBAR + USER PROFILE -->
+        <div class="d-flex align-items-center gap-2.5">
+            <!-- Global AI Search Bar -->
+            <div class="misa-search-bar d-none d-xl-flex align-items-center gap-2">
+                <i class="bi bi-search text-muted small"></i>
+                <input type="text" class="misa-search-input" placeholder="Tìm kiếm thông minh..." />
+                <span class="misa-search-ai-badge">AI</span>
+            </div>
+
+            <!-- Action Toolbar Icons -->
+            <div class="d-flex align-items-center gap-1">
+                <button class="misa-tool-btn" title="Tải xuống ứng dụng / Báo cáo">
+                    <i class="bi bi-cloud-arrow-down fs-6"></i>
+                </button>
                 
-                <!-- Global AI Search Bar -->
-                <div class="misa-search-bar d-none d-xl-flex align-items-center gap-2">
-                    <i class="bi bi-search text-muted small"></i>
-                    <input type="text" class="misa-search-input" placeholder="Tìm kiếm thông minh..." />
-                    <span class="misa-search-ai-badge">AI</span>
-                </div>
+                <button class="misa-tool-btn" title="Video hướng dẫn nghiệp vụ">
+                    <i class="bi bi-play-circle fs-6"></i>
+                </button>
 
-                <!-- Action Toolbar Icons -->
-                <div class="d-flex align-items-center gap-1">
-                    <button class="misa-tool-btn" title="Tải xuống ứng dụng / Báo cáo">
-                        <i class="bi bi-cloud-arrow-down fs-6"></i>
-                    </button>
-                    
-                    <button class="misa-tool-btn" title="Video hướng dẫn nghiệp vụ">
-                        <i class="bi bi-play-circle fs-6"></i>
-                    </button>
+                <button class="misa-tool-btn" title="Mời đồng nghiệp / Thêm người dùng">
+                    <i class="bi bi-person-plus fs-6"></i>
+                </button>
 
-                    <button class="misa-tool-btn" title="Mời đồng nghiệp / Thêm người dùng">
-                        <i class="bi bi-person-plus fs-6"></i>
-                    </button>
+                <button class="misa-tool-btn position-relative" title="Tin nhắn & Hỗ trợ">
+                    <i class="bi bi-chat-dots-fill fs-6 text-primary"></i>
+                    <span class="misa-counter-badge">2</span>
+                </button>
 
-                    <button class="misa-tool-btn position-relative" title="Tin nhắn & Hỗ trợ">
-                        <i class="bi bi-chat-dots-fill fs-6 text-primary"></i>
-                        <span class="misa-counter-badge">2</span>
-                    </button>
+                <button class="misa-tool-btn position-relative" title="Thông báo hệ thống">
+                    <i class="bi bi-bell fs-6"></i>
+                    <span class="misa-dot-badge"></span>
+                </button>
 
-                    <button class="misa-tool-btn position-relative" title="Thông báo hệ thống">
-                        <i class="bi bi-bell fs-6"></i>
-                        <span class="misa-dot-badge"></span>
-                    </button>
+                <button class="misa-tool-btn" title="Trung tâm trợ giúp">
+                    <i class="bi bi-question-circle fs-6"></i>
+                </button>
 
-                    <button class="misa-tool-btn" title="Trung tâm trợ giúp">
-                        <i class="bi bi-question-circle fs-6"></i>
-                    </button>
-
-                    <button class="misa-tool-btn" title="Thiết lập hệ thống">
-                        <i class="bi bi-gear fs-6"></i>
-                    </button>
-                </div>
-
-                <!-- User Profile & Authentication -->
-                <AuthorizeView>
-                    <Authorized>
-                        <div class="dropdown">
-                            <div class="misa-user-btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button">
-                                <div class="misa-user-avatar d-flex align-items-center justify-content-center text-white fw-bold">
-                                    @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
-                                </div>
-                                <div class="d-none d-xxl-block text-start lh-1">
-                                    <div class="small fw-bold text-slate-navy text-truncate" style="max-width: 140px;">
-                                        @context.User.Identity?.Name
-                                    </div>
-                                    <small class="text-muted" style="font-size: 0.7rem;">
-                                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-                                    </small>
-                                </div>
-                                <i class="bi bi-chevron-down text-muted small ms-1"></i>
-                            </div>
-
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1">
-                                <li class="px-3 py-2 border-bottom">
-                                    <div class="fw-bold small text-dark">@context.User.Identity?.Name</div>
-                                    <div class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small mt-1">
-                                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-                                    </div>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/portal/dashboard">
-                                        <i class="bi bi-person-workspace text-muted"></i> Cổng thông tin làm việc
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/aging-report">
-                                        <i class="bi bi-bar-chart-line text-muted"></i> Báo cáo phân tích
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider my-1"></li>
-                                <li>
-                                    <a class="dropdown-item small py-2 text-danger d-flex align-items-center gap-2" href="/api/auth/logout">
-                                        <i class="bi bi-box-arrow-right"></i> Đăng xuất hệ thống
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </Authorized>
-                    <NotAuthorized>
-                        <a href="/login" class="btn btn-misa btn-sm d-flex align-items-center gap-1.5 py-1 px-3">
-                            <i class="bi bi-box-arrow-in-right"></i>
-                            <span>Đăng nhập</span>
-                        </a>
-                    </NotAuthorized>
-                </AuthorizeView>
-
+                <button class="misa-tool-btn" title="Thiết lập hệ thống">
+                    <i class="bi bi-gear fs-6"></i>
+                </button>
             </div>
-        </header>
 
-        <!-- 2.2 MAIN BODY CANVAS -->
-        <main class="misa-content-canvas flex-grow-1 p-3">
+            <!-- User Profile & Authentication -->
+            <AuthorizeView>
+                <Authorized>
+                    <div class="dropdown">
+                        <div class="misa-user-btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button">
+                            <div class="misa-user-avatar d-flex align-items-center justify-content-center text-white fw-bold">
+                                @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                            </div>
+                            <div class="d-none d-xxl-block text-start lh-1">
+                                <div class="small fw-bold text-slate-navy text-truncate" style="max-width: 140px;">
+                                    @context.User.Identity?.Name
+                                </div>
+                                <small class="text-muted" style="font-size: 0.7rem;">
+                                    @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                                </small>
+                            </div>
+                            <i class="bi bi-chevron-down text-muted small ms-1"></i>
+                        </div>
+
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1">
+                            <li class="px-3 py-2 border-bottom">
+                                <div class="fw-bold small text-dark">@context.User.Identity?.Name</div>
+                                <div class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small mt-1">
+                                    @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                                </div>
+                            </li>
+                            <li>
+                                <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/portal/dashboard">
+                                    <i class="bi bi-person-workspace text-muted"></i> Cổng đại lý B2B
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/aging-report">
+                                    <i class="bi bi-bar-chart-line text-muted"></i> Báo cáo tuổi nợ 4 xô
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li>
+                                <a class="dropdown-item small py-2 text-danger d-flex align-items-center gap-2" href="/api/auth/logout">
+                                    <i class="bi bi-box-arrow-right"></i> Đăng xuất hệ thống
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="/login" class="btn btn-misa btn-sm d-flex align-items-center gap-1.5 py-1 px-3">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Đăng nhập</span>
+                    </a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+    </header>
+
+    <!-- 2. WORKSPACE AREA (BELOW TOPBAR: SIDEBAR ON LEFT, CANVAS ON RIGHT) -->
+    <div class="misa-workspace">
+        
+        <!-- 2.1 LEFT SIDEBAR (COLLAPSIBLE: 52px or 220px) -->
+        <aside class="misa-sidebar @(LayoutState.IsSidebarCollapsed ? "is-collapsed" : "is-expanded")">
+            <NavMenu />
+        </aside>
+
+        <!-- 2.2 MAIN CONTENT CANVAS (SCROLLABLE) -->
+        <main class="misa-content-canvas">
             @Body
         </main>
-        
+
     </div>
+
 </div>
 
 <!-- 3. MODAL: "+ THÊM NHANH CHỨNG TỪ & DANH MỤC" -->
