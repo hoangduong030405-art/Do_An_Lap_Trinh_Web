@@ -38,6 +38,10 @@ namespace WebBanHang.UseCases.DTOs
         public string CustomerAddress { get; set; } = string.Empty;
 
         public List<InvoiceLineDetailDto> Lines { get; set; } = new();
+
+        public decimal TotalCost => Lines.Sum(l => l.LineCost);
+        public decimal TotalProfit => TotalAmount - TotalCost;
+        public decimal ProfitMargin => TotalAmount > 0 ? Math.Round((TotalProfit / TotalAmount) * 100, 1) : 0;
     }
 
     public class InvoiceLineDetailDto
@@ -48,6 +52,10 @@ namespace WebBanHang.UseCases.DTOs
         public string Unit { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
+        public decimal CostPrice { get; set; }
         public decimal LineTotal => Quantity * UnitPrice;
+        public decimal LineCost => Quantity * CostPrice;
+        public decimal LineProfit => LineTotal - LineCost;
+        public decimal ProfitMargin => UnitPrice > 0 ? Math.Round(((UnitPrice - CostPrice) / UnitPrice) * 100, 1) : 0;
     }
 }

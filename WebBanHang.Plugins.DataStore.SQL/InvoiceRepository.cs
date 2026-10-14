@@ -64,8 +64,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
                 }, transaction);
 
                 var insertLineQuery = @"
-                    INSERT INTO InvoiceLines (InvoiceId, ProductId, Quantity, UnitPrice)
-                    VALUES (@InvoiceId, @ProductId, @Quantity, @UnitPrice)";
+                    INSERT INTO InvoiceLines (InvoiceId, ProductId, Quantity, UnitPrice, CostPrice)
+                    VALUES (@InvoiceId, @ProductId, @Quantity, @UnitPrice, (SELECT COALESCE(CostPrice, 0) FROM Products WHERE Id = @ProductId))";
 
                 var updateProductQuery = "UPDATE Products SET StockQuantity = StockQuantity - @Quantity WHERE Id = @ProductId";
 
@@ -131,7 +131,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
             if (dto == null) return null;
 
             var linesSql = @"
-                SELECT l.ProductId, p.ProductCode, p.Name AS ProductName, p.Unit, l.Quantity, l.UnitPrice
+                SELECT l.ProductId, p.ProductCode, p.Name AS ProductName, p.Unit, l.Quantity, l.UnitPrice, COALESCE(l.CostPrice, p.CostPrice, 0) AS CostPrice
                 FROM InvoiceLines l
                 INNER JOIN Products p ON l.ProductId = p.Id
                 WHERE l.InvoiceId = @Id";
@@ -160,13 +160,19 @@ namespace WebBanHang.Plugins.DataStore.SQL
         {
             using var connection = new SqlConnection(_connectionString);
             var sql = @"
+                WITH InvoiceCost AS (
+                    SELECT InvoiceId, SUM(Quantity * CostPrice) AS TotalCost
+                    FROM InvoiceLines
+                    GROUP BY InvoiceId
+                )
                 SELECT 
                     MONTH(i.InvoiceDate) AS MonthNumber,
                     FORMAT(i.InvoiceDate, 'MM/yyyy') AS MonthLabel,
                     SUM(i.TotalAmount) AS Revenue,
                     SUM(i.PaidAmount) AS Collected,
-                    SUM(i.TotalAmount * 0.72) AS Cost
+                    SUM(COALESCE(c.TotalCost, i.TotalAmount * 0.72)) AS Cost
                 FROM Invoices i
+                LEFT JOIN InvoiceCost c ON i.Id = c.InvoiceId
                 WHERE i.InvoiceDate >= DATEADD(month, -@Months, GETDATE())
                 GROUP BY FORMAT(i.InvoiceDate, 'MM/yyyy'), YEAR(i.InvoiceDate), MONTH(i.InvoiceDate)
                 ORDER BY YEAR(i.InvoiceDate) ASC, MONTH(i.InvoiceDate) ASC";

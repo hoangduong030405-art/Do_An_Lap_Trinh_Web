@@ -46,6 +46,7 @@ namespace WebBanHang.UseCases.Dashboard
                 TotalCustomersCount = customers.Count,
                 TotalProductsCount = products.Count,
                 TotalInvoicesCount = invoices.Count,
+                TotalInventoryCost = products.Sum(p => p.StockQuantity * p.CostPrice),
                 TotalInventoryValuation = products.Sum(p => p.StockQuantity * p.UnitPrice),
                 TopInventoryProducts = products
                     .OrderByDescending(p => p.StockQuantity * p.UnitPrice)
@@ -58,6 +59,7 @@ namespace WebBanHang.UseCases.Dashboard
                         Unit = p.Unit,
                         StockQuantity = p.StockQuantity,
                         UnitPrice = p.UnitPrice,
+                        CostPrice = p.CostPrice,
                         ImageUrl = p.ImageUrl
                     })
                     .ToList()

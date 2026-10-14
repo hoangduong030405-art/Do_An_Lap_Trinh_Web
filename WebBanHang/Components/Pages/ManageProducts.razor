@@ -31,6 +31,61 @@
     </div>
 }
 
+<!-- THỐNG KÊ TỔNG VỐN BỎ RA & ĐỐI CHIẾU DOANH THU KHO -->
+@if (allProducts != null && allProducts.Any())
+{
+    var totalCostStock = allProducts.Sum(p => p.StockQuantity * p.CostPrice);
+    var totalRevenueStock = allProducts.Sum(p => p.StockQuantity * p.UnitPrice);
+    var totalProfitStock = totalRevenueStock - totalCostStock;
+    var avgMargin = totalRevenueStock > 0 ? Math.Round((totalProfitStock / totalRevenueStock) * 100, 1) : 0;
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 border-start border-4 border-danger">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Tổng Vốn Bỏ Ra (Giá Nhập)</span>
+                    <i class="bi bi-wallet2 text-danger fs-5"></i>
+                </div>
+                <div class="fs-4 fw-bold text-slate-navy">@totalCostStock.ToString("N0") <small class="fs-6 fw-normal text-muted">đ</small></div>
+                <small class="text-muted" style="font-size: 0.72rem;">Số tiền vốn đã thanh toán cho nhà cung cấp</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 border-start border-4 border-primary">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Giá Trị Bán Sỉ Tiềm Năng</span>
+                    <i class="bi bi-graph-up-arrow text-primary fs-5"></i>
+                </div>
+                <div class="fs-4 fw-bold text-primary">@totalRevenueStock.ToString("N0") <small class="fs-6 fw-normal text-muted">đ</small></div>
+                <small class="text-muted" style="font-size: 0.72rem;">Doanh số nếu phân phối hết hàng tồn kho</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 border-start border-4 border-success">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Lợi Nhuận Gộp Kỳ Vọng</span>
+                    <i class="bi bi-piggy-bank text-success fs-5"></i>
+                </div>
+                <div class="fs-4 fw-bold text-success">+@totalProfitStock.ToString("N0") <small class="fs-6 fw-normal text-muted">đ</small></div>
+                <small class="text-muted" style="font-size: 0.72rem;">Chênh lệch lãi = Bán sỉ - Giá vốn</small>
+            </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100 border-start border-4 border-info">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.72rem;">Biên Lợi Nhuận Bình Quân</span>
+                    <i class="bi bi-percent text-info fs-5"></i>
+                </div>
+                <div class="fs-4 fw-bold text-dark">@avgMargin%</div>
+                <small class="text-muted" style="font-size: 0.72rem;">Tỷ suất sinh lời trên doanh thu phân phối</small>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="row g-4">
     <!-- CỘT 1: FORM THÊM / SỬA SẢN PHẨM -->
     <div class="col-lg-4">
@@ -47,7 +102,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">Mã sản phẩm <span class="text-danger">*</span></label>
-                        <InputText @bind-Value="productModel.ProductCode" class="form-control" placeholder="VD: SP006, LAP01..." />
+                        <InputText @bind-Value="productModel.ProductCode" class="form-control" placeholder="VD: SP009, COCA01..." />
                         <ValidationMessage For="() => productModel.ProductCode" class="text-danger small" />
                     </div>
 
@@ -60,7 +115,7 @@
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label class="form-label fw-bold">Đơn vị tính <span class="text-danger">*</span></label>
-                            <InputText @bind-Value="productModel.Unit" class="form-control" placeholder="Cái, Bộ, Hộp..." />
+                            <InputText @bind-Value="productModel.Unit" class="form-control" placeholder="Thùng, Két, Lon, Chai..." />
                             <ValidationMessage For="() => productModel.Unit" class="text-danger small" />
                         </div>
                         <div class="col-6">
@@ -70,10 +125,44 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Đơn giá bán (VNĐ) <span class="text-danger">*</span></label>
-                        <InputNumber @bind-Value="productModel.UnitPrice" class="form-control" />
-                        <ValidationMessage For="() => productModel.UnitPrice" class="text-danger small" />
+                    <!-- KHỐI ĐỐI CHIẾU GIÁ NHẬP (VỐN) VÀ GIÁ BÁN SỈ -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold text-danger">Giá Nhập (Giá Vốn) <span class="text-danger">*</span></label>
+                            <InputNumber @bind-Value="productModel.CostPrice" class="form-control border-danger-subtle" placeholder="Tiền bỏ ra mua..." />
+                            <ValidationMessage For="() => productModel.CostPrice" class="text-danger small" />
+                            <small class="text-muted d-block" style="font-size: 0.7rem;">Giá mua từ nhà máy</small>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold text-primary">Giá Bán Sỉ (VNĐ) <span class="text-danger">*</span></label>
+                            <InputNumber @bind-Value="productModel.UnitPrice" class="form-control border-primary-subtle" placeholder="Bán cho đại lý..." />
+                            <ValidationMessage For="() => productModel.UnitPrice" class="text-danger small" />
+                            <small class="text-muted d-block" style="font-size: 0.7rem;">Giá xuất kho đại lý</small>
+                        </div>
+                    </div>
+
+                    <!-- THẺ PHÂN TÍCH LÃI GỘP THỜI GIAN THỰC -->
+                    @{
+                        decimal formProfit = productModel.UnitPrice - productModel.CostPrice;
+                        decimal formMargin = productModel.UnitPrice > 0 ? Math.Round((formProfit / productModel.UnitPrice) * 100, 1) : 0;
+                    }
+                    <div class="p-2.5 rounded-3 mb-3 @(formProfit >= 0 ? "bg-success-subtle border border-success-subtle" : "bg-danger-subtle border border-danger-subtle")">
+                        <div class="d-flex justify-content-between align-items-center small">
+                            <span class="fw-semibold">Lãi gộp dự kiến:</span>
+                            <span class="fw-bold @(formProfit >= 0 ? "text-success" : "text-danger")">
+                                @(formProfit >= 0 ? $"+{formProfit:N0} đ" : $"{formProfit:N0} đ")
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center small mt-1">
+                            <span class="fw-semibold">Biên lợi nhuận:</span>
+                            <span class="fw-bold @(formProfit >= 0 ? "text-success" : "text-danger")">@formMargin%</span>
+                        </div>
+                        @if (productModel.CostPrice > 0 && productModel.UnitPrice > 0 && formProfit <= 0)
+                        {
+                            <div class="text-danger small mt-1 fw-bold">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Cảnh báo: Giá bán thấp hơn hoặc bằng giá vốn!
+                            </div>
+                        }
                     </div>
 
                     <div class="mb-3">
@@ -144,25 +233,29 @@
                 {
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
+                            <thead class="table-light small">
                                 <tr>
-                                    <th style="width: 60px;" class="text-center">Ảnh</th>
+                                    <th style="width: 50px;" class="text-center">Ảnh</th>
                                     <th>Mã SP</th>
                                     <th>Tên Hàng Hóa</th>
-                                    <th>ĐVT</th>
-                                    <th class="text-end">Đơn Giá</th>
+                                    <th class="text-center">ĐVT</th>
+                                    <th class="text-end text-danger">Giá Nhập (Vốn)</th>
+                                    <th class="text-end text-primary">Giá Bán Sỉ</th>
+                                    <th class="text-end text-success">Lãi Gộp / Biên Độ</th>
                                     <th class="text-center">Tồn Kho</th>
+                                    <th class="text-end">Vốn Tồn Kho</th>
                                     <th class="text-center">Thao Tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var p in products)
                                 {
+                                    var itemTotalCost = p.StockQuantity * p.CostPrice;
                                     <tr>
                                         <td class="text-center">
                                             <img src="@(string.IsNullOrEmpty(p.ImageUrl) ? "/images/products/sp001-coca-cola.svg" : p.ImageUrl)" 
                                                  alt="@p.Name" 
-                                                 style="width: 44px; height: 44px; object-fit: contain;" 
+                                                 style="width: 38px; height: 38px; object-fit: contain;" 
                                                  class="rounded border bg-white p-1 shadow-xs" />
                                         </td>
                                         <td><span class="badge bg-dark font-monospace">@p.ProductCode</span></td>
@@ -170,11 +263,17 @@
                                             <div class="fw-bold">@p.Name</div>
                                             @if (!string.IsNullOrEmpty(p.Description))
                                             {
-                                                <small class="text-muted text-truncate d-inline-block" style="max-width: 200px;">@p.Description</small>
+                                                <small class="text-muted text-truncate d-inline-block" style="max-width: 180px;">@p.Description</small>
                                             }
                                         </td>
-                                        <td>@p.Unit</td>
+                                        <td class="text-center">@p.Unit</td>
+                                        <td class="text-end text-muted fw-semibold">@p.CostPrice.ToString("N0") đ</td>
                                         <td class="text-end fw-bold text-primary">@p.UnitPrice.ToString("N0") đ</td>
+                                        <td class="text-end">
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                                +@p.UnitProfit.ToString("N0") đ (@p.ProfitMargin%)
+                                            </span>
+                                        </td>
                                         <td class="text-center">
                                             @if (p.StockQuantity <= 5)
                                             {
@@ -195,12 +294,15 @@
                                                 </span>
                                             }
                                         </td>
+                                        <td class="text-end fw-bold text-slate-navy small">
+                                            @itemTotalCost.ToString("N0") đ
+                                        </td>
                                         <td class="text-center">
                                             <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-primary" @onclick="() => EditProduct(p)">
+                                                <button class="btn btn-outline-primary" @onclick="() => EditProduct(p)" title="Chỉnh sửa sản phẩm & giá">
                                                     <i class="bi bi-pencil"></i> Sửa
                                                 </button>
-                                                <button class="btn btn-outline-danger" @onclick="() => DeleteProduct(p.Id, p.Name)">
+                                                <button class="btn btn-outline-danger" @onclick="() => DeleteProduct(p.Id, p.Name)" title="Xóa">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
@@ -281,6 +383,7 @@
             Name = p.Name,
             Unit = p.Unit,
             UnitPrice = p.UnitPrice,
+            CostPrice = p.CostPrice,
             StockQuantity = p.StockQuantity,
             ImageUrl = p.ImageUrl ?? "",
             Description = p.Description

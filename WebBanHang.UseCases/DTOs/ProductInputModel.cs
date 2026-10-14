@@ -21,6 +21,9 @@ namespace WebBanHang.UseCases.DTOs
         [Range(0, 1000000000, ErrorMessage = "Giá bán phải từ 0 đến 1.000.000.000 đ.")]
         public decimal UnitPrice { get; set; } = 0;
 
+        [Range(0, 1000000000, ErrorMessage = "Giá nhập (giá vốn) phải từ 0 đến 1.000.000.000 đ.")]
+        public decimal CostPrice { get; set; } = 0;
+
         [Range(0, 100000, ErrorMessage = "Số lượng tồn kho phải từ 0 đến 100.000.")]
         public int StockQuantity { get; set; } = 0;
 

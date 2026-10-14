@@ -186,17 +186,41 @@ else
                             </div>
                         </div>
 
+                        <!-- KHỐI ĐỐI SOÁT TÀI CHÍNH NỘI BỘ (GIÁ VỐN VS GIÁ BÁN) -->
+                        <div class="card bg-light border-0 p-3 mb-3 d-print-none rounded-3">
+                            <div class="row align-items-center text-center text-md-start">
+                                <div class="col-md-3 border-end">
+                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Doanh thu xuất sỉ</small>
+                                    <span class="fs-5 fw-bold text-primary">@selectedInvoiceDetail.TotalAmount.ToString("N0") đ</span>
+                                </div>
+                                <div class="col-md-3 border-end">
+                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Tiền vốn nhập kho (COGS)</small>
+                                    <span class="fs-5 fw-bold text-danger">@selectedInvoiceDetail.TotalCost.ToString("N0") đ</span>
+                                </div>
+                                <div class="col-md-3 border-end">
+                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Lợi nhuận gộp đơn hàng</small>
+                                    <span class="fs-5 fw-bold text-success">+@selectedInvoiceDetail.TotalProfit.ToString("N0") đ</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Biên lợi nhuận gộp</small>
+                                    <span class="fs-5 fw-bold text-dark">@selectedInvoiceDetail.ProfitMargin%</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- BẢNG CHI TIẾT SẢN PHẨM -->
                         <table class="table table-bordered align-middle mb-3">
-                            <thead class="table-light text-center">
+                            <thead class="table-light text-center small">
                                 <tr>
-                                    <th style="width: 50px;">STT</th>
+                                    <th style="width: 45px;">STT</th>
                                     <th>Mã SP</th>
                                     <th>Tên Hàng Hóa / Dịch Vụ</th>
                                     <th>ĐVT</th>
-                                    <th style="width: 80px;">SL</th>
-                                    <th style="width: 130px;">Đơn Giá</th>
-                                    <th style="width: 140px;">Thành Tiền</th>
+                                    <th style="width: 65px;">SL</th>
+                                    <th class="d-print-none text-end text-muted" style="width: 105px;">Giá Vốn</th>
+                                    <th style="width: 115px;" class="text-end">Đơn Giá Bán</th>
+                                    <th style="width: 125px;" class="text-end">Thành Tiền</th>
+                                    <th class="d-print-none text-end text-success" style="width: 115px;">Lãi Gộp</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -209,8 +233,14 @@ else
                                         <td class="fw-bold">@line.ProductName</td>
                                         <td class="text-center">@line.Unit</td>
                                         <td class="text-center">@line.Quantity</td>
+                                        <td class="d-print-none text-end text-muted small">@line.CostPrice.ToString("N0") đ</td>
                                         <td class="text-end">@line.UnitPrice.ToString("N0") đ</td>
                                         <td class="text-end fw-bold">@line.LineTotal.ToString("N0") đ</td>
+                                        <td class="d-print-none text-end">
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                                +@line.LineProfit.ToString("N0") đ
+                                            </span>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>

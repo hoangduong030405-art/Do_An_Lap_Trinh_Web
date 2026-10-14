@@ -22,6 +22,7 @@ namespace WebBanHang.UseCases.Products
                 Name = model.Name,
                 Unit = model.Unit,
                 UnitPrice = model.UnitPrice,
+                CostPrice = model.CostPrice,
                 StockQuantity = model.StockQuantity,
                 ImageUrl = model.ImageUrl,
                 Description = model.Description
@@ -38,6 +39,7 @@ namespace WebBanHang.UseCases.Products
                 Name = model.Name,
                 Unit = model.Unit,
                 UnitPrice = model.UnitPrice,
+                CostPrice = model.CostPrice,
                 StockQuantity = model.StockQuantity,
                 ImageUrl = model.ImageUrl,
                 Description = model.Description

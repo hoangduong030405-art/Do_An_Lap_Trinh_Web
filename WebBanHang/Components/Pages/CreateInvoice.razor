@@ -98,9 +98,26 @@
             
         @if (State.Items.Any())
         {
-            <div class="text-end mt-2">
-                <h5>Tổng Số Lượng: @State.TotalItemCount</h5>
-                <h4 class="text-danger">Tổng Tiền: @State.TotalAmount.ToString("N0") đ</h4>
+            <div class="card bg-light border-0 p-3 mt-3 shadow-xs rounded-3">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <small class="text-muted d-block">Số lượng mặt hàng</small>
+                        <span class="fs-5 fw-bold text-dark">@State.TotalItemCount SP (@State.Items.Count loại hàng)</span>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted d-block">Tổng tiền vốn nhập (COGS)</small>
+                        <span class="fs-5 fw-bold text-secondary">@State.TotalCost.ToString("N0") đ</span>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted d-block">Tổng doanh thu bán sỉ</small>
+                        <span class="fs-4 fw-bold text-primary">@State.TotalAmount.ToString("N0") đ</span>
+                    </div>
+                    <div class="col-md-3 text-md-end">
+                        <small class="text-muted d-block">Lợi nhuận gộp dự kiến</small>
+                        <span class="fs-4 fw-bold text-success">+@State.TotalProfit.ToString("N0") đ</span>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle ms-1">@State.ProfitMargin%</span>
+                    </div>
+                </div>
             </div>
         }
     </div>
@@ -108,7 +125,7 @@
 
 <div class="row mb-4">
     <div class="col-12">
-        <h4>3. Sản Phẩm Khả Dụng</h4>
+        <h4>3. Sản Phẩm Khả Dụng Trong Kho</h4>
         @if (products != null && products.Any())
         {
             <table class="table table-hover align-middle">
@@ -116,9 +133,11 @@
                     <tr>
                         <th style="width: 60px;" class="text-center">Ảnh</th>
                         <th>Mã SP</th>
-                        <th>Tên SP</th>
-                        <th>ĐVT</th>
-                        <th class="text-end">Đơn Giá</th>
+                        <th>Tên Hàng Hóa</th>
+                        <th class="text-center">ĐVT</th>
+                        <th class="text-end">Giá Nhập (Vốn)</th>
+                        <th class="text-end">Giá Bán Sỉ</th>
+                        <th class="text-end">Lãi Gộp / SP</th>
                         <th class="text-center">Tồn Kho</th>
                         <th class="text-center">Thao Tác</th>
                     </tr>
@@ -135,8 +154,14 @@
                             </td>
                             <td><span class="badge bg-dark font-monospace">@p.ProductCode</span></td>
                             <td class="fw-semibold">@p.Name</td>
-                            <td>@p.Unit</td>
+                            <td class="text-center">@p.Unit</td>
+                            <td class="text-end text-muted small">@p.CostPrice.ToString("N0") đ</td>
                             <td class="text-end fw-bold text-primary">@p.UnitPrice.ToString("N0") đ</td>
+                            <td class="text-end">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    +@p.UnitProfit.ToString("N0") đ (@p.ProfitMargin%)
+                                </span>
+                            </td>
                             <td class="text-center">
                                 <span class="badge @(p.StockQuantity <= 10 ? "bg-warning text-dark" : "bg-success")">
                                     @p.StockQuantity

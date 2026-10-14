@@ -2,34 +2,46 @@
 
 @if (Items != null && Items.Any())
 {
-    <table class="table table-bordered table-striped">
-        <thead>
+    <table class="table table-hover align-middle table-bordered mb-0">
+        <thead class="table-light small text-muted">
             <tr>
                 <th>Mã SP</th>
-                <th>Tên SP</th>
-                <th>ĐVT</th>
-                <th>Đơn Giá</th>
-                <th>Số Lượng</th>
-                <th>Thành Tiền</th>
-                <th>Hành động</th>
+                <th>Tên Hàng Hóa</th>
+                <th class="text-center">ĐVT</th>
+                <th class="text-end">Giá Nhập (Vốn)</th>
+                <th class="text-end">Giá Bán Sỉ</th>
+                <th class="text-center">Số Lượng</th>
+                <th class="text-end">Thành Tiền Bán</th>
+                <th class="text-end">Lãi Gộp Dòng</th>
+                <th class="text-center">Xóa</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Items)
             {
                 <tr>
-                    <td>@item.ProductCode</td>
-                    <td>@item.ProductName</td>
-                    <td>@item.Unit</td>
-                    <td>@item.UnitPrice.ToString("N0")</td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary" @onclick="() => OnDecrement.InvokeAsync(item.ProductId)">-</button>
-                        <span class="mx-2">@item.Quantity</span>
-                        <button class="btn btn-sm btn-secondary" @onclick="() => OnIncrement.InvokeAsync(item.ProductId)">+</button>
+                    <td><span class="badge bg-dark font-monospace">@item.ProductCode</span></td>
+                    <td class="fw-semibold">@item.ProductName</td>
+                    <td class="text-center">@item.Unit</td>
+                    <td class="text-end text-muted small">@item.CostPrice.ToString("N0") đ</td>
+                    <td class="text-end fw-bold text-primary">@item.UnitPrice.ToString("N0") đ</td>
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-secondary" @onclick="() => OnDecrement.InvokeAsync(item.ProductId)">-</button>
+                            <span class="btn btn-light disabled px-3 fw-bold">@item.Quantity</span>
+                            <button class="btn btn-outline-secondary" @onclick="() => OnIncrement.InvokeAsync(item.ProductId)">+</button>
+                        </div>
                     </td>
-                    <td>@item.LineTotal.ToString("N0")</td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" @onclick="() => OnRemove.InvokeAsync(item.ProductId)">x</button>
+                    <td class="text-end fw-bold">@item.LineTotal.ToString("N0") đ</td>
+                    <td class="text-end">
+                        <span class="badge @(item.LineProfit >= 0 ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") border">
+                            +@item.LineProfit.ToString("N0") đ (@item.ProfitMargin%)
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-danger border-0" @onclick="() => OnRemove.InvokeAsync(item.ProductId)" title="Xóa dòng">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             }

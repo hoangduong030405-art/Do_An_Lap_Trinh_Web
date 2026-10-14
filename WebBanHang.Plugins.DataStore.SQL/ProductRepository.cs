@@ -40,9 +40,9 @@ namespace WebBanHang.Plugins.DataStore.SQL
         {
             using var connection = new SqlConnection(_connectionString);
             var sql = @"
-                INSERT INTO Products (ProductCode, Name, Unit, UnitPrice, StockQuantity, ImageUrl, Description)
+                INSERT INTO Products (ProductCode, Name, Unit, UnitPrice, CostPrice, StockQuantity, ImageUrl, Description)
                 OUTPUT INSERTED.Id
-                VALUES (@ProductCode, @Name, @Unit, @UnitPrice, @StockQuantity, @ImageUrl, @Description)";
+                VALUES (@ProductCode, @Name, @Unit, @UnitPrice, @CostPrice, @StockQuantity, @ImageUrl, @Description)";
             return await connection.QuerySingleAsync<int>(sql, product);
         }
 
@@ -55,6 +55,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     Name = @Name, 
                     Unit = @Unit, 
                     UnitPrice = @UnitPrice, 
+                    CostPrice = @CostPrice,
                     StockQuantity = @StockQuantity, 
                     ImageUrl = @ImageUrl,
                     Description = @Description

@@ -221,7 +221,7 @@ else if (dashboard != null)
                             <span>Biên Lợi Nhuận Doanh Số</span>
                         </div>
                         <p class="text-muted mb-0 small" style="font-size: 0.78rem; line-height: 1.4;">
-                            Tổng doanh thu đạt <strong>@((dashboard.TotalRevenue / 1000000m).ToString("N1")) triệu đồng</strong>. Biên lợi nhuận gộp ước đạt <strong>@((estimatedProfit / 1000000m).ToString("N1")) trđ (28.0%)</strong>, duy trì tỷ suất sinh lời an toàn.
+                            Tổng doanh thu đạt <strong>@((dashboard.TotalRevenue / 1000000m).ToString("N1")) triệu đồng</strong>. Lợi nhuận gộp thực tế đạt <strong>+@((actualProfit / 1000000m).ToString("N1")) trđ (@profitMargin%)</strong>, duy trì tỷ suất sinh lời an toàn.
                         </p>
                     </div>
                     <a href="/invoices" class="small fw-bold text-decoration-none text-purple" style="font-size: 0.72rem; color: #7c3aed;">
@@ -291,27 +291,27 @@ else if (dashboard != null)
                         <span class="misa-metric-val-blue">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
                     </div>
                     <div class="misa-metric-row">
-                        <span class="text-slate-navy fw-semibold">Giá vốn hàng bán (Ước tính)</span>
-                        <span class="misa-metric-val-dark">@((estimatedCost / 1000000m).ToString("N3"))</span>
+                        <span class="text-slate-navy fw-semibold">Giá vốn hàng bán (COGS)</span>
+                        <span class="misa-metric-val-dark text-danger">@((actualCost / 1000000m).ToString("N3"))</span>
                     </div>
                     <div class="misa-metric-row">
-                        <span class="text-slate-navy fw-semibold">Lợi nhuận gộp</span>
-                        <span class="misa-metric-val-green">@((estimatedProfit / 1000000m).ToString("N3"))</span>
+                        <span class="text-slate-navy fw-semibold">Lợi nhuận gộp thực tế</span>
+                        <span class="misa-metric-val-green">@((actualProfit / 1000000m).ToString("N3"))</span>
                     </div>
                     <div class="misa-metric-row">
-                        <span class="text-slate-navy fw-semibold">Giá trị hàng tồn kho</span>
-                        <span class="misa-metric-val-blue">@((dashboard.TotalInventoryValuation / 1000000m).ToString("N3"))</span>
+                        <span class="text-slate-navy fw-semibold">Tổng vốn tồn kho đang chôn</span>
+                        <span class="misa-metric-val-blue">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
                     </div>
 
                     <!-- Profitability Ratio Progress Bar -->
                     <div class="mt-3 pt-2 border-top">
                         <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 0.72rem;">
                             <span>Tỷ suất lợi nhuận gộp:</span>
-                            <span class="fw-bold text-success">28.0%</span>
+                            <span class="fw-bold text-success">@(profitMargin.ToString("N1"))%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-success" style="width: 28%"></div>
-                            <div class="progress-bar bg-secondary-subtle" style="width: 72%"></div>
+                            <div class="progress-bar bg-success" style="width: @(Math.Min(100, Math.Max(5, profitMargin)))%"></div>
+                            <div class="progress-bar bg-secondary-subtle" style="width: @(Math.Max(0, 100 - profitMargin))%"></div>
                         </div>
                     </div>
                 </div>
@@ -721,20 +721,35 @@ else if (dashboard != null)
                 </div>
 
                 <div class="misa-card-body p-3">
-                    <div class="mb-3 pb-2 border-bottom">
-                        <div class="text-muted small" style="font-size: 0.72rem;">Tổng giá trị tồn kho</div>
-                        <div class="fs-4 fw-bold text-slate-navy">
-                            @((dashboard.TotalInventoryValuation / 1000000m).ToString("N0")) <small class="fs-6 fw-normal text-muted">Triệu đồng</small>
+                    <div class="row g-2 mb-3 pb-2 border-bottom">
+                        <div class="col-6 border-end">
+                            <div class="text-muted small" style="font-size: 0.7rem;">Tổng vốn bỏ ra (Nhập kho)</div>
+                            <div class="fs-5 fw-bold text-danger">
+                                @((dashboard.TotalInventoryCost / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Trđ</small>
+                            </div>
+                        </div>
+                        <div class="col-6 ps-2">
+                            <div class="text-muted small" style="font-size: 0.7rem;">Giá trị bán sỉ tiềm năng</div>
+                            <div class="fs-5 fw-bold text-primary">
+                                @((dashboard.TotalInventoryValuation / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Trđ</small>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-1">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle small w-100 text-start py-1 px-2">
+                                <i class="bi bi-piggy-bank me-1"></i> Lợi nhuận gộp kỳ vọng kho: <strong>+@((dashboard.TotalExpectedInventoryProfit / 1000000m).ToString("N1")) Trđ</strong> (@dashboard.ExpectedProfitMargin%)
+                            </span>
                         </div>
                     </div>
 
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.8rem;">
-                            <thead class="table-light text-muted" style="font-size: 0.72rem;">
+                        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 0.78rem;">
+                            <thead class="table-light text-muted" style="font-size: 0.7rem;">
                                 <tr>
                                     <th>Tên hàng</th>
-                                    <th class="text-end">Số lượng</th>
-                                    <th class="text-end">Giá trị</th>
+                                    <th class="text-end">Tồn kho</th>
+                                    <th class="text-end text-danger">Vốn (Trđ)</th>
+                                    <th class="text-end text-primary">Bán (Trđ)</th>
+                                    <th class="text-end text-success">Lãi gộp</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -746,19 +761,27 @@ else if (dashboard != null)
                                     {
                                         var curColor = dotColors[colorIdx % dotColors.Length];
                                         colorIdx++;
-                                        var val = prod.Valuation / 1000000m;
+                                        var costVal = prod.TotalCost / 1000000m;
+                                        var sellVal = prod.Valuation / 1000000m;
+                                        var profitVal = prod.ExpectedProfit / 1000000m;
                                         <tr>
                                             <td>
                                                 <span class="misa-dot" style="background-color: @curColor;"></span>
-                                                <span class="fw-semibold text-slate-navy text-truncate d-inline-block" style="max-width: 170px;" title="@prod.ProductName">
+                                                <span class="fw-semibold text-slate-navy text-truncate d-inline-block" style="max-width: 130px;" title="@prod.ProductName">
                                                     @prod.ProductName
                                                 </span>
                                             </td>
                                             <td class="text-end fw-semibold text-dark">
                                                 @prod.StockQuantity.ToString("N0") <span class="text-muted small">@prod.Unit</span>
                                             </td>
-                                            <td class="text-end fw-bold text-slate-navy">
-                                                @val.ToString("N1")
+                                            <td class="text-end text-muted">
+                                                @costVal.ToString("N1")
+                                            </td>
+                                            <td class="text-end fw-semibold text-primary">
+                                                @sellVal.ToString("N1")
+                                            </td>
+                                            <td class="text-end fw-bold text-success">
+                                                +@profitVal.ToString("N1")
                                             </td>
                                         </tr>
                                     }
@@ -766,7 +789,7 @@ else if (dashboard != null)
                                 else
                                 {
                                     <tr>
-                                        <td colspan="3" class="text-center text-muted py-3">Chưa có dữ liệu tồn kho</td>
+                                        <td colspan="5" class="text-center text-muted py-3">Chưa có dữ liệu tồn kho</td>
                                     </tr>
                                 }
                             </tbody>
@@ -1154,9 +1177,12 @@ else if (dashboard != null)
     private void ToggleCost() => showCost = !showCost;
     private void ToggleProfit() => showProfit = !showProfit;
 
-    // Calculations
-    private decimal estimatedCost => dashboard != null ? dashboard.TotalRevenue * 0.72m : 0;
-    private decimal estimatedProfit => dashboard != null ? dashboard.TotalRevenue - estimatedCost : 0;
+    // Calculations: Real COGS & Real Profit from products CostPrice
+    private decimal actualCost => dashboard != null ? dashboard.MonthlyRevenues.Sum(m => m.Cost) : 0;
+    private decimal actualProfit => dashboard != null ? dashboard.TotalRevenue - actualCost : 0;
+    private decimal profitMargin => dashboard != null && dashboard.TotalRevenue > 0
+        ? Math.Round((actualProfit / dashboard.TotalRevenue) * 100, 1)
+        : 0;
     
     private decimal collectionRate => dashboard != null && dashboard.TotalRevenue > 0
         ? Math.Min(100, (dashboard.TotalCollectedAmount / dashboard.TotalRevenue) * 100)

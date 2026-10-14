@@ -13,7 +13,11 @@ namespace WebBanHang.UseCases.DTOs
         public int TotalProductsCount { get; set; }
         public int TotalInvoicesCount { get; set; }
 
+        public decimal TotalInventoryCost { get; set; }
         public decimal TotalInventoryValuation { get; set; }
+        public decimal TotalExpectedInventoryProfit => TotalInventoryValuation - TotalInventoryCost;
+        public decimal ExpectedProfitMargin => TotalInventoryValuation > 0 ? Math.Round((TotalExpectedInventoryProfit / TotalInventoryValuation) * 100, 1) : 0;
+
         public List<ProductInventoryDto> TopInventoryProducts { get; set; } = new();
 
         public List<TopDebtorDto> TopDebtors { get; set; } = new();
@@ -29,8 +33,12 @@ namespace WebBanHang.UseCases.DTOs
         public string ProductName { get; set; } = string.Empty;
         public string Unit { get; set; } = string.Empty;
         public int StockQuantity { get; set; }
+        public decimal CostPrice { get; set; }
         public decimal UnitPrice { get; set; }
+        public decimal TotalCost => StockQuantity * CostPrice;
         public decimal Valuation => StockQuantity * UnitPrice;
+        public decimal ExpectedProfit => Valuation - TotalCost;
+        public decimal ProfitMargin => UnitPrice > 0 ? Math.Round(((UnitPrice - CostPrice) / UnitPrice) * 100, 1) : 0;
         public string ImageUrl { get; set; } = string.Empty;
     }
 
