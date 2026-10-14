@@ -6,8 +6,15 @@ namespace WebBanHang.Services
     {
         public bool IsSidebarCollapsed { get; private set; } = false;
         public bool IsQuickAddOpen { get; private set; } = false;
-        public string SelectedCompany { get; set; } = "CÔNG TY TNHH THƯƠNG MẠI KỸ THUẬT BÁCH KHOA";
+        public bool IsRoleModalOpen { get; set; } = false;
+        public string SelectedCompany { get; set; } = "TỔNG KHO PHÂN PHỐI SỈ & CÔNG NỢ B2B";
         public string FiscalYear { get; set; } = "2024";
+
+        public void ToggleRoleModal()
+        {
+            IsRoleModalOpen = !IsRoleModalOpen;
+            NotifyStateChanged();
+        }
 
         public event Action? OnChange;
 

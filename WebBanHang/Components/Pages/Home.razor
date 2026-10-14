@@ -12,21 +12,21 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject LayoutStateService LayoutState
 
-<PageTitle>Tổng Quan - AMIS Kế Toán Bán Hàng & Quản Trị Tín Dụng</PageTitle>
+<PageTitle>Tổng Quan - Phân Hệ Bán Hàng & Quản Trị Công Nợ B2B</PageTitle>
 
 @if (loading)
 {
     <div class="d-flex flex-column align-items-center justify-content-center py-5 my-5">
         <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Đang nạp dữ liệu MISA...</span>
+            <span class="visually-hidden">Đang nạp dữ liệu...</span>
         </div>
-        <p class="mt-3 text-muted small fw-semibold">Đang nạp số liệu kế toán & công nợ từ hệ thống MISA AMIS...</p>
+        <p class="mt-3 text-muted small fw-semibold">Đang tổng hợp số liệu kế toán & công nợ từ hệ thống...</p>
     </div>
 }
 else if (dashboard != null)
 {
     <!-- =========================================================================
-         1. CONTEXT BAR & TIME PERIOD SELECTOR (CHUẨN MISA AMIS KẾ TOÁN)
+         1. CONTEXT BAR & TIME PERIOD SELECTOR (CHUẨN BÀN LÀM VIỆC DOANH NGHIỆP)
          ========================================================================= -->
     <div class="misa-period-filter-bar d-flex flex-wrap align-items-center justify-content-between gap-2 shadow-xs mb-3">
         <div class="d-flex align-items-center gap-2">
@@ -35,8 +35,8 @@ else if (dashboard != null)
                 <span class="text-slate-navy">Tổng quan</span>
             </div>
             <span class="text-muted small d-none d-sm-inline">|</span>
-            <span class="text-muted small fw-semibold text-truncate d-none d-md-inline" style="max-width: 320px;" title="Công ty CP Thương mại & Phân phối FMCG Miền Trung - Tổng kho">
-                Công ty CP Thương mại & Phân phối FMCG Miền Trung
+            <span class="text-muted small fw-semibold text-truncate d-none d-md-inline" style="max-width: 340px;">
+                Tổng Kho Phân Phối Sỉ & Quản Lý Công Nợ B2B
             </span>
         </div>
 
@@ -83,7 +83,7 @@ else if (dashboard != null)
     </div>
 
     <!-- =========================================================================
-         2. EXECUTIVE KPI CARDS (4 CHỈ SỐ TÀI CHÍNH & CÔNG NỢ TRỌNG YẾU MISA)
+         2. EXECUTIVE KPI CARDS (4 CHỈ SỐ TÀI CHÍNH & CÔNG NỢ TRỌNG YẾU)
          ========================================================================= -->
     <div class="row g-2.5 mb-3">
         <!-- KPI 1: TỔNG DOANH THU BÁN HÀNG -->
@@ -269,7 +269,7 @@ else if (dashboard != null)
     </div>
 
     <!-- =========================================================================
-         4. MAIN DASHBOARD GRID (ROW 1: TÀI CHÍNH, NỢ PHẢI THU THEO HẠN, DÒNG TIỀN)
+         4. MAIN DASHBOARD GRID (ROW 1: TÀI CHÍNH, NỢ THEO HẠN, DÒNG TIỀN)
          ========================================================================= -->
     <div class="row g-3 mb-3">
         <!-- CARD 1: TÌNH HÌNH TÀI CHÍNH (DOANH THU - CHI PHÍ - LỢI NHUẬN) -->
@@ -397,7 +397,7 @@ else if (dashboard != null)
             </div>
         </div>
 
-        <!-- CARD 3: DÒNG TIỀN & THỰC THU VS. DOANH SỐ (CASH CONVERSION) -->
+        <!-- CARD 3: DÒNG TIỀN & THỰC THU VS. DOANH SỐ -->
         <div class="col-12 col-lg-4">
             <div class="misa-card">
                 <div class="misa-card-header">
@@ -426,10 +426,10 @@ else if (dashboard != null)
                                 @if (dashboard.MonthlyRevenues.Any())
                                 {
                                     var maxVal = Math.Max(1m, dashboard.MonthlyRevenues.Max(m => Math.Max(m.Revenue, m.Collected)));
-                                    @foreach (var m in dashboard.MonthlyRevenues.TakeLast(5))
+                                    @foreach (var m in dashboard.MonthlyRevenues.TakeLast(6))
                                     {
-                                        var revHeight = Math.Max(10, (int)((m.Revenue / maxVal) * 85));
-                                        var colHeight = Math.Max(10, (int)((m.Collected / maxVal) * 85));
+                                        var revHeight = Math.Max(8, (int)((m.Revenue / maxVal) * 85));
+                                        var colHeight = Math.Max(8, (int)((m.Collected / maxVal) * 85));
                                         <div class="d-flex flex-column align-items-center gap-1">
                                             <div class="d-flex align-items-end gap-1" style="height: 85px;">
                                                 <div class="bg-primary rounded-top" style="width: 10px; height: @(revHeight)px;" title="Doanh thu: @((m.Revenue / 1000000m).ToString("N1")) Trđ"></div>
@@ -464,17 +464,19 @@ else if (dashboard != null)
     </div>
 
     <!-- =========================================================================
-         5. ROW 2: DOANH THU/CHI PHÍ/LỢI NHUẬN (MULTI-LINE CHART) & HÀNG TỒN KHO
+         5. ROW 2: DOANH THU/CHI PHÍ/LỢI NHUẬN (INTERACTIVE MISA BAR & LINE CHART)
          ========================================================================= -->
     <div class="row g-3 mb-3">
-        <!-- CARD 4: DOANH THU, CHI PHÍ, LỢI NHUẬN (INTERACTIVE SVG MULTI-LINE CHART) -->
+        <!-- CARD 4: DOANH THU, CHI PHÍ, LỢI NHUẬN (INTERACTIVE 12-MONTH MISA CHART) -->
         <div class="col-12 col-xl-7">
-            <div class="misa-card">
+            <div class="misa-card position-relative">
                 <div class="misa-card-header">
                     <h6 class="misa-card-title">
                         <i class="bi bi-graph-up text-primary"></i> Doanh thu, chi phí, lợi nhuận
                     </h6>
                     <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-stars text-purple" title="Phân tích AI"></i>
+                        <i class="bi bi-arrow-clockwise text-muted cursor-pointer" title="Làm mới biểu đồ" @onclick="LoadDashboard"></i>
                         <select class="misa-dropdown-filter">
                             <option>Năm nay</option>
                             <option>Năm trước</option>
@@ -483,90 +485,226 @@ else if (dashboard != null)
                 </div>
 
                 <div class="misa-card-body p-3">
-                    <!-- Top stats summary -->
+                    <!-- Top stats summary (Matching MISA Screenshot 4 & 5) -->
                     <div class="d-flex align-items-center gap-4 mb-3 pb-2 border-bottom">
                         <div>
-                            <span class="text-muted small d-block" style="font-size: 0.72rem;">CHI PHÍ:</span>
-                            <span class="fw-bold text-slate-navy fs-6">@((estimatedCost / 1000000m).ToString("N0")) <small class="fw-normal text-muted" style="font-size: 0.7rem;">Triệu đồng</small></span>
+                            <span class="text-muted small d-block" style="font-size: 0.72rem; letter-spacing: 0.3px;">DOANH THU</span>
+                            <span class="fw-bold fs-5" style="color: #00b060;">
+                                @((chartTotalRevenue / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 0.75rem;">Triệu đồng</small>
+                            </span>
                         </div>
                         <div>
-                            <span class="small d-block fw-semibold" style="color: #ff7700; font-size: 0.72rem;">LỢI NHUẬN:</span>
-                            <span class="fw-bold fs-6" style="color: #ff7700;">@((estimatedProfit / 1000000m).ToString("N0")) <small class="fw-normal text-muted" style="font-size: 0.7rem;">Triệu đồng</small></span>
+                            <span class="text-muted small d-block" style="font-size: 0.72rem; letter-spacing: 0.3px;">CHI PHÍ</span>
+                            <span class="fw-bold text-slate-navy fs-5">
+                                @((chartTotalCost / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 0.75rem;">Triệu đồng</small>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="small d-block fw-semibold" style="color: #ff7700; font-size: 0.72rem; letter-spacing: 0.3px;">LỢI NHUẬN</span>
+                            <span class="fw-bold fs-5" style="color: #ff7700;">
+                                @((chartTotalProfit / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 0.75rem;">Triệu đồng</small>
+                            </span>
                         </div>
                     </div>
 
-                    <!-- Interactive SVG Chart with Data Points & Callout Labels -->
-                    <div class="misa-chart-wrapper position-relative" style="height: 220px; width: 100%;">
-                        <svg viewBox="0 0 680 200" preserveAspectRatio="none" style="width: 100%; height: 100%;">
-                            <defs>
-                                <linearGradient id="chartGreenGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stop-color="#00b060" stop-opacity="0.15" />
-                                    <stop offset="100%" stop-color="#00b060" stop-opacity="0.0" />
-                                </linearGradient>
-                            </defs>
+                    <!-- Interactive MISA AMIS Chart (12 Months Bar & Line) -->
+                    <div class="position-relative" style="height: 240px; width: 100%;">
+                        
+                        <!-- Floating Tooltip on Hover / Select (Matching Screenshot 5) -->
+                        @if (hoveredMonth.HasValue)
+                        {
+                            var hm = hoveredMonth.Value;
+                            var mData = dashboard.MonthlyRevenues.FirstOrDefault(x => x.MonthNumber == hm);
+                            var tooltipLeftPercent = Math.Max(8, Math.Min(88, (hm - 1) * 8.33 + 4.16));
+                            <div class="misa-chart-tooltip" style="left: @(tooltipLeftPercent)%; top: 15px; transform: translateX(-50%);">
+                                <div class="fw-bold mb-1 border-bottom border-secondary border-opacity-50 pb-1" style="font-size: 0.8rem; color: #10b981;">
+                                    Tháng @hm
+                                </div>
+                                @if (showRevenue)
+                                {
+                                    <div class="d-flex align-items-center gap-1.5" style="color: #10b981;">
+                                        <i class="bi bi-square-fill" style="font-size: 8px;"></i>
+                                        <span>Doanh thu: @((mData != null ? mData.Revenue / 1000000m : 0).ToString("N0")) Triệu đồng</span>
+                                    </div>
+                                }
+                                @if (showCost)
+                                {
+                                    <div class="d-flex align-items-center gap-1.5" style="color: #f43f5e;">
+                                        <i class="bi bi-square-fill" style="font-size: 8px;"></i>
+                                        <span>Chi phí: @((mData != null ? mData.Cost / 1000000m : 0).ToString("N0")) Triệu đồng</span>
+                                    </div>
+                                }
+                                @if (showProfit)
+                                {
+                                    <div class="d-flex align-items-center gap-1.5" style="color: #ff7700;">
+                                        <i class="bi bi-circle-fill" style="font-size: 8px;"></i>
+                                        <span>Lợi nhuận: @((mData != null ? mData.Profit / 1000000m : 0).ToString("N0")) Triệu đồng</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <svg viewBox="0 0 740 220" style="width: 100%; height: 100%; overflow: visible;">
+                            <!-- Y-Axis Labels -->
+                            <text x="42" y="34" fill="#94a3b8" font-size="10" text-anchor="end">4.000</text>
+                            <text x="42" y="84" fill="#94a3b8" font-size="10" text-anchor="end">2.000</text>
+                            <text x="42" y="134" fill="#94a3b8" font-size="10" text-anchor="end">0</text>
+                            <text x="42" y="184" fill="#94a3b8" font-size="10" text-anchor="end">(2.000)</text>
 
                             <!-- Horizontal Grid Lines -->
-                            <line x1="30" y1="20" x2="660" y2="20" stroke="#f1f5f9" stroke-dasharray="3 3" />
-                            <line x1="30" y1="60" x2="660" y2="60" stroke="#f1f5f9" stroke-dasharray="3 3" />
-                            <line x1="30" y1="100" x2="660" y2="100" stroke="#f1f5f9" stroke-dasharray="3 3" />
-                            <line x1="30" y1="140" x2="660" y2="140" stroke="#f1f5f9" stroke-dasharray="3 3" />
-                            <line x1="30" y1="170" x2="660" y2="170" stroke="#e2e8f0" stroke-width="1.5" />
+                            <line x1="48" y1="30" x2="720" y2="30" stroke="#f1f5f9" stroke-dasharray="3 3" />
+                            <line x1="48" y1="80" x2="720" y2="80" stroke="#f1f5f9" stroke-dasharray="3 3" />
+                            <line x1="48" y1="130" x2="720" y2="130" stroke="#cbd5e1" stroke-width="1.2" />
+                            <line x1="48" y1="180" x2="720" y2="180" stroke="#f1f5f9" stroke-dasharray="3 3" />
 
-                            <!-- 1. DOANH THU LINE (Green #00b060) -->
-                            <path d="M 40 165 C 100 160, 160 165, 220 160 C 270 155, 300 140, 340 100 C 370 70, 400 40, 440 35 C 470 38, 500 50, 540 85 C 570 120, 610 140, 650 145" 
-                                  fill="none" stroke="#00b060" stroke-width="2.5" />
+                            <!-- 12 MONTH COLUMNS -->
+                            @{
+                                var monthsList = dashboard.MonthlyRevenues;
+                                decimal maxScale = 4000m; // Scale factor in Trđ
+                                int baselineY = 130;
+                                int chartHeightPositive = 100; // 0 to 4.000 Trđ
+                            }
 
-                            <!-- 2. CHI PHÍ LINE (Dark Red #ef4444) -->
-                            <path d="M 40 168 C 100 165, 160 168, 220 165 C 270 160, 300 150, 340 120 C 370 95, 400 70, 440 68 C 470 70, 500 80, 540 105 C 570 135, 610 150, 650 155" 
-                                  fill="none" stroke="#ef4444" stroke-width="2" />
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                int m = i;
+                                int cx = 55 + (m - 1) * 55;
+                                var mDto = monthsList.FirstOrDefault(x => x.MonthNumber == m);
+                                decimal revTrd = mDto != null ? mDto.Revenue / 1000000m : 0m;
+                                decimal costTrd = mDto != null ? mDto.Cost / 1000000m : 0m;
+                                decimal profitTrd = mDto != null ? mDto.Profit / 1000000m : 0m;
 
-                            <!-- 3. LỢI NHUẬN LINE (Orange #ff7700) -->
-                            <path d="M 40 166 C 100 162, 160 165, 220 163 C 270 158, 300 145, 340 135 C 370 130, 400 125, 440 128 C 470 130, 500 132, 540 135 C 570 135, 610 136, 650 138" 
-                                  fill="none" stroke="#ff7700" stroke-width="2.2" />
+                                int revH = (int)Math.Min(100, (revTrd / maxScale) * chartHeightPositive);
+                                int costH = (int)Math.Min(100, (costTrd / maxScale) * chartHeightPositive);
 
-                            <!-- Data Points on Lines -->
-                            <rect x="315" y="125" width="45" height="18" rx="4" fill="#334155" />
-                            <text x="337" y="137" fill="#ffffff" font-size="9.5" font-weight="700" text-anchor="middle">1.308</text>
-                            <circle cx="340" cy="100" r="4.5" fill="#00b060" stroke="#ffffff" stroke-width="1.5" />
+                                bool isHovered = hoveredMonth == m;
 
-                            <rect x="418" y="22" width="45" height="18" rx="4" fill="#00b060" />
-                            <text x="440" y="34" fill="#ffffff" font-size="9.5" font-weight="700" text-anchor="middle">1.035</text>
-                            <circle cx="440" cy="35" r="4.5" fill="#00b060" stroke="#ffffff" stroke-width="1.5" />
+                                <!-- Highlight column background and vertical dashed guideline when hovered -->
+                                @if (isHovered)
+                                {
+                                    <line x1="@cx" y1="20" x2="@cx" y2="195" stroke="#94a3b8" stroke-dasharray="3 3" />
+                                    <rect x="@(cx - 24)" y="20" width="48" height="175" fill="rgba(0,176,96,0.04)" rx="4" />
+                                    <!-- Selected Month Border Box around X-axis label (Matching Screenshot 5) -->
+                                    <rect x="@(cx - 18)" y="195" width="36" height="20" rx="3" fill="#f8fafc" stroke="#94a3b8" />
+                                }
 
-                            <rect x="472" y="40" width="38" height="18" rx="4" fill="#ff7700" />
-                            <text x="491" y="52" fill="#ffffff" font-size="9.5" font-weight="700" text-anchor="middle">650</text>
-                            <circle cx="491" cy="62" r="4.5" fill="#ff7700" stroke="#ffffff" stroke-width="1.5" />
+                                <!-- BARS: DOANH THU & CHI PHÍ -->
+                                @if (showRevenue && showCost)
+                                {
+                                    <!-- Revenue Bar (Teal/Green) -->
+                                    @if (revH > 0)
+                                    {
+                                        <rect x="@(cx - 11)" y="@(baselineY - revH)" width="10" height="@revH" fill="#10b981" rx="2" />
+                                    }
+                                    <!-- Cost Bar (Red/Pink) -->
+                                    @if (costH > 0)
+                                    {
+                                        <rect x="@(cx + 1)" y="@(baselineY - costH)" width="10" height="@costH" fill="#f43f5e" rx="2" />
+                                    }
+                                }
+                                else if (showRevenue)
+                                {
+                                    <!-- Revenue Bar ONLY (Single wide column, matching Screenshot 5) -->
+                                    @if (revH > 0)
+                                    {
+                                        <rect x="@(cx - 8)" y="@(baselineY - revH)" width="16" height="@revH" fill="#10b981" rx="2" />
+                                    }
+                                }
+                                else if (showCost)
+                                {
+                                    <!-- Cost Bar ONLY -->
+                                    @if (costH > 0)
+                                    {
+                                        <rect x="@(cx - 8)" y="@(baselineY - costH)" width="16" height="@costH" fill="#f43f5e" rx="2" />
+                                    }
+                                }
 
-                            <rect x="522" y="65" width="38" height="18" rx="4" fill="#00b060" />
-                            <text x="541" y="77" fill="#ffffff" font-size="9.5" font-weight="700" text-anchor="middle">253</text>
-                            <circle cx="541" cy="85" r="4.5" fill="#00b060" stroke="#ffffff" stroke-width="1.5" />
+                                <!-- Peak callout labels (as seen in screenshots: 1.035, 650, 253) -->
+                                @if (showRevenue && revTrd >= 200m)
+                                {
+                                    <rect x="@(cx - 18)" y="@(baselineY - revH - 17)" width="36" height="15" rx="3" fill="#0f172a" opacity="0.85" />
+                                    @((MarkupString)$"<text x=\"{cx}\" y=\"{baselineY - revH - 6}\" fill=\"#ffffff\" font-size=\"8.5\" font-weight=\"700\" text-anchor=\"middle\">{revTrd.ToString("N0")}</text>")
+                                }
 
-                            <!-- Month Labels on X Axis -->
-                            <text x="40" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 2</text>
-                            <text x="95" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 3</text>
-                            <text x="150" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 4</text>
-                            <text x="205" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 5</text>
-                            <text x="260" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 6</text>
-                            <text x="315" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 7</text>
-                            <text x="370" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 8</text>
-                            <text x="425" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 9</text>
-                            <text x="480" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 10</text>
-                            <text x="535" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 11</text>
-                            <text x="590" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 12</text>
-                            <text x="645" y="190" fill="#64748b" font-size="10" text-anchor="middle">Th 1</text>
+                                <!-- X-Axis Month Label -->
+                                @((MarkupString)$"<text x=\"{cx}\" y=\"209\" fill=\"{(isHovered ? "#0f172a" : "#64748b")}\" font-size=\"10\" font-weight=\"{(isHovered ? "700" : "500")}\" text-anchor=\"middle\">Th {m}</text>")
+
+                                <!-- Invisible hover trigger rect -->
+                                <rect x="@(cx - 24)" y="15" width="48" height="195" fill="transparent" 
+                                      style="cursor: pointer;"
+                                      @onmouseover="() => hoveredMonth = m" 
+                                      @onmouseout="() => hoveredMonth = null"
+                                      @onclick="() => hoveredMonth = m" />
+                            }
+
+                            <!-- 3. LỢI NHUẬN LINE & CIRCULAR DATA POINTS (ORANGE) -->
+                            @if (showProfit)
+                            {
+                                <!-- Build SVG path for profit points -->
+                                string pathD = "";
+                                for (int i = 1; i <= 12; i++)
+                                {
+                                    int m = i;
+                                    int cx = 55 + (m - 1) * 55;
+                                    var mDto = monthsList.FirstOrDefault(x => x.MonthNumber == m);
+                                    decimal profitTrd = mDto != null ? mDto.Profit / 1000000m : 0m;
+                                    // Calculate py based on profit (can be negative!)
+                                    int py = baselineY - (int)((profitTrd / maxScale) * chartHeightPositive);
+                                    py = Math.Max(25, Math.Min(200, py));
+                                    pathD += (i == 1 ? $"M {cx} {py}" : $" L {cx} {py}");
+                                }
+
+                                <path d="@pathD" fill="none" stroke="#ff7700" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    int m = i;
+                                    int cx = 55 + (m - 1) * 55;
+                                    var mDto = monthsList.FirstOrDefault(x => x.MonthNumber == m);
+                                    decimal profitTrd = mDto != null ? mDto.Profit / 1000000m : 0m;
+                                    int py = baselineY - (int)((profitTrd / maxScale) * chartHeightPositive);
+                                    py = Math.Max(25, Math.Min(200, py));
+
+                                    <circle cx="@cx" cy="@py" r="4" fill="#ff7700" stroke="#ffffff" stroke-width="1.5" />
+
+                                    <!-- Negative callout badge if loss occurs -->
+                                    @if (profitTrd < 0 && Math.Abs(profitTrd) >= 100m)
+                                    {
+                                        <rect x="@(cx - 22)" y="@(py + 6)" width="44" height="15" rx="3" fill="#0f172a" opacity="0.85" />
+                                        @((MarkupString)$"<text x=\"{cx}\" y=\"{py + 17}\" fill=\"#ffffff\" font-size=\"8.5\" font-weight=\"700\" text-anchor=\"middle\">({Math.Abs(profitTrd).ToString("N0")})</text>")
+                                    }
+                                }
+                            }
                         </svg>
                     </div>
 
-                    <!-- Chart Legend Pill -->
-                    <div class="misa-chart-legend justify-content-center mt-2">
-                        <span class="d-flex align-items-center"><span class="misa-dot" style="background-color: #00b060;"></span> DOANH THU</span>
-                        <span class="d-flex align-items-center"><span class="misa-dot" style="background-color: #ef4444;"></span> CHI PHÍ</span>
-                        <span class="d-flex align-items-center"><span class="misa-dot" style="background-color: #ff7700;"></span> LỢI NHUẬN</span>
+                    <!-- Interactive MISA Legend Buttons (Matching Screenshot 4 & 5) -->
+                    <div class="d-flex align-items-center justify-content-center gap-3 mt-2">
+                        <button class="misa-legend-btn @(showRevenue ? "" : "inactive")" 
+                                title="Bấm để ẩn / hiện chuỗi Doanh thu" 
+                                @onclick="ToggleRevenue">
+                            <span class="misa-dot" style="background-color: #00b060;"></span>
+                            <span style="color: @(showRevenue ? "#1e293b" : "#94a3b8");">DOANH THU</span>
+                        </button>
+
+                        <button class="misa-legend-btn @(showCost ? "" : "inactive")" 
+                                title="Bấm để ẩn / hiện chuỗi Chi phí" 
+                                @onclick="ToggleCost">
+                            <span class="misa-dot" style="background-color: #f43f5e;"></span>
+                            <span style="color: @(showCost ? "#1e293b" : "#94a3b8");">CHI PHÍ</span>
+                        </button>
+
+                        <button class="misa-legend-btn @(showProfit ? "" : "inactive")" 
+                                title="Bấm để ẩn / hiện chuỗi Lợi nhuận" 
+                                @onclick="ToggleProfit">
+                            <span class="misa-dot" style="background-color: #ff7700;"></span>
+                            <span style="color: @(showProfit ? "#1e293b" : "#94a3b8");">LỢI NHUẬN</span>
+                        </button>
                     </div>
                 </div>
 
                 <div class="misa-card-footer">
-                    <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
+                    <span><i class="bi bi-clock me-1"></i>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
                     <a href="javascript:void(0)" @onclick="LoadDashboard" class="text-primary fw-bold text-decoration-none">Tải lại</a>
                 </div>
             </div>
@@ -908,7 +1046,7 @@ else if (dashboard != null)
                     <!-- Quick Navigation Actions inside Modal -->
                     <div class="d-flex align-items-center justify-content-between pt-2 border-top">
                         <div class="text-muted small" style="font-size: 0.75rem;">
-                            <i class="bi bi-info-circle me-1"></i> Dữ liệu tự động đồng bộ hóa với phân hệ Kế toán MISA AMIS
+                            <i class="bi bi-info-circle me-1"></i> Dữ liệu tự động đồng bộ hóa với CSDL bán hàng & công nợ
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <button class="btn btn-outline-secondary btn-sm" @onclick="CloseAvaModal">Đóng</button>
@@ -924,7 +1062,7 @@ else if (dashboard != null)
 }
 
 <!-- =========================================================================
-     9. MODAL TÙY CHỈNH BÀN LÀM VIỆC (MISA CUSTOMIZE DASHBOARD)
+     9. MODAL TÙY CHỈNH BÀN LÀM VIỆC (CUSTOMIZE DASHBOARD)
      ========================================================================= -->
 @if (showCustomizeModal)
 {
@@ -1001,6 +1139,20 @@ else if (dashboard != null)
 
     private bool showAvaModal = false;
     private bool showCustomizeModal = false;
+
+    // Chart Interactive Series Toggles (Matching MISA Screenshot 4 & 5)
+    private bool showRevenue = true;
+    private bool showCost = true;
+    private bool showProfit = true;
+    private int? hoveredMonth = null;
+
+    private decimal chartTotalRevenue => dashboard != null ? dashboard.MonthlyRevenues.Sum(m => m.Revenue) : 0;
+    private decimal chartTotalCost => dashboard != null ? dashboard.MonthlyRevenues.Sum(m => m.Cost) : 0;
+    private decimal chartTotalProfit => chartTotalRevenue - chartTotalCost;
+
+    private void ToggleRevenue() => showRevenue = !showRevenue;
+    private void ToggleCost() => showCost = !showCost;
+    private void ToggleProfit() => showProfit = !showProfit;
 
     // Calculations
     private decimal estimatedCost => dashboard != null ? dashboard.TotalRevenue * 0.72m : 0;

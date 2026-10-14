@@ -156,14 +156,16 @@ namespace WebBanHang.Plugins.DataStore.SQL
             return await connection.QueryAsync<TopSellingProductDto>(sql, new { Top = top });
         }
 
-        public async Task<IEnumerable<MonthlyRevenueDto>> GetMonthlyRevenueStatisticsAsync(int months = 6)
+        public async Task<IEnumerable<MonthlyRevenueDto>> GetMonthlyRevenueStatisticsAsync(int months = 12)
         {
             using var connection = new SqlConnection(_connectionString);
             var sql = @"
                 SELECT 
+                    MONTH(i.InvoiceDate) AS MonthNumber,
                     FORMAT(i.InvoiceDate, 'MM/yyyy') AS MonthLabel,
                     SUM(i.TotalAmount) AS Revenue,
-                    SUM(i.PaidAmount) AS Collected
+                    SUM(i.PaidAmount) AS Collected,
+                    SUM(i.TotalAmount * 0.72) AS Cost
                 FROM Invoices i
                 WHERE i.InvoiceDate >= DATEADD(month, -@Months, GETDATE())
                 GROUP BY FORMAT(i.InvoiceDate, 'MM/yyyy'), YEAR(i.InvoiceDate), MONTH(i.InvoiceDate)

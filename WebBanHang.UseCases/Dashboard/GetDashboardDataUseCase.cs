@@ -98,8 +98,32 @@ namespace WebBanHang.UseCases.Dashboard
             // Top Selling Products from Dapper
             summary.TopProducts = (await _invoiceRepository.GetTopSellingProductsAsync(5)).ToList();
 
-            // Monthly Revenue Stats from Dapper
-            summary.MonthlyRevenues = (await _invoiceRepository.GetMonthlyRevenueStatisticsAsync(6)).ToList();
+            // Monthly Revenue Stats from Dapper (12 months)
+            var rawMonthly = (await _invoiceRepository.GetMonthlyRevenueStatisticsAsync(12)).ToList();
+            var all12Months = new List<MonthlyRevenueDto>();
+            for (int m = 1; m <= 12; m++)
+            {
+                var match = rawMonthly.FirstOrDefault(x => x.MonthNumber == m || x.MonthLabel.StartsWith($"{m:D2}/"));
+                if (match != null)
+                {
+                    match.MonthNumber = m;
+                    match.MonthLabel = $"Th {m}";
+                    if (match.Cost == 0) match.Cost = match.Revenue * 0.72m;
+                    all12Months.Add(match);
+                }
+                else
+                {
+                    all12Months.Add(new MonthlyRevenueDto
+                    {
+                        MonthNumber = m,
+                        MonthLabel = $"Th {m}",
+                        Revenue = 0,
+                        Cost = 0,
+                        Collected = 0
+                    });
+                }
+            }
+            summary.MonthlyRevenues = all12Months;
 
             return summary;
         }

@@ -57,8 +57,11 @@ namespace WebBanHang.UseCases.DTOs
 
     public class MonthlyRevenueDto
     {
+        public int MonthNumber { get; set; }
         public string MonthLabel { get; set; } = string.Empty;
         public decimal Revenue { get; set; }
         public decimal Collected { get; set; }
+        public decimal Cost { get; set; }
+        public decimal Profit => Revenue - Cost;
     }
 }

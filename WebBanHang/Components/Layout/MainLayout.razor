@@ -19,17 +19,71 @@
 
             <!-- Brand Logo & Name -->
             <a href="" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0 ms-1">
-                <img src="/images/misa-logo.svg" alt="MISA Logo" class="misa-brand-logo-img" />
-                <span class="misa-brand-text fw-bold">Kế toán</span>
+                <img src="/images/misa-logo.svg" alt="B2B Logo" class="misa-brand-logo-img" />
+                <span class="misa-brand-text fw-bold">Kế toán & Bán hàng B2B</span>
             </a>
 
             <span class="misa-header-divider d-none d-md-inline ms-1"></span>
 
-            <!-- Company Selector Dropdown -->
-            <div class="misa-company-selector d-none d-md-flex align-items-center gap-1 text-truncate" 
-                 title="@LayoutState.SelectedCompany">
-                <span class="fw-semibold text-truncate text-slate-navy small">@LayoutState.SelectedCompany</span>
-                <i class="bi bi-chevron-down text-muted small ms-0.5"></i>
+            <!-- Company Selector Dropdown & Working Mode Popover -->
+            <div class="position-relative d-none d-md-block">
+                <div class="misa-company-selector d-flex align-items-center gap-1 text-truncate" 
+                     role="button"
+                     style="cursor: pointer;"
+                     @onclick="LayoutState.ToggleRoleModal"
+                     title="Bấm để đổi chế độ làm việc: @LayoutState.SelectedCompany">
+                    <span class="fw-semibold text-truncate text-slate-navy small">@LayoutState.SelectedCompany</span>
+                    <i class="bi bi-chevron-down text-muted small ms-0.5"></i>
+                </div>
+
+                @if (LayoutState.IsRoleModalOpen)
+                {
+                    <!-- Backdrop to close popover when clicking outside -->
+                    <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="LayoutState.ToggleRoleModal"></div>
+
+                    <!-- Popover Card (Matching Screenshot media_1791966322056_fb1cada3.png) -->
+                    <div class="position-absolute bg-white rounded-3 shadow-lg border p-3" 
+                         style="top: 100%; left: 0; z-index: 1050; min-width: 330px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);" 
+                         @onclick:stopPropagation="true">
+                        <div class="fw-bold text-dark mb-2.5 fs-6" style="letter-spacing: -0.2px;">Chế độ làm việc</div>
+                        
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="form-check d-flex align-items-center gap-1.5 mb-0">
+                                <input class="form-check-input" type="radio" name="workingMode" id="modeAccountant" 
+                                       checked="@(selectedRoleMode == "accountant")" 
+                                       @onchange='() => selectedRoleMode = "accountant"' />
+                                <label class="form-check-label small fw-medium text-slate-navy cursor-pointer" for="modeAccountant">
+                                    Kế toán
+                                </label>
+                            </div>
+                            <div class="form-check d-flex align-items-center gap-1.5 mb-0">
+                                <input class="form-check-input" type="radio" name="workingMode" id="modeSales" 
+                                       checked="@(selectedRoleMode == "sales")" 
+                                       @onchange='() => selectedRoleMode = "sales"' />
+                                <label class="form-check-label small fw-medium text-slate-navy cursor-pointer" for="modeSales">
+                                    Thủ kho (Bán hàng)
+                                </label>
+                            </div>
+                            <div class="form-check d-flex align-items-center gap-1.5 mb-0">
+                                <input class="form-check-input" type="radio" name="workingMode" id="modeCustomer" 
+                                       checked="@(selectedRoleMode == "customer")" 
+                                       @onchange='() => selectedRoleMode = "customer"' />
+                                <label class="form-check-label small fw-medium text-slate-navy cursor-pointer" for="modeCustomer">
+                                    Đại lý B2B
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-top pt-2.5 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-2" @onclick="LayoutState.ToggleRoleModal">
+                                Hủy
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm px-3 rounded-2 fw-semibold" style="background-color: #00b060; border-color: #00b060;" @onclick="ApplyRoleSwitch">
+                                Đồng ý
+                            </button>
+                        </div>
+                    </div>
+                }
             </div>
 
             <!-- Fiscal Year Green Badge -->
@@ -252,9 +306,17 @@
 </div>
 
 @code {
+    private string selectedRoleMode = "accountant";
+
     protected override void OnInitialized()
     {
         LayoutState.OnChange += StateHasChanged;
+    }
+
+    private void ApplyRoleSwitch()
+    {
+        LayoutState.IsRoleModalOpen = false;
+        Navigation.NavigateTo($"/api/auth/switch?role={selectedRoleMode}", forceLoad: true);
     }
 
     public void Dispose()
