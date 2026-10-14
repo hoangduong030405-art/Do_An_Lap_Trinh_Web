@@ -45,7 +45,22 @@ namespace WebBanHang.UseCases.Dashboard
                 OverdueInvoicesCount = invoices.Count(i => i.Balance > 0 && DateTime.Now > i.DueDate),
                 TotalCustomersCount = customers.Count,
                 TotalProductsCount = products.Count,
-                TotalInvoicesCount = invoices.Count
+                TotalInvoicesCount = invoices.Count,
+                TotalInventoryValuation = products.Sum(p => p.StockQuantity * p.UnitPrice),
+                TopInventoryProducts = products
+                    .OrderByDescending(p => p.StockQuantity * p.UnitPrice)
+                    .Take(5)
+                    .Select(p => new ProductInventoryDto
+                    {
+                        ProductId = p.Id,
+                        ProductCode = p.ProductCode,
+                        ProductName = p.Name,
+                        Unit = p.Unit,
+                        StockQuantity = p.StockQuantity,
+                        UnitPrice = p.UnitPrice,
+                        ImageUrl = p.ImageUrl
+                    })
+                    .ToList()
             };
 
             // Top Debtors

@@ -1,204 +1,261 @@
-<div class="nav-menu-wrapper d-flex flex-column h-100">
-    <!-- 1. HEADER BRAND: DEEP SLATE NAVY ENTERPRISE SAAS -->
-    <div class="top-row px-3 navbar navbar-dark d-flex align-items-center justify-content-between">
-        <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-decoration-none" href="">
-            <div class="brand-logo-badge rounded-3 bg-primary text-white d-flex align-items-center justify-content-center shadow-xs">
-                <i class="bi bi-diagram-3-fill fs-5"></i>
-            </div>
-            <div class="lh-sm">
-                <span class="d-block text-white fw-extrabold letter-spacing-wide">B2B TRADE CREDIT</span>
-                <small class="text-slate-light opacity-75 font-monospace" style="font-size: 0.65rem;">PLATFORM ECO2415</small>
-            </div>
-        </a>
-        <input type="checkbox" title="Navigation menu" class="navbar-toggler d-md-none" />
+@inject LayoutStateService LayoutState
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<div class="misa-sidebar-wrapper d-flex flex-column h-100 @(LayoutState.IsSidebarCollapsed ? "is-collapsed" : "")">
+    
+    <!-- 1. TOP QUICK ACTION BUTTON ("+ THÊM NHANH") -->
+    <div class="p-2 pt-2.5 pb-1 flex-shrink-0">
+        @if (LayoutState.IsSidebarCollapsed)
+        {
+            <button class="btn btn-misa-quick-mini w-100 d-flex align-items-center justify-content-center" 
+                    title="+ Thêm nhanh chứng từ / nghiệp vụ" 
+                    @onclick="LayoutState.ToggleQuickAdd">
+                <i class="bi bi-plus-lg text-success fs-5"></i>
+            </button>
+        }
+        else
+        {
+            <button class="btn btn-misa-quick-full w-100 d-flex align-items-center justify-content-center gap-2" 
+                    @onclick="LayoutState.ToggleQuickAdd">
+                <i class="bi bi-plus-lg text-success fw-bold"></i>
+                <span class="fw-semibold">Thêm nhanh</span>
+            </button>
+        }
     </div>
 
-    <!-- 2. SCROLLABLE NAVIGATION LINKS THEO ROLE -->
-    <div class="nav-scrollable flex-grow-1" onclick="document.querySelector('.navbar-toggler')?.click()">
-        <nav class="flex-column p-2">
+    <!-- 2. SECTION: HAY DÙNG (PINNED FAVORITES) - Only visible when expanded -->
+    @if (!LayoutState.IsSidebarCollapsed)
+    {
+        <div class="px-2.5 py-1.5 flex-shrink-0">
+            <div class="d-flex align-items-center justify-content-between text-uppercase small text-muted-misa fw-bold mb-1.5" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+                <span>HAY DÙNG</span>
+                <i class="bi bi-chevron-up opacity-75" style="font-size: 0.75rem;"></i>
+            </div>
+            
+            <div class="misa-pinned-box mb-1.5" @onclick="LayoutState.ToggleQuickAdd" title="Bấm để truy cập nhanh các tính năng">
+                <span class="text-info-blue">Ghim các tính năng hay dùng tại đây</span>
+            </div>
 
-            <!-- ================= ROLE: CUSTOMER (ĐẠI LÝ B2B) ================= -->
-            <AuthorizeView Roles="Customer">
-                <Authorized>
-                    <div class="nav-divider text-uppercase px-3 mt-2 mb-2 fw-bold text-warning small">
-                        <i class="bi bi-building me-1"></i> Cổng Đại Lý Tự Phục Vụ
+            <button class="btn btn-misa-favorite-page w-100 text-center py-1 small" @onclick="MarkCurrentPageFavorite">
+                Hay dùng trang này
+            </button>
+        </div>
+    }
+
+    <!-- 3. SECTION: PHÂN HỆ (MODULES MENU) -->
+    <div class="misa-nav-scrollable flex-grow-1 px-1.5 py-1">
+        @if (!LayoutState.IsSidebarCollapsed)
+        {
+            <div class="text-uppercase small text-muted-misa fw-bold px-2 py-1" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+                PHÂN HỆ
+            </div>
+        }
+
+        <nav class="d-flex flex-column gap-0.5">
+            <!-- 3.1 AVA Kế toán AI -->
+            <div class="nav-item">
+                <a class="nav-link misa-link" href="javascript:void(0)" @onclick="LayoutState.ToggleQuickAdd" title="Trợ lý AVA Kế toán AI">
+                    <div class="misa-avatar-wrapper flex-shrink-0">
+                        <img src="/images/ava-avatar.svg" alt="AVA AI" class="misa-ava-icon" />
                     </div>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text d-flex align-items-center justify-content-between flex-grow-1">
+                            <span>AVA Kế toán</span>
+                            <span class="badge bg-purple-ai text-white rounded-pill px-1.5 py-0.5" style="font-size: 0.62rem;">AI</span>
+                        </span>
+                    }
+                </a>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="portal/dashboard" Match="NavLinkMatch.All">
-                            <i class="bi bi-speedometer2 fs-5"></i>
-                            <span>Trang Chủ Đại Lý</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.2 Tổng quan (Dashboard) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link active-green" href="" Match="NavLinkMatch.All" title="Tổng quan">
+                    <i class="bi bi-grid-fill misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Tổng quan</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="portal/store">
-                            <i class="bi bi-cart3 fs-5"></i>
-                            <span>Mua Hàng Sỉ B2B</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.3 Tiền mặt (Phiếu thu / Chi) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="payments" title="Tiền mặt">
+                    <i class="bi bi-cash-stack misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Tiền mặt</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="portal/invoices">
-                            <i class="bi bi-receipt-cutoff fs-5"></i>
-                            <span>Hóa Đơn & Quét VietQR</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.4 Tiền gửi (Ngân hàng / VietQR) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="portal/invoices" title="Tiền gửi & VietQR">
+                    <i class="bi bi-bank misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Tiền gửi</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="portal/ledger">
-                            <i class="bi bi-journal-text fs-5"></i>
-                            <span>Sổ Đối Soát Công Nợ</span>
-                        </NavLink>
-                    </div>
-                </Authorized>
-            </AuthorizeView>
+            <!-- 3.5 Mua hàng (Đặt hàng B2B) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="portal/store" title="Mua hàng">
+                    <i class="bi bi-bag-check misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Mua hàng</span>
+                    }
+                </NavLink>
+            </div>
 
-            <!-- ================= ROLE: SALES (BÁN HÀNG) ================= -->
-            <AuthorizeView Roles="Sales">
-                <Authorized>
-                    <div class="nav-divider text-uppercase px-3 mt-2 mb-2 fw-bold text-info small">
-                        <i class="bi bi-bag-check me-1"></i> Phân Hệ Bán Hàng Sỉ
-                    </div>
+            <!-- 3.6 Bán hàng (Lập hóa đơn bán buôn) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="create-invoice" title="Bán hàng">
+                    <i class="bi bi-cart3 misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Bán hàng</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                            <i class="bi bi-speedometer2 fs-5"></i>
-                            <span>Tổng Quan (Dashboard)</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.7 Quản lý hóa đơn -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="invoices" title="Quản lý hóa đơn">
+                    <i class="bi bi-receipt-cutoff misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Quản lý hóa đơn</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="create-invoice">
-                            <i class="bi bi-cart-plus-fill fs-5"></i>
-                            <span>Lập Hóa Đơn Bán Hàng</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.8 Kho (Sản phẩm & Tồn kho) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="manage-products" title="Kho">
+                    <i class="bi bi-box-seam misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Kho</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="invoices">
-                            <i class="bi bi-receipt-cutoff fs-5"></i>
-                            <span>Danh Sách Hóa Đơn & In</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.9 Công cụ dụng cụ & Hạn mức rủi ro -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="manage-customers" title="Công cụ dụng cụ / Khách hàng">
+                    <i class="bi bi-tools misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Công cụ dụng cụ</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="manage-products">
-                            <i class="bi bi-box-seam-fill fs-5"></i>
-                            <span>Danh Mục Sản Phẩm & Kho</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.10 Thuế -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="aging-report" title="Thuế & Quyết toán">
+                    <i class="bi bi-percent misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Thuế</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="manage-customers">
-                            <i class="bi bi-shield-check fs-5"></i>
-                            <span>Đánh Giá Rủi Ro AI</span>
-                        </NavLink>
-                    </div>
-                </Authorized>
-            </AuthorizeView>
+            <!-- 3.11 Cộng đồng MISA -->
+            <div class="nav-item">
+                <a class="nav-link misa-link" href="https://forum.misa.vn" target="_blank" title="Cộng đồng MISA">
+                    <i class="bi bi-asterisk misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Cộng đồng MISA</span>
+                    }
+                </a>
+            </div>
 
-            <!-- ================= ROLE: ACCOUNTANT (KẾ TOÁN CÔNG NỢ) ================= -->
-            <AuthorizeView Roles="Accountant">
-                <Authorized>
-                    <div class="nav-divider text-uppercase px-3 mt-2 mb-2 fw-bold text-warning small">
-                        <i class="bi bi-coin me-1"></i> Quản Trị Công Nợ & Kế Toán
-                    </div>
+            <!-- 3.12 Tổng hợp (Sổ cái / Sổ chi tiết) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="customer-ledger" title="Tổng hợp">
+                    <i class="bi bi-journal-bookmark-fill misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Tổng hợp</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                            <i class="bi bi-speedometer2 fs-5"></i>
-                            <span>Tổng Quan (Dashboard)</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.13 Báo cáo (Báo cáo tuổi nợ 4 xô / Doanh số) -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="aging-report" title="Báo cáo">
+                    <i class="bi bi-bar-chart-line-fill misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Báo cáo</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="manage-customers">
-                            <i class="bi bi-people-fill fs-5"></i>
-                            <span>Hạn Mức Khách Hàng (AI)</span>
-                        </NavLink>
-                    </div>
+            <!-- 3.14 Phân tích tài chính -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="aging-report" title="Phân tích tài chính">
+                    <i class="bi bi-diagram-3 misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Phân tích tài chính</span>
+                    }
+                </NavLink>
+            </div>
 
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="payments">
-                            <i class="bi bi-cash-stack fs-5"></i>
-                            <span>Thu Tiền Phân Bổ (FIFO)</span>
-                        </NavLink>
-                    </div>
-
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="payment-history">
-                            <i class="bi bi-clock-history fs-5"></i>
-                            <span>Lịch Sử Phiếu Thu & In</span>
-                        </NavLink>
-                    </div>
-
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="customer-ledger">
-                            <i class="bi bi-journal-text fs-5"></i>
-                            <span>Sổ Chi Tiết Công Nợ</span>
-                        </NavLink>
-                    </div>
-
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="aging-report">
-                            <i class="bi bi-bar-chart-line-fill fs-5"></i>
-                            <span>Báo Cáo Tuổi Nợ 4 Xô</span>
-                        </NavLink>
-                    </div>
-
-                    <div class="nav-item">
-                        <NavLink class="nav-link" href="invoices">
-                            <i class="bi bi-envelope-exclamation-fill fs-5"></i>
-                            <span>Hóa Đơn & Đòi Nợ AI</span>
-                        </NavLink>
-                    </div>
-                </Authorized>
-            </AuthorizeView>
-
-            <!-- ================= GUEST / NOT AUTHORIZED ================= -->
-            <AuthorizeView>
-                <NotAuthorized>
-                    <div class="p-3 text-center text-slate-light small opacity-75">
-                        <i class="bi bi-lock fs-2 d-block mb-2"></i>
-                        Vui lòng đăng nhập để truy cập tính năng theo vai trò.
-                    </div>
-                </NotAuthorized>
-            </AuthorizeView>
-
+            <!-- 3.15 Danh mục -->
+            <div class="nav-item">
+                <NavLink class="nav-link misa-link" href="manage-products" title="Danh mục">
+                    <i class="bi bi-list-ul misa-nav-icon"></i>
+                    @if (!LayoutState.IsSidebarCollapsed)
+                    {
+                        <span class="misa-link-text">Danh mục</span>
+                    }
+                </NavLink>
+            </div>
         </nav>
     </div>
 
-    <!-- 3. FOOTER CỐ ĐỊNH Ở GÓC DƯỚI BÊN TRÁI -->
-    <div class="nav-footer p-3 mt-auto">
-        <AuthorizeView>
-            <Authorized>
-                <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded-3 bg-dark bg-opacity-40 border border-white border-opacity-10">
-                    <div class="user-avatar-circle bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-xs flex-shrink-0" style="width: 36px; height: 36px;">
-                        @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
-                    </div>
-                    <div class="overflow-hidden flex-grow-1">
-                        <div class="fw-bold text-white small text-truncate" title="@context.User.Identity?.Name">
-                            @context.User.Identity?.Name
-                        </div>
-                        <div class="d-flex align-items-center gap-1">
-                            <span class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small fw-semibold" style="font-size: 0.7rem;">
-                                @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <a href="/api/auth/logout" class="btn btn-outline-light btn-sm w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-pill shadow-xs">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span class="fw-semibold">Đăng xuất</span>
-                </a>
-            </Authorized>
-            <NotAuthorized>
-                <a href="/login" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-pill shadow-sm text-decoration-none fw-bold">
-                    <i class="bi bi-box-arrow-in-right fs-5"></i>
-                    <span>Đăng nhập hệ thống</span>
-                </a>
-            </NotAuthorized>
-        </AuthorizeView>
+    <!-- 4. BOTTOM FOOTER: TOGGLE COLLAPSE / EXPAND BUTTON -->
+    <div class="misa-sidebar-footer p-2 border-top border-secondary border-opacity-20 d-flex align-items-center @(LayoutState.IsSidebarCollapsed ? "justify-content-center" : "justify-content-between") flex-shrink-0">
+        @if (!LayoutState.IsSidebarCollapsed)
+        {
+            <div class="small text-muted-misa d-flex align-items-center gap-1.5" style="font-size: 0.7rem;">
+                <span class="misa-version-badge">AMIS v2024.1</span>
+            </div>
+        }
+        
+        <button class="btn btn-misa-collapse-toggle d-flex align-items-center justify-content-center" 
+                @onclick="LayoutState.ToggleSidebar" 
+                title="@(LayoutState.IsSidebarCollapsed ? "Mở rộng thanh điều hướng" : "Thu gọn thanh điều hướng")">
+            <i class="bi @(LayoutState.IsSidebarCollapsed ? "bi-chevron-bar-right" : "bi-chevron-bar-left") fs-6"></i>
+        </button>
     </div>
+
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        LayoutState.OnChange += StateHasChanged;
+    }
+
+    private void MarkCurrentPageFavorite()
+    {
+        // Feedback toast or action
+    }
+
+    public void Dispose()
+    {
+        LayoutState.OnChange -= StateHasChanged;
+    }
+}

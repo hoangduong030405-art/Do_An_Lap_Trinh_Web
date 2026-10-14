@@ -13,10 +13,25 @@ namespace WebBanHang.UseCases.DTOs
         public int TotalProductsCount { get; set; }
         public int TotalInvoicesCount { get; set; }
 
+        public decimal TotalInventoryValuation { get; set; }
+        public List<ProductInventoryDto> TopInventoryProducts { get; set; } = new();
+
         public List<TopDebtorDto> TopDebtors { get; set; } = new();
         public List<TopSellingProductDto> TopProducts { get; set; } = new();
         public List<MonthlyRevenueDto> MonthlyRevenues { get; set; } = new();
         public CustomerAgingReportDto OverallAging { get; set; } = new();
+    }
+
+    public class ProductInventoryDto
+    {
+        public int ProductId { get; set; }
+        public string ProductCode { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
+        public string Unit { get; set; } = string.Empty;
+        public int StockQuantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal Valuation => StockQuantity * UnitPrice;
+        public string ImageUrl { get; set; } = string.Empty;
     }
 
     public class TopDebtorDto

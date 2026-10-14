@@ -20,6 +20,7 @@ builder.Services.AddRazorComponents()
 
 // State Service
 builder.Services.AddScoped<DraftInvoiceStateService>();
+builder.Services.AddScoped<LayoutStateService>();
 
 // Repositories
 builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();

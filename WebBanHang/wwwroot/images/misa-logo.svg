@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00b060" />
+      <stop offset="100%" stop-color="#008a4b" />
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0075ff" />
+      <stop offset="100%" stop-color="#0056b3" />
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff7700" />
+      <stop offset="100%" stop-color="#e05500" />
+    </linearGradient>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
+  </defs>
+  <!-- 4 colored curved segments forming MISA logo circle -->
+  <circle cx="24" cy="24" r="22" fill="#ffffff" />
+  <path d="M 24 4 A 20 20 0 0 1 44 24 L 34 24 A 10 10 0 0 0 24 14 Z" fill="url(#g1)" />
+  <path d="M 44 24 A 20 20 0 0 1 24 44 L 24 34 A 10 10 0 0 0 34 24 Z" fill="url(#g2)" />
+  <path d="M 24 44 A 20 20 0 0 1 4 24 L 14 24 A 10 10 0 0 0 24 34 Z" fill="url(#g3)" />
+  <path d="M 4 24 A 20 20 0 0 1 24 4 L 24 14 A 10 10 0 0 0 14 24 Z" fill="url(#g4)" />
+  <circle cx="24" cy="24" r="6" fill="#1e222d" />
+</svg>
