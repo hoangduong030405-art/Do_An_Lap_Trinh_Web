@@ -18,9 +18,12 @@ package "1. WebBanHang.CoreBusiness (Domain Layer)" {
         +string Name
         +string Unit
         +decimal UnitPrice
+        +decimal CostPrice
         +int StockQuantity
         +string ImageUrl
         +string Description
+        +decimal UnitProfit
+        +decimal ProfitMargin
     }
 
     class Invoice {
@@ -41,7 +44,10 @@ package "1. WebBanHang.CoreBusiness (Domain Layer)" {
         +int ProductId
         +int Quantity
         +decimal UnitPrice
+        +decimal CostPrice
         +decimal LineTotal
+        +decimal LineCost
+        +decimal LineProfit
     }
 
     class Payment {
