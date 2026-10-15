@@ -1,52 +1,144 @@
-<nav class="navbar navbar-expand-lg landing-navbar" id="landingNav">
+<nav class="navbar navbar-expand-lg landing-navbar" id="landingNav" aria-label="Thanh điều hướng chính">
     <div class="container">
-        <!-- BRAND LOGO -->
-        <a class="navbar-brand d-flex align-items-center gap-2.5 text-decoration-none" href="#">
-            <span class="landing-brand-logo">
-                <i class="bi bi-box-seam-fill"></i>
-            </span>
-            <div class="d-flex flex-column">
+        <!-- BRAND LOGO (LOCAL VECTOR SVG) -->
+        <a class="navbar-brand d-flex align-items-center gap-2.5 text-decoration-none" href="#gioi-thieu" aria-label="HUEGO B2B Trang chủ">
+            <div class="landing-brand-logo-svg">
+                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <rect width="34" height="34" rx="10" fill="url(#brandGrad)" />
+                    <path d="M10 12.5L17 8.5L24 12.5L17 16.5L10 12.5Z" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M10 17.5L17 21.5L24 17.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.8" />
+                    <path d="M10 22.5L17 26.5L24 22.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
+                    <defs>
+                        <linearGradient id="brandGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#3b82f6" />
+                            <stop offset="1" stop-color="#10b981" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="d-flex flex-column text-start">
                 <span class="landing-brand-text">HUEGO B2B</span>
-                <span class="text-white-50" style="font-size: 0.68rem; letter-spacing: 0.5px; text-transform: uppercase;">Phân Phối & Công Nợ</span>
+                <span class="landing-brand-subtext">Phân Phối & Công Nợ</span>
             </div>
         </a>
 
         <!-- MOBILE TOGGLE BUTTON -->
-        <button class="navbar-toggler border-0 text-white p-1" type="button" data-bs-toggle="collapse" data-bs-target="#landingNavMenu" aria-controls="landingNavMenu" aria-expanded="false" aria-label="Toggle navigation">
-            <i class="bi bi-list fs-2"></i>
+        <button class="navbar-toggler border-0 text-white p-1 rounded-2 focus-ring-light" 
+                type="button" 
+                data-bs-toggle="offcanvas" 
+                data-bs-target="#landingOffcanvas" 
+                aria-controls="landingOffcanvas" 
+                aria-label="Mở menu điều hướng">
+            <i class="bi bi-list fs-2 text-white"></i>
         </button>
 
-        <!-- MENU LINKS & CTA BUTTONS -->
-        <div class="collapse navbar-collapse mt-3 mt-lg-0" id="landingNavMenu">
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1 gap-lg-2">
+        <!-- DESKTOP MENU LINKS -->
+        <div class="collapse navbar-collapse d-none d-lg-flex" id="landingNavMenu">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1 gap-xl-2">
                 <li class="nav-item">
-                    <a class="nav-link landing-nav-link" href="#gioi-thieu">Giới Thiệu</a>
+                    <a class="nav-link landing-nav-link active" href="#gioi-thieu" data-scrollspy="gioi-thieu">Giới Thiệu</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link landing-nav-link" href="#san-pham">Sản Phẩm</a>
+                    <a class="nav-link landing-nav-link" href="#tinh-nang" data-scrollspy="tinh-nang">Tính Năng</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link landing-nav-link" href="#quy-trinh">Quy Trình</a>
+                    <a class="nav-link landing-nav-link" href="#san-pham" data-scrollspy="san-pham">Sản Phẩm</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link landing-nav-link" href="#cong-no">Công Nợ FIFO</a>
+                    <a class="nav-link landing-nav-link" href="#quy-trinh" data-scrollspy="quy-trinh">Quy Trình</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link landing-nav-link" href="#ai">Trợ Lý AI</a>
+                    <a class="nav-link landing-nav-link" href="#cong-no" data-scrollspy="cong-no">Công Nợ FIFO</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link landing-nav-link" href="#vai-tro">Phân Quyền</a>
+                    <a class="nav-link landing-nav-link" href="#ai" data-scrollspy="ai">Trợ Lý AI</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link landing-nav-link" href="#kien-truc" data-scrollspy="kien-truc">Kiến Trúc</a>
                 </li>
             </ul>
 
-            <div class="d-flex align-items-center gap-2.5 pt-2 pt-lg-0">
-                <a href="/login" class="landing-btn-login text-decoration-none">
-                    <i class="bi bi-box-arrow-in-right me-1.5"></i> Đăng Nhập
+            <div class="d-flex align-items-center gap-2.5">
+                <a href="/login" class="landing-btn-login text-decoration-none" aria-label="Đăng nhập tài khoản">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Đăng Nhập
                 </a>
-                <a href="/login" class="landing-btn-cta text-decoration-none">
-                    Dùng Thử Ngay <i class="bi bi-arrow-right ms-1"></i>
+                <a href="/login" class="landing-btn-cta text-decoration-none" aria-label="Dùng thử ngay hệ thống">
+                    <span>Dùng Thử Ngay</span>
+                    <i class="bi bi-arrow-right ms-1 cta-arrow"></i>
                 </a>
             </div>
         </div>
     </div>
 </nav>
+
+<!-- MOBILE OFFCANVAS DRAWER -->
+<div class="offcanvas offcanvas-end landing-offcanvas" tabindex="-1" id="landingOffcanvas" aria-labelledby="landingOffcanvasLabel">
+    <div class="offcanvas-header border-bottom border-white border-opacity-10 py-3">
+        <div class="d-flex align-items-center gap-2" id="landingOffcanvasLabel">
+            <div class="landing-brand-logo-svg">
+                <svg width="28" height="28" viewBox="0 0 34 34" fill="none">
+                    <rect width="34" height="34" rx="8" fill="url(#brandGradMobile)" />
+                    <path d="M10 12.5L17 8.5L24 12.5L17 16.5L10 12.5Z" stroke="white" stroke-width="2" />
+                    <path d="M10 17.5L17 21.5L24 17.5" stroke="white" stroke-width="2" opacity="0.8" />
+                    <defs>
+                        <linearGradient id="brandGradMobile" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#3b82f6" />
+                            <stop offset="1" stop-color="#10b981" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <span class="landing-brand-text fs-5">HUEGO B2B</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Đóng menu"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column justify-content-between p-4">
+        <ul class="nav flex-column gap-2">
+            <li class="nav-item">
+                <a class="nav-link text-white-50 py-2 fs-6 rounded-2 hover-text-white" href="#gioi-thieu" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-house-door me-2 text-primary"></i> Giới Thiệu
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50 py-2 fs-6 rounded-2 hover-text-white" href="#tinh-nang" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-grid-fill me-2 text-success"></i> Tính Năng Cốt Lõi
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50 py-2 fs-6 rounded-2 hover-text-white" href="#san-pham" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-box-seam me-2 text-info"></i> Danh Mục Sản Phẩm
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50 py-2 fs-6 rounded-2 hover-text-white" href="#quy-trinh" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-arrow-repeat me-2 text-warning"></i> Quy Trình 4 Bước
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50 py-2 fs-6 rounded-2 hover-text-white" href="#cong-no" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-cash-stack me-2 text-danger"></i> Công Nợ FIFO & 4 Xô
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50 py-2 fs-6 rounded-2 hover-text-white" href="#ai" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-stars me-2 text-purple"></i> Trợ Lý AVA AI
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50 py-2 fs-6 rounded-2 hover-text-white" href="#kien-truc" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-layers-fill me-2 text-secondary"></i> Kiến Trúc Hệ Thống
+                </a>
+            </li>
+        </ul>
+
+        <div class="d-flex flex-column gap-2.5 pt-4 border-top border-white border-opacity-10">
+            <a href="/login" class="btn btn-outline-light rounded-pill py-2.5 fw-semibold d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-box-arrow-in-right"></i> Đăng Nhập Hệ Thống
+            </a>
+            <a href="/login" class="btn btn-primary rounded-pill py-2.5 fw-bold d-flex align-items-center justify-content-center gap-2">
+                <span>Dùng Thử Ngay</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>

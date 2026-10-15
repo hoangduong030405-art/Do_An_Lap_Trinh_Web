@@ -33,13 +33,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
             var result = await connection.QuerySingleOrDefaultAsync<PublicStatisticsDto>(query);
             if (result == null)
             {
-                return new PublicStatisticsDto
-                {
-                    TotalProducts = 8,
-                    TotalCustomers = 4,
-                    TotalInvoicesProcessed = 12,
-                    DebtCollectionRate = 96.5m
-                };
+                return new PublicStatisticsDto();
             }
 
             if (result.TotalRevenue > 0)
@@ -48,14 +42,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
             }
             else
             {
-                result.DebtCollectionRate = 98.2m;
+                result.DebtCollectionRate = 0m;
             }
-
-            // Ensure non-zero presentation for smooth counter effect if DB is fresh
-            if (result.TotalProducts == 0) result.TotalProducts = 8;
-            if (result.TotalCustomers == 0) result.TotalCustomers = 4;
-            if (result.TotalInvoicesProcessed == 0) result.TotalInvoicesProcessed = 15;
-            if (result.DebtCollectionRate <= 0) result.DebtCollectionRate = 97.8m;
 
             return result;
         }

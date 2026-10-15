@@ -91,14 +91,8 @@ else if (!isAuthenticated)
         }
         catch
         {
-            // Fallback safe values if database is initializing
-            publicStats = new PublicStatisticsDto
-            {
-                TotalProducts = 8,
-                TotalCustomers = 4,
-                TotalInvoicesProcessed = 15,
-                DebtCollectionRate = 98.2m
-            };
+            // When database is unavailable, keep null so UI displays value propositions or 'Chưa có dữ liệu'
+            publicStats = null;
         }
         finally
         {

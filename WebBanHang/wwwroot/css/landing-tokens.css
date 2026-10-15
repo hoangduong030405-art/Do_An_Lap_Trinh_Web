@@ -1,0 +1,130 @@
+/* ==========================================================================
+   LANDING PAGE DESIGN TOKENS - B2B SAAS AESTHETICS (LINEAR / STRIPE / VERCEL)
+   ECO2415 CAPSTONE 18: B2B DISTRIBUTION & CREDIT MANAGEMENT
+   ========================================================================== */
+
+/* 1. LOCAL TYPOGRAPHY (@font-face with Vietnamese & Latin subsets) */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/inter-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* 2. DESIGN TOKENS VARIABLES */
+:root {
+  /* --- Color Palette: Deep Space Navy --- */
+  --color-bg-base: #060b18;
+  --color-bg-surface: #0b1530;
+  --color-bg-elevated: #111e42;
+  --color-bg-card: rgba(17, 30, 66, 0.72);
+  --color-bg-card-hover: rgba(24, 42, 92, 0.85);
+  
+  /* --- Light Section Alternate (Eye-rest section) --- */
+  --color-light-bg: #f8fafc;
+  --color-light-surface: #ffffff;
+  --color-light-border: #e2e8f0;
+  --color-light-text: #0f172a;
+  --color-light-text-muted: #64748b;
+
+  /* --- Accents & Brand --- */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-glow: rgba(59, 130, 246, 0.35);
+  --color-accent: #10b981;
+  --color-accent-hover: #059669;
+  --color-accent-glow: rgba(16, 185, 129, 0.35);
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-purple: #8b5cf6;
+
+  /* --- 4-Bucket Aging Standard Colors (Strict B2B) --- */
+  --bucket-current: #10b981;     /* 0-30 days: Green/Emerald */
+  --bucket-overdue-1: #f59e0b;   /* 31-60 days: Amber/Yellow */
+  --bucket-overdue-2: #f97316;   /* 61-90 days: Orange */
+  --bucket-overdue-3: #ef4444;   /* >90 days: Red */
+
+  /* --- Typography & Text Colors (WCAG AA Compliant >= 4.5:1) --- */
+  --color-text-primary: #f1f5f9;   /* Slate 100 - Contrast 13.5:1 on base */
+  --color-text-secondary: #94a3b8; /* Slate 400 - Contrast 5.2:1 on base */
+  --color-text-muted: #64748b;     /* Slate 500 */
+  --color-text-inverse: #0f172a;
+
+  --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+
+  --font-size-hero: clamp(2.35rem, 5vw, 4.25rem);
+  --font-size-section-title: clamp(1.85rem, 3.2vw, 2.75rem);
+  --font-size-body: 1.05rem;
+  --line-height-hero: 1.12;
+  --line-height-body: 1.65;
+  --letter-spacing-tight: -0.025em;
+
+  /* --- Radii Scale --- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  /* --- Spacing Scale (4px/8px grid) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* --- Multi-layered Elevation & Glassmorphism --- */
+  --glass-bg: rgba(11, 21, 48, 0.65);
+  --glass-bg-hover: rgba(17, 30, 66, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-subtle: rgba(255, 255, 255, 0.06);
+  --glass-blur: blur(16px);
+  --glass-blur-lg: blur(24px);
+
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-elevated: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 2px 1px rgba(255, 255, 255, 0.08);
+  --shadow-glow-primary: 0 0 35px rgba(59, 130, 246, 0.28);
+  --shadow-glow-accent: 0 0 35px rgba(16, 185, 129, 0.28);
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}

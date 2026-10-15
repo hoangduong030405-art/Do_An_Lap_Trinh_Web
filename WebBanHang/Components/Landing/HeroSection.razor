@@ -1,68 +1,85 @@
-<section class="landing-hero" id="gioi-thieu">
-    <!-- BACKGROUND EFFECTS -->
-    <div class="landing-hero-bg">
-        <div class="landing-bokeh-1"></div>
-        <div class="landing-bokeh-2"></div>
+@using WebBanHang.Components.Landing
+
+<section class="landing-hero position-relative overflow-hidden" id="gioi-thieu" aria-label="Giới thiệu nền tảng">
+    <!-- 1. MULTI-LAYERED BACKGROUND EFFECTS (MESH GRADIENT + VIGNETTE + GRID MASK) -->
+    <div class="landing-hero-bg" aria-hidden="true">
+        <div class="landing-orb landing-orb-1"></div>
+        <div class="landing-orb landing-orb-2"></div>
+        <div class="landing-orb landing-orb-3"></div>
         <div class="landing-grid-pattern"></div>
+        <div class="landing-hero-vignette"></div>
     </div>
 
     <div class="container position-relative" style="z-index: 2;">
-        <div class="row align-items-center g-5">
-            <!-- LEFT COLUMN: VALUE PROPOSITION & CTAs -->
+        <div class="row align-items-center g-5 py-4 py-lg-5">
+            <!-- 2. LEFT COLUMN: VALUE PROPOSITIONS & CALL TO ACTIONS -->
             <div class="col-12 col-lg-7 text-center text-lg-start">
-                <div class="landing-hero-badge reveal-fade-up">
-                    <span class="badge bg-primary px-2 py-1 rounded-pill">ECO2415</span>
-                    <span>Nền Tảng Phân Phối Sỉ & Quản Trị Tín Dụng Thương Mại</span>
+                <!-- TOP BADGE WITH PULSING STATUS -->
+                <div class="landing-hero-badge reveal-fade-up d-inline-flex align-items-center gap-2 mb-3">
+                    <span class="landing-badge-pill">
+                        <span class="landing-pulse-dot"></span>
+                        @LandingConstants.CourseCode • Capstone 18
+                    </span>
+                    <span class="landing-badge-text">@LandingConstants.SubTitle</span>
                 </div>
 
-                <h1 class="landing-hero-title reveal-fade-up">
+                <!-- HERO HEADLINE WITH ANIMATED GRADIENT & TEXT REVEAL -->
+                <h1 class="landing-hero-title reveal-fade-up mb-3">
                     Bán Buôn Thần Tốc.<br />
                     <span class="landing-title-gradient">Kiểm Soát Công Nợ Tuyệt Đối.</span>
                 </h1>
 
-                <p class="landing-hero-subtitle mx-auto mx-lg-0 reveal-fade-up">
-                    Giải pháp All-in-One cho nhà phân phối hàng tiêu dùng: Tự động hóa kiểm soát hạn mức tín dụng khách hàng, thu nợ cấn trừ FIFO minh bạch, đối soát tuổi nợ 4 xô và trợ lý AVA AI chấm điểm rủi ro.
+                <!-- BUSINESS-FOCUSED VALUE DESCRIPTION -->
+                <p class="landing-hero-subtitle mx-auto mx-lg-0 reveal-fade-up mb-4">
+                    Giải pháp toàn diện cho nhà phân phối hàng tiêu dùng: Thiết lập hạn mức tín dụng thông minh, thu hồi dòng tiền minh bạch chuẩn FIFO, và cảnh báo sớm nợ quá hạn nhờ trợ lý tài chính thông minh.
                 </p>
 
-                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-3 reveal-fade-up">
-                    <a href="/login" class="btn btn-primary btn-lg rounded-pill px-4 py-2.5 fw-bold shadow-lg d-flex align-items-center gap-2">
-                        <i class="bi bi-box-arrow-in-right"></i> Đăng Nhập Hệ Thống
+                <!-- CTA BUTTONS -->
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-3 reveal-fade-up mb-4">
+                    <a href="/login" class="landing-btn-hero-primary d-inline-flex align-items-center gap-2" aria-label="Bắt đầu trải nghiệm nền tảng ngay">
+                        <span>Trải Nghiệm Hệ Thống Ngay</span>
+                        <i class="bi bi-arrow-right hero-btn-arrow"></i>
                     </a>
-                    <a href="#san-pham" class="btn btn-outline-light btn-lg rounded-pill px-4 py-2.5 fw-semibold d-flex align-items-center gap-2">
-                        <i class="bi bi-grid-3x3-gap"></i> Xem Sản Phẩm Phân Phối
+                    <a href="#san-pham" class="landing-btn-hero-glass d-inline-flex align-items-center gap-2" aria-label="Xem danh mục sản phẩm phân phối">
+                        <i class="bi bi-grid-3x3-gap-fill text-primary"></i>
+                        <span>Xem Danh Mục Sản Phẩm</span>
                     </a>
                 </div>
 
-                <!-- TRUST BADGES -->
-                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-4 mt-5 text-white-50 small reveal-fade-up">
-                    <div class="d-flex align-items-center gap-1.5">
-                        <i class="bi bi-check-circle-fill text-success fs-6"></i>
-                        <span>Clean Architecture 4 Tầng</span>
+                <!-- 3 BUSINESS VALUE PROPOSITIONS (REPLACES TECH CHIPS) -->
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-3 gap-md-4 text-secondary small reveal-fade-up">
+                    <div class="d-flex align-items-center gap-1.5 landing-trust-item">
+                        <i class="bi bi-shield-check text-success fs-5"></i>
+                        <span class="text-slate-200 fw-medium">Hạn mức tín dụng tự động</span>
                     </div>
-                    <div class="d-flex align-items-center gap-1.5">
-                        <i class="bi bi-check-circle-fill text-success fs-6"></i>
-                        <span>Giao Dịch ACID SQL Server</span>
+                    <div class="d-flex align-items-center gap-1.5 landing-trust-item">
+                        <i class="bi bi-arrow-repeat text-primary fs-5"></i>
+                        <span class="text-slate-200 fw-medium">Cấn trừ nợ chuẩn FIFO</span>
                     </div>
-                    <div class="d-flex align-items-center gap-1.5">
-                        <i class="bi bi-check-circle-fill text-success fs-6"></i>
-                        <span>Bảo Mật Phân Quyền 3 Vai Trò</span>
+                    <div class="d-flex align-items-center gap-1.5 landing-trust-item">
+                        <i class="bi bi-bar-chart-steps text-warning fs-5"></i>
+                        <span class="text-slate-200 fw-medium">Báo cáo 4 xô tuổi nợ</span>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: 3D FLOATING DASHBOARD MOCKUP -->
+            <!-- 3. RIGHT COLUMN: MULTI-LAYER WORKSPACE MOCKUP WITH 3D PARALLAX -->
             <div class="col-12 col-lg-5">
-                <div class="landing-mockup-wrapper reveal-fade-up">
-                    <div class="landing-mockup-card tilt-effect">
-                        <!-- MOCKUP HEADER -->
-                        <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-secondary border-opacity-25">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="p-1.5 rounded-circle bg-danger" style="width: 10px; height: 10px;"></span>
-                                <span class="p-1.5 rounded-circle bg-warning" style="width: 10px; height: 10px;"></span>
-                                <span class="p-1.5 rounded-circle bg-success" style="width: 10px; height: 10px;"></span>
-                                <span class="text-white-50 ms-2 small fw-semibold" style="font-size: 0.76rem;">Bàn Làm Việc Kế Toán & Bán Hàng</span>
+                <div class="landing-mockup-stage reveal-fade-up" id="heroMockupStage">
+                    
+                    <!-- MAIN DASHBOARD WINDOW CARD -->
+                    <div class="landing-workspace-main-card glass-panel" id="mainDashboardCard">
+                        <!-- WINDOW CONTROLS & HEADER -->
+                        <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-white border-opacity-10">
+                            <div class="d-flex align-items-center gap-1.5">
+                                <span class="window-dot dot-red"></span>
+                                <span class="window-dot dot-amber"></span>
+                                <span class="window-dot dot-green"></span>
+                                <span class="text-slate-300 ms-2 small fw-semibold" style="font-size: 0.78rem;">
+                                    Bàn Làm Việc Kế Toán & Bán Hàng
+                                </span>
                             </div>
-                            <span class="badge bg-success-subtle text-success border border-success border-opacity-25 small px-2 py-1">
+                            <span class="badge bg-success-subtle text-success border border-success border-opacity-25 px-2 py-0.5 rounded-pill" style="font-size: 0.68rem;">
                                 <i class="bi bi-broadcast me-1"></i> Real-time
                             </span>
                         </div>
@@ -71,53 +88,123 @@
                         <div class="row g-2.5 mb-3">
                             <div class="col-6">
                                 <div class="landing-mini-stat">
-                                    <div class="text-white-50 small" style="font-size: 0.72rem;">Hạn Mức Đã Cấp</div>
-                                    <div class="fw-bold text-white fs-5 mt-1">200.0 Trđ</div>
-                                    <div class="text-success small" style="font-size: 0.7rem;">
+                                    <div class="text-slate-400 small" style="font-size: 0.72rem;">Hạn Mức Đã Cấp</div>
+                                    <div class="fw-bold text-white fs-5 mt-0.5">@LandingConstants.HeroMockup.TotalCreditAllocated</div>
+                                    <div class="text-success small fw-medium mt-0.5" style="font-size: 0.68rem;">
                                         <i class="bi bi-shield-check"></i> An toàn 100%
                                     </div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="landing-mini-stat">
-                                    <div class="text-white-50 small" style="font-size: 0.72rem;">Thu Hồi Nợ FIFO</div>
-                                    <div class="fw-bold text-white fs-5 mt-1">98.2%</div>
-                                    <div class="text-info small" style="font-size: 0.7rem;">
-                                        <i class="bi bi-lightning-charge"></i> Cấn trừ tức thì
+                                    <div class="text-slate-400 small" style="font-size: 0.72rem;">Thu Hồi Nợ FIFO</div>
+                                    <div class="fw-bold text-white fs-5 mt-0.5">@LandingConstants.HeroMockup.DemoDebtCollectionRate</div>
+                                    <div class="text-info small fw-medium mt-0.5" style="font-size: 0.68rem;">
+                                        <i class="bi bi-lightning-charge"></i> Cấn trừ tự động
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- MINI AGING BUCKETS PREVIEW -->
+                        <!-- 4-BUCKET AGING PROGRESS BAR (STANDARDIZED LABELS >= 12px) -->
                         <div class="landing-mini-stat mb-3">
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="text-white-50 small" style="font-size: 0.75rem;">Phân Khớp Tuổi Nợ 4 Xô:</span>
-                                <span class="badge bg-primary-subtle text-primary small" style="font-size: 0.7rem;">Chuẩn MISA AMIS</span>
+                                <span class="text-slate-300 fw-semibold" style="font-size: 0.8rem;">
+                                    <i class="bi bi-bar-chart-fill text-primary me-1"></i> Tuổi Nợ 4 Xô
+                                </span>
+                                <span class="badge bg-secondary bg-opacity-25 text-white-50 border border-white border-opacity-10" style="font-size: 0.65rem;">
+                                    * Dữ liệu minh họa
+                                </span>
                             </div>
-                            <div class="progress" style="height: 10px; border-radius: 6px; background-color: rgba(255,255,255,0.1);">
-                                <div class="progress-bar bg-success" style="width: 65%;" title="0-30 ngày (65%)"></div>
-                                <div class="progress-bar bg-warning" style="width: 20%;" title="31-60 ngày (20%)"></div>
-                                <div class="progress-bar" style="width: 10%; background-color: #fd7e14;" title="61-90 ngày (10%)"></div>
-                                <div class="progress-bar bg-danger" style="width: 5%;" title=">90 ngày (5%)"></div>
+                            
+                            <!-- PROGRESS BAR WITH 4 STANDARD COLORS -->
+                            <div class="progress landing-aging-progress" style="height: 12px;">
+                                <div class="progress-bar bg-emerald" 
+                                     style="width: @(LandingConstants.MockAging.Bucket1Percent)%;" 
+                                     title="0 - 30 ngày: @(LandingConstants.MockAging.Bucket1Percent)%">
+                                </div>
+                                <div class="progress-bar bg-amber" 
+                                     style="width: @(LandingConstants.MockAging.Bucket2Percent)%;" 
+                                     title="31 - 60 ngày: @(LandingConstants.MockAging.Bucket2Percent)%">
+                                </div>
+                                <div class="progress-bar bg-orange" 
+                                     style="width: @(LandingConstants.MockAging.Bucket3Percent)%;" 
+                                     title="61 - 90 ngày: @(LandingConstants.MockAging.Bucket3Percent)%">
+                                </div>
+                                <div class="progress-bar bg-rose" 
+                                     style="width: @(LandingConstants.MockAging.Bucket4Percent)%;" 
+                                     title="> 90 ngày: @(LandingConstants.MockAging.Bucket4Percent)%">
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-between text-white-50 mt-1.5" style="font-size: 0.68rem;">
-                                <span>0-30 ngày</span>
-                                <span>31-60 ngày</span>
-                                <span>61-90 ngày</span>
-                                <span>>90 ngày</span>
+
+                            <!-- LEGEND LABELS (MINIMUM 12px AS PER SPEC) -->
+                            <div class="row g-1 text-center mt-2" style="font-size: 0.75rem;">
+                                <div class="col-3 text-emerald fw-semibold text-truncate" title="0 - 30 ngày (55%)">
+                                    0-30 ngày
+                                    <span class="d-block text-slate-400" style="font-size: 0.7rem;">55%</span>
+                                </div>
+                                <div class="col-3 text-amber fw-semibold text-truncate" title="31 - 60 ngày (25%)">
+                                    31-60 ngày
+                                    <span class="d-block text-slate-400" style="font-size: 0.7rem;">25%</span>
+                                </div>
+                                <div class="col-3 text-orange fw-semibold text-truncate" title="61 - 90 ngày (12%)">
+                                    61-90 ngày
+                                    <span class="d-block text-slate-400" style="font-size: 0.7rem;">12%</span>
+                                </div>
+                                <div class="col-3 text-rose fw-semibold text-truncate" title="> 90 ngày (8%)">
+                                    >90 ngày
+                                    <span class="d-block text-slate-400" style="font-size: 0.7rem;">8%</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- AVA COPILOT MINI BADGE -->
-                        <div class="p-2.5 rounded-3 d-flex align-items-center gap-2.5" style="background: linear-gradient(135deg, rgba(67, 56, 202, 0.4) 0%, rgba(13, 110, 253, 0.25) 100%); border: 1px solid rgba(147, 197, 253, 0.25);">
-                            <img src="/images/ava-avatar.svg" alt="AVA AI" style="width: 28px; height: 28px; border-radius: 50%;" />
-                            <div class="overflow-hidden">
-                                <div class="text-white fw-bold small" style="font-size: 0.78rem;">Trợ Lý Tài Chính AVA AI</div>
-                                <div class="text-white-50 text-truncate" style="font-size: 0.7rem;">Cảnh báo: Tạp Hóa Bà Ba còn 3 ngày đến hạn hóa đơn #001</div>
+                        <!-- FOOTER NOTE -->
+                        <div class="d-flex align-items-center justify-content-between text-slate-400 pt-1" style="font-size: 0.7rem;">
+                            <span>Cân đối toàn vẹn (IsIntegrityValid): <strong class="text-emerald">Khớp 100%</strong></span>
+                            <span>Đối soát tức thời</span>
+                        </div>
+                    </div>
+
+                    <!-- FLOATING CARD 1: AVA AI ALERT (OFFSET TOP-RIGHT) -->
+                    <div class="landing-float-card float-card-top-right glass-panel-sm" id="floatCard1">
+                        <div class="d-flex align-items-center gap-2 mb-1.5">
+                            <img src="/images/ava-avatar.svg" alt="AVA AI" class="rounded-circle" style="width: 24px; height: 24px;" />
+                            <span class="fw-bold text-white small" style="font-size: 0.76rem;">Trợ Lý AVA Kế Toán</span>
+                            <span class="badge bg-warning text-dark ms-auto" style="font-size: 0.65rem;">Cần chú ý</span>
+                        </div>
+                        <div class="text-slate-200 small" style="font-size: 0.72rem; line-height: 1.4;">
+                            <strong>@LandingConstants.HeroMockup.AvaAlertCustomer:</strong> @LandingConstants.HeroMockup.AvaAlertMsg
+                        </div>
+                    </div>
+
+                    <!-- FLOATING CARD 2: FIFO RECEIPT ALLOCATION (OFFSET BOTTOM-LEFT) -->
+                    <div class="landing-float-card float-card-bottom-left glass-panel-sm" id="floatCard2">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <span class="badge bg-success small px-2 py-0.5" style="font-size: 0.65rem;">
+                                <i class="bi bi-check-all me-1"></i> FIFO Đã Cấn Trừ
+                            </span>
+                            <span class="fw-bold text-emerald" style="font-size: 0.78rem;">+@LandingConstants.HeroMockup.FifoReceiptAmount</span>
+                        </div>
+                        <div class="text-slate-300 small" style="font-size: 0.7rem;">
+                            Phiếu thu #@LandingConstants.HeroMockup.FifoReceiptNo: Gạch nợ HĐ cũ nhất trước
+                        </div>
+                    </div>
+
+                    <!-- FLOATING CARD 3: CREDIT TIER BADGE (OFFSET BOTTOM-RIGHT) -->
+                    <div class="landing-float-card float-card-bottom-right glass-panel-sm" id="floatCard3">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="p-1.5 rounded-circle bg-primary bg-opacity-25 text-primary">
+                                <i class="bi bi-shield-shaded fs-6"></i>
+                            </div>
+                            <div>
+                                <div class="text-white fw-bold small" style="font-size: 0.74rem;">Điểm Tín Nhiệm</div>
+                                <div class="text-emerald fw-semibold" style="font-size: 0.7rem;">
+                                    @LandingConstants.HeroMockup.CreditScore — @LandingConstants.HeroMockup.CreditGrade
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
