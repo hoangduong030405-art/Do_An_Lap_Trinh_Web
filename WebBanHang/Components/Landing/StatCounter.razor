@@ -1,0 +1,79 @@
+@using WebBanHang.UseCases.DTOs
+
+<section class="landing-stats-section">
+    <div class="container">
+        <div class="landing-stats-container shadow-lg reveal-fade-up">
+            <div class="row g-4 divide-y divide-y-md-0">
+                <!-- STAT 1: SỐ MẶT HÀNG -->
+                <div class="col-6 col-lg-3">
+                    <div class="landing-stat-card">
+                        <div class="d-inline-flex p-2.5 rounded-3 mb-2" style="background: rgba(13, 110, 253, 0.1); color: var(--landing-primary);">
+                            <i class="bi bi-box-seam-fill fs-4"></i>
+                        </div>
+                        <div class="landing-stat-number"
+                             data-counter-target="@(Statistics?.TotalProducts ?? 8)"
+                             data-counter-suffix="+">
+                            @(Statistics?.TotalProducts ?? 8)+
+                        </div>
+                        <div class="landing-stat-label">Mặt Hàng Sỉ</div>
+                        <p class="landing-stat-desc">Bia, Nước ngọt, Sữa, Mì, Dầu ăn...</p>
+                    </div>
+                </div>
+
+                <!-- STAT 2: ĐẠI LÝ PHÂN PHỐI -->
+                <div class="col-6 col-lg-3">
+                    <div class="landing-stat-card border-start-lg">
+                        <div class="d-inline-flex p-2.5 rounded-3 mb-2" style="background: rgba(16, 185, 129, 0.1); color: var(--landing-success);">
+                            <i class="bi bi-people-fill fs-4"></i>
+                        </div>
+                        <div class="landing-stat-number"
+                             data-counter-target="@(Statistics?.TotalCustomers ?? 4)"
+                             data-counter-suffix="+">
+                            @(Statistics?.TotalCustomers ?? 4)+
+                        </div>
+                        <div class="landing-stat-label">Đại Lý B2B</div>
+                        <p class="landing-stat-desc">Quản lý hạn mức nợ độc lập</p>
+                    </div>
+                </div>
+
+                <!-- STAT 3: HÓA ĐƠN XỬ LÝ -->
+                <div class="col-6 col-lg-3">
+                    <div class="landing-stat-card border-start-lg">
+                        <div class="d-inline-flex p-2.5 rounded-3 mb-2" style="background: rgba(245, 158, 11, 0.1); color: var(--landing-warning);">
+                            <i class="bi bi-receipt fs-4"></i>
+                        </div>
+                        <div class="landing-stat-number"
+                             data-counter-target="@(Statistics?.TotalInvoicesProcessed ?? 12)"
+                             data-counter-suffix="+">
+                            @(Statistics?.TotalInvoicesProcessed ?? 12)+
+                        </div>
+                        <div class="landing-stat-label">Hóa Đơn Xuất Kho</div>
+                        <p class="landing-stat-desc">Giao dịch ACID SQL Server</p>
+                    </div>
+                </div>
+
+                <!-- STAT 4: TỶ LỆ THU HỒI NỢ -->
+                <div class="col-6 col-lg-3">
+                    <div class="landing-stat-card border-start-lg">
+                        <div class="d-inline-flex p-2.5 rounded-3 mb-2" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                            <i class="bi bi-shield-check fs-4"></i>
+                        </div>
+                        <div class="landing-stat-number"
+                             data-counter-target="@(Statistics?.DebtCollectionRate ?? 98.2m)"
+                             data-counter-suffix="%"
+                             data-counter-decimals="1">
+                            @((Statistics?.DebtCollectionRate ?? 98.2m).ToString("N1"))%
+                        </div>
+                        <div class="landing-stat-label">Thu Nợ Đúng Hạn</div>
+                        <p class="landing-stat-desc">Nhờ cấn trừ tự động FIFO</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Parameter]
+    public PublicStatisticsDto? Statistics { get; set; }
+}

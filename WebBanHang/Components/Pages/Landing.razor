@@ -1,0 +1,123 @@
+@page "/"
+@layout LandingLayout
+@attribute [AllowAnonymous]
+@rendermode InteractiveServer
+
+@using WebBanHang.UseCases.PublicPortal
+@using WebBanHang.UseCases.Products
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.CoreBusiness.Entities
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.JSInterop
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject IGetPublicStatisticsUseCase GetPublicStatisticsUseCase
+@inject IViewProductCatalogUseCase ViewProductCatalogUseCase
+@inject IJSRuntime JS
+
+<PageTitle>HUEGO B2B - Nền Tảng Phân Phối Sỉ & Quản Trị Tín Dụng Doanh Nghiệp</PageTitle>
+
+@if (isCheckingAuth)
+{
+    <!-- Minimal smooth loader while evaluating auth redirect -->
+    <div class="d-flex align-items-center justify-content-center min-vh-100 bg-dark text-white">
+        <div class="spinner-border text-primary" role="status" style="width: 2.5rem; height: 2.5rem;">
+            <span class="visually-hidden">Đang chuyển hướng...</span>
+        </div>
+    </div>
+}
+else if (!isAuthenticated)
+{
+    <!-- 1. HERO SECTION -->
+    <HeroSection />
+
+    <!-- 2. LIVE STATISTICS NUMBER COUNTER (REAL DATA FROM USECASE) -->
+    <StatCounter Statistics="@publicStats" />
+
+    <!-- 3. VALUE PROPOSITIONS (CORE BUSINESS FEATURES) -->
+    <FeatureCard />
+
+    <!-- 4. PRODUCT SHOWCASE (PUBLIC SAFE: ONLY UNIT PRICE, NO COST/STOCK) -->
+    <ProductShowcase Products="@catalogProducts" />
+
+    <!-- 5. 4-STEP PROCESS TIMELINE -->
+    <ProcessTimeline />
+
+    <!-- 6. INTERACTIVE AGING BUCKETS & FIFO ALLOCATION DEMO -->
+    <AgingDemo />
+
+    <!-- 7. AVA AI COPILOT & CREDIT RISK SCORING -->
+    <AiAssistantSection />
+
+    <!-- 8. ROLES & ACCESS CONTROL -->
+    <RoleCard />
+
+    <!-- 9. CALL TO ACTION & COMPREHENSIVE FOOTER -->
+    <LandingFooter />
+}
+
+@code {
+    private bool isCheckingAuth = true;
+    private bool isAuthenticated = false;
+    private PublicStatisticsDto? publicStats;
+    private IEnumerable<Product>? catalogProducts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            isAuthenticated = true;
+            if (user.IsInRole("Customer"))
+            {
+                Navigation.NavigateTo("/portal/dashboard", replace: true);
+            }
+            else
+            {
+                Navigation.NavigateTo("/dashboard", replace: true);
+            }
+            return;
+        }
+
+        // Unauthenticated visitor -> Prepare landing data
+        isAuthenticated = false;
+        try
+        {
+            publicStats = await GetPublicStatisticsUseCase.ExecuteAsync();
+            catalogProducts = await ViewProductCatalogUseCase.ExecuteAsync();
+        }
+        catch
+        {
+            // Fallback safe values if database is initializing
+            publicStats = new PublicStatisticsDto
+            {
+                TotalProducts = 8,
+                TotalCustomers = 4,
+                TotalInvoicesProcessed = 15,
+                DebtCollectionRate = 98.2m
+            };
+        }
+        finally
+        {
+            isCheckingAuth = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !isAuthenticated)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("initLandingPageJs");
+            }
+            catch
+            {
+                // Silently ignore if JS is executed before DOM hydration
+            }
+        }
+    }
+}

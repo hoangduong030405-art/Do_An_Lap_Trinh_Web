@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using WebBanHang.UseCases.AI;
 using WebBanHang.UseCases.Dashboard;
+using WebBanHang.UseCases.PublicPortal;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -27,8 +28,10 @@ builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
+builder.Services.AddTransient<IPublicStatisticsRepository, PublicStatisticsRepository>();
 
 // UseCases
+builder.Services.AddTransient<IGetPublicStatisticsUseCase, GetPublicStatisticsUseCase>();
 builder.Services.AddTransient<ICreateInvoiceUseCase, CreateInvoiceUseCase>();
 builder.Services.AddTransient<IViewCustomerListUseCase, ViewCustomerListUseCase>();
 builder.Services.AddTransient<IViewProductCatalogUseCase, ViewProductCatalogUseCase>();
@@ -153,7 +156,7 @@ app.MapGet("/api/auth/switch", async (string role, HttpContext httpContext) => {
     {
         return Results.Redirect("/portal/dashboard");
     }
-    return Results.Redirect("/");
+    return Results.Redirect("/dashboard");
 });
 
 app.MapGet("/api/auth/logout", async (HttpContext httpContext) => {

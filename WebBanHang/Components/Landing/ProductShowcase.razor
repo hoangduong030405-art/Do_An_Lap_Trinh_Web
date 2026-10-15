@@ -1,0 +1,136 @@
+@using WebBanHang.CoreBusiness.Entities
+
+<section class="landing-section" id="san-pham" style="background-color: var(--landing-slate-50);">
+    <div class="container">
+        <!-- HEADER -->
+        <div class="text-center">
+            <span class="landing-section-badge reveal-fade-up">Danh Mục Phân Phối</span>
+            <h2 class="landing-section-title reveal-fade-up">
+                Hàng Tiêu Dùng & Đồ Uống Nhanh Thiết Yếu
+            </h2>
+            <p class="landing-section-desc reveal-fade-up">
+                Nguồn hàng phân phối sỉ chính hãng, cam kết chất lượng, chiết khấu hấp dẫn và chính sách hạn mức tín dụng linh hoạt cho các đại lý đối tác.
+            </p>
+        </div>
+
+        <!-- CATEGORY FILTER TABS -->
+        <div class="landing-product-tabs reveal-fade-up">
+            <button class="landing-tab-btn @(selectedCategory == "all" ? "active" : "")" @onclick='() => SetCategory("all")'>
+                Tất Cả (@(Products?.Count() ?? 0))
+            </button>
+            <button class="landing-tab-btn @(selectedCategory == "beverage" ? "active" : "")" @onclick='() => SetCategory("beverage")'>
+                Nước Ngọt & Khoáng
+            </button>
+            <button class="landing-tab-btn @(selectedCategory == "beer" ? "active" : "")" @onclick='() => SetCategory("beer")'>
+                Bia Cao Cấp
+            </button>
+            <button class="landing-tab-btn @(selectedCategory == "milk" ? "active" : "")" @onclick='() => SetCategory("milk")'>
+                Sữa & Dinh Dưỡng
+            </button>
+            <button class="landing-tab-btn @(selectedCategory == "food" ? "active" : "")" @onclick='() => SetCategory("food")'>
+                Mì & Dầu Ăn
+            </button>
+        </div>
+
+        <!-- PRODUCT GRID (PUBLIC SAFE: NO COST PRICE, NO STOCK QUANTITY) -->
+        <div class="row g-4">
+            @if (filteredProducts != null && filteredProducts.Any())
+            {
+                @foreach (var p in filteredProducts)
+                {
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="landing-product-card tilt-effect reveal-fade-up">
+                            <!-- PRODUCT IMAGE CONTAINER -->
+                            <div class="landing-product-img-wrap">
+                                <img src="@p.ImageUrl" 
+                                     alt="@p.Name" 
+                                     class="landing-product-img" 
+                                     loading="lazy" />
+                            </div>
+
+                            <!-- CODE & CATEGORY -->
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="landing-product-code">@p.ProductCode</span>
+                                <span class="badge bg-light text-muted border small">ĐVT: @p.Unit</span>
+                            </div>
+
+                            <!-- TITLE -->
+                            <h6 class="landing-product-title" title="@p.Name">
+                                @p.Name
+                            </h6>
+
+                            <!-- DESCRIPTION -->
+                            <p class="text-muted small mb-3 text-truncate" style="font-size: 0.78rem;">
+                                @p.Description
+                            </p>
+
+                            <!-- PRICE & ACTION (WHOLESALE SELLING PRICE ONLY) -->
+                            <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
+                                <div>
+                                    <div class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;">Giá Bán Sỉ</div>
+                                    <div class="landing-product-price">
+                                        @p.UnitPrice.ToString("N0") <span class="fs-6 fw-normal">đ</span>
+                                    </div>
+                                </div>
+                                <a href="/login" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-1">
+                                    <i class="bi bi-cart-plus"></i> Đặt Sỉ
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Đang cập nhật danh mục sản phẩm từ hệ thống...</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- MARQUEE BRAND BANNER TICKER -->
+<div class="landing-marquee-wrapper">
+    <div class="landing-marquee-track">
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Coca-Cola Sleek</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Heineken Silver</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Tiger Crystal</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-info"></i> Aquafina</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Acecook Hảo Hảo</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-warning"></i> Simply Đậu Nành</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Vinamilk Tiệt Trùng</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Omachi Xốt Bò Hầm</div>
+
+        <!-- DUPLICATE FOR INFINITE SEAMLESS LOOP -->
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Coca-Cola Sleek</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Heineken Silver</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Tiger Crystal</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-info"></i> Aquafina</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Acecook Hảo Hảo</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-warning"></i> Simply Đậu Nành</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Vinamilk Tiệt Trùng</div>
+        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Omachi Xốt Bò Hầm</div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<Product>? Products { get; set; }
+
+    private string selectedCategory = "all";
+
+    private IEnumerable<Product>? filteredProducts => selectedCategory switch
+    {
+        "beverage" => Products?.Where(p => p.Name.Contains("Coca", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Aquafina", StringComparison.OrdinalIgnoreCase)),
+        "beer" => Products?.Where(p => p.Name.Contains("Heineken", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Tiger", StringComparison.OrdinalIgnoreCase)),
+        "milk" => Products?.Where(p => p.Name.Contains("Vinamilk", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Sữa", StringComparison.OrdinalIgnoreCase)),
+        "food" => Products?.Where(p => p.Name.Contains("Hảo Hảo", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Omachi", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Simply", StringComparison.OrdinalIgnoreCase)),
+        _ => Products
+    };
+
+    private void SetCategory(string cat)
+    {
+        selectedCategory = cat;
+    }
+}
