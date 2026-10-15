@@ -72,14 +72,24 @@ WebBanHang/
 - SQL Server (Local / Express / Developer)
 
 ### 2. Thiết lập Cơ sở dữ liệu
-1. Mở SQL Server Management Studio (SSMS).
-2. Chạy file script: [`docs/CSDLBANHANG.sql`](./docs/CSDLBANHANG.sql) để tạo cơ sở dữ liệu `CSDLBANHANG` và dữ liệu mẫu.
-3. Kiểm tra chuỗi kết nối trong [`WebBanHang/appsettings.json`](./WebBanHang/appsettings.json):
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=.\\SQLEXPRESS;Database=CSDLBANHANG;Trusted_Connection=True;TrustServerCertificate=True;"
-   }
-   ```
+Có 2 cách để thiết lập CSDL `CSDLBANHANG` trên SQL Server:
+
+- **Cách 1 (Khuyên dùng - Chạy Script SQL):**
+  1. Mở SQL Server Management Studio (SSMS) hoặc Azure Data Studio.
+  2. Mở và thực thi tệp [`CSDLBANHANG.sql`](./CSDLBANHANG.sql) (hoặc [`Database/CSDLBANHANG.sql`](./Database/CSDLBANHANG.sql)).
+  3. Script sẽ tự động tạo Database `CSDLBANHANG`, 6 bảng chuẩn 3NF, các ràng buộc và nạp đầy đủ dữ liệu mẫu (sản phẩm, khách hàng, hóa đơn, công nợ).
+
+- **Cách 2 (Phục hồi từ File Backup .BAK):**
+  1. Trong SSMS, chuột phải vào **Databases** $\rightarrow$ chọn **Restore Database...**
+  2. Chọn **Device** $\rightarrow$ duyệt chọn tệp [`Database/CSDLBANHANG.bak`](./Database/CSDLBANHANG.bak).
+  3. Bấm **OK** để phục hồi toàn bộ CSDL gốc với dữ liệu mẫu hoàn chỉnh.
+
+Kiểm tra chuỗi kết nối trong [`WebBanHang/appsettings.json`](./WebBanHang/appsettings.json):
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=.\\SQLEXPRESS;Database=CSDLBANHANG;Trusted_Connection=True;TrustServerCertificate=True;"
+}
+```
 
 ### 3. Khởi chạy ứng dụng
 Chạy lệnh sau tại thư mục gốc của giải pháp:
