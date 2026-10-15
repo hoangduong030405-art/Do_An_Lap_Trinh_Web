@@ -8,12 +8,11 @@
 
     // 1. SCROLL PROGRESS BAR & NAVBAR SCROLLED STATE
     function initScrollEffects() {
-        const progressBar = document.querySelector('.landing-scroll-progress');
-        const navbar = document.querySelector('.landing-navbar');
-
         function onScroll() {
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progressBar = document.querySelector('.landing-scroll-progress');
+            const navbar = document.querySelector('.landing-navbar');
             
             // Progress Bar
             if (progressBar && scrollHeight > 0) {
@@ -31,12 +30,20 @@
             }
         }
 
+        if (window._landingScrollHandler) {
+            window.removeEventListener('scroll', window._landingScrollHandler);
+        }
+        window._landingScrollHandler = onScroll;
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
     }
 
-    // 2. SCROLLSPY (ACTIVE NAVBAR ITEM INDICATOR)
+    // 2. SCROLLSPY (ACTIVE NAVBAR ITEM INDICATOR WITH ROOTMARGIN -40% 0px -50% 0px)
     function initScrollspy() {
+        if (window._landingScrollspyObserver) {
+            window._landingScrollspyObserver.disconnect();
+        }
+
         const navLinks = document.querySelectorAll('.landing-nav-link[data-scrollspy]');
         if (!navLinks.length) return;
 
@@ -61,57 +68,117 @@
             });
         }, {
             root: null,
-            rootMargin: '-20% 0px -70% 0px',
+            rootMargin: '-40% 0px -50% 0px',
             threshold: 0
         });
 
+        window._landingScrollspyObserver = observer;
         sections.forEach(s => observer.observe(s.el));
     }
 
-    // 3. 3D HERO MOCKUP WORKSPACE PARALLAX (MAX 6 DEGREES)
-    function initHeroParallax() {
-        if (prefersReducedMotion || window.innerWidth < 992) return;
+    // 3. UNIFIED REQUESTANIMATIONFRAME 3D PARALLAX & SCROLL ENGINE
+    function initParallaxEngine() {
+        if (prefersReducedMotion) return;
 
-        const stage = document.getElementById('heroMockupStage');
-        const mainCard = document.getElementById('mainDashboardCard');
-        const float1 = document.getElementById('floatCard1');
-        const float2 = document.getElementById('floatCard2');
-        const float3 = document.getElementById('floatCard3');
+        const monitoredSections = document.querySelectorAll('.landing-section, .landing-hero');
+        if (!monitoredSections.length) return;
 
-        if (!stage || !mainCard) return;
+        const activeSections = new Set();
 
-        stage.addEventListener('mousemove', (e) => {
-            const rect = stage.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
+        if (window._landingSectionObserver) {
+            window._landingSectionObserver.disconnect();
+        }
 
-            // Restrict rotation to max 5.5 degrees
-            const rawRotX = ((y - centerY) / centerY) * -5.5;
-            const rawRotY = ((x - centerX) / centerX) * 5.5;
-            const rotX = Math.max(-5.5, Math.min(5.5, rawRotX));
-            const rotY = Math.max(-5.5, Math.min(5.5, rawRotY));
-
-            mainCard.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(8px)`;
-            
-            if (float1) {
-                float1.style.transform = `translate(${rotY * 1.5}px, ${-rotX * 1.5}px) translateZ(28px)`;
-            }
-            if (float2) {
-                float2.style.transform = `translate(${-rotY * 1.3}px, ${rotX * 1.3}px) translateZ(36px)`;
-            }
-            if (float3) {
-                float3.style.transform = `translate(${rotY * 1.1}px, ${rotX * 1.1}px) translateZ(20px)`;
-            }
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    activeSections.add(entry.target);
+                    scheduleRender();
+                } else {
+                    activeSections.delete(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '100px 0px 100px 0px',
+            threshold: 0
         });
 
-        stage.addEventListener('mouseleave', () => {
-            mainCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0)';
-            if (float1) float1.style.transform = '';
-            if (float2) float2.style.transform = '';
-            if (float3) float3.style.transform = '';
-        });
+        monitoredSections.forEach(s => sectionObserver.observe(s));
+        window._landingSectionObserver = sectionObserver;
+
+        let isRenderPending = false;
+
+        function renderParallax() {
+            isRenderPending = false;
+            const windowHeight = window.innerHeight;
+            const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+            activeSections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const sectionHeight = rect.height;
+                const sectionMiddle = rect.top + sectionHeight / 2;
+                const viewportMiddle = windowHeight / 2;
+                
+                // Normalized progress: -1 (above viewport) to 0 (centered) to 1 (below viewport)
+                const offsetFromCenter = (sectionMiddle - viewportMiddle) / (windowHeight / 2 + sectionHeight / 2);
+                const clampedOffset = Math.max(-1.5, Math.min(1.5, offsetFromCenter));
+
+                // 1. Shift all 3D background elements with data-parallax-speed
+                const parallaxItems = section.querySelectorAll('[data-parallax-speed]');
+                parallaxItems.forEach(item => {
+                    const speed = parseFloat(item.getAttribute('data-parallax-speed') || '0.12');
+                    const yShift = -clampedOffset * speed * 160;
+                    const rotY = clampedOffset * speed * 35;
+                    const rotX = -clampedOffset * speed * 20;
+
+                    item.style.transform = `translate3d(0, ${yShift.toFixed(1)}px, 0) rotateY(${rotY.toFixed(1)}deg) rotateX(${rotX.toFixed(1)}deg)`;
+                });
+
+                // 2. Scroll-driven Hero Mockup 3D tilt & Z-layer separation
+                if (section.id === 'gioi-thieu' && window.innerWidth >= 992) {
+                    const mainCard = section.querySelector('#mainDashboardCard');
+                    const float1 = section.querySelector('#floatCard1');
+                    const float2 = section.querySelector('#floatCard2');
+                    const float3 = section.querySelector('#floatCard3');
+
+                    if (mainCard) {
+                        const heroScrollRatio = Math.min(1, Math.max(0, scrollY / 600));
+                        const tiltX = heroScrollRatio * 8; // tilts up to 8 deg on scroll down
+                        const scale = 1 - heroScrollRatio * 0.04; // subtle scale down
+                        mainCard.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(1)}deg) scale(${scale.toFixed(3)}) translateZ(0)`;
+
+                        // Outward Z-layer and translate separation
+                        if (float1) {
+                            const z1 = 28 + heroScrollRatio * 32;
+                            float1.style.transform = `translate3d(${heroScrollRatio * 15}px, ${-heroScrollRatio * 12}px, ${z1.toFixed(0)}px)`;
+                        }
+                        if (float2) {
+                            const z2 = 36 + heroScrollRatio * 40;
+                            float2.style.transform = `translate3d(${-heroScrollRatio * 18}px, ${heroScrollRatio * 14}px, ${z2.toFixed(0)}px)`;
+                        }
+                        if (float3) {
+                            const z3 = 20 + heroScrollRatio * 25;
+                            float3.style.transform = `translate3d(0px, ${heroScrollRatio * 16}px, ${z3.toFixed(0)}px)`;
+                        }
+                    }
+                }
+            });
+        }
+
+        function scheduleRender() {
+            if (!isRenderPending) {
+                isRenderPending = true;
+                requestAnimationFrame(renderParallax);
+            }
+        }
+
+        if (window._landingParallaxScrollHandler) {
+            window.removeEventListener('scroll', window._landingParallaxScrollHandler);
+        }
+        window._landingParallaxScrollHandler = scheduleRender;
+        window.addEventListener('scroll', scheduleRender, { passive: true });
+        scheduleRender();
     }
 
     // 4. SPOTLIGHT CURSOR FOLLOWER FOR BENTO CARDS
@@ -130,14 +197,14 @@
         });
     }
 
-    // 5. SCROLL REVEALS VIA INTERSECTION OBSERVER
+    // 5. SCROLL REVEALS (FADE-UP & 3D STAGGER) VIA INTERSECTION OBSERVER
     function initScrollReveals() {
         if (prefersReducedMotion) {
-            document.querySelectorAll('.reveal-fade-up').forEach(el => el.classList.add('is-revealed'));
+            document.querySelectorAll('.reveal-fade-up, .reveal-3d-card, .landing-timeline-step').forEach(el => el.classList.add('is-revealed'));
             return;
         }
 
-        const reveals = document.querySelectorAll('.reveal-fade-up');
+        const reveals = document.querySelectorAll('.reveal-fade-up, .reveal-3d-card, .landing-timeline-step');
         if (!reveals.length) return;
 
         const observer = new IntersectionObserver((entries, obs) => {
@@ -148,7 +215,7 @@
                 }
             });
         }, {
-            threshold: 0.12,
+            threshold: 0.10,
             rootMargin: '0px 0px -40px 0px'
         });
 
@@ -244,26 +311,51 @@
         observer.observe(typewriterEl);
     }
 
-    // 8. 3D CARD TILT FOR PRODUCT CARDS
+    // 8. 3D CARD TILT & SPECULAR GLARE FOR CARDS (.lp-tilt-card & .tilt-effect)
     function initTiltEffect() {
         if (prefersReducedMotion || window.innerWidth < 992) return;
 
-        const tiltCards = document.querySelectorAll('.tilt-effect');
+        const tiltCards = document.querySelectorAll('.lp-tilt-card, .tilt-effect');
         tiltCards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = ((y - centerY) / centerY) * -5;
-                const rotateY = ((x - centerX) / centerX) * 5;
+            let isTicking = false;
 
-                card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+            card.addEventListener('mousemove', (e) => {
+                if (isTicking) return;
+                isTicking = true;
+
+                requestAnimationFrame(() => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    // Restrict rotation to max 6 degrees
+                    const rawRotateX = ((y - centerY) / centerY) * -6;
+                    const rawRotateY = ((x - centerX) / centerX) * 6;
+                    const rotateX = Math.max(-6, Math.min(6, rawRotateX));
+                    const rotateY = Math.max(-6, Math.min(6, rawRotateY));
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(1)}deg) rotateY(${rotateY.toFixed(1)}deg) translateY(-6px) translateZ(10px)`;
+                    card.style.setProperty('--glare-x', `${x}px`);
+                    card.style.setProperty('--glare-y', `${y}px`);
+
+                    // Float inner element forward
+                    const floatInner = card.querySelector('.lp-tilt-float');
+                    if (floatInner) {
+                        floatInner.style.transform = `translateZ(28px) scale(1.03)`;
+                    }
+
+                    isTicking = false;
+                });
             });
 
             card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0)';
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) translateZ(0)';
+                const floatInner = card.querySelector('.lp-tilt-float');
+                if (floatInner) {
+                    floatInner.style.transform = 'translateZ(0) scale(1)';
+                }
             });
         });
     }
@@ -272,7 +364,7 @@
     window.initLandingPageJs = function () {
         initScrollEffects();
         initScrollspy();
-        initHeroParallax();
+        initParallaxEngine();
         initSpotlightCards();
         initScrollReveals();
         initCounters();
@@ -287,3 +379,4 @@
         window.initLandingPageJs();
     }
 })();
+

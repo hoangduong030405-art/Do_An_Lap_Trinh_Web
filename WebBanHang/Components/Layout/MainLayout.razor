@@ -1,23 +1,33 @@
 @inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.JSInterop
 @inject LayoutStateService LayoutState
+@inject IJSRuntime JS
 @implements IDisposable
 
 <AuthorizeView>
     <Authorized>
-        <div class="misa-app-root">
-            <!-- 1. MISA ENTERPRISE FUNCTIONAL TOPBAR -->
+        <div class="app-root">
+            <!-- 1. ENTERPRISE FUNCTIONAL TOPBAR -->
             <AppTopBar />
 
             <!-- 2. WORKSPACE AREA (BELOW TOPBAR: SIDEBAR ON LEFT, CANVAS ON RIGHT) -->
-            <div class="misa-workspace">
-                <!-- 2.1 LEFT SIDEBAR (COLLAPSIBLE: 52px or 220px) -->
-                <aside class="misa-sidebar @(LayoutState.IsSidebarCollapsed ? "is-collapsed" : "is-expanded")">
+            <div class="app-workspace" id="appWorkspace">
+                <!-- 2.0 TRIGGER ZONE FOR AUTO-HIDE HOVER (14px strip with 3px subtle glowing bar) -->
+                <div class="app-sidebar-trigger" id="appSidebarTrigger" title="Rê chuột để mở menu (Ctrl+B để ghim)">
+                    <span class="app-trigger-bar"></span>
+                </div>
+
+                <!-- 2.0 MOBILE OFFCANVAS BACKDROP -->
+                <div class="app-sidebar-backdrop" id="appSidebarBackdrop"></div>
+
+                <!-- 2.1 LEFT SIDEBAR (OVERLAY ON HOVER, DOCKED WHEN PINNED) -->
+                <aside class="app-sidebar" id="appSidebar" aria-label="Thanh điều hướng chính">
                     <NavMenu />
                 </aside>
 
-                <!-- 2.2 MAIN CONTENT CANVAS (SCROLLABLE) -->
-                <main class="misa-content-canvas">
+                <!-- 2.2 MAIN CONTENT CANVAS (SCROLLABLE, NO JUMP ON HOVER) -->
+                <main class="app-content-canvas" id="appContentCanvas">
                     @Body
                 </main>
             </div>
@@ -38,6 +48,18 @@
     protected override void OnInitialized()
     {
         LayoutState.OnChange += StateHasChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("window.appSidebar.init");
+            }
+            catch { }
+        }
     }
 
     public void Dispose()

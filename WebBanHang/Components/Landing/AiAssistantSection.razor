@@ -1,5 +1,40 @@
-<section class="landing-section bg-white" id="ai">
-    <div class="container">
+<section class="landing-section lp-section--dark position-relative overflow-hidden" id="ai">
+    <!-- 3D FLOATING BACKGROUND LAYER (STAGE 1) -->
+    <div class="lp-bg3d" aria-hidden="true" tabindex="-1">
+        <!-- Ambient Cyan & Indigo Neon Glows -->
+        <div class="lp-bg3d-glow lp-bg3d-glow-cyan" style="width: 380px; height: 380px; top: 10%; right: 5%;"></div>
+        <div class="lp-bg3d-glow lp-bg3d-glow-purple" style="width: 320px; height: 320px; bottom: 12%; left: 4%;"></div>
+
+        <!-- 3D AI Polyhedron & Glowing Orbital Rings (Near Depth, Parallax 0.22) -->
+        <div class="ai-orbital-3d depth-near" data-parallax-speed="0.22" style="top: 14%; right: 6%;">
+            <div class="ai-sphere-core"></div>
+            <div class="ai-ring ai-ring-1"></div>
+            <div class="ai-ring ai-ring-2"></div>
+            <div class="ai-ring ai-ring-3"></div>
+        </div>
+
+        <!-- 3D Tech Cube (Mid Depth, Parallax 0.16) -->
+        <div class="cube-3d cube-tech depth-mid" data-parallax-speed="0.16" style="bottom: 12%; left: 4%; --cube-w: 68px; --cube-h: 68px;">
+            <div class="cube-3d-inner">
+                <div class="cube-face cube-front"></div>
+                <div class="cube-face cube-back"></div>
+                <div class="cube-face cube-top"></div>
+                <div class="cube-face cube-bottom"></div>
+                <div class="cube-face cube-left"></div>
+                <div class="cube-face cube-right"></div>
+            </div>
+        </div>
+
+        <!-- 3D Mini Token (Far Depth, Parallax 0.08) -->
+        <div class="coin-3d depth-far lp-bg3d-extra" data-parallax-speed="0.08" style="top: 25%; left: 8%;">
+            <svg width="52" height="52" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="34" cy="34" r="24" fill="rgba(6,182,212,0.18)" stroke="#06b6d4" stroke-width="1.2" />
+                <text x="34" y="38" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" fill="#67e8f9" text-anchor="middle">AI</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="container position-relative" style="z-index: 2;">
         <!-- HEADER -->
         <div class="text-center">
             <span class="landing-section-badge reveal-fade-up">Trợ Lý Kế Toán AI</span>
@@ -12,50 +47,50 @@
         </div>
 
         <div class="row g-4 align-items-center">
-            <!-- LEFT: 3 AI CAPABILITIES -->
+            <!-- LEFT: 3 AI CAPABILITIES (GAP 24px, DISTINCT ICON BOXES) -->
             <div class="col-12 col-lg-5">
-                <div class="d-flex flex-column gap-3.5 reveal-fade-up">
+                <div class="d-flex flex-column gap-4 reveal-3d-card reveal-delay-1">
                     <!-- CAPABILITY 1 -->
-                    <div class="d-flex gap-3">
+                    <div class="d-flex gap-3 align-items-start">
                         <div class="flex-shrink-0">
-                            <div class="p-2.5 rounded-3 bg-primary-subtle text-primary">
+                            <div class="rounded-3 bg-primary bg-opacity-20 text-primary border border-primary border-opacity-25" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
                                 <i class="bi bi-award fs-4"></i>
                             </div>
                         </div>
                         <div>
-                            <h6 class="fw-bold text-slate-navy mb-1">Chấm Điểm Tín Nhiệm (0 - 100 Điểm)</h6>
-                            <p class="text-muted small mb-0">
+                            <h6 class="fw-bold text-white mb-1">Chấm Điểm Tín Nhiệm (0 - 100 Điểm)</h6>
+                            <p class="text-white-50 small mb-0" style="line-height: 1.55;">
                                 Đánh giá tỷ lệ nợ trên hạn mức và số ngày quá hạn để xếp hạng đại lý theo thang A, B, C, D kèm khuyến nghị nâng hoặc khóa hạn mức.
                             </p>
                         </div>
                     </div>
 
                     <!-- CAPABILITY 2 -->
-                    <div class="d-flex gap-3">
+                    <div class="d-flex gap-3 align-items-start">
                         <div class="flex-shrink-0">
-                            <div class="p-2.5 rounded-3 bg-success-subtle text-success">
+                            <div class="rounded-3 bg-success bg-opacity-20 text-success border border-success border-opacity-25" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
                                 <i class="bi bi-envelope-check fs-4"></i>
                             </div>
                         </div>
                         <div>
-                            <h6 class="fw-bold text-slate-navy mb-1">Soạn Thảo Email Đòi Nợ Tự Động</h6>
-                            <p class="text-muted small mb-0">
+                            <h6 class="fw-bold text-white mb-1">Soạn Thảo Email Đòi Nợ Tự Động</h6>
+                            <p class="text-white-50 small mb-0" style="line-height: 1.55;">
                                 Tạo thư nhắc nợ lịch sự, đầy đủ chi tiết số tiền, danh sách hóa đơn quá hạn và thông tin tài khoản chuyển khoản.
                             </p>
                         </div>
                     </div>
 
-                    <!-- CAPABILITY 3: COMPLIANCE BADGE -->
-                    <div class="d-flex gap-3">
+                    <!-- CAPABILITY 3: COMPLIANCE BADGE (REMOVED RUBRIC / MỤC 10) -->
+                    <div class="d-flex gap-3 align-items-start">
                         <div class="flex-shrink-0">
-                            <div class="p-2.5 rounded-3 bg-warning-subtle text-warning">
-                                <i class="bi bi-person-check fs-4"></i>
+                            <div class="rounded-3 bg-warning bg-opacity-20 text-warning border border-warning border-opacity-25" style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-shield-check fs-4"></i>
                             </div>
                         </div>
                         <div>
-                            <h6 class="fw-bold text-slate-navy mb-1">Tuân Thủ Tuyệt Đối Mục 10 Rubric</h6>
-                            <p class="text-muted small mb-0">
-                                <strong>AI chỉ đóng vai trò phân tích & tư vấn</strong>; mọi quyết định thay đổi hạn mức nợ hay gửi email đều phải do Kế toán trưởng duyệt trước.
+                            <h6 class="fw-bold text-white mb-1">AI chỉ tư vấn, kế toán quyết định</h6>
+                            <p class="text-white-50 small mb-0" style="line-height: 1.55;">
+                                <strong>AI chỉ đóng vai trò phân tích & tư vấn</strong>; mọi quyết định thay đổi hạn mức nợ hay gửi email đều do Kế toán trưởng phê duyệt trước khi thi hành.
                             </p>
                         </div>
                     </div>
@@ -64,9 +99,9 @@
 
             <!-- RIGHT: SIMULATED INTERACTIVE AI CONSOLE -->
             <div class="col-12 col-lg-7">
-                <div class="landing-ai-console reveal-fade-up">
+                <div class="landing-ai-console lp-tilt-card reveal-3d-card reveal-delay-2">
                     <!-- CONSOLE TOP BAR -->
-                    <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-secondary border-opacity-25">
+                    <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom border-white border-opacity-10">
                         <div class="d-flex align-items-center gap-2">
                             <img src="/images/ava-avatar.svg" alt="AVA AI" style="width: 30px; height: 30px; border-radius: 50%;" />
                             <div>
@@ -80,7 +115,7 @@
                     </div>
 
                     <!-- RISK SCORING CARD -->
-                    <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 mb-3">
+                    <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-white border-opacity-10 mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <span class="badge bg-success-subtle text-success small mb-1">ĐỐI TÁC: KH001 - TẠP HÓA BÀ BA</span>
@@ -98,13 +133,14 @@
                         AVA AI Copilot: Đang thẩm định rủi ro đối tác KH001 (Tạp Hóa Bà Ba)...
                     </div>
 
-                    <!-- FOOTER ACTIONS -->
-                    <div class="d-flex align-items-center justify-content-between pt-3 mt-3 border-top border-secondary border-opacity-25">
+                    <!-- FOOTER ACTIONS (BUTTON NOT CUT) -->
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 mt-3 border-top border-white border-opacity-10">
                         <span class="text-white-50 small" style="font-size: 0.72rem;">
                             <i class="bi bi-lock-fill me-1"></i> Dữ liệu bảo mật nội bộ, không lộ ra ngoài
                         </span>
-                        <a href="/login" class="btn btn-outline-light btn-sm rounded-pill px-3" style="font-size: 0.78rem;">
-                            Xem Thử Nghiệm Tại /login <i class="bi bi-arrow-right ms-1"></i>
+                        <a href="/login" class="btn btn-outline-light btn-sm rounded-pill px-3 py-1.5 text-nowrap flex-shrink-0" style="font-size: 0.8rem;">
+                            <span>Xem Thử Nghiệm Tại /login</span>
+                            <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>

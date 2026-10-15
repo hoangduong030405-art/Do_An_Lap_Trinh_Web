@@ -1,5 +1,46 @@
-<section class="landing-section bg-white" id="quy-trinh">
-    <div class="container">
+<section class="landing-section lp-section--light position-relative overflow-hidden" id="quy-trinh">
+    <!-- 3D FLOATING BACKGROUND LAYER (STAGE 1) -->
+    <div class="lp-bg3d" aria-hidden="true" tabindex="-1">
+        <!-- Ambient Glows -->
+        <div class="lp-bg3d-glow lp-bg3d-glow-blue" style="width: 320px; height: 320px; top: 10%; left: 10%;"></div>
+        <div class="lp-bg3d-glow lp-bg3d-glow-emerald" style="width: 300px; height: 300px; bottom: 10%; right: 10%;"></div>
+
+        <!-- 3D Process Token 1 (Near Depth, Parallax 0.20) -->
+        <div class="cube-3d cube-tech depth-near" data-parallax-speed="0.20" style="top: 15%; left: 5%; --cube-w: 62px; --cube-h: 62px;">
+            <div class="cube-3d-inner">
+                <div class="cube-face cube-front"></div>
+                <div class="cube-face cube-back"></div>
+                <div class="cube-face cube-top"></div>
+                <div class="cube-face cube-bottom"></div>
+                <div class="cube-face cube-left"></div>
+                <div class="cube-face cube-right"></div>
+            </div>
+        </div>
+
+        <!-- 3D SLA Clock Token (Mid Depth, Parallax 0.15) -->
+        <div class="coin-3d depth-mid" data-parallax-speed="0.15" style="top: 60%; right: 4%;">
+            <svg width="60" height="60" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="34" cy="34" r="26" fill="rgba(59,130,246,0.15)" stroke="#3b82f6" stroke-width="1.5" />
+                <circle cx="34" cy="34" r="2" fill="#3b82f6" />
+                <line x1="34" y1="34" x2="34" y2="18" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" />
+                <line x1="34" y1="34" x2="44" y2="34" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+            </svg>
+        </div>
+
+        <!-- 3D Carton Box (Far Depth, Parallax 0.08) -->
+        <div class="cube-3d cube-carton cube-alt depth-far lp-bg3d-extra" data-parallax-speed="0.08" style="bottom: 12%; left: 35%; --cube-w: 48px; --cube-h: 48px;">
+            <div class="cube-3d-inner cube-alt">
+                <div class="cube-face cube-front"><span class="box-tape"></span></div>
+                <div class="cube-face cube-back"></div>
+                <div class="cube-face cube-top"><span class="box-tape-h"></span></div>
+                <div class="cube-face cube-bottom"></div>
+                <div class="cube-face cube-left"></div>
+                <div class="cube-face cube-right"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container position-relative" style="z-index: 2;">
         <!-- HEADER -->
         <div class="text-center">
             <span class="landing-section-badge reveal-fade-up">Quy Trình Hoạt Động</span>
@@ -11,12 +52,28 @@
             </p>
         </div>
 
-        <!-- 4 STEPS TIMELINE -->
+        <!-- 4 STEPS TIMELINE WITH 3D FLIP & DYNAMIC CONNECTOR -->
         <div class="row g-4 position-relative">
+            <!-- Dynamic SVG connector line for large screens -->
+            <div class="d-none d-lg-block position-absolute" style="top: 42px; left: 12%; right: 12%; height: 4px; z-index: 0; pointer-events: none;">
+                <svg width="100%" height="4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="0" y1="2" x2="100%" y2="2" stroke="url(#timelineLineGrad)" stroke-width="3" stroke-dasharray="8 6" />
+                    <defs>
+                        <linearGradient id="timelineLineGrad" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#0d6efd" />
+                            <stop offset="50%" stop-color="#10b981" />
+                            <stop offset="100%" stop-color="#059669" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
             <!-- STEP 1 -->
             <div class="col-12 col-md-6 col-lg-3">
-                <div class="landing-timeline-step reveal-fade-up">
-                    <div class="landing-step-badge">1</div>
+                <div class="landing-timeline-step lp-tilt-card reveal-3d-card reveal-delay-1">
+                    <div class="lp-tilt-float">
+                        <div class="landing-step-badge">1</div>
+                    </div>
                     <h5 class="fw-bold text-slate-navy mb-2">Lập Đơn Bán Sỉ</h5>
                     <p class="text-muted small mb-0" style="line-height: 1.6;">
                         Nhân viên kinh doanh chọn danh mục hàng, tính tổng tiền xuất kho theo bảng giá sỉ và kiểm tra tồn kho thời gian thực.
@@ -26,8 +83,10 @@
 
             <!-- STEP 2 -->
             <div class="col-12 col-md-6 col-lg-3">
-                <div class="landing-timeline-step reveal-fade-up">
-                    <div class="landing-step-badge">2</div>
+                <div class="landing-timeline-step lp-tilt-card reveal-3d-card reveal-delay-2">
+                    <div class="lp-tilt-float">
+                        <div class="landing-step-badge">2</div>
+                    </div>
                     <h5 class="fw-bold text-slate-navy mb-2">Kiểm Tra Hạn Mức</h5>
                     <p class="text-muted small mb-0" style="line-height: 1.6;">
                         Hệ thống tự động cộng dồn nợ cũ với đơn mới. Nếu vượt quá trần hạn mức (Credit Limit), đơn hàng sẽ bị từ chối phê duyệt ngay lập tức.
@@ -37,8 +96,10 @@
 
             <!-- STEP 3 -->
             <div class="col-12 col-md-6 col-lg-3">
-                <div class="landing-timeline-step reveal-fade-up">
-                    <div class="landing-step-badge">3</div>
+                <div class="landing-timeline-step lp-tilt-card reveal-3d-card reveal-delay-3">
+                    <div class="lp-tilt-float">
+                        <div class="landing-step-badge">3</div>
+                    </div>
                     <h5 class="fw-bold text-slate-navy mb-2">Thu Tiền Cấn Trừ FIFO</h5>
                     <p class="text-muted small mb-0" style="line-height: 1.6;">
                         Khi đại lý thanh toán, tiền thu tự động ưu tiên gạch nợ cho các hóa đơn cũ nhất trước theo thứ tự InvoiceDate ASC trong 1 transaction ACID.
@@ -48,8 +109,10 @@
 
             <!-- STEP 4 -->
             <div class="col-12 col-md-6 col-lg-3">
-                <div class="landing-timeline-step reveal-fade-up">
-                    <div class="landing-step-badge">4</div>
+                <div class="landing-timeline-step lp-tilt-card reveal-3d-card reveal-delay-4">
+                    <div class="lp-tilt-float">
+                        <div class="landing-step-badge">4</div>
+                    </div>
                     <h5 class="fw-bold text-slate-navy mb-2">Đối Soát & Báo Cáo</h5>
                     <p class="text-muted small mb-0" style="line-height: 1.6;">
                         Cập nhật tức thời sổ công nợ lũy kế (Ledger Running Balance), báo cáo tuổi nợ 4 xô và đối chiếu lãi gộp phân phối theo giá vốn thực tế.

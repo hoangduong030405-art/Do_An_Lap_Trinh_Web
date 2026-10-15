@@ -5,6 +5,7 @@ namespace WebBanHang.Services
     public class LayoutStateService
     {
         public bool IsSidebarCollapsed { get; private set; } = false;
+        public bool IsSidebarPinned { get; private set; } = false;
         public bool IsQuickAddOpen { get; private set; } = false;
         public bool IsRoleModalOpen { get; set; } = false;
         public string SelectedCompany { get; set; } = "TỔNG KHO PHÂN PHỐI SỈ & CÔNG NỢ B2B";
@@ -22,6 +23,21 @@ namespace WebBanHang.Services
         {
             IsSidebarCollapsed = !IsSidebarCollapsed;
             NotifyStateChanged();
+        }
+
+        public void ToggleSidebarPinned()
+        {
+            IsSidebarPinned = !IsSidebarPinned;
+            NotifyStateChanged();
+        }
+
+        public void SetSidebarPinned(bool pinned)
+        {
+            if (IsSidebarPinned != pinned)
+            {
+                IsSidebarPinned = pinned;
+                NotifyStateChanged();
+            }
         }
 
         public void SetSidebarCollapsed(bool collapsed)

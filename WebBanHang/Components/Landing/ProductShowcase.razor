@@ -1,7 +1,87 @@
 @using WebBanHang.CoreBusiness.Entities
+@using WebBanHang.Components.Landing
 
-<section class="landing-section" id="san-pham" style="background-color: var(--landing-slate-50);">
-    <div class="container">
+<section class="landing-section lp-section--dark position-relative overflow-hidden" id="san-pham">
+    <!-- 3D FLOATING BACKGROUND LAYER (STAGE 1) -->
+    <div class="lp-bg3d" aria-hidden="true" tabindex="-1">
+        <!-- Ambient Glows -->
+        <div class="lp-bg3d-glow lp-bg3d-glow-emerald" style="width: 360px; height: 360px; top: 15%; right: 4%;"></div>
+        <div class="lp-bg3d-glow lp-bg3d-glow-blue" style="width: 320px; height: 320px; bottom: 20%; left: 4%;"></div>
+
+        <!-- 3D Wooden Warehouse Pallet (Near Depth, Parallax 0.22) -->
+        <div class="pallet-3d depth-near" data-parallax-speed="0.22" style="bottom: 10%; left: 3%;">
+            <svg width="130" height="85" viewBox="0 0 140 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="palWood1" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#d4a373" />
+                        <stop offset="100%" stop-color="#a98467" />
+                    </linearGradient>
+                    <linearGradient id="palWoodDark" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#8a5a36" />
+                        <stop offset="100%" stop-color="#583110" />
+                    </linearGradient>
+                </defs>
+                <polygon points="10,65 70,88 135,55 75,32" fill="rgba(0,0,0,0.4)" filter="blur(5px)" />
+                <polygon points="20,62 70,82 70,86 20,66" fill="url(#palWoodDark)" />
+                <polygon points="70,82 125,56 125,60 70,86" fill="#432818" />
+                <polygon points="65,70 75,74 75,80 65,76" fill="url(#palWoodDark)" />
+                <polygon points="25,54 35,58 35,64 25,60" fill="url(#palWoodDark)" />
+                <polygon points="105,48 115,52 115,58 105,54" fill="url(#palWoodDark)" />
+                <polygon points="45,30 95,12 110,18 60,36" fill="url(#palWood1)" stroke="#b08968" stroke-width="0.8" />
+                <polygon points="30,42 80,24 95,30 45,48" fill="url(#palWood1)" stroke="#b08968" stroke-width="0.8" />
+                <polygon points="15,54 65,36 80,42 30,60" fill="url(#palWood1)" stroke="#b08968" stroke-width="0.8" />
+                <polygon points="15,54 30,60 30,64 15,58" fill="url(#palWoodDark)" />
+                <polygon points="30,60 80,42 80,46 30,64" fill="#583110" />
+            </svg>
+        </div>
+
+        <!-- 3D Wholesale Master Carton Box (Near Depth, Parallax 0.18) -->
+        <div class="cube-3d cube-carton depth-near" data-parallax-speed="0.18" style="top: 12%; right: 4%; --cube-w: 84px; --cube-h: 84px;">
+            <div class="cube-3d-inner">
+                <div class="cube-face cube-front"><span class="box-tape"></span><span class="box-icon">🏷️</span></div>
+                <div class="cube-face cube-back"></div>
+                <div class="cube-face cube-top"><span class="box-tape-h"></span></div>
+                <div class="cube-face cube-bottom"></div>
+                <div class="cube-face cube-left"></div>
+                <div class="cube-face cube-right"></div>
+            </div>
+        </div>
+
+        <!-- 3D Beverage Can (Mid Depth, Parallax 0.14) -->
+        <div class="cylinder-can-3d depth-mid" data-parallax-speed="0.14" style="top: 48%; left: 2%;">
+            <svg width="72" height="100" viewBox="0 0 80 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="prodCanGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#047857" />
+                        <stop offset="30%" stop-color="#10b981" />
+                        <stop offset="55%" stop-color="#6ee7b7" />
+                        <stop offset="75%" stop-color="#059669" />
+                        <stop offset="100%" stop-color="#064e3b" />
+                    </linearGradient>
+                    <linearGradient id="prodCanTop" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#e2e8f0" />
+                        <stop offset="100%" stop-color="#94a3b8" />
+                    </linearGradient>
+                </defs>
+                <ellipse cx="40" cy="100" rx="26" ry="6" fill="rgba(0,0,0,0.35)" filter="blur(3px)" />
+                <path d="M 12 25 L 12 85 C 12 95 68 95 68 85 L 68 25 Z" fill="url(#prodCanGrad)" />
+                <path d="M 38 25 L 38 86" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" />
+                <ellipse cx="40" cy="25" rx="28" ry="10" fill="url(#prodCanTop)" stroke="#cbd5e1" stroke-width="1.2" />
+                <ellipse cx="40" cy="24" rx="21" ry="6" fill="#64748b" />
+                <path d="M 36 21 C 36 19 44 19 44 21 C 44 24 36 24 36 21 Z" fill="#f8fafc" />
+            </svg>
+        </div>
+
+        <!-- 3D Mini Bottle / Can (Far Depth, Parallax 0.08) -->
+        <div class="cylinder-can-3d depth-far lp-bg3d-extra" data-parallax-speed="0.08" style="bottom: 24%; right: 4%;">
+            <svg width="54" height="76" viewBox="0 0 80 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 12 25 L 12 85 C 12 95 68 95 68 85 L 68 25 Z" fill="#b45309" />
+                <ellipse cx="40" cy="25" rx="28" ry="10" fill="#fef08a" />
+            </svg>
+        </div>
+    </div>
+
+    <div class="container position-relative" style="z-index: 2;">
         <!-- HEADER -->
         <div class="text-center">
             <span class="landing-section-badge reveal-fade-up">Danh Mục Phân Phối</span>
@@ -14,103 +94,96 @@
         </div>
 
         <!-- CATEGORY FILTER TABS -->
-        <div class="landing-product-tabs reveal-fade-up">
-            <button class="landing-tab-btn @(selectedCategory == "all" ? "active" : "")" @onclick='() => SetCategory("all")'>
-                Tất Cả (@(Products?.Count() ?? 0))
+        <div class="landing-product-tabs reveal-fade-up mb-4">
+            <button type="button" class="landing-tab-btn @(selectedCategory == "all" ? "active" : "")" @onclick='() => SetCategory("all")'>
+                Tất Cả (@displayProducts.Count())
             </button>
-            <button class="landing-tab-btn @(selectedCategory == "beverage" ? "active" : "")" @onclick='() => SetCategory("beverage")'>
-                Nước Ngọt & Khoáng
+            <button type="button" class="landing-tab-btn @(selectedCategory == "beverage" ? "active" : "")" @onclick='() => SetCategory("beverage")'>
+                Nước Ngọt & Khoáng (@displayProducts.Count(p => GetProductCategoryKey(p) == "beverage"))
             </button>
-            <button class="landing-tab-btn @(selectedCategory == "beer" ? "active" : "")" @onclick='() => SetCategory("beer")'>
-                Bia Cao Cấp
+            <button type="button" class="landing-tab-btn @(selectedCategory == "beer" ? "active" : "")" @onclick='() => SetCategory("beer")'>
+                Bia Cao Cấp (@displayProducts.Count(p => GetProductCategoryKey(p) == "beer"))
             </button>
-            <button class="landing-tab-btn @(selectedCategory == "milk" ? "active" : "")" @onclick='() => SetCategory("milk")'>
-                Sữa & Dinh Dưỡng
+            <button type="button" class="landing-tab-btn @(selectedCategory == "milk" ? "active" : "")" @onclick='() => SetCategory("milk")'>
+                Sữa & Dinh Dưỡng (@displayProducts.Count(p => GetProductCategoryKey(p) == "milk"))
             </button>
-            <button class="landing-tab-btn @(selectedCategory == "food" ? "active" : "")" @onclick='() => SetCategory("food")'>
-                Mì & Dầu Ăn
+            <button type="button" class="landing-tab-btn @(selectedCategory == "food" ? "active" : "")" @onclick='() => SetCategory("food")'>
+                Mì & Dầu Ăn (@displayProducts.Count(p => GetProductCategoryKey(p) == "food"))
             </button>
         </div>
 
-        <!-- PRODUCT GRID (PUBLIC SAFE: NO COST PRICE, NO STOCK QUANTITY) -->
-        <div class="row g-4">
-            @if (filteredProducts != null && filteredProducts.Any())
+        <!-- PRODUCT GRID (CSS GRID AUTO-FILL MINMAX 260px, GAP 24px) -->
+        <div class="lp-product-grid">
+            @foreach (var p in filteredProducts)
             {
-                @foreach (var p in filteredProducts)
-                {
-                    <div class="col-12 col-sm-6 col-lg-3">
-                        <div class="landing-product-card tilt-effect reveal-fade-up">
-                            <!-- PRODUCT IMAGE CONTAINER -->
-                            <div class="landing-product-img-wrap">
-                                <img src="@p.ImageUrl" 
-                                     alt="@p.Name" 
-                                     class="landing-product-img" 
-                                     loading="lazy" />
-                            </div>
-
-                            <!-- CODE & CATEGORY -->
-                            <div class="d-flex align-items-center justify-content-between mb-1">
-                                <span class="landing-product-code">@p.ProductCode</span>
-                                <span class="badge bg-light text-muted border small">ĐVT: @p.Unit</span>
-                            </div>
-
-                            <!-- TITLE -->
-                            <h6 class="landing-product-title" title="@p.Name">
-                                @p.Name
-                            </h6>
-
-                            <!-- DESCRIPTION -->
-                            <p class="text-muted small mb-3 text-truncate" style="font-size: 0.78rem;">
-                                @p.Description
-                            </p>
-
-                            <!-- PRICE & ACTION (WHOLESALE SELLING PRICE ONLY) -->
-                            <div class="mt-auto pt-2 border-top d-flex align-items-center justify-content-between">
-                                <div>
-                                    <div class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;">Giá Bán Sỉ</div>
-                                    <div class="landing-product-price">
-                                        @p.UnitPrice.ToString("N0") <span class="fs-6 fw-normal">đ</span>
-                                    </div>
-                                </div>
-                                <a href="/login" class="btn btn-outline-primary btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-1">
-                                    <i class="bi bi-cart-plus"></i> Đặt Sỉ
-                                </a>
-                            </div>
+                <div class="lp-product-card lp-tilt-card tilt-effect reveal-3d-card">
+                    <!-- PRODUCT IMAGE CONTAINER (ASPECT RATIO 4/3, CATEGORY GRADIENT) -->
+                    <div class="lp-tilt-float w-100">
+                        <div class="lp-product-img-wrap" style="background: @GetCategoryGradient(p);">
+                            <img src="@p.ImageUrl" 
+                                 alt="@p.Name" 
+                                 class="lp-product-img" 
+                                 loading="lazy" />
                         </div>
                     </div>
-                }
-            }
-            else
-            {
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">Đang cập nhật danh mục sản phẩm từ hệ thống...</p>
+
+                    <!-- CARD BODY -->
+                    <div class="lp-product-body d-flex flex-column flex-grow-1 p-3.5">
+                        <!-- CATEGORY BADGE & PRODUCT CODE -->
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="badge @GetCategoryBadgeClass(p) px-2.5 py-1 fw-semibold" style="font-size: 0.72rem;">
+                                @GetCategoryBadge(p)
+                            </span>
+                            <span class="text-white-50 small fw-medium" style="font-size: 0.74rem;">
+                                @p.ProductCode • ĐVT: @p.Unit
+                            </span>
+                        </div>
+
+                        <!-- PRODUCT TITLE (MAX 2 LINES, LINE-CLAMP) -->
+                        <h3 class="lp-product-title mb-2" title="@p.Name">
+                            @p.Name
+                        </h3>
+
+                        <!-- SHORT DESCRIPTION -->
+                        <p class="text-muted small mb-3 text-truncate" style="font-size: 0.8rem;">
+                            @p.Description
+                        </p>
+
+                        <!-- PRICE & ACTION (WHOLESALE SELLING PRICE ONLY, NO COST/STOCK) -->
+                        <div class="mt-auto pt-3 border-top border-white border-opacity-10 d-flex align-items-center justify-content-between gap-2">
+                            <div class="d-flex flex-column">
+                                <span class="text-white-50" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em;">Giá Bán Sỉ</span>
+                                <span class="lp-product-price text-nowrap">
+                                    @p.UnitPrice.ToString("N0") <span class="fs-6 fw-normal text-white-50">đ</span>
+                                </span>
+                            </div>
+                            <a href="/login" class="btn btn-emerald-cta text-nowrap d-inline-flex align-items-center gap-1.5" aria-label="Đặt sỉ sản phẩm @p.Name">
+                                <i class="bi bi-cart-plus-fill"></i>
+                                <span>Đặt Sỉ</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             }
         </div>
     </div>
 </section>
 
-<!-- MARQUEE BRAND BANNER TICKER -->
-<div class="landing-marquee-wrapper">
+<!-- MARQUEE BRAND BANNER TICKER (DYNAMICALLY TAKEN FROM CATALOG USECASE) -->
+<div class="landing-marquee-wrapper" aria-hidden="true">
     <div class="landing-marquee-track">
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Coca-Cola Sleek</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Heineken Silver</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Tiger Crystal</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-info"></i> Aquafina</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Acecook Hảo Hảo</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-warning"></i> Simply Đậu Nành</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Vinamilk Tiệt Trùng</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Omachi Xốt Bò Hầm</div>
-
-        <!-- DUPLICATE FOR INFINITE SEAMLESS LOOP -->
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Coca-Cola Sleek</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Heineken Silver</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-primary"></i> Tiger Crystal</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-info"></i> Aquafina</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Acecook Hảo Hảo</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-warning"></i> Simply Đậu Nành</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-success"></i> Vinamilk Tiệt Trùng</div>
-        <div class="landing-marquee-item"><i class="bi bi-patch-check-fill text-danger"></i> Omachi Xốt Bò Hầm</div>
+        @foreach (var p in displayProducts)
+        {
+            <div class="landing-marquee-item">
+                <i class="bi bi-patch-check-fill text-success me-1"></i> @p.Name
+            </div>
+        }
+        @foreach (var p in displayProducts)
+        {
+            <div class="landing-marquee-item">
+                <i class="bi bi-patch-check-fill text-success me-1"></i> @p.Name
+            </div>
+        }
     </div>
 </div>
 
@@ -120,17 +193,74 @@
 
     private string selectedCategory = "all";
 
-    private IEnumerable<Product>? filteredProducts => selectedCategory switch
+    private IEnumerable<Product> displayProducts => (Products != null && Products.Any())
+        ? Products
+        : LandingConstants.DefaultProducts;
+
+    private IEnumerable<Product> filteredProducts => selectedCategory switch
     {
-        "beverage" => Products?.Where(p => p.Name.Contains("Coca", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Aquafina", StringComparison.OrdinalIgnoreCase)),
-        "beer" => Products?.Where(p => p.Name.Contains("Heineken", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Tiger", StringComparison.OrdinalIgnoreCase)),
-        "milk" => Products?.Where(p => p.Name.Contains("Vinamilk", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Sữa", StringComparison.OrdinalIgnoreCase)),
-        "food" => Products?.Where(p => p.Name.Contains("Hảo Hảo", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Omachi", StringComparison.OrdinalIgnoreCase) || p.Name.Contains("Simply", StringComparison.OrdinalIgnoreCase)),
-        _ => Products
+        "all" => displayProducts,
+        _ => displayProducts.Where(p => GetProductCategoryKey(p) == selectedCategory)
     };
 
     private void SetCategory(string cat)
     {
         selectedCategory = cat;
+    }
+
+    private string GetProductCategoryKey(Product p)
+    {
+        var name = p.Name ?? "";
+        if (name.Contains("Coca", StringComparison.OrdinalIgnoreCase) || 
+            name.Contains("Aquafina", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("Nước", StringComparison.OrdinalIgnoreCase))
+            return "beverage";
+
+        if (name.Contains("Heineken", StringComparison.OrdinalIgnoreCase) || 
+            name.Contains("Tiger", StringComparison.OrdinalIgnoreCase) ||
+            name.Contains("Bia", StringComparison.OrdinalIgnoreCase))
+            return "beer";
+
+        if (name.Contains("Vinamilk", StringComparison.OrdinalIgnoreCase) || 
+            name.Contains("Sữa", StringComparison.OrdinalIgnoreCase))
+            return "milk";
+
+        return "food";
+    }
+
+    private string GetCategoryBadge(Product p)
+    {
+        return GetProductCategoryKey(p) switch
+        {
+            "beverage" => "Nước Ngọt & Khoáng",
+            "beer" => "Bia Cao Cấp",
+            "milk" => "Sữa & Dinh Dưỡng",
+            "food" => "Mì & Dầu Ăn",
+            _ => "Hàng Tiêu Dùng"
+        };
+    }
+
+    private string GetCategoryBadgeClass(Product p)
+    {
+        return GetProductCategoryKey(p) switch
+        {
+            "beverage" => "bg-primary bg-opacity-25 text-primary border border-primary border-opacity-30",
+            "beer" => "bg-warning bg-opacity-25 text-warning border border-warning border-opacity-30",
+            "milk" => "bg-info bg-opacity-25 text-info border border-info border-opacity-30",
+            "food" => "bg-danger bg-opacity-25 text-danger border border-danger border-opacity-30",
+            _ => "bg-secondary bg-opacity-25 text-white-50"
+        };
+    }
+
+    private string GetCategoryGradient(Product p)
+    {
+        return GetProductCategoryKey(p) switch
+        {
+            "beverage" => "radial-gradient(circle at center, rgba(59, 130, 246, 0.22) 0%, rgba(16, 185, 129, 0.12) 70%, rgba(15, 23, 42, 0.4) 100%)",
+            "beer" => "radial-gradient(circle at center, rgba(245, 158, 11, 0.22) 0%, rgba(239, 68, 68, 0.12) 70%, rgba(15, 23, 42, 0.4) 100%)",
+            "milk" => "radial-gradient(circle at center, rgba(16, 185, 129, 0.22) 0%, rgba(6, 182, 212, 0.12) 70%, rgba(15, 23, 42, 0.4) 100%)",
+            "food" => "radial-gradient(circle at center, rgba(249, 115, 22, 0.22) 0%, rgba(234, 179, 8, 0.12) 70%, rgba(15, 23, 42, 0.4) 100%)",
+            _ => "radial-gradient(circle at center, rgba(100, 116, 139, 0.2) 0%, rgba(15, 23, 42, 0.4) 100%)"
+        };
     }
 }

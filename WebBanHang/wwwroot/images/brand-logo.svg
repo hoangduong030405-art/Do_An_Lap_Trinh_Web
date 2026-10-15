@@ -17,7 +17,7 @@
       <stop offset="100%" stop-color="#b91c1c" />
     </linearGradient>
   </defs>
-  <!-- 4 colored curved segments forming MISA logo circle -->
+  <!-- 4 colored curved segments forming brand logo circle -->
   <circle cx="24" cy="24" r="22" fill="#ffffff" />
   <path d="M 24 4 A 20 20 0 0 1 44 24 L 34 24 A 10 10 0 0 0 24 14 Z" fill="url(#g1)" />
   <path d="M 44 24 A 20 20 0 0 1 24 44 L 24 34 A 10 10 0 0 0 34 24 Z" fill="url(#g2)" />

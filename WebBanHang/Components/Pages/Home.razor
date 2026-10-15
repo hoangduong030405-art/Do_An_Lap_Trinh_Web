@@ -29,7 +29,7 @@ else if (dashboard != null)
     <!-- =========================================================================
          1. CONTEXT BAR & TIME PERIOD SELECTOR (CHUẨN BÀN LÀM VIỆC DOANH NGHIỆP)
          ========================================================================= -->
-    <div class="misa-period-filter-bar d-flex flex-wrap align-items-center justify-content-between gap-2 shadow-xs mb-3">
+    <div class="app-period-filter-bar d-flex flex-wrap align-items-center justify-content-between gap-2 shadow-xs mb-3">
         <div class="d-flex align-items-center gap-2">
             <div class="d-flex align-items-center gap-1.5 text-success fw-bold fs-6">
                 <i class="bi bi-grid-fill"></i>
@@ -45,7 +45,7 @@ else if (dashboard != null)
             <!-- Period Selector Dropdown -->
             <div class="d-flex align-items-center gap-1.5 bg-light rounded px-2 py-1 border">
                 <i class="bi bi-calendar3 text-muted small"></i>
-                <select class="misa-filter-select border-0 bg-transparent py-0" @onchange="OnPeriodChanged" value="@selectedPeriod">
+                <select class="app-filter-select border-0 bg-transparent py-0" @onchange="OnPeriodChanged" value="@selectedPeriod">
                     <option value="today">Hôm nay</option>
                     <option value="this_week">Tuần này</option>
                     <option value="this_month">Tháng này</option>
@@ -74,7 +74,7 @@ else if (dashboard != null)
                 <span class="d-none d-md-inline">Tùy chỉnh</span>
             </button>
 
-            <button class="btn btn-sm btn-misa-outline d-flex align-items-center gap-1" 
+            <button class="btn btn-sm btn-brand-outline d-flex align-items-center gap-1" 
                     title="In báo cáo tổng quan" 
                     @onclick="PrintOverview">
                 <i class="bi bi-printer"></i>
@@ -89,15 +89,15 @@ else if (dashboard != null)
     <div class="row g-2.5 mb-3">
         <!-- KPI 1: TỔNG DOANH THU BÁN HÀNG -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="misa-kpi-card kpi-blue">
+            <div class="app-kpi-card kpi-blue">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="text-uppercase small fw-bold text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px;">Doanh thu bán hàng</span>
-                    <div class="misa-kpi-icon" style="background-color: #eff6ff; color: #0075ff;">
+                    <div class="app-kpi-icon" style="background-color: #eff6ff; color: #0075ff;">
                         <i class="bi bi-cash-coin"></i>
                     </div>
                 </div>
                 <div>
-                    <div class="misa-kpi-val text-slate-navy">
+                    <div class="app-kpi-val text-slate-navy">
                         @((dashboard.TotalRevenue / 1000000m).ToString("N2")) <small class="fs-6 fw-semibold text-muted">Trđ</small>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light-subtle small" style="font-size: 0.72rem;">
@@ -110,15 +110,15 @@ else if (dashboard != null)
 
         <!-- KPI 2: TIỀN THỰC THU (TIỀN MẶT & VIETQR) -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="misa-kpi-card kpi-green">
+            <div class="app-kpi-card kpi-green">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="text-uppercase small fw-bold text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px;">Tiền đã thu về</span>
-                    <div class="misa-kpi-icon" style="background-color: #e6f7ef; color: #00b060;">
+                    <div class="app-kpi-icon" style="background-color: #e6f7ef; color: #00b060;">
                         <i class="bi bi-wallet2"></i>
                     </div>
                 </div>
                 <div>
-                    <div class="misa-kpi-val text-success">
+                    <div class="app-kpi-val text-success">
                         @((dashboard.TotalCollectedAmount / 1000000m).ToString("N2")) <small class="fs-6 fw-semibold text-muted">Trđ</small>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light-subtle small" style="font-size: 0.72rem;">
@@ -131,15 +131,15 @@ else if (dashboard != null)
 
         <!-- KPI 3: TỔNG NỢ PHẢI THU (DƯ NỢ TK 131) -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="misa-kpi-card kpi-orange">
+            <div class="app-kpi-card kpi-orange">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="text-uppercase small fw-bold text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px;">Nợ phải thu (TK 131)</span>
-                    <div class="misa-kpi-icon" style="background-color: #fff7ed; color: #ff7700;">
+                    <div class="app-kpi-icon" style="background-color: #fff7ed; color: #ff7700;">
                         <i class="bi bi-clock-history"></i>
                     </div>
                 </div>
                 <div>
-                    <div class="misa-kpi-val" style="color: #ea580c;">
+                    <div class="app-kpi-val" style="color: #ea580c;">
                         @((dashboard.TotalOutstandingDebt / 1000000m).ToString("N2")) <small class="fs-6 fw-semibold text-muted">Trđ</small>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light-subtle small" style="font-size: 0.72rem;">
@@ -152,15 +152,15 @@ else if (dashboard != null)
 
         <!-- KPI 4: NỢ QUÁ HẠN (CẢNH BÁO RỦI RO THANH KHOẢN) -->
         <div class="col-12 col-sm-6 col-xl-3">
-            <div class="misa-kpi-card kpi-red">
+            <div class="app-kpi-card kpi-red">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <span class="text-uppercase small fw-bold text-muted" style="font-size: 0.7rem; letter-spacing: 0.5px;">Nợ quá hạn (Cảnh báo)</span>
-                    <div class="misa-kpi-icon" style="background-color: #fef2f2; color: #ef4444;">
+                    <div class="app-kpi-icon" style="background-color: #fef2f2; color: #ef4444;">
                         <i class="bi bi-exclamation-triangle-fill"></i>
                     </div>
                 </div>
                 <div>
-                    <div class="misa-kpi-val text-danger">
+                    <div class="app-kpi-val text-danger">
                         @((overdueDebt / 1000000m).ToString("N2")) <small class="fs-6 fw-semibold text-muted">Trđ</small>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light-subtle small" style="font-size: 0.72rem;">
@@ -175,7 +175,7 @@ else if (dashboard != null)
     <!-- =========================================================================
          3. AVA AI EXECUTIVE COPILOT BANNER & 3 INSIGHT CARDS
          ========================================================================= -->
-    <div class="misa-announcement-bar d-flex align-items-center justify-content-between p-2 px-3 mb-2 rounded bg-white border shadow-xs">
+    <div class="app-announcement-bar d-flex align-items-center justify-content-between p-2 px-3 mb-2 rounded bg-white border shadow-xs">
         <div class="d-flex align-items-center gap-2 small">
             <span class="badge bg-danger text-white px-2 py-0.5 rounded-pill" style="font-size: 0.65rem; font-weight: 700;">MỚI</span>
             <span class="fw-semibold text-slate-navy">Khám phá Trợ lý AI AVA Kế toán:</span>
@@ -188,7 +188,7 @@ else if (dashboard != null)
         </button>
     </div>
 
-    <div class="misa-insight-banner mb-3 shadow-xs">
+    <div class="app-insight-banner mb-3 shadow-xs">
         <div class="d-flex align-items-center justify-content-between mb-2.5">
             <div class="d-flex align-items-center gap-2">
                 <img src="/images/ava-avatar.svg" alt="AVA AI" style="width: 28px; height: 28px; border-radius: 50%;" />
@@ -215,7 +215,7 @@ else if (dashboard != null)
         <div class="row g-2.5">
             <!-- Insight 1: Doanh thu & Lợi nhuận -->
             <div class="col-12 col-md-4">
-                <div class="misa-insight-card">
+                <div class="app-insight-card">
                     <div class="mb-2">
                         <div class="d-flex align-items-center gap-1 text-success fw-bold small mb-1">
                             <i class="bi bi-graph-up-arrow"></i>
@@ -233,7 +233,7 @@ else if (dashboard != null)
 
             <!-- Insight 2: Rủi ro tập trung công nợ KH -->
             <div class="col-12 col-md-4">
-                <div class="misa-insight-card">
+                <div class="app-insight-card">
                     <div class="mb-2">
                         <div class="d-flex align-items-center gap-1 text-warning fw-bold small mb-1">
                             <i class="bi bi-pie-chart-fill"></i>
@@ -251,7 +251,7 @@ else if (dashboard != null)
 
             <!-- Insight 3: Kiểm soát rủi ro tuổi nợ -->
             <div class="col-12 col-md-4">
-                <div class="misa-insight-card">
+                <div class="app-insight-card">
                     <div class="mb-2">
                         <div class="d-flex align-items-center gap-1 text-primary fw-bold small mb-1">
                             <i class="bi bi-shield-check"></i>
@@ -275,9 +275,9 @@ else if (dashboard != null)
     <div class="row g-3 mb-3">
         <!-- CARD 1: TÌNH HÌNH TÀI CHÍNH (DOANH THU - CHI PHÍ - LỢI NHUẬN) -->
         <div class="col-12 col-lg-4">
-            <div class="misa-card">
-                <div class="misa-card-header">
-                    <h6 class="misa-card-title">
+            <div class="app-card">
+                <div class="app-card-header">
+                    <h6 class="app-card-title">
                         <i class="bi bi-cash-coin text-success"></i> Tình hình tài chính
                     </h6>
                     <div class="d-flex align-items-center gap-2">
@@ -286,22 +286,22 @@ else if (dashboard != null)
                     </div>
                 </div>
 
-                <div class="misa-card-body d-flex flex-column justify-content-center">
-                    <div class="misa-metric-row">
+                <div class="app-card-body d-flex flex-column justify-content-center">
+                    <div class="app-metric-row">
                         <span class="text-slate-navy fw-semibold">Doanh thu thuần</span>
-                        <span class="misa-metric-val-blue">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
+                        <span class="app-metric-val-blue">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
                     </div>
-                    <div class="misa-metric-row">
+                    <div class="app-metric-row">
                         <span class="text-slate-navy fw-semibold">Giá vốn hàng bán (COGS)</span>
-                        <span class="misa-metric-val-dark text-danger">@((actualCost / 1000000m).ToString("N3"))</span>
+                        <span class="app-metric-val-dark text-danger">@((actualCost / 1000000m).ToString("N3"))</span>
                     </div>
-                    <div class="misa-metric-row">
+                    <div class="app-metric-row">
                         <span class="text-slate-navy fw-semibold">Lợi nhuận gộp thực tế</span>
-                        <span class="misa-metric-val-green">@((actualProfit / 1000000m).ToString("N3"))</span>
+                        <span class="app-metric-val-green">@((actualProfit / 1000000m).ToString("N3"))</span>
                     </div>
-                    <div class="misa-metric-row">
+                    <div class="app-metric-row">
                         <span class="text-slate-navy fw-semibold">Tổng vốn tồn kho đang chôn</span>
-                        <span class="misa-metric-val-blue">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
+                        <span class="app-metric-val-blue">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
                     </div>
 
                     <!-- Profitability Ratio Progress Bar -->
@@ -317,24 +317,24 @@ else if (dashboard != null)
                     </div>
                 </div>
 
-                <div class="misa-card-footer">
+                <div class="app-card-footer">
                     <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
                     <a href="javascript:void(0)" @onclick="LoadDashboard" class="text-primary fw-bold text-decoration-none">Tải lại</a>
                 </div>
             </div>
         </div>
 
-        <!-- CARD 2: NỢ PHẢI THU THEO HẠN NỢ (MISA AGING SIGNATURE WIDGET) -->
+        <!-- CARD 2: NỢ PHẢI THU THEO HẠN NỢ (Enterprise AGING SIGNATURE WIDGET) -->
         <div class="col-12 col-lg-4">
-            <div class="misa-card">
-                <div class="misa-card-header">
-                    <h6 class="misa-card-title">
+            <div class="app-card">
+                <div class="app-card-header">
+                    <h6 class="app-card-title">
                         <i class="bi bi-wallet2 text-warning"></i> Nợ phải thu theo hạn nợ
                     </h6>
                     <span class="text-muted small" style="font-size: 0.7rem;">Đvt: Trđ</span>
                 </div>
 
-                <div class="misa-card-body d-flex flex-column justify-content-between">
+                <div class="app-card-body d-flex flex-column justify-content-between">
                     <div>
                         <div class="mb-2">
                             <div class="text-muted small" style="font-size: 0.72rem;">Tổng nợ phải thu</div>
@@ -359,9 +359,9 @@ else if (dashboard != null)
                         </div>
 
                         <!-- Dual Tone Progress Bar -->
-                        <div class="misa-debt-bar mb-1.5">
-                            <div class="misa-debt-bar-overdue" style="width: @(overdueBarWidth)%;" title="Quá hạn: @overdueBarWidth.ToString("N1")%"></div>
-                            <div class="misa-debt-bar-current" style="width: @(currentBarWidth)%;" title="Trong hạn: @currentBarWidth.ToString("N1")%"></div>
+                        <div class="app-debt-bar mb-1.5">
+                            <div class="app-debt-bar-overdue" style="width: @(overdueBarWidth)%;" title="Quá hạn: @overdueBarWidth.ToString("N1")%"></div>
+                            <div class="app-debt-bar-current" style="width: @(currentBarWidth)%;" title="Trong hạn: @currentBarWidth.ToString("N1")%"></div>
                         </div>
 
                         <div class="d-flex justify-content-between text-muted mb-3" style="font-size: 0.7rem;">
@@ -391,7 +391,7 @@ else if (dashboard != null)
                     </div>
                 </div>
 
-                <div class="misa-card-footer">
+                <div class="app-card-footer">
                     <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
                     <a href="/aging-report" class="text-primary fw-bold text-decoration-none">Báo cáo 4 xô ↗</a>
                 </div>
@@ -400,15 +400,15 @@ else if (dashboard != null)
 
         <!-- CARD 3: DÒNG TIỀN & THỰC THU VS. DOANH SỐ -->
         <div class="col-12 col-lg-4">
-            <div class="misa-card">
-                <div class="misa-card-header">
-                    <h6 class="misa-card-title">
+            <div class="app-card">
+                <div class="app-card-header">
+                    <h6 class="app-card-title">
                         <i class="bi bi-arrow-left-right text-primary"></i> Dòng tiền: Bán chịu & Thu tiền
                     </h6>
                     <span class="text-muted small" style="font-size: 0.7rem;">Đvt: Trđ</span>
                 </div>
 
-                <div class="misa-card-body d-flex flex-column justify-content-between">
+                <div class="app-card-body d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex align-items-center justify-content-between mb-2">
                             <div>
@@ -442,8 +442,8 @@ else if (dashboard != null)
                                 }
                             </div>
                             <div class="d-flex justify-content-center gap-3 mt-1.5" style="font-size: 0.68rem;">
-                                <span><span class="misa-dot bg-primary"></span> Bán ra</span>
-                                <span><span class="misa-dot bg-success"></span> Thu tiền về</span>
+                                <span><span class="app-dot bg-primary"></span> Bán ra</span>
+                                <span><span class="app-dot bg-success"></span> Thu tiền về</span>
                             </div>
                         </div>
                     </div>
@@ -456,7 +456,7 @@ else if (dashboard != null)
                     </div>
                 </div>
 
-                <div class="misa-card-footer">
+                <div class="app-card-footer">
                     <span>Cấn trừ tự động theo FIFO</span>
                     <a href="/payments" class="text-primary fw-bold text-decoration-none">Thu nợ ngay ↗</a>
                 </div>
@@ -465,28 +465,28 @@ else if (dashboard != null)
     </div>
 
     <!-- =========================================================================
-         5. ROW 2: DOANH THU/CHI PHÍ/LỢI NHUẬN (INTERACTIVE MISA BAR & LINE CHART)
+         5. ROW 2: DOANH THU/CHI PHÍ/LỢI NHUẬN (INTERACTIVE Enterprise BAR & LINE CHART)
          ========================================================================= -->
     <div class="row g-3 mb-3">
-        <!-- CARD 4: DOANH THU, CHI PHÍ, LỢI NHUẬN (INTERACTIVE 12-MONTH MISA CHART) -->
+        <!-- CARD 4: DOANH THU, CHI PHÍ, LỢI NHUẬN (INTERACTIVE 12-MONTH Enterprise CHART) -->
         <div class="col-12 col-xl-7">
-            <div class="misa-card position-relative">
-                <div class="misa-card-header">
-                    <h6 class="misa-card-title">
+            <div class="app-card position-relative">
+                <div class="app-card-header">
+                    <h6 class="app-card-title">
                         <i class="bi bi-graph-up text-primary"></i> Doanh thu, chi phí, lợi nhuận
                     </h6>
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-stars text-purple" title="Phân tích AI"></i>
                         <i class="bi bi-arrow-clockwise text-muted cursor-pointer" title="Làm mới biểu đồ" @onclick="LoadDashboard"></i>
-                        <select class="misa-dropdown-filter">
+                        <select class="app-dropdown-filter">
                             <option>Năm nay</option>
                             <option>Năm trước</option>
                         </select>
                     </div>
                 </div>
 
-                <div class="misa-card-body p-3">
-                    <!-- Top stats summary (Matching MISA Screenshot 4 & 5) -->
+                <div class="app-card-body p-3">
+                    <!-- Top stats summary (Matching Enterprise Screenshot 4 & 5) -->
                     <div class="d-flex align-items-center gap-4 mb-3 pb-2 border-bottom">
                         <div>
                             <span class="text-muted small d-block" style="font-size: 0.72rem; letter-spacing: 0.3px;">DOANH THU</span>
@@ -508,7 +508,7 @@ else if (dashboard != null)
                         </div>
                     </div>
 
-                    <!-- Interactive MISA AMIS Chart (12 Months Bar & Line) -->
+                    <!-- Interactive Enterprise B2B Chart (12 Months Bar & Line) -->
                     <div class="position-relative" style="height: 240px; width: 100%;">
                         
                         <!-- Floating Tooltip on Hover / Select (Matching Screenshot 5) -->
@@ -517,7 +517,7 @@ else if (dashboard != null)
                             var hm = hoveredMonth.Value;
                             var mData = dashboard.MonthlyRevenues.FirstOrDefault(x => x.MonthNumber == hm);
                             var tooltipLeftPercent = Math.Max(8, Math.Min(88, (hm - 1) * 8.33 + 4.16));
-                            <div class="misa-chart-tooltip" style="left: @(tooltipLeftPercent)%; top: 15px; transform: translateX(-50%);">
+                            <div class="app-chart-tooltip" style="left: @(tooltipLeftPercent)%; top: 15px; transform: translateX(-50%);">
                                 <div class="fw-bold mb-1 border-bottom border-secondary border-opacity-50 pb-1" style="font-size: 0.8rem; color: #10b981;">
                                     Tháng @hm
                                 </div>
@@ -679,32 +679,32 @@ else if (dashboard != null)
                         </svg>
                     </div>
 
-                    <!-- Interactive MISA Legend Buttons (Matching Screenshot 4 & 5) -->
+                    <!-- Interactive Enterprise Legend Buttons (Matching Screenshot 4 & 5) -->
                     <div class="d-flex align-items-center justify-content-center gap-3 mt-2">
-                        <button class="misa-legend-btn @(showRevenue ? "" : "inactive")" 
+                        <button class="app-legend-btn @(showRevenue ? "" : "inactive")" 
                                 title="Bấm để ẩn / hiện chuỗi Doanh thu" 
                                 @onclick="ToggleRevenue">
-                            <span class="misa-dot" style="background-color: #00b060;"></span>
+                            <span class="app-dot" style="background-color: #00b060;"></span>
                             <span style="color: @(showRevenue ? "#1e293b" : "#94a3b8");">DOANH THU</span>
                         </button>
 
-                        <button class="misa-legend-btn @(showCost ? "" : "inactive")" 
+                        <button class="app-legend-btn @(showCost ? "" : "inactive")" 
                                 title="Bấm để ẩn / hiện chuỗi Chi phí" 
                                 @onclick="ToggleCost">
-                            <span class="misa-dot" style="background-color: #f43f5e;"></span>
+                            <span class="app-dot" style="background-color: #f43f5e;"></span>
                             <span style="color: @(showCost ? "#1e293b" : "#94a3b8");">CHI PHÍ</span>
                         </button>
 
-                        <button class="misa-legend-btn @(showProfit ? "" : "inactive")" 
+                        <button class="app-legend-btn @(showProfit ? "" : "inactive")" 
                                 title="Bấm để ẩn / hiện chuỗi Lợi nhuận" 
                                 @onclick="ToggleProfit">
-                            <span class="misa-dot" style="background-color: #ff7700;"></span>
+                            <span class="app-dot" style="background-color: #ff7700;"></span>
                             <span style="color: @(showProfit ? "#1e293b" : "#94a3b8");">LỢI NHUẬN</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="misa-card-footer">
+                <div class="app-card-footer">
                     <span><i class="bi bi-clock me-1"></i>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
                     <a href="javascript:void(0)" @onclick="LoadDashboard" class="text-primary fw-bold text-decoration-none">Tải lại</a>
                 </div>
@@ -713,15 +713,15 @@ else if (dashboard != null)
 
         <!-- CARD 5: HÀNG HÓA TỒN KHO -->
         <div class="col-12 col-xl-5">
-            <div class="misa-card">
-                <div class="misa-card-header">
-                    <h6 class="misa-card-title">
+            <div class="app-card">
+                <div class="app-card-header">
+                    <h6 class="app-card-title">
                         <i class="bi bi-box-seam text-primary"></i> Hàng hóa tồn kho
                     </h6>
                     <span class="text-muted small" style="font-size: 0.7rem;">Đvt: Triệu đồng</span>
                 </div>
 
-                <div class="misa-card-body p-3">
+                <div class="app-card-body p-3">
                     <div class="row g-2 mb-3 pb-2 border-bottom">
                         <div class="col-6 border-end">
                             <div class="text-muted small" style="font-size: 0.7rem;">Tổng vốn bỏ ra (Nhập kho)</div>
@@ -767,7 +767,7 @@ else if (dashboard != null)
                                         var profitVal = prod.ExpectedProfit / 1000000m;
                                         <tr>
                                             <td>
-                                                <span class="misa-dot" style="background-color: @curColor;"></span>
+                                                <span class="app-dot" style="background-color: @curColor;"></span>
                                                 <span class="fw-semibold text-slate-navy text-truncate d-inline-block" style="max-width: 130px;" title="@prod.ProductName">
                                                     @prod.ProductName
                                                 </span>
@@ -798,7 +798,7 @@ else if (dashboard != null)
                     </div>
                 </div>
 
-                <div class="misa-card-footer">
+                <div class="app-card-footer">
                     <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
                     <a href="/manage-products" class="text-primary fw-bold text-decoration-none">Xem chi tiết kho ↗</a>
                 </div>
@@ -812,15 +812,15 @@ else if (dashboard != null)
     <div class="row g-3 mb-3">
         <!-- CARD 6: MẶT HÀNG BÁN CHẠY (VỚI HÌNH ẢNH VECTOR ĐỒNG BỘ) -->
         <div class="col-12 col-lg-6">
-            <div class="misa-card">
-                <div class="misa-card-header">
-                    <h6 class="misa-card-title">
+            <div class="app-card">
+                <div class="app-card-header">
+                    <h6 class="app-card-title">
                         <i class="bi bi-trophy-fill text-warning"></i> Mặt hàng bán chạy nhất
                     </h6>
                     <span class="badge bg-light text-secondary border small">Top sản phẩm FMCG</span>
                 </div>
 
-                <div class="misa-card-body p-0">
+                <div class="app-card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0" style="font-size: 0.82rem;">
                             <thead class="table-light text-muted" style="font-size: 0.72rem;">
@@ -870,7 +870,7 @@ else if (dashboard != null)
                     </div>
                 </div>
 
-                <div class="misa-card-footer">
+                <div class="app-card-footer">
                     <span>Tổng số: @dashboard.TopProducts.Count mặt hàng chủ lực</span>
                     <a href="/invoices" class="text-primary fw-bold text-decoration-none">Toàn bộ hóa đơn ↗</a>
                 </div>
@@ -879,9 +879,9 @@ else if (dashboard != null)
 
         <!-- CARD 7: TOP KHÁCH HÀNG NỢ & GIÁM SÁT HẠN MỨC AI -->
         <div class="col-12 col-lg-6">
-            <div class="misa-card">
-                <div class="misa-card-header">
-                    <h6 class="misa-card-title">
+            <div class="app-card">
+                <div class="app-card-header">
+                    <h6 class="app-card-title">
                         <i class="bi bi-shield-exclamation text-danger"></i> Giám sát hạn mức & Top 5 khách nợ
                     </h6>
                     <a href="/aging-report" class="btn btn-sm btn-outline-danger py-0.5 px-2" style="font-size: 0.72rem;">
@@ -889,7 +889,7 @@ else if (dashboard != null)
                     </a>
                 </div>
 
-                <div class="misa-card-body p-0">
+                <div class="app-card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0" style="font-size: 0.82rem;">
                             <thead class="table-light text-muted" style="font-size: 0.72rem;">
@@ -951,7 +951,7 @@ else if (dashboard != null)
                     </div>
                 </div>
 
-                <div class="misa-card-footer">
+                <div class="app-card-footer">
                     <span>Tổng nợ 5 KH: @((dashboard.TopDebtors.Sum(d => d.CurrentDebt) / 1000000m).ToString("N1")) trđ</span>
                     <a href="/customer-ledger" class="text-primary fw-bold text-decoration-none">Sổ chi tiết ↗</a>
                 </div>
@@ -960,7 +960,7 @@ else if (dashboard != null)
     </div>
 
     <!-- =========================================================================
-         7. QUICK ACTION RIBBON (MISA THAO TÁC NGHIỆP VỤ NHANH)
+         7. QUICK ACTION RIBBON (Enterprise THAO TÁC NGHIỆP VỤ NHANH)
          ========================================================================= -->
     <div class="card border-0 shadow-xs p-3 bg-white rounded-3 mb-3">
         <div class="d-flex align-items-center justify-content-between mb-2.5">
@@ -971,7 +971,7 @@ else if (dashboard != null)
         </div>
         
         <div class="d-flex flex-wrap gap-2">
-            <a href="/create-invoice" class="btn btn-misa btn-sm d-flex align-items-center gap-1.5">
+            <a href="/create-invoice" class="btn btn-brand btn-sm d-flex align-items-center gap-1.5">
                 <i class="bi bi-cart-plus-fill"></i> Lập Hóa Đơn Bán Hàng
             </a>
             <a href="/payments" class="btn btn-success btn-sm d-flex align-items-center gap-1.5 text-white" style="background-color: #00b060; border-color: #00b060;">
@@ -1074,7 +1074,7 @@ else if (dashboard != null)
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <button class="btn btn-outline-secondary btn-sm" @onclick="CloseAvaModal">Đóng</button>
-                            <a href="/aging-report" class="btn btn-misa btn-sm" @onclick="CloseAvaModal">
+                            <a href="/aging-report" class="btn btn-brand btn-sm" @onclick="CloseAvaModal">
                                 Xem Báo Cáo Tuổi Nợ 4 Xô
                             </a>
                         </div>
@@ -1125,7 +1125,7 @@ else if (dashboard != null)
                     </div>
                 </div>
                 <div class="modal-footer py-2 bg-white border-top">
-                    <button type="button" class="btn btn-misa btn-sm px-3" @onclick="ToggleCustomizeModal">Lưu thiết lập</button>
+                    <button type="button" class="btn btn-brand btn-sm px-3" @onclick="ToggleCustomizeModal">Lưu thiết lập</button>
                 </div>
             </div>
         </div>
@@ -1164,7 +1164,7 @@ else if (dashboard != null)
     private bool showAvaModal = false;
     private bool showCustomizeModal = false;
 
-    // Chart Interactive Series Toggles (Matching MISA Screenshot 4 & 5)
+    // Chart Interactive Series Toggles (Matching Enterprise Screenshot 4 & 5)
     private bool showRevenue = true;
     private bool showCost = true;
     private bool showProfit = true;

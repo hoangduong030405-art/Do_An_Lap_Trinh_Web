@@ -6,13 +6,13 @@
 @inject AuthenticationStateProvider AuthStateProvider
 
 <div class="position-relative">
-    <button class="misa-tool-btn position-relative" 
+    <button class="app-tool-btn position-relative" 
             title="Thông báo hệ thống (@unreadCount)"
             @onclick="ToggleDropdown">
         <i class="bi bi-bell fs-6"></i>
         @if (unreadCount > 0)
         {
-            <span class="misa-counter-badge bg-danger">
+            <span class="app-counter-badge bg-danger">
                 @(unreadCount > 9 ? "9+" : unreadCount.ToString())
             </span>
         }

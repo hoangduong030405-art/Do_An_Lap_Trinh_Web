@@ -3,23 +3,24 @@
 @inject LayoutStateService LayoutState
 @inject IJSRuntime JS
 
-<header class="misa-topbar px-3 d-flex align-items-center justify-content-between flex-shrink-0">
+<header class="app-topbar px-3 d-flex align-items-center justify-content-between flex-shrink-0">
     <!-- LEFT: SIDEBAR TOGGLE + BRAND + REPORTING PERIOD -->
     <div class="d-flex align-items-center gap-2 overflow-hidden">
-        <!-- Sidebar Toggle Button (Saves to localStorage) -->
-        <button class="misa-waffle-btn" 
-                title="Ẩn / Hiện thanh điều hướng" 
+        <!-- Sidebar Toggle Button (Desktop: Ghim/Bỏ ghim, Mobile: Bật drawer) -->
+        <button class="app-waffle-btn" 
+                id="appSidebarToggleBtn"
+                title="Ghim / Mở rộng thanh điều hướng (Ctrl+B)" 
                 @onclick="ToggleSidebar">
             <i class="bi bi-list fs-5"></i>
         </button>
 
         <!-- Brand Logo & Name -->
         <a href="/dashboard" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0 ms-1">
-            <img src="/images/misa-logo.svg" alt="B2B Logo" class="misa-brand-logo-img" />
-            <span class="misa-brand-text fw-bold">HUEGO B2B</span>
+            <img src="/images/brand-logo.svg" alt="B2B Logo" class="brand-logo-img" />
+            <span class="brand-text fw-bold">HUEGO B2B</span>
         </a>
 
-        <span class="misa-header-divider d-none d-md-inline ms-1"></span>
+        <span class="app-header-divider d-none d-md-inline ms-1"></span>
 
         <!-- Functional Reporting Period Selector (Replaces static 2024 badge) -->
         <div class="d-none d-lg-flex align-items-center gap-1.5 bg-light rounded-pill px-2.5 py-1 border small">
@@ -46,13 +47,13 @@
         <QuickAddMenu />
 
         <!-- 2. AVA AI CHAT ASSISTANT BUTTON WITH SMART REMINDER BADGE -->
-        <button class="misa-tool-btn position-relative" 
+        <button class="app-tool-btn position-relative" 
                 title="Trợ lý AVA Kế toán (@avaBadgeCount nhắc nhở)"
                 @onclick="ToggleAvaPanel">
             <i class="bi bi-chat-dots-fill fs-6 text-primary"></i>
             @if (avaBadgeCount > 0)
             {
-                <span class="misa-counter-badge bg-danger">
+                <span class="app-counter-badge bg-danger">
                     @(avaBadgeCount > 9 ? "9+" : avaBadgeCount.ToString())
                 </span>
             }
@@ -62,7 +63,7 @@
         <NotificationBell />
 
         <!-- 4. HELP (?) BUTTON -->
-        <button class="misa-tool-btn" 
+        <button class="app-tool-btn" 
                 title="Trung tâm trợ giúp & 2 Luật nghiệp vụ"
                 @onclick="ToggleHelpModal">
             <i class="bi bi-question-circle fs-6"></i>
@@ -71,7 +72,7 @@
         <!-- 5. SETTINGS & THEME TOGGLE -->
         <SettingsMenu />
 
-        <span class="misa-header-divider d-none d-sm-inline"></span>
+        <span class="app-header-divider d-none d-sm-inline"></span>
 
         <!-- 6. USER PROFILE & LOGOUT -->
         <UserMenu />
@@ -97,10 +98,9 @@
 
     private async Task ToggleSidebar()
     {
-        LayoutState.ToggleSidebar();
         try
         {
-            await JS.InvokeVoidAsync("localStorage.setItem", "sidebar_collapsed", LayoutState.IsSidebarCollapsed ? "true" : "false");
+            await JS.InvokeVoidAsync("window.appSidebar.toggleFromTopbar");
         }
         catch { }
     }
@@ -114,12 +114,7 @@
         {
             try
             {
-                var stored = await JS.InvokeAsync<string>("localStorage.getItem", "sidebar_collapsed");
-                if (stored == "true" && !LayoutState.IsSidebarCollapsed)
-                {
-                    LayoutState.ToggleSidebar();
-                    StateHasChanged();
-                }
+                await JS.InvokeVoidAsync("window.appSidebar.syncState");
             }
             catch { }
         }

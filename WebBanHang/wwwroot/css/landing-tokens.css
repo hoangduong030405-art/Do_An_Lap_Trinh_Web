@@ -7,7 +7,7 @@
 @font-face {
   font-family: 'Inter';
   font-style: normal;
-  font-weight: 400 800;
+  font-weight: 400;
   font-display: swap;
   src: url('/fonts/inter-vietnamese.woff2') format('woff2');
   unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
@@ -15,16 +15,37 @@
 @font-face {
   font-family: 'Inter';
   font-style: normal;
-  font-weight: 400 800;
+  font-weight: 400;
   font-display: swap;
   src: url('/fonts/inter-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Plus Jakarta Sans';
   font-style: normal;
-  font-weight: 600 800;
+  font-weight: 600;
   font-display: swap;
   src: url('/fonts/plus-jakarta-sans-vietnamese.woff2') format('woff2');
   unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
@@ -32,14 +53,28 @@
 @font-face {
   font-family: 'Plus Jakarta Sans';
   font-style: normal;
-  font-weight: 600 800;
+  font-weight: 600;
   font-display: swap;
   src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+}
 
 /* 2. DESIGN TOKENS VARIABLES */
-:root {
+:root, .lp-root {
   /* --- Color Palette: Deep Space Navy --- */
   --color-bg-base: #060b18;
   --color-bg-surface: #0b1530;
@@ -47,7 +82,7 @@
   --color-bg-card: rgba(17, 30, 66, 0.72);
   --color-bg-card-hover: rgba(24, 42, 92, 0.85);
   
-  /* --- Light Section Alternate (Eye-rest section) --- */
+  /* --- Light Section Alternate --- */
   --color-light-bg: #f8fafc;
   --color-light-surface: #ffffff;
   --color-light-border: #e2e8f0;
@@ -72,15 +107,15 @@
   --bucket-overdue-3: #ef4444;   /* >90 days: Red */
 
   /* --- Typography & Text Colors (WCAG AA Compliant >= 4.5:1) --- */
-  --color-text-primary: #f1f5f9;   /* Slate 100 - Contrast 13.5:1 on base */
-  --color-text-secondary: #94a3b8; /* Slate 400 - Contrast 5.2:1 on base */
+  --color-text-primary: #f1f5f9;   /* Slate 100 */
+  --color-text-secondary: #94a3b8; /* Slate 400 */
   --color-text-muted: #64748b;     /* Slate 500 */
   --color-text-inverse: #0f172a;
 
   --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-family-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
 
-  --font-size-hero: clamp(2.35rem, 5vw, 4.25rem);
+  --font-size-hero: clamp(2.35rem, 4.8vw, 4rem);
   --font-size-section-title: clamp(1.85rem, 3.2vw, 2.75rem);
   --font-size-body: 1.05rem;
   --line-height-hero: 1.12;
@@ -95,7 +130,7 @@
   --radius-xl: 24px;
   --radius-pill: 9999px;
 
-  /* --- Spacing Scale (4px/8px grid) --- */
+  /* --- Spacing Scale --- */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -106,10 +141,8 @@
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
-  --space-20: 80px;
-  --space-24: 96px;
 
-  /* --- Multi-layered Elevation & Glassmorphism --- */
+  /* --- Glassmorphism & Elevation --- */
   --glass-bg: rgba(11, 21, 48, 0.65);
   --glass-bg-hover: rgba(17, 30, 66, 0.78);
   --glass-border: rgba(255, 255, 255, 0.12);
@@ -122,9 +155,4 @@
   --shadow-elevated: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 2px 1px rgba(255, 255, 255, 0.08);
   --shadow-glow-primary: 0 0 35px rgba(59, 130, 246, 0.28);
   --shadow-glow-accent: 0 0 35px rgba(16, 185, 129, 0.28);
-
-  /* --- Transitions --- */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
 }

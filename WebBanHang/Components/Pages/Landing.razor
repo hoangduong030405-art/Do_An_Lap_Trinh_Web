@@ -60,6 +60,7 @@ else if (!isAuthenticated)
 @code {
     private bool isCheckingAuth = true;
     private bool isAuthenticated = false;
+    private bool jsInitialized = false;
     private PublicStatisticsDto? publicStats;
     private IEnumerable<Product>? catalogProducts;
 
@@ -87,23 +88,35 @@ else if (!isAuthenticated)
         try
         {
             publicStats = await GetPublicStatisticsUseCase.ExecuteAsync();
+        }
+        catch
+        {
+            publicStats = null;
+        }
+
+        try
+        {
             catalogProducts = await ViewProductCatalogUseCase.ExecuteAsync();
         }
         catch
         {
-            // When database is unavailable, keep null so UI displays value propositions or 'Chưa có dữ liệu'
-            publicStats = null;
+            catalogProducts = null;
         }
-        finally
+
+        // Ensure 8 standard products are always available even if DB connection is delayed
+        if (catalogProducts == null || !catalogProducts.Any())
         {
-            isCheckingAuth = false;
+            catalogProducts = LandingConstants.DefaultProducts;
         }
+
+        isCheckingAuth = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !isAuthenticated)
+        if (!isCheckingAuth && !isAuthenticated && !jsInitialized)
         {
+            jsInitialized = true;
             try
             {
                 await JS.InvokeVoidAsync("initLandingPageJs");

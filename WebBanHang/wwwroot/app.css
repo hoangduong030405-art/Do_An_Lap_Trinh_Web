@@ -1,28 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
-    --misa-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    --bs-font-sans-serif: var(--misa-font);
+    --app-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --bs-font-sans-serif: var(--app-font);
     
-    /* MISA Brand Colors */
-    --misa-green: #00b060;
-    --misa-green-hover: #009653;
-    --misa-green-light: #e6f7ef;
-    --misa-green-border: #a3e6cd;
-    --misa-dark-bg: #1e222d;
-    --misa-sidebar-btn: #2a303c;
-    --misa-sidebar-border: #353d4c;
-    --misa-sidebar-text: #abb4c4;
-    --misa-sidebar-heading: #717d91;
-    --misa-body-bg: #f4f5f8;
-    --misa-card-bg: #ffffff;
-    --misa-border: #e2e8f0;
-    --misa-text-heading: #1e293b;
-    --misa-text-body: #334155;
-    --misa-text-muted: #64748b;
-    --misa-orange: #ff7700;
-    --misa-red: #ef4444;
-    --misa-blue: #0075ff;
+    /* Enterprise Brand Colors */
+    --brand-green: #00b060;
+    --brand-green-hover: #009653;
+    --brand-green-light: #e6f7ef;
+    --brand-green-border: #a3e6cd;
+    --app-dark-bg: #1e222d;
+    --app-sidebar-btn: #2a303c;
+    --app-sidebar-border: #353d4c;
+    --app-sidebar-text: #abb4c4;
+    --app-sidebar-heading: #717d91;
+    --app-body-bg: #f4f5f8;
+    --app-card-bg: #ffffff;
+    --app-border: #e2e8f0;
+    --app-text-heading: #1e293b;
+    --app-text-body: #334155;
+    --app-text-muted: #64748b;
+    --app-orange: #ff7700;
+    --app-red: #ef4444;
+    --app-blue: #0075ff;
 
     --navy-dark: #1e222d;
     --navy-slate: #252b38;
@@ -33,19 +33,19 @@
 }
 
 html, body {
-    font-family: var(--misa-font);
-    background-color: var(--misa-body-bg);
-    color: var(--misa-text-body);
+    font-family: var(--app-font);
+    background-color: var(--app-body-bg);
+    color: var(--app-text-body);
     -webkit-font-smoothing: antialiased;
     letter-spacing: -0.2px !important;
     font-variant-numeric: tabular-nums !important;
 }
 
-/* MISA Primary Button Style */
-.btn-misa {
+/* Enterprise Primary Button Style */
+.btn-brand {
     color: #ffffff;
-    background-color: var(--misa-green);
-    border-color: var(--misa-green);
+    background-color: var(--brand-green);
+    border-color: var(--brand-green);
     font-weight: 600;
     font-size: 13px;
     padding: 6px 16px;
@@ -53,17 +53,17 @@ html, body {
     transition: all 0.2s ease;
 }
 
-.btn-misa:hover, .btn-misa:focus {
-    background-color: var(--misa-green-hover);
-    border-color: var(--misa-green-hover);
+.btn-brand:hover, .btn-brand:focus {
+    background-color: var(--brand-green-hover);
+    border-color: var(--brand-green-hover);
     color: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 176, 96, 0.25);
 }
 
-.btn-misa-outline {
-    color: var(--misa-green);
+.btn-brand-outline {
+    color: var(--brand-green);
     background-color: transparent;
-    border: 1px solid var(--misa-green);
+    border: 1px solid var(--brand-green);
     font-weight: 600;
     font-size: 13px;
     padding: 5px 14px;
@@ -71,27 +71,27 @@ html, body {
     transition: all 0.2s ease;
 }
 
-.btn-misa-outline:hover {
-    background-color: var(--misa-green-light);
-    color: var(--misa-green-hover);
+.btn-brand-outline:hover {
+    background-color: var(--brand-green-light);
+    color: var(--brand-green-hover);
 }
 
 .btn-primary {
     color: #fff;
-    background-color: var(--misa-green);
-    border-color: var(--misa-green);
+    background-color: var(--brand-green);
+    border-color: var(--brand-green);
     font-weight: 600;
     transition: all 0.2s ease-in-out;
 }
 
 .btn-primary:hover, .btn-primary:focus {
-    background-color: var(--misa-green-hover);
-    border-color: var(--misa-green-hover);
+    background-color: var(--brand-green-hover);
+    border-color: var(--brand-green-hover);
     box-shadow: 0 4px 12px rgba(0, 176, 96, 0.25);
 }
 
 a, .btn-link {
-    color: var(--misa-blue);
+    color: var(--app-blue);
     text-decoration: none;
 }
 a:hover, .btn-link:hover {
@@ -219,9 +219,9 @@ a:hover, .btn-link:hover {
 }
 
 /* ==========================================================================
-   MISA AMIS ENTERPRISE DASHBOARD & COMPONENT STYLES
+   Enterprise B2B ENTERPRISE DASHBOARD & COMPONENT STYLES
    ========================================================================== */
-.misa-card {
+.app-card {
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -231,7 +231,7 @@ a:hover, .btn-link:hover {
     flex-direction: column;
 }
 
-.misa-card-header {
+.app-card-header {
     padding: 12px 16px;
     border-bottom: 1px solid #f1f5f9;
     display: flex;
@@ -239,7 +239,7 @@ a:hover, .btn-link:hover {
     justify-content: space-between;
 }
 
-.misa-card-title {
+.app-card-title {
     font-size: 13.5px;
     font-weight: 700;
     color: #1e293b;
@@ -249,12 +249,12 @@ a:hover, .btn-link:hover {
     gap: 6px;
 }
 
-.misa-card-body {
+.app-card-body {
     padding: 14px 16px;
     flex: 1;
 }
 
-.misa-card-footer {
+.app-card-footer {
     padding: 8px 16px;
     background-color: #fbfcfd;
     border-top: 1px solid #f1f5f9;
@@ -265,7 +265,7 @@ a:hover, .btn-link:hover {
     justify-content: space-between;
 }
 
-.misa-dropdown-filter {
+.app-dropdown-filter {
     border: none;
     background: transparent;
     font-size: 12px;
@@ -275,12 +275,12 @@ a:hover, .btn-link:hover {
     cursor: pointer;
     border-radius: 4px;
 }
-.misa-dropdown-filter:hover {
+.app-dropdown-filter:hover {
     background-color: #f1f5f9;
     color: #0f172a;
 }
 
-.misa-metric-row {
+.app-metric-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -288,53 +288,53 @@ a:hover, .btn-link:hover {
     border-bottom: 1px dashed #e2e8f0;
     font-size: 13px;
 }
-.misa-metric-row:last-child {
+.app-metric-row:last-child {
     border-bottom: none;
 }
 
-.misa-metric-val-blue {
+.app-metric-val-blue {
     color: #0075ff;
     font-weight: 700;
     font-size: 14.5px;
 }
-.misa-metric-val-green {
+.app-metric-val-green {
     color: #00b060;
     font-weight: 700;
     font-size: 14.5px;
 }
-.misa-metric-val-dark {
+.app-metric-val-dark {
     color: #1e293b;
     font-weight: 700;
     font-size: 14.5px;
 }
-.misa-metric-val-orange {
+.app-metric-val-orange {
     color: #ff7700;
     font-weight: 700;
     font-size: 14.5px;
 }
-.misa-metric-val-red {
+.app-metric-val-red {
     color: #ef4444;
     font-weight: 700;
     font-size: 14.5px;
 }
 
-.misa-debt-bar {
+.app-debt-bar {
     height: 14px;
     border-radius: 4px;
     overflow: hidden;
     display: flex;
     background-color: #cbd5e1;
 }
-.misa-debt-bar-overdue {
+.app-debt-bar-overdue {
     background-color: #ff7700;
     transition: width 0.4s ease;
 }
-.misa-debt-bar-current {
+.app-debt-bar-current {
     background-color: #94a3b8;
     transition: width 0.4s ease;
 }
 
-.misa-insight-banner {
+.app-insight-banner {
     background: linear-gradient(135deg, #fffbeb 0%, #fbf7ff 45%, #f0fdf4 100%);
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -342,7 +342,7 @@ a:hover, .btn-link:hover {
     margin-bottom: 16px;
 }
 
-.misa-insight-card {
+.app-insight-card {
     background: #ffffff;
     border: 1px solid #f1f5f9;
     border-radius: 8px;
@@ -354,13 +354,13 @@ a:hover, .btn-link:hover {
     justify-content: space-between;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.misa-insight-card:hover {
+.app-insight-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 /* Chart Legend Pill */
-.misa-chart-legend {
+.app-chart-legend {
     display: flex;
     gap: 16px;
     align-items: center;
@@ -370,7 +370,7 @@ a:hover, .btn-link:hover {
     letter-spacing: 0.3px;
 }
 
-.misa-legend-btn {
+.app-legend-btn {
     border: 1px solid transparent;
     background: transparent;
     font-size: 11px;
@@ -386,17 +386,17 @@ a:hover, .btn-link:hover {
     transition: all 0.2s ease;
     user-select: none;
 }
-.misa-legend-btn:hover {
+.app-legend-btn:hover {
     background-color: #f1f5f9;
 }
-.misa-legend-btn.inactive {
+.app-legend-btn.inactive {
     opacity: 0.35;
 }
-.misa-legend-btn.inactive:hover {
+.app-legend-btn.inactive:hover {
     opacity: 0.7;
 }
 
-.misa-chart-tooltip {
+.app-chart-tooltip {
     position: absolute;
     background-color: #1e293b;
     color: #ffffff;
@@ -410,14 +410,14 @@ a:hover, .btn-link:hover {
     line-height: 1.4;
 }
 
-.misa-chart-col-hover {
+.app-chart-col-hover {
     cursor: pointer;
 }
-.misa-chart-col-hover:hover rect.hover-bg {
+.app-chart-col-hover:hover rect.hover-bg {
     fill: rgba(0, 176, 96, 0.05);
 }
 
-.misa-dot {
+.app-dot {
     display: inline-block;
     width: 8px;
     height: 8px;
@@ -425,8 +425,8 @@ a:hover, .btn-link:hover {
     margin-right: 5px;
 }
 
-/* MISA AMIS Executive KPI Cards */
-.misa-kpi-card {
+/* Enterprise B2B Executive KPI Cards */
+.app-kpi-card {
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -441,7 +441,7 @@ a:hover, .btn-link:hover {
     overflow: hidden;
 }
 
-.misa-kpi-card::before {
+.app-kpi-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -451,17 +451,17 @@ a:hover, .btn-link:hover {
     background: #e2e8f0;
 }
 
-.misa-kpi-card.kpi-blue::before { background: #0075ff; }
-.misa-kpi-card.kpi-green::before { background: #00b060; }
-.misa-kpi-card.kpi-orange::before { background: #ff7700; }
-.misa-kpi-card.kpi-red::before { background: #ef4444; }
+.app-kpi-card.kpi-blue::before { background: #0075ff; }
+.app-kpi-card.kpi-green::before { background: #00b060; }
+.app-kpi-card.kpi-orange::before { background: #ff7700; }
+.app-kpi-card.kpi-red::before { background: #ef4444; }
 
-.misa-kpi-card:hover {
+.app-kpi-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
 }
 
-.misa-kpi-icon {
+.app-kpi-icon {
     width: 38px;
     height: 38px;
     border-radius: 8px;
@@ -471,7 +471,7 @@ a:hover, .btn-link:hover {
     font-size: 18px;
 }
 
-.misa-kpi-val {
+.app-kpi-val {
     font-size: 1.35rem;
     font-weight: 800;
     color: #1e293b;
@@ -479,7 +479,7 @@ a:hover, .btn-link:hover {
     letter-spacing: -0.5px;
 }
 
-.misa-period-filter-bar {
+.app-period-filter-bar {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -487,7 +487,7 @@ a:hover, .btn-link:hover {
     margin-bottom: 12px;
 }
 
-.misa-filter-select {
+.app-filter-select {
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     font-size: 12.5px;
@@ -500,13 +500,13 @@ a:hover, .btn-link:hover {
     transition: border-color 0.15s ease;
 }
 
-.misa-filter-select:focus {
+.app-filter-select:focus {
     border-color: #00b060;
     background-color: #ffffff;
 }
 
 /* Dual Column Bar Chart */
-.misa-dual-bar-col {
+.app-dual-bar-col {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -515,7 +515,7 @@ a:hover, .btn-link:hover {
     flex: 1;
 }
 
-.misa-dual-bar-group {
+.app-dual-bar-group {
     display: flex;
     align-items: flex-end;
     gap: 3px;
@@ -524,7 +524,7 @@ a:hover, .btn-link:hover {
     justify-content: center;
 }
 
-.misa-bar-item {
+.app-bar-item {
     width: 13px;
     border-radius: 3px 3px 0 0;
     transition: height 0.4s ease;
@@ -706,16 +706,19 @@ a:hover, .btn-link:hover {
 }
 
 /* ==========================================================================
-   MISA AMIS ENTERPRISE ROOT LAYOUT (TOPBAR FULL-WIDTH + SIDEBAR & WORKSPACE)
+   Enterprise B2B ENTERPRISE ROOT LAYOUT (TOPBAR FULL-WIDTH + SIDEBAR & WORKSPACE)
    ========================================================================== */
 html, body {
-    height: 100%;
     margin: 0;
     padding: 0;
+}
+
+html:has(.app-root), body:has(.app-root) {
+    height: 100%;
     overflow: hidden;
 }
 
-.misa-app-root {
+.app-root {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -724,8 +727,8 @@ html, body {
     background-color: #f4f5f8;
 }
 
-/* 1. MISA Topbar (100% full width at top) */
-.misa-topbar {
+/* 1. Enterprise Topbar (100% full width at top) */
+.app-topbar {
     height: 48px;
     min-height: 48px;
     max-height: 48px;
@@ -741,7 +744,7 @@ html, body {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.misa-waffle-btn {
+.app-waffle-btn {
     background: transparent;
     border: none;
     width: 32px;
@@ -754,41 +757,41 @@ html, body {
     cursor: pointer;
     transition: all 0.15s ease;
 }
-.misa-waffle-btn:hover {
+.app-waffle-btn:hover {
     background-color: #f1f5f9;
     color: #00b060;
 }
 
-.misa-brand-logo-img {
+.brand-logo-img {
     width: 26px;
     height: 26px;
     object-fit: contain;
 }
 
-.misa-brand-text {
+.brand-text {
     font-size: 15px;
     color: #1e293b;
     letter-spacing: -0.3px;
 }
 
-.misa-header-divider {
+.app-header-divider {
     width: 1px;
     height: 18px;
     background-color: #e5e7eb;
 }
 
-.misa-company-selector {
+.app-company-selector {
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
     max-width: 360px;
     transition: background-color 0.15s ease;
 }
-.misa-company-selector:hover {
+.app-company-selector:hover {
     background-color: #f1f5f9;
 }
 
-.misa-fiscal-badge {
+.app-fiscal-badge {
     background-color: #e6f7ef;
     border: 1px solid #a3e6cd;
     color: #00874c;
@@ -798,7 +801,7 @@ html, body {
     font-weight: 500;
 }
 
-.misa-fiscal-dot {
+.app-fiscal-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
@@ -807,7 +810,7 @@ html, body {
     display: inline-block;
 }
 
-.misa-search-bar {
+.app-search-bar {
     border: 1px solid #d1d5db;
     border-radius: 20px;
     padding: 3px 10px;
@@ -815,12 +818,12 @@ html, body {
     width: 220px;
     transition: all 0.2s ease;
 }
-.misa-search-bar:focus-within {
+.app-search-bar:focus-within {
     border-color: #00b060;
     box-shadow: 0 0 0 2px rgba(0, 176, 96, 0.15);
 }
 
-.misa-search-input {
+.app-search-input {
     border: none;
     outline: none;
     background: transparent;
@@ -829,7 +832,7 @@ html, body {
     color: #1e293b;
 }
 
-.misa-search-ai-badge {
+.app-search-ai-badge {
     background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
     color: #ffffff;
     font-size: 9.5px;
@@ -838,7 +841,7 @@ html, body {
     border-radius: 4px;
 }
 
-.misa-tool-btn {
+.app-tool-btn {
     background: transparent;
     border: none;
     width: 32px;
@@ -851,12 +854,12 @@ html, body {
     cursor: pointer;
     transition: all 0.15s ease;
 }
-.misa-tool-btn:hover {
+.app-tool-btn:hover {
     background-color: #f1f5f9;
     color: #1e293b;
 }
 
-.misa-counter-badge {
+.app-counter-badge {
     position: absolute;
     top: 1px;
     right: 1px;
@@ -873,7 +876,7 @@ html, body {
     justify-content: center;
 }
 
-.misa-dot-badge {
+.app-dot-badge {
     position: absolute;
     top: 5px;
     right: 6px;
@@ -883,17 +886,17 @@ html, body {
     background-color: #ef4444;
 }
 
-.misa-user-btn {
+.app-user-btn {
     cursor: pointer;
     padding: 3px 6px;
     border-radius: 6px;
     transition: background-color 0.15s ease;
 }
-.misa-user-btn:hover {
+.app-user-btn:hover {
     background-color: #f1f5f9;
 }
 
-.misa-user-avatar {
+.app-user-avatar {
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -902,8 +905,11 @@ html, body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-/* 2. MISA Workspace (below topbar) */
-.misa-workspace {
+/* ==========================================================================
+   2. Enterprise B2B MODERN WORKSPACE & AUTO-HIDE SIDEBAR ARCHITECTURE
+   ========================================================================== */
+.app-workspace {
+    position: relative;
     display: flex;
     flex-direction: row;
     height: calc(100vh - 48px);
@@ -912,33 +918,93 @@ html, body {
     flex-grow: 1;
 }
 
-/* 3. MISA Sidebar (on the left, collapsible) */
-.misa-sidebar {
+/* 2.0 Invisible 14px Trigger Zone on Left Edge */
+.app-sidebar-trigger {
+    position: fixed;
+    top: 48px;
+    bottom: 0;
+    left: 0;
+    width: 14px;
+    z-index: 1040;
+    cursor: pointer;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* 3px Glowing Cue Bar */
+.app-trigger-bar {
+    width: 3px;
+    height: 54px;
+    background: var(--brand-green, #00b060);
+    border-radius: 0 4px 4px 0;
+    opacity: 0.35;
+    box-shadow: 0 0 8px rgba(0, 176, 96, 0.4);
+    transition: opacity 0.2s ease, height 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-sidebar-trigger:hover .app-trigger-bar {
+    opacity: 0.95;
+    height: 76px;
+    box-shadow: 0 0 14px rgba(0, 176, 96, 0.7);
+}
+
+/* Hide trigger zone when pinned */
+.is-sidebar-pinned .app-sidebar-trigger,
+.app-sidebar.is-pinned ~ .app-sidebar-trigger {
+    display: none !important;
+}
+
+/* 2.1 Sidebar Container (Default: Auto-hide, floats as overlay on hover, docks when pinned) */
+.app-sidebar {
+    position: fixed;
+    top: 48px;
+    bottom: 0;
+    left: 0;
+    width: 240px !important;
+    min-width: 240px !important;
+    max-width: 240px !important;
+    height: calc(100vh - 48px);
     background-color: #1e222d;
-    height: 100%;
-    flex-shrink: 0;
-    z-index: 900;
-    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-right: 1px solid #353d4c;
+    z-index: 1050;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     user-select: none;
+    
+    /* Default Auto-Hide Offscreen State */
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), 
+                visibility 220ms cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 220ms ease;
+    will-change: transform, visibility;
 }
 
-.misa-sidebar.is-collapsed {
-    width: 52px !important;
-    min-width: 52px !important;
-    max-width: 52px !important;
+/* Desktop Hover Overlay State: Slides out, floats on top, ZERO layout shift */
+.app-sidebar.is-hover-open {
+    transform: translateX(0);
+    visibility: visible;
+    box-shadow: 8px 0 28px -4px rgba(0, 0, 0, 0.35), 
+                2px 0 8px -2px rgba(0, 0, 0, 0.2);
 }
 
-.misa-sidebar.is-expanded {
-    width: 220px !important;
-    min-width: 220px !important;
-    max-width: 220px !important;
+/* Desktop Pinned Docked State: Permanently docked */
+.app-sidebar.is-pinned {
+    position: fixed;
+    top: 48px;
+    bottom: 0;
+    left: 0;
+    transform: translateX(0);
+    visibility: visible;
+    box-shadow: none;
+    z-index: 900;
 }
 
-/* 4. MISA Content Canvas (scrollable main area) */
-.misa-content-canvas {
+/* 2.2 Content Canvas (Full width by default, smoothly shifts right when pinned) */
+.app-content-canvas {
     flex: 1;
     background-color: #f4f5f8;
     height: 100%;
@@ -946,10 +1012,22 @@ html, body {
     overflow-x: hidden;
     min-width: 0;
     padding: 14px 16px;
+    margin-left: 0;
+    width: 100%;
+    transition: margin-left 220ms cubic-bezier(0.16, 1, 0.3, 1),
+                width 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 992px) {
+    .is-sidebar-pinned .app-content-canvas,
+    .app-content-canvas.is-pinned {
+        margin-left: 240px;
+        width: calc(100% - 240px);
+    }
 }
 
 /* 5. NavMenu items */
-.misa-sidebar-wrapper {
+.app-sidebar-wrapper {
     background-color: #1e222d;
     height: 100%;
     width: 100%;
@@ -959,14 +1037,14 @@ html, body {
     overflow: hidden;
 }
 
-.text-muted-misa {
+.text-muted-app {
     color: #717d91 !important;
 }
 .text-info-blue {
     color: #38bdf8 !important;
 }
 
-.btn-misa-quick-full {
+.btn-app-quick-full {
     background-color: #2a303c;
     border: 1px solid #3b4454;
     color: #ffffff;
@@ -976,13 +1054,13 @@ html, body {
     width: 100%;
     transition: all 0.2s ease;
 }
-.btn-misa-quick-full:hover {
+.btn-app-quick-full:hover {
     background-color: #353d4c;
     border-color: #4b5563;
     color: #ffffff;
 }
 
-.btn-misa-quick-mini {
+.btn-app-quick-mini {
     background-color: #2a303c;
     border: 1px solid #3b4454;
     color: #00b060;
@@ -999,12 +1077,12 @@ html, body {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-.btn-misa-quick-mini:hover {
+.btn-app-quick-mini:hover {
     background-color: #353d4c;
     color: #00b060;
 }
 
-.misa-pinned-box {
+.app-pinned-box {
     border: 1px dashed #3b82f6;
     background-color: rgba(59, 130, 246, 0.08);
     border-radius: 6px;
@@ -1015,12 +1093,12 @@ html, body {
     line-height: 1.35;
     transition: all 0.2s ease;
 }
-.misa-pinned-box:hover {
+.app-pinned-box:hover {
     background-color: rgba(59, 130, 246, 0.16);
     border-color: #60a5fa;
 }
 
-.btn-misa-favorite-page {
+.btn-app-favorite-page {
     background-color: #2a303c;
     border: 1px solid #353d4c;
     color: #cbd5e1;
@@ -1029,52 +1107,71 @@ html, body {
     font-weight: 500;
     transition: all 0.2s ease;
 }
-.btn-misa-favorite-page:hover {
+.btn-app-favorite-page:hover {
     background-color: #353d4c;
     color: #ffffff;
 }
 
-.misa-nav-scrollable {
+.app-nav-scrollable {
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
-/* Collapsed mode links */
-.is-collapsed .misa-link {
-    width: 36px !important;
-    height: 36px !important;
-    margin: 2px auto !important;
-    border-radius: 6px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    color: #8a96a8 !important;
-    text-decoration: none !important;
+/* 6. Sidebar Header, Pin Toggle & Mobile Close */
+.app-sidebar-header {
+    height: 44px;
+    background-color: #161922;
+}
+
+.btn-app-pin-toggle {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #8a96a8;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     transition: all 0.15s ease;
 }
 
-.is-collapsed .misa-link:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
+.btn-app-pin-toggle:hover {
+    background-color: #2a303c;
+    color: #ffffff;
+    border-color: #3b4454;
 }
 
-.is-collapsed .misa-link.active,
-.is-collapsed .misa-link.active-green.active {
-    background-color: #00b060 !important;
-    color: #ffffff !important;
-    box-shadow: 0 2px 8px rgba(0, 176, 96, 0.35) !important;
+.btn-app-pin-toggle.active {
+    color: var(--brand-green, #00b060);
+    background-color: rgba(0, 176, 96, 0.12);
+    border-color: rgba(0, 176, 96, 0.25);
 }
 
-.is-collapsed .misa-link.active .misa-nav-icon,
-.is-collapsed .misa-link.active-green.active .misa-nav-icon {
-    color: #ffffff !important;
+.btn-app-close-mobile {
+    background: transparent;
+    border: none;
+    color: #8a96a8;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.btn-app-close-mobile:hover {
+    background-color: #2a303c;
+    color: #ffffff;
 }
 
-/* Expanded mode links */
-.is-expanded .misa-link {
+/* 7. Nav Links (Always full expanded format with icons & labels) */
+.app-sidebar .app-nav-link,
+.is-expanded .app-nav-link {
     width: 100% !important;
     min-height: 36px !important;
     padding: 6px 10px !important;
@@ -1090,25 +1187,30 @@ html, body {
     white-space: nowrap !important;
 }
 
-.is-expanded .misa-link:hover {
+.app-sidebar .app-nav-link:hover,
+.is-expanded .app-nav-link:hover {
     background-color: rgba(255, 255, 255, 0.08) !important;
     color: #ffffff !important;
 }
 
-.is-expanded .misa-link.active,
-.is-expanded .misa-link.active-green.active {
+.app-sidebar .app-nav-link.active,
+.app-sidebar .app-nav-link.active-green.active,
+.is-expanded .app-nav-link.active,
+.is-expanded .app-nav-link.active-green.active {
     background-color: #00b060 !important;
     color: #ffffff !important;
     font-weight: 600 !important;
     box-shadow: 0 2px 8px rgba(0, 176, 96, 0.3) !important;
 }
 
-.is-expanded .misa-link.active .misa-nav-icon,
-.is-expanded .misa-link.active-green.active .misa-nav-icon {
+.app-sidebar .app-nav-link.active .app-nav-icon,
+.app-sidebar .app-nav-link.active-green.active .app-nav-icon,
+.is-expanded .app-nav-link.active .app-nav-icon,
+.is-expanded .app-nav-link.active-green.active .app-nav-icon {
     color: #ffffff !important;
 }
 
-.misa-nav-icon {
+.app-nav-icon {
     font-size: 16px;
     width: 20px;
     text-align: center;
@@ -1116,35 +1218,91 @@ html, body {
     flex-shrink: 0;
 }
 
-.misa-avatar-wrapper {
+.app-avatar-wrapper {
     width: 24px;
     height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.misa-ava-icon {
+.app-ava-icon {
     width: 24px;
     height: 24px;
     border-radius: 50%;
 }
 
-.misa-sidebar-footer {
-    background-color: #1a1e27;
+/* 8. Sidebar Footer & Logout Button */
+.app-sidebar-footer {
+    background-color: #161922;
 }
 
-.btn-misa-collapse-toggle {
-    background-color: #2a303c;
-    border: 1px solid #3b4454;
-    color: #abb4c4;
-    width: 32px;
-    height: 30px;
+.btn-app-sidebar-logout {
+    background-color: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
     border-radius: 6px;
-    padding: 0;
-    cursor: pointer;
+    font-size: 12.5px;
+    padding: 7px 12px;
+    text-decoration: none;
     transition: all 0.2s ease;
 }
-.btn-misa-collapse-toggle:hover {
-    background-color: #353d4c;
+
+.btn-app-sidebar-logout:hover {
+    background-color: rgba(239, 68, 68, 0.18);
+    border-color: rgba(239, 68, 68, 0.4);
     color: #ffffff;
+}
+
+/* 9. Mobile Offcanvas (< 992px) */
+@media (max-width: 991.98px) {
+    .app-sidebar-trigger {
+        display: none !important;
+    }
+
+    .app-sidebar {
+        top: 0 !important;
+        height: 100vh !important;
+        z-index: 1060 !important;
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .app-sidebar.is-mobile-open {
+        transform: translateX(0) !important;
+        visibility: visible !important;
+    }
+
+    .app-sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 1055;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 220ms ease, visibility 220ms ease;
+    }
+
+    .app-sidebar-backdrop.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .app-content-canvas {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* 10. Prefers-Reduced-Motion Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .app-sidebar,
+    .app-content-canvas,
+    .app-sidebar-backdrop,
+    .app-trigger-bar {
+        transition: none !important;
+    }
 }

@@ -94,6 +94,35 @@ app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Anti-caching middleware for authenticated pages & protected areas
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        var path = context.Request.Path.Value ?? "";
+        bool isProtectedPath = path.StartsWith("/dashboard", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/portal", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/invoices", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/payments", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/aging-report", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/customer-ledger", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/manage-customers", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/manage-products", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/create-invoice", StringComparison.OrdinalIgnoreCase) ||
+                               path.StartsWith("/payment-history", StringComparison.OrdinalIgnoreCase);
+
+        if (context.User.Identity?.IsAuthenticated == true || isProtectedPath)
+        {
+            context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0";
+            context.Response.Headers["Pragma"] = "no-cache";
+            context.Response.Headers["Expires"] = "0";
+        }
+        return Task.CompletedTask;
+    });
+
+    await next();
+});
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
@@ -178,6 +207,9 @@ app.MapGet("/api/auth/switch", async (string role, HttpContext httpContext) => {
 
 app.MapGet("/api/auth/logout", async (HttpContext httpContext) => {
     await httpContext.SignOutAsync("Cookies");
+    httpContext.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0";
+    httpContext.Response.Headers["Pragma"] = "no-cache";
+    httpContext.Response.Headers["Expires"] = "0";
     return Results.Redirect("/login");
 });
 

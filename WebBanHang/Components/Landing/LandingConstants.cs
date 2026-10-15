@@ -70,5 +70,90 @@ namespace WebBanHang.Components.Landing
             public const string ZeroManualFifo = "0 Lần Nhập Tay Khi Cấn Trừ";
             public const string NoDataYet = "Chưa có dữ liệu";
         }
+
+        // 5. DANH MỤC 8 SẢN PHẨM PHÂN PHỐI CHUẨN CỦA NỀN TẢNG (FALLBACK AN TOÀN)
+        public static readonly CoreBusiness.Entities.Product[] DefaultProducts = new CoreBusiness.Entities.Product[]
+        {
+            new CoreBusiness.Entities.Product
+            {
+                Id = 1,
+                ProductCode = "SP001",
+                Name = "Nước ngọt Coca-Cola Sleek (Thùng 24 lon 320ml)",
+                Unit = "Thùng",
+                UnitPrice = 210000,
+                ImageUrl = "/images/products/sp001-coca-cola.svg",
+                Description = "Hàng chính hãng Coca-Cola Việt Nam"
+            },
+            new CoreBusiness.Entities.Product
+            {
+                Id = 2,
+                ProductCode = "SP002",
+                Name = "Bia Heineken Silver (Thùng 24 lon 330ml)",
+                Unit = "Thùng",
+                UnitPrice = 435000,
+                ImageUrl = "/images/products/sp002-heineken.svg",
+                Description = "Bia cao cấp Heineken Silver lon cao"
+            },
+            new CoreBusiness.Entities.Product
+            {
+                Id = 3,
+                ProductCode = "SP003",
+                Name = "Mì Hảo Hảo Tôm Chua Cay (Thùng 30 gói)",
+                Unit = "Thùng",
+                UnitPrice = 125000,
+                ImageUrl = "/images/products/sp003-hao-hao.svg",
+                Description = "Mì ăn liền Acecook quốc dân"
+            },
+            new CoreBusiness.Entities.Product
+            {
+                Id = 4,
+                ProductCode = "SP004",
+                Name = "Dầu ăn Simply Đậu Nành (Chai 1 lít)",
+                Unit = "Chai",
+                UnitPrice = 65000,
+                ImageUrl = "/images/products/sp004-simply.svg",
+                Description = "Dầu thực vật dinh dưỡng Simply 1L"
+            },
+            new CoreBusiness.Entities.Product
+            {
+                Id = 5,
+                ProductCode = "SP005",
+                Name = "Sữa tươi Vinamilk có đường (Lốc 4 hộp 180ml)",
+                Unit = "Lốc",
+                UnitPrice = 35000,
+                ImageUrl = "/images/products/sp005-vinamilk.svg",
+                Description = "Sữa tươi tiệt trùng Vinamilk 100%"
+            },
+            new CoreBusiness.Entities.Product
+            {
+                Id = 6,
+                ProductCode = "SP006",
+                Name = "Bia Tiger Crystal (Thùng 24 lon 330ml)",
+                Unit = "Thùng",
+                UnitPrice = 410000,
+                ImageUrl = "/images/products/sp006-tiger-crystal.svg",
+                Description = "Bia Tiger Crystal lên men lạnh sảng khoái"
+            },
+            new CoreBusiness.Entities.Product
+            {
+                Id = 7,
+                ProductCode = "SP007",
+                Name = "Nước tinh khiết Aquafina (Thùng 24 chai 500ml)",
+                Unit = "Thùng",
+                UnitPrice = 95000,
+                ImageUrl = "/images/products/sp007-aquafina.svg",
+                Description = "Nước uống tinh khiết Aquafina đóng thùng 24 chai"
+            },
+            new CoreBusiness.Entities.Product
+            {
+                Id = 8,
+                ProductCode = "SP008",
+                Name = "Mì Omachi Xốt Bò Hầm (Thùng 30 gói)",
+                Unit = "Thùng",
+                UnitPrice = 230000,
+                ImageUrl = "/images/products/sp008-omachi.svg",
+                Description = "Mì khoai tây Omachi xốt bò hầm cao cấp"
+            }
+        };
     }
 }

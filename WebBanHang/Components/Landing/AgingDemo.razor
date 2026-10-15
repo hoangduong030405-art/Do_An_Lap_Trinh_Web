@@ -1,5 +1,67 @@
-<section class="landing-section" id="cong-no" style="background-color: var(--landing-slate-50);">
-    <div class="container">
+<section class="landing-section lp-section--dark position-relative overflow-hidden" id="cong-no">
+    <!-- 3D FLOATING BACKGROUND LAYER (STAGE 1) -->
+    <div class="lp-bg3d" aria-hidden="true" tabindex="-1">
+        <!-- Ambient Glows -->
+        <div class="lp-bg3d-glow lp-bg3d-glow-amber" style="width: 350px; height: 350px; top: 12%; right: 4%;"></div>
+        <div class="lp-bg3d-glow lp-bg3d-glow-emerald" style="width: 320px; height: 320px; bottom: 15%; left: 4%;"></div>
+
+        <!-- 3D Stacked Invoices / Documents (Mid Depth, Parallax 0.16) -->
+        <div class="stacked-invoices-3d depth-mid" data-parallax-speed="0.16" style="top: 16%; right: 5%;">
+            <svg width="125" height="105" viewBox="0 0 130 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="agingInvGlass" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="rgba(255,255,255,0.22)" />
+                        <stop offset="100%" stop-color="rgba(255,255,255,0.06)" />
+                    </linearGradient>
+                </defs>
+                <polygon points="25,45 85,20 115,50 55,75" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.1)" />
+                <polygon points="20,38 80,13 110,43 50,68" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.16)" />
+                <polygon points="15,30 75,5 105,35 45,60" fill="url(#agingInvGlass)" stroke="rgba(59,130,246,0.35)" stroke-width="1.2" />
+                <line x1="30" y1="28" x2="65" y2="13" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" />
+                <line x1="32" y1="36" x2="78" y2="17" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" />
+                <line x1="35" y1="44" x2="85" y2="23" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" />
+                <ellipse cx="78" cy="30" rx="14" ry="8" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.2" stroke-dasharray="2 1" />
+                <text x="78" y="33" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="7" fill="#10b981" text-anchor="middle">FIFO</text>
+            </svg>
+        </div>
+
+        <!-- 3D 4-Pillar Bar Chart (Near Depth, Parallax 0.20) -->
+        <div class="barchart-3d depth-near" data-parallax-speed="0.20" style="bottom: 10%; left: 3%;">
+            <svg width="115" height="90" viewBox="0 0 120 95" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="10,65 60,85 110,60 60,40" fill="rgba(0,0,0,0.3)" filter="blur(4px)" />
+                <polygon points="20,40 32,45 32,70 20,65" fill="#059669" />
+                <polygon points="32,45 44,40 44,65 32,70" fill="#047857" />
+                <polygon points="20,40 32,35 44,40 32,45" fill="#34d399" />
+                <polygon points="40,35 52,40 52,70 40,65" fill="#d97706" />
+                <polygon points="52,40 64,35 64,65 52,70" fill="#b45309" />
+                <polygon points="40,35 52,30 64,35 52,40" fill="#fbbf24" />
+                <polygon points="60,40 72,45 72,70 60,65" fill="#ea580c" />
+                <polygon points="72,45 84,40 84,65 72,70" fill="#c2410c" />
+                <polygon points="60,40 72,35 84,40 72,45" fill="#fb923c" />
+                <polygon points="80,50 92,55 92,70 80,65" fill="#dc2626" />
+                <polygon points="92,55 104,50 104,65 92,70" fill="#b91c1c" />
+                <polygon points="80,50 92,45 104,50 92,55" fill="#f87171" />
+            </svg>
+        </div>
+
+        <!-- 3D Gold Coin (Far Depth, Parallax 0.08) -->
+        <div class="coin-3d depth-far" data-parallax-speed="0.08" style="top: 14%; left: 5%;">
+            <svg width="56" height="56" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="34" cy="34" rx="26" ry="18" fill="url(#heroCoinGold)" stroke="#fef08a" stroke-width="1.2" />
+                <text x="34" y="38" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="13" fill="#78350f" text-anchor="middle">₫</text>
+            </svg>
+        </div>
+
+        <!-- Mini Coin (Far Depth, Parallax 0.06) -->
+        <div class="coin-3d depth-far lp-bg3d-extra" data-parallax-speed="0.06" style="bottom: 18%; right: 26%;">
+            <svg width="44" height="44" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="34" cy="34" rx="24" ry="16" fill="url(#heroCoinGold)" stroke="#fef08a" stroke-width="1" />
+                <text x="34" y="38" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" fill="#78350f" text-anchor="middle">✓</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="container position-relative" style="z-index: 2;">
         <!-- HEADER -->
         <div class="text-center">
             <span class="landing-section-badge reveal-fade-up">Minh Họa Trực Quan</span>
@@ -14,55 +76,55 @@
         <div class="row g-4 align-items-stretch">
             <!-- LEFT: 4-BUCKET AGING DEMO CARD -->
             <div class="col-12 col-lg-6">
-                <div class="landing-demo-card h-100 reveal-fade-up">
+                <div class="landing-demo-card h-100 lp-tilt-card reveal-3d-card reveal-delay-1">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="fw-bold text-slate-navy mb-0 d-flex align-items-center gap-2">
+                        <h5 class="fw-bold text-white mb-0 d-flex align-items-center gap-2">
                             <i class="bi bi-clock-history text-primary"></i> Cơ Cấu Tuổi Nợ 4 Xô (Aging)
                         </h5>
-                        <span class="badge bg-secondary-subtle text-secondary small border">Dữ liệu minh họa</span>
+                        <span class="badge bg-secondary bg-opacity-25 text-white-50 small border border-white border-opacity-10">Dữ liệu minh họa</span>
                     </div>
-                    <p class="text-muted small mb-4">
+                    <p class="text-white-50 small mb-4">
                         Tự động phân loại từng hóa đơn chưa thanh toán vào các khung hạn nợ để tính dự phòng nợ khó đòi và kích hoạt biện pháp thu hồi:
                     </p>
 
                     <!-- VISUAL AGING PROGRESS BAR -->
-                    <div class="landing-aging-bar mb-3">
-                        <div class="aging-segment bg-success" style="width: 55%;" title="Trong hạn 0-30 ngày">
+                    <div class="landing-aging-bar mb-3" style="height: 16px; border-radius: 8px; overflow: hidden; display: flex;">
+                        <div class="aging-segment" style="width: 55%; background-color: #10b981;" title="Trong hạn 0-30 ngày: 55%">
                             55%
                         </div>
-                        <div class="aging-segment bg-warning text-dark" style="width: 25%;" title="Quá hạn 31-60 ngày">
+                        <div class="aging-segment" style="width: 25%; background-color: #f59e0b; color: #1e293b;" title="Quá hạn 31-60 ngày: 25%">
                             25%
                         </div>
-                        <div class="aging-segment" style="width: 12%; background-color: #fd7e14;" title="Quá hạn 61-90 ngày">
+                        <div class="aging-segment" style="width: 12%; background-color: #f97316;" title="Quá hạn 61-90 ngày: 12%">
                             12%
                         </div>
-                        <div class="aging-segment bg-danger" style="width: 8%;" title="Quá hạn >90 ngày">
+                        <div class="aging-segment" style="width: 8%; background-color: #ef4444;" title="Quá hạn >90 ngày: 8%">
                             8%
                         </div>
                     </div>
 
-                    <!-- 4 BUCKET CARDS -->
+                    <!-- 4 BUCKET CARDS (COL-6 COL-SM-3 FOR PERFECT MOBILE DISPLAY) -->
                     <div class="row g-2 text-center mb-3">
-                        <div class="col-3">
-                            <div class="p-2 rounded bg-success text-white">
+                        <div class="col-6 col-sm-3">
+                            <div class="p-2 rounded text-white" style="background-color: #10b981;">
                                 <div class="small fw-semibold" style="font-size: 0.72rem;">0 - 30 Ngày</div>
                                 <div class="fw-bold small">55.000.000 đ</div>
                             </div>
                         </div>
-                        <div class="col-3">
-                            <div class="p-2 rounded bg-warning text-dark">
+                        <div class="col-6 col-sm-3">
+                            <div class="p-2 rounded text-dark" style="background-color: #f59e0b;">
                                 <div class="small fw-semibold" style="font-size: 0.72rem;">31 - 60 Ngày</div>
                                 <div class="fw-bold small">25.000.000 đ</div>
                             </div>
                         </div>
-                        <div class="col-3">
-                            <div class="p-2 rounded text-white" style="background-color: #fd7e14;">
+                        <div class="col-6 col-sm-3">
+                            <div class="p-2 rounded text-white" style="background-color: #f97316;">
                                 <div class="small fw-semibold" style="font-size: 0.72rem;">61 - 90 Ngày</div>
                                 <div class="fw-bold small">12.000.000 đ</div>
                             </div>
                         </div>
-                        <div class="col-3">
-                            <div class="p-2 rounded bg-danger text-white">
+                        <div class="col-6 col-sm-3">
+                            <div class="p-2 rounded text-white" style="background-color: #ef4444;">
                                 <div class="small fw-semibold" style="font-size: 0.72rem;">> 90 Ngày</div>
                                 <div class="fw-bold small">8.000.000 đ</div>
                             </div>
@@ -70,8 +132,8 @@
                     </div>
 
                     <!-- INTEGRITY CHECK BADGE -->
-                    <div class="p-2.5 rounded-3 bg-light border d-flex align-items-center justify-content-between mt-auto">
-                        <span class="text-muted small">Kiểm soát toàn vẹn (IsIntegrityValid):</span>
+                    <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-white border-opacity-10 d-flex align-items-center justify-content-between flex-wrap gap-2 mt-auto">
+                        <span class="text-white-50 small">Kiểm soát toàn vẹn (IsIntegrityValid):</span>
                         <span class="text-success small fw-bold d-flex align-items-center gap-1">
                             <i class="bi bi-patch-check-fill"></i> Khớp 100% Tổng Nợ: 100.000.000 đ
                         </span>
@@ -81,50 +143,50 @@
 
             <!-- RIGHT: FIFO ALLOCATION SIMULATION -->
             <div class="col-12 col-lg-6">
-                <div class="landing-demo-card h-100 reveal-fade-up">
+                <div class="landing-demo-card h-100 lp-tilt-card reveal-3d-card reveal-delay-2">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="fw-bold text-slate-navy mb-0 d-flex align-items-center gap-2">
+                        <h5 class="fw-bold text-white mb-0 d-flex align-items-center gap-2">
                             <i class="bi bi-arrow-down-up text-success"></i> Thuật Toán Phân Bổ FIFO
                         </h5>
-                        <button class="btn btn-sm @(isSimulated ? "btn-outline-secondary" : "btn-primary") px-3" @onclick="ToggleFifoSimulation">
+                        <button class="btn btn-sm @(isSimulated ? "btn-outline-light" : "btn-primary") px-3" @onclick="ToggleFifoSimulation">
                             <i class="bi bi-play-circle me-1"></i> @(isSimulated ? "Đặt Lại Mô Phỏng" : "Mô Phỏng Thu Tiền 5 Trđ")
                         </button>
                     </div>
 
-                    <p class="text-muted small mb-3">
-                        Khách hàng thanh toán <strong>5.000.000 đ</strong>. Hệ thống tự động phân bổ vào hóa đơn cũ nhất trước:
+                    <p class="text-white-50 small mb-3">
+                        Khách hàng thanh toán <strong class="text-white">5.000.000 đ</strong>. Hệ thống tự động phân bổ vào hóa đơn cũ nhất trước:
                     </p>
 
                     <!-- INVOICE 1: OLDEST (3.000.000 đ) -->
-                    <div class="card p-3 mb-2.5 border @(isSimulated ? "border-success bg-success-subtle bg-opacity-25" : "bg-white")">
+                    <div class="card p-3 mb-2.5 border @(isSimulated ? "border-success bg-success bg-opacity-10 text-white" : "bg-dark bg-opacity-50 text-white border-white border-opacity-10")">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="fw-bold text-slate-navy small">HĐ #001 (Lập 45 ngày trước - Nợ cũ nhất)</span>
+                            <span class="fw-bold small">HĐ #001 (Lập 45 ngày trước - Nợ cũ nhất)</span>
                             <span class="badge @(isSimulated ? "bg-success" : "bg-danger") small">
                                 @(isSimulated ? "ĐÃ THANH TOÁN ĐỦ (PAID)" : "ĐANG NỢ 3.000.000 đ")
                             </span>
                         </div>
-                        <div class="small text-muted d-flex justify-content-between">
+                        <div class="small text-white-50 d-flex justify-content-between">
                             <span>Tổng nợ đơn: 3.000.000 đ</span>
                             <span class="fw-bold text-success">@(isSimulated ? "Được cấn trừ: +3.000.000 đ (Số dư nợ: 0 đ)" : "Chưa cấn trừ")</span>
                         </div>
                     </div>
 
                     <!-- INVOICE 2: NEWER (4.000.000 đ) -->
-                    <div class="card p-3 mb-2.5 border @(isSimulated ? "border-warning bg-warning-subtle bg-opacity-25" : "bg-white")">
+                    <div class="card p-3 mb-2.5 border @(isSimulated ? "border-warning bg-warning bg-opacity-10 text-white" : "bg-dark bg-opacity-50 text-white border-white border-opacity-10")">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="fw-bold text-slate-navy small">HĐ #002 (Lập 10 ngày trước - Đơn kế tiếp)</span>
+                            <span class="fw-bold small">HĐ #002 (Lập 10 ngày trước - Đơn kế tiếp)</span>
                             <span class="badge @(isSimulated ? "bg-warning text-dark" : "bg-danger") small">
                                 @(isSimulated ? "TRẢ 1 PHẦN (PARTIALLY PAID)" : "ĐANG NỢ 4.000.000 đ")
                             </span>
                         </div>
-                        <div class="small text-muted d-flex justify-content-between">
+                        <div class="small text-white-50 d-flex justify-content-between">
                             <span>Tổng nợ đơn: 4.000.000 đ</span>
-                            <span class="fw-bold text-warning-emphasis">@(isSimulated ? "Được cấn trừ nốt: +2.000.000 đ (Còn nợ: 2.000.000 đ)" : "Chưa cấn trừ")</span>
+                            <span class="fw-bold text-warning">@(isSimulated ? "Được cấn trừ nốt: +2.000.000 đ (Còn nợ: 2.000.000 đ)" : "Chưa cấn trừ")</span>
                         </div>
                     </div>
 
-                    <!-- RESULT EXPLANATION -->
-                    <div class="p-2.5 rounded-3 bg-light border small text-muted mt-3">
+                    <!-- RESULT EXPLANATION (NO OVERFLOW) -->
+                    <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-white border-opacity-10 small text-white-50 mt-3" style="overflow-wrap: break-word; word-break: break-word; line-height: 1.5;">
                         <i class="bi bi-info-circle text-primary me-1"></i>
                         <span>Tiền thu 5 Trđ trừ hết 3 Trđ cho HĐ #001, phần dư 2 Trđ cấn trừ tiếp cho HĐ #002. Đúng chuẩn FIFO!</span>
                     </div>
