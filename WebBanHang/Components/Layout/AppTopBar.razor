@@ -1,0 +1,127 @@
+@using WebBanHang.Services
+@using Microsoft.JSInterop
+@inject LayoutStateService LayoutState
+@inject IJSRuntime JS
+
+<header class="misa-topbar px-3 d-flex align-items-center justify-content-between flex-shrink-0">
+    <!-- LEFT: SIDEBAR TOGGLE + BRAND + REPORTING PERIOD -->
+    <div class="d-flex align-items-center gap-2 overflow-hidden">
+        <!-- Sidebar Toggle Button (Saves to localStorage) -->
+        <button class="misa-waffle-btn" 
+                title="Ẩn / Hiện thanh điều hướng" 
+                @onclick="ToggleSidebar">
+            <i class="bi bi-list fs-5"></i>
+        </button>
+
+        <!-- Brand Logo & Name -->
+        <a href="/dashboard" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0 ms-1">
+            <img src="/images/misa-logo.svg" alt="B2B Logo" class="misa-brand-logo-img" />
+            <span class="misa-brand-text fw-bold">HUEGO B2B</span>
+        </a>
+
+        <span class="misa-header-divider d-none d-md-inline ms-1"></span>
+
+        <!-- Functional Reporting Period Selector (Replaces static 2024 badge) -->
+        <div class="d-none d-lg-flex align-items-center gap-1.5 bg-light rounded-pill px-2.5 py-1 border small">
+            <i class="bi bi-calendar3 text-success"></i>
+            <span class="text-muted fw-semibold" style="font-size: 0.72rem;">Kỳ báo cáo:</span>
+            <select class="form-select form-select-sm border-0 bg-transparent py-0 ps-1 pe-4 text-slate-navy fw-bold" 
+                    style="font-size: 0.72rem; cursor: pointer; width: auto;"
+                    @bind="selectedPeriod">
+                <option value="this_month">Tháng này (@DateTime.Now.ToString("MM/yyyy"))</option>
+                <option value="this_quarter">Quý này (Q@(((DateTime.Now.Month - 1) / 3) + 1)/@DateTime.Now.Year)</option>
+                <option value="this_year">Năm nay (@DateTime.Now.Year)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- CENTER: GLOBAL REAL-TIME SEARCH BOX -->
+    <div class="d-none d-lg-block mx-2">
+        <GlobalSearchBox />
+    </div>
+
+    <!-- RIGHT: FUNCTIONAL TOOLBAR & USER PROFILE -->
+    <div class="d-flex align-items-center gap-1.5 gap-md-2">
+        <!-- 1. QUICK ADD (+) MENU -->
+        <QuickAddMenu />
+
+        <!-- 2. AVA AI CHAT ASSISTANT BUTTON WITH SMART REMINDER BADGE -->
+        <button class="misa-tool-btn position-relative" 
+                title="Trợ lý AVA Kế toán (@avaBadgeCount nhắc nhở)"
+                @onclick="ToggleAvaPanel">
+            <i class="bi bi-chat-dots-fill fs-6 text-primary"></i>
+            @if (avaBadgeCount > 0)
+            {
+                <span class="misa-counter-badge bg-danger">
+                    @(avaBadgeCount > 9 ? "9+" : avaBadgeCount.ToString())
+                </span>
+            }
+        </button>
+
+        <!-- 3. REAL-TIME SQL NOTIFICATION BELL -->
+        <NotificationBell />
+
+        <!-- 4. HELP (?) BUTTON -->
+        <button class="misa-tool-btn" 
+                title="Trung tâm trợ giúp & 2 Luật nghiệp vụ"
+                @onclick="ToggleHelpModal">
+            <i class="bi bi-question-circle fs-6"></i>
+        </button>
+
+        <!-- 5. SETTINGS & THEME TOGGLE -->
+        <SettingsMenu />
+
+        <span class="misa-header-divider d-none d-sm-inline"></span>
+
+        <!-- 6. USER PROFILE & LOGOUT -->
+        <UserMenu />
+    </div>
+</header>
+
+<!-- AVA AI CHAT & SMART REMINDERS SLIDE-OUT PANEL -->
+<AvaChatPanel IsOpen="@isAvaOpen" 
+              OnClose="() => isAvaOpen = false" 
+              OnUnreadCountChanged="count => avaBadgeCount = count" />
+
+<!-- HELP MODAL -->
+@if (isHelpOpen)
+{
+    <HelpModal OnClose="() => isHelpOpen = false" />
+}
+
+@code {
+    private bool isAvaOpen = false;
+    private bool isHelpOpen = false;
+    private int avaBadgeCount = 3;
+    private string selectedPeriod = "this_month";
+
+    private async Task ToggleSidebar()
+    {
+        LayoutState.ToggleSidebar();
+        try
+        {
+            await JS.InvokeVoidAsync("localStorage.setItem", "sidebar_collapsed", LayoutState.IsSidebarCollapsed ? "true" : "false");
+        }
+        catch { }
+    }
+
+    private void ToggleAvaPanel() => isAvaOpen = !isAvaOpen;
+    private void ToggleHelpModal() => isHelpOpen = !isHelpOpen;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var stored = await JS.InvokeAsync<string>("localStorage.getItem", "sidebar_collapsed");
+                if (stored == "true" && !LayoutState.IsSidebarCollapsed)
+                {
+                    LayoutState.ToggleSidebar();
+                    StateHasChanged();
+                }
+            }
+            catch { }
+        }
+    }
+}

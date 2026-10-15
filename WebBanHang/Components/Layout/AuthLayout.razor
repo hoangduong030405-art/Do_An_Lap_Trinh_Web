@@ -1,0 +1,38 @@
+@inherits LayoutComponentBase
+
+<div class="auth-layout-root min-vh-100 d-flex flex-column position-relative overflow-hidden" style="background-color: #090d16; color: #ffffff;">
+    <!-- LUMINOUS BACKGROUND BOKEH ACCENTS -->
+    <div class="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" style="z-index: 0; overflow: hidden;">
+        <div style="position: absolute; top: -100px; left: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(13, 110, 253, 0.22) 0%, transparent 70%); filter: blur(80px);"></div>
+        <div style="position: absolute; bottom: -120px; right: -100px; width: 550px; height: 550px; border-radius: 50%; background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, transparent 70%); filter: blur(90px);"></div>
+        <div style="position: absolute; inset: 0; background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px); background-size: 30px 30px; opacity: 0.5;"></div>
+    </div>
+
+    <!-- MINIMAL TOPBAR WITH BRAND & BACK TO LANDING -->
+    <header class="py-3 px-3 px-md-5 d-flex align-items-center justify-content-between position-relative" style="z-index: 2; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+        <a href="/" class="d-flex align-items-center gap-2.5 text-decoration-none">
+            <span class="d-inline-flex align-items-center justify-content-center p-2 rounded-3 text-white" style="background: linear-gradient(135deg, #0d6efd, #10b981); width: 36px; height: 36px;">
+                <i class="bi bi-box-seam-fill fs-5"></i>
+            </span>
+            <div class="d-flex flex-column">
+                <span class="fw-bold fs-6 text-white" style="letter-spacing: -0.2px; font-family: 'Plus Jakarta Sans', sans-serif;">HUEGO B2B</span>
+                <span class="text-white-50" style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px;">Phân phối & Quản trị Tín dụng</span>
+            </div>
+        </a>
+
+        <a href="/" class="btn btn-outline-light btn-sm rounded-pill px-3 py-1.5 fw-semibold d-flex align-items-center gap-1.5 shadow-sm" style="font-size: 0.85rem; border-color: rgba(255, 255, 255, 0.25); background: rgba(255, 255, 255, 0.06);">
+            <i class="bi bi-arrow-left"></i>
+            <span>Về trang giới thiệu</span>
+        </a>
+    </header>
+
+    <!-- CENTER LOGIN CONTENT -->
+    <main class="flex-grow-1 d-flex align-items-center justify-content-center position-relative py-4" style="z-index: 2;">
+        @Body
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="py-2.5 text-center position-relative text-white-50 small" style="z-index: 2; border-top: 1px solid rgba(255, 255, 255, 0.06); font-size: 0.75rem;">
+        <span>Đồ án Capstone ECO2415 — Đề tài 18: Bán hàng & Công nợ Khách hàng B2B © 2026</span>
+    </footer>
+</div>

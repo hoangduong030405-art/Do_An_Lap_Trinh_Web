@@ -13,6 +13,8 @@ using System.Security.Claims;
 using WebBanHang.UseCases.AI;
 using WebBanHang.UseCases.Dashboard;
 using WebBanHang.UseCases.PublicPortal;
+using WebBanHang.UseCases.GlobalSearch;
+using WebBanHang.UseCases.Notifications;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -29,8 +31,15 @@ builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 builder.Services.AddTransient<IPublicStatisticsRepository, PublicStatisticsRepository>();
+builder.Services.AddTransient<IGlobalSearchRepository, GlobalSearchRepository>();
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 
-// UseCases
+// UseCases & Smart Assistant
+builder.Services.AddTransient<IAvaSmartAssistantService, AvaSmartAssistantService>();
+builder.Services.AddTransient<IGetSmartRemindersUseCase, GetSmartRemindersUseCase>();
+builder.Services.AddTransient<IAnswerAccountingQuestionUseCase, AnswerAccountingQuestionUseCase>();
+builder.Services.AddTransient<IGlobalSearchUseCase, GlobalSearchUseCase>();
+builder.Services.AddTransient<IGetNotificationsUseCase, GetNotificationsUseCase>();
 builder.Services.AddTransient<IGetPublicStatisticsUseCase, GetPublicStatisticsUseCase>();
 builder.Services.AddTransient<ICreateInvoiceUseCase, CreateInvoiceUseCase>();
 builder.Services.AddTransient<IViewCustomerListUseCase, ViewCustomerListUseCase>();
@@ -91,6 +100,7 @@ app.MapRazorComponents<App>()
 app.MapPost("/api/auth/login", async (HttpContext httpContext, IFormCollection form) => {
     string username = form["username"].ToString().Trim().ToLowerInvariant();
     string password = form["password"].ToString().Trim();
+    string returnUrl = form["returnUrl"].ToString().Trim();
 
     if ((username == "sales" && password == "123456") || 
         (username == "accountant" && password == "123456") ||
@@ -115,20 +125,27 @@ app.MapPost("/api/auth/login", async (HttpContext httpContext, IFormCollection f
         var identity = new ClaimsIdentity(claims, "Cookies");
         await httpContext.SignInAsync("Cookies", new ClaimsPrincipal(identity));
 
+        // Return to requested URL if present and valid
+        if (!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("/") && !returnUrl.StartsWith("//") && !returnUrl.Contains("/login"))
+        {
+            return Results.Redirect(returnUrl);
+        }
+
         if (role == "Customer")
         {
             return Results.Redirect("/portal/dashboard");
         }
         else if (role == "Accountant")
         {
-            return Results.Redirect("/aging-report");
+            return Results.Redirect("/dashboard");
         }
         else
         {
             return Results.Redirect("/create-invoice");
         }
     }
-    return Results.Redirect("/login?error=true");
+    string errRedirect = "/login?error=true" + (!string.IsNullOrEmpty(returnUrl) ? $"&returnUrl={Uri.EscapeDataString(returnUrl)}" : "");
+    return Results.Redirect(errRedirect);
 }).DisableAntiforgery();
 
 app.MapGet("/api/auth/switch", async (string role, HttpContext httpContext) => {

@@ -1,0 +1,69 @@
+@using Microsoft.AspNetCore.Components.Authorization
+
+<AuthorizeView>
+    <Authorized>
+        <div class="dropdown">
+            <div class="misa-user-btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button">
+                <div class="misa-user-avatar d-flex align-items-center justify-content-center text-white fw-bold shadow-xs">
+                    @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
+                </div>
+                <div class="d-none d-xl-block text-start lh-1">
+                    <div class="small fw-bold text-slate-navy text-truncate" style="max-width: 140px;">
+                        @context.User.Identity?.Name
+                    </div>
+                    <small class="text-muted" style="font-size: 0.7rem;">
+                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                    </small>
+                </div>
+                <i class="bi bi-chevron-down text-muted small ms-0.5"></i>
+            </div>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border mt-1" style="min-width: 220px;">
+                <li class="px-3 py-2 border-bottom">
+                    <div class="fw-bold small text-dark">@context.User.Identity?.Name</div>
+                    <div class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small mt-1">
+                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                    </div>
+                </li>
+                @if (context.User.IsInRole("Customer"))
+                {
+                    <li>
+                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/portal/dashboard">
+                            <i class="bi bi-person-workspace text-muted"></i> Bàn làm việc đại lý
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/portal/invoices">
+                            <i class="bi bi-receipt text-muted"></i> Hóa đơn của tôi
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/dashboard">
+                            <i class="bi bi-grid-fill text-muted"></i> Tổng quan kế toán
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/invoices">
+                            <i class="bi bi-receipt text-muted"></i> Danh sách hóa đơn
+                        </a>
+                    </li>
+                }
+                <li><hr class="dropdown-divider my-1"></li>
+                <li>
+                    <a class="dropdown-item small py-2 text-danger d-flex align-items-center gap-2 fw-semibold" href="/api/auth/logout">
+                        <i class="bi bi-box-arrow-right"></i> Đăng xuất hệ thống
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <a href="/login" class="btn btn-misa btn-sm d-flex align-items-center gap-1.5 py-1 px-3">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Đăng nhập</span>
+        </a>
+    </NotAuthorized>
+</AuthorizeView>

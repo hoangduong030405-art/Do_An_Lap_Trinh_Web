@@ -1,0 +1,84 @@
+<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(15,23,42,0.65); z-index: 1070;" @onclick="OnClose">
+    <div class="modal-dialog modal-dialog-centered modal-lg" @onclick:stopPropagation="true">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <!-- MODAL HEADER -->
+            <div class="modal-header py-3 text-white d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="p-2 rounded-3 bg-primary text-white">
+                        <i class="bi bi-question-circle-fill fs-5"></i>
+                    </span>
+                    <div>
+                        <h6 class="modal-title fw-bold text-white mb-0">Trung Tâm Trợ Giúp & Hướng Dẫn Nghiệp Vụ</h6>
+                        <small class="text-white-50" style="font-size: 0.72rem;">Đồ án Capstone ECO2415 — Đề tài 18: Bán hàng & Công nợ B2B</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" @onclick="OnClose"></button>
+            </div>
+
+            <!-- MODAL BODY -->
+            <div class="modal-body p-4 bg-light">
+                <!-- 2 CORE BUSINESS RULES -->
+                <h6 class="fw-bold text-slate-navy mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-check text-success"></i> 2 Luật Nghiệp Vụ Cốt Lõi Của Đồ Án
+                </h6>
+
+                <div class="row g-3 mb-4">
+                    <!-- RULE 1 -->
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-primary">
+                            <span class="badge bg-primary-subtle text-primary small mb-1.5 align-self-start">LUẬT 1: HẠN MỨC TÍN DỤNG</span>
+                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 0.88rem;">Kiểm Soát Khi Lập Hóa Đơn</h6>
+                            <p class="text-muted small mb-0" style="font-size: 0.78rem; line-height: 1.5;">
+                                Khi nhân viên kinh doanh lập đơn bán buôn, hệ thống bắt buộc kiểm tra: <code>(Nợ Hiện Tại + Đơn Mới) &le; Hạn Mức Tín Dụng</code>. Nếu vượt trần, hệ thống từ chối ghi nhận và ném ngoại lệ <code>CreditLimitExceededException</code>.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- RULE 2 -->
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-success">
+                            <span class="badge bg-success-subtle text-success small mb-1.5 align-self-start">LUẬT 2: THU NỢ FIFO</span>
+                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 0.88rem;">Cấn Trừ Nợ Cũ Nhất Trước</h6>
+                            <p class="text-muted small mb-0" style="font-size: 0.78rem; line-height: 1.5;">
+                                Khi đại lý thanh toán, tiền thu tự động cấn trừ ưu tiên vào hóa đơn có <code>InvoiceDate ASC</code> (cũ nhất / quá hạn lâu nhất trước). Đồng thời đối soát bảng tuổi nợ 4 xô với cờ <code>IsIntegrityValid</code> khớp 100%.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KEYBOARD SHORTCUTS -->
+                <h6 class="fw-bold text-slate-navy mb-2.5 d-flex align-items-center gap-2">
+                    <i class="bi bi-keyboard text-primary"></i> Phím Tắt Thao Tác Nhanh
+                </h6>
+
+                <div class="table-responsive bg-white rounded-3 shadow-xs border">
+                    <table class="table table-sm table-hover mb-0 small">
+                        <tbody>
+                            <tr>
+                                <td class="ps-3"><kbd class="bg-dark text-white">Ctrl + K</kbd></td>
+                                <td class="fw-semibold">Tìm kiếm toàn cục</td>
+                                <td class="text-muted">Tìm kiếm nhanh khách hàng, hóa đơn, sản phẩm</td>
+                            </tr>
+                            <tr>
+                                <td class="ps-3"><kbd class="bg-dark text-white">Esc</kbd></td>
+                                <td class="fw-semibold">Đóng hộp thoại</td>
+                                <td class="text-muted">Đóng thanh tìm kiếm, bảng chat AVA hoặc modal trợ giúp</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MODAL FOOTER -->
+            <div class="modal-footer py-2.5 bg-white border-top d-flex justify-content-between">
+                <small class="text-muted">Kiến trúc: Clean Architecture 4 tầng • Blazor Server</small>
+                <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" @onclick="OnClose">Đã hiểu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+}

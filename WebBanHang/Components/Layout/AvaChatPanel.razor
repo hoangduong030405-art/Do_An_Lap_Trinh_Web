@@ -1,0 +1,333 @@
+@using WebBanHang.UseCases.AI
+@using WebBanHang.UseCases.DTOs
+@using WebBanHang.UseCases.Customers
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IGetSmartRemindersUseCase GetSmartRemindersUseCase
+@inject IAnswerAccountingQuestionUseCase AnswerAccountingQuestionUseCase
+@inject IDraftDebtReminderEmailUseCase DraftDebtReminderEmailUseCase
+@inject IAssessCreditRiskUseCase AssessCreditRiskUseCase
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@implements IDisposable
+
+@if (IsOpen)
+{
+    <!-- BACKDROP -->
+    <div class="position-fixed top-0 start-0 w-100 h-100" 
+         style="z-index: 1060; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(2px);" 
+         @onclick="OnClose"></div>
+
+    <!-- SLIDE-OUT PANEL (380px width, 100vw on mobile) -->
+    <div class="position-fixed top-0 end-0 h-100 bg-light d-flex flex-column shadow-2xl border-start" 
+         style="width: 380px; max-width: 100vw; z-index: 1070; transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);"
+         @onclick:stopPropagation="true">
+        
+        <!-- PANEL HEADER -->
+        <div class="p-3 text-white d-flex align-items-center justify-content-between flex-shrink-0" 
+             style="background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);">
+            <div class="d-flex align-items-center gap-2.5">
+                <div class="position-relative">
+                    <img src="/images/ava-avatar.svg" alt="AVA AI" style="width: 34px; height: 34px; border-radius: 50%;" />
+                    <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle" style="width: 9px; height: 9px;"></span>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-white" style="font-size: 0.95rem;">AVA Kế Toán</h6>
+                    <small class="text-white-50" style="font-size: 0.7rem;">Trợ lý tài chính & Nhắc nợ thông minh</small>
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" @onclick="OnClose" title="Đóng panel"></button>
+        </div>
+
+        <!-- DISCLAIMER BANNER (COMPLIANCE RUBRIC SECTION 10) -->
+        <div class="py-1.5 px-3 bg-warning bg-opacity-25 border-bottom d-flex align-items-center gap-1.5 text-warning-emphasis small" style="font-size: 0.72rem;">
+            <i class="bi bi-info-circle-fill flex-shrink-0 text-warning"></i>
+            <span><strong>Nguyên tắc:</strong> AVA chỉ đóng vai trò tư vấn; Kế toán trưởng trực tiếp quyết định.</span>
+        </div>
+
+        <!-- PANEL SCROLLABLE BODY -->
+        <div class="flex-grow-1 p-3 overflow-y-auto" style="scroll-behavior: smooth;">
+            <!-- SECTION 1: NHẮC NHỞ HÔM NAY -->
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="fw-bold text-slate-navy small text-uppercase" style="font-size: 0.74rem; letter-spacing: 0.5px;">
+                    <i class="bi bi-bell-fill text-primary me-1"></i> Nhắc Nhở Cần Xử Lý (@activeReminders.Count)
+                </span>
+                <button class="btn btn-link btn-sm text-decoration-none p-0 text-primary small" style="font-size: 0.72rem;" @onclick="RefreshReminders">
+                    <i class="bi bi-arrow-clockwise"></i> Làm mới
+                </button>
+            </div>
+
+            @if (isLoadingReminders)
+            {
+                <div class="text-center py-3">
+                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                    <small class="d-block text-muted mt-1" style="font-size: 0.72rem;">Đang quét sổ nợ và hạn mức...</small>
+                </div>
+            }
+            else if (!activeReminders.Any())
+            {
+                <div class="p-3 text-center rounded-3 bg-white border mb-3 text-muted small">
+                    <i class="bi bi-check2-circle fs-3 text-success d-block mb-1"></i>
+                    Tuyệt vời! Không có cảnh báo nợ quá hạn hoặc rủi ro hạn mức nào hôm nay.
+                </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    @foreach (var rem in activeReminders)
+                    {
+                        <ReminderCard Reminder="@rem" 
+                                      OnAction="HandleReminderAction"
+                                      OnNavigate="HandleNavigate"
+                                      OnDismiss="HandleDismiss" />
+                    }
+                </div>
+            }
+
+            <!-- SECTION 2: CHAT VỚI AVA AI -->
+            <div class="fw-bold text-slate-navy small text-uppercase mb-2" style="font-size: 0.74rem; letter-spacing: 0.5px;">
+                <i class="bi bi-chat-quote-fill text-success me-1"></i> Hỏi Nhanh Dòng Tiền & Công Nợ
+            </div>
+
+            <!-- QUICK CHIP PROMPTS -->
+            <div class="d-flex flex-wrap gap-1.5 mb-3">
+                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 0.72rem;" @onclick='() => AskQuestion("Ai đang nợ quá hạn?")'>
+                    Ai đang nợ quá hạn?
+                </button>
+                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 0.72rem;" @onclick='() => AskQuestion("Tóm tắt công nợ hôm nay")'>
+                    Tóm tắt công nợ hôm nay
+                </button>
+                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 0.72rem;" @onclick='() => AskQuestion("Khách nào nên siết hạn mức?")'>
+                    Khách nào nên siết hạn mức?
+                </button>
+            </div>
+
+            <!-- CHAT MESSAGES LOG -->
+            @if (chatLog.Any())
+            {
+                <div class="d-flex flex-column gap-2 mb-3">
+                    @foreach (var msg in chatLog)
+                    {
+                        @if (msg.IsUser)
+                        {
+                            <div class="align-self-end p-2.5 rounded-3 bg-primary text-white shadow-xs small" style="max-width: 85%; font-size: 0.78rem;">
+                                @msg.Text
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="align-self-start p-2.5 rounded-3 bg-white border shadow-xs small text-slate-navy" style="max-width: 95%; font-size: 0.76rem; line-height: 1.45; white-space: pre-line;">
+                                <div class="d-flex align-items-center gap-1.5 text-primary fw-bold mb-1" style="font-size: 0.72rem;">
+                                    <i class="bi bi-stars"></i> AVA Kế Toán:
+                                </div>
+                                @msg.Text
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- PANEL CHAT INPUT AT BOTTOM -->
+        <div class="p-2.5 bg-white border-top flex-shrink-0">
+            <div class="input-group input-group-sm">
+                <input type="text" 
+                       class="form-control rounded-start-pill bg-light border-end-0 ps-3 small" 
+                       placeholder="Hỏi AVA về công nợ, tồn kho..."
+                       @bind="inputQuestion" 
+                       @bind:event="oninput"
+                       @onkeyup="HandleInputKeyUp" />
+                <button class="btn btn-primary rounded-end-pill px-3" type="button" @onclick="SubmitQuestion" disabled="@string.IsNullOrWhiteSpace(inputQuestion)">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- MODAL SOẠN EMAIL NHẮC NỢ AI (WHEN USER CLICKS [SOẠN EMAIL NHẮC NỢ]) -->
+@if (showEmailModal && draftedEmail != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(15,23,42,0.65); z-index: 1080;" @onclick="() => showEmailModal = false">
+        <div class="modal-dialog modal-dialog-centered modal-lg" @onclick:stopPropagation="true">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header py-3 bg-primary text-white d-flex align-items-center justify-content-between">
+                    <h6 class="modal-title fw-bold mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-envelope-paper-fill"></i> Thư Nhắc Nợ Tự Động - Soạn Bởi AVA AI
+                    </h6>
+                    <button type="button" class="btn-close btn-close-white" @onclick="() => showEmailModal = false"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Người nhận (Email):</label>
+                        <input type="text" class="form-control form-control-sm" value="@draftedEmail.RecipientEmail" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Tiêu đề thư:</label>
+                        <input type="text" class="form-control form-control-sm fw-semibold" value="@draftedEmail.Subject" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Nội dung thư do AI soạn thảo (Kế toán phê duyệt):</label>
+                        <textarea class="form-control small font-monospace" rows="8" readonly>@draftedEmail.Body</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer py-2.5 bg-white border-top d-flex justify-content-between">
+                    <span class="text-muted small" style="font-size: 0.72rem;">Kế toán xác nhận trước khi gửi</span>
+                    <button type="button" class="btn btn-primary btn-sm rounded-pill px-4" @onclick="() => showEmailModal = false">
+                        Đóng xem trước
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnUnreadCountChanged { get; set; }
+
+    private List<SmartReminderDto> reminders = new();
+    private List<SmartReminderDto> activeReminders => reminders.Where(r => !r.IsDismissed).ToList();
+    private bool isLoadingReminders = false;
+    private string role = "Sales";
+    private int? customerId = null;
+
+    private string inputQuestion = "";
+    private List<ChatMessage> chatLog = new();
+    private System.Threading.Timer? refreshTimer;
+
+    private bool showEmailModal = false;
+    private DebtReminderEmailDto? draftedEmail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            role = user.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Sales";
+            if (int.TryParse(user.FindFirst("CustomerId")?.Value, out int cid))
+            {
+                customerId = cid;
+            }
+        }
+
+        await RefreshReminders();
+
+        // Auto-refresh every 60 seconds
+        refreshTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                await RefreshReminders();
+                StateHasChanged();
+            });
+        }, null, 60000, 60000);
+    }
+
+    private async Task RefreshReminders()
+    {
+        isLoadingReminders = true;
+        try
+        {
+            var list = await GetSmartRemindersUseCase.ExecuteAsync(role, customerId);
+            reminders = list.ToList();
+            await OnUnreadCountChanged.InvokeAsync(activeReminders.Count(r => r.Priority == "Khẩn" || r.Priority == "Cần chú ý"));
+        }
+        catch
+        {
+            reminders = new List<SmartReminderDto>();
+        }
+        finally
+        {
+            isLoadingReminders = false;
+        }
+    }
+
+    private async Task AskQuestion(string q)
+    {
+        chatLog.Add(new ChatMessage { Text = q, IsUser = true });
+        var ans = await AnswerAccountingQuestionUseCase.ExecuteAsync(q, role, customerId);
+        chatLog.Add(new ChatMessage { Text = ans.Answer, IsUser = false });
+    }
+
+    private async Task SubmitQuestion()
+    {
+        if (string.IsNullOrWhiteSpace(inputQuestion)) return;
+        var q = inputQuestion;
+        inputQuestion = "";
+        await AskQuestion(q);
+    }
+
+    private async Task HandleInputKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SubmitQuestion();
+        }
+    }
+
+    private async Task HandleReminderAction(SmartReminderDto r)
+    {
+        if (r.ActionType == "email")
+        {
+            try
+            {
+                // Draft email via use case
+                var bodyText = await DraftDebtReminderEmailUseCase.ExecuteAsync(r.ReferenceId);
+                draftedEmail = new DebtReminderEmailDto
+                {
+                    RecipientEmail = $"{r.CustomerName.Trim().ToLower().Replace(" ", "")}@doitac-b2b.vn",
+                    Subject = $"[ECO2415 - HUEGO B2B] Nhắc hạn đối soát & thanh toán hóa đơn #{r.InvoiceNumber}",
+                    Body = bodyText
+                };
+                showEmailModal = true;
+            }
+            catch
+            {
+                // Navigate to invoice
+                Navigation.NavigateTo(r.Url);
+            }
+        }
+        else if (r.ActionType == "credit_risk")
+        {
+            Navigation.NavigateTo(r.Url);
+        }
+        else
+        {
+            Navigation.NavigateTo(r.Url);
+        }
+    }
+
+    private void HandleNavigate(string url)
+    {
+        OnClose.InvokeAsync();
+        Navigation.NavigateTo(url);
+    }
+
+    private async Task HandleDismiss(string id)
+    {
+        var target = reminders.FirstOrDefault(r => r.Id == id);
+        if (target != null)
+        {
+            target.IsDismissed = true;
+            await OnUnreadCountChanged.InvokeAsync(activeReminders.Count(r => r.Priority == "Khẩn" || r.Priority == "Cần chú ý"));
+        }
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+
+    private class ChatMessage
+    {
+        public string Text { get; set; } = string.Empty;
+        public bool IsUser { get; set; }
+    }
+}

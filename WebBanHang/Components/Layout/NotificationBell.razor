@@ -1,0 +1,139 @@
+@using WebBanHang.UseCases.Notifications
+@using WebBanHang.UseCases.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IGetNotificationsUseCase GetNotificationsUseCase
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="position-relative">
+    <button class="misa-tool-btn position-relative" 
+            title="Thông báo hệ thống (@unreadCount)"
+            @onclick="ToggleDropdown">
+        <i class="bi bi-bell fs-6"></i>
+        @if (unreadCount > 0)
+        {
+            <span class="misa-counter-badge bg-danger">
+                @(unreadCount > 9 ? "9+" : unreadCount.ToString())
+            </span>
+        }
+    </button>
+
+    @if (isOpen)
+    {
+        <!-- BACKDROP -->
+        <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="CloseDropdown"></div>
+
+        <!-- NOTIFICATION DROPDOWN POPUP -->
+        <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 overflow-hidden" 
+             style="top: 100%; right: 0; width: 340px; max-height: 460px; z-index: 1050;"
+             @onclick:stopPropagation="true">
+            <!-- HEADER -->
+            <div class="p-3 bg-light border-bottom d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-1.5" style="font-size: 0.88rem;">
+                        <i class="bi bi-bell-fill text-primary"></i> Thông Báo Nghiệp Vụ
+                    </h6>
+                    <small class="text-muted" style="font-size: 0.72rem;">@unreadCount thông báo chưa đọc</small>
+                </div>
+                @if (unreadCount > 0)
+                {
+                    <button class="btn btn-link btn-sm text-decoration-none p-0 text-primary small" style="font-size: 0.75rem;" @onclick="MarkAllAsRead">
+                        Đánh dấu đã đọc
+                    </button>
+                }
+            </div>
+
+            <!-- NOTIFICATION LIST -->
+            <div style="max-height: 360px; overflow-y: auto;">
+                @if (notifications == null || !notifications.Any())
+                {
+                    <div class="p-4 text-center text-muted small">
+                        <i class="bi bi-bell-slash fs-3 d-block mb-1 text-secondary opacity-50"></i>
+                        Không có thông báo mới nào cần xử lý.
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var n in notifications)
+                        {
+                            <button type="button" 
+                                    class="list-group-item list-group-item-action p-2.5 border-0 border-bottom d-flex align-items-start gap-2.5 @(n.IsRead ? "bg-white opacity-75" : "bg-light bg-opacity-50")"
+                                    @onclick="() => HandleNotificationClick(n)">
+                                <div class="p-2 rounded-circle bg-@n.Type-subtle text-@n.Type flex-shrink-0 mt-0.5" style="font-size: 0.85rem;">
+                                    <i class="bi @n.Icon"></i>
+                                </div>
+                                <div class="overflow-hidden flex-grow-1 text-start">
+                                    <div class="fw-bold text-slate-navy small text-truncate" style="font-size: 0.8rem;">@n.Title</div>
+                                    <div class="text-muted text-break small" style="font-size: 0.72rem; line-height: 1.35;">@n.Message</div>
+                                    <small class="text-secondary opacity-75" style="font-size: 0.65rem;">Hạn chót: @n.CreatedAt.ToString("dd/MM/yyyy")</small>
+                                </div>
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isOpen = false;
+    private List<NotificationItemDto>? notifications;
+    private int unreadCount => notifications?.Count(n => !n.IsRead) ?? 0;
+    private string role = "Sales";
+    private int? customerId = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            role = user.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Sales";
+            if (int.TryParse(user.FindFirst("CustomerId")?.Value, out int cid))
+            {
+                customerId = cid;
+            }
+        }
+        await LoadNotifications();
+    }
+
+    private async Task LoadNotifications()
+    {
+        try
+        {
+            var list = await GetNotificationsUseCase.ExecuteAsync(role, customerId);
+            notifications = list.ToList();
+        }
+        catch
+        {
+            notifications = new List<NotificationItemDto>();
+        }
+    }
+
+    private void ToggleDropdown()
+    {
+        isOpen = !isOpen;
+    }
+
+    private void CloseDropdown()
+    {
+        isOpen = false;
+    }
+
+    private void MarkAllAsRead()
+    {
+        if (notifications != null)
+        {
+            foreach (var n in notifications) n.IsRead = true;
+        }
+    }
+
+    private void HandleNotificationClick(NotificationItemDto item)
+    {
+        item.IsRead = true;
+        isOpen = false;
+        Navigation.NavigateTo(item.Url);
+    }
+}

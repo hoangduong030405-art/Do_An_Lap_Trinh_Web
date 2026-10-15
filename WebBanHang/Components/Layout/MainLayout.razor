@@ -1,322 +1,43 @@
 @inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
 @inject LayoutStateService LayoutState
-@inject NavigationManager Navigation
 @implements IDisposable
 
-<div class="misa-app-root">
-    
-    <!-- 1. MISA ENTERPRISE TOP HEADER BAR (FULL WIDTH AT TOP) -->
-    <header class="misa-topbar px-3 d-flex align-items-center justify-content-between flex-shrink-0">
-        
-        <!-- LEFT: 9-DOTS WAFFLE TOGGLE + BRAND + COMPANY SELECTOR + FISCAL BADGE -->
-        <div class="d-flex align-items-center gap-2 overflow-hidden">
-            <!-- 9-Dots Waffle App Launcher & Sidebar Toggle Button -->
-            <button class="misa-waffle-btn" 
-                    title="Ẩn / Hiện thanh điều hướng (Menu)" 
-                    @onclick="LayoutState.ToggleSidebar">
-                <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
-            </button>
+<AuthorizeView>
+    <Authorized>
+        <div class="misa-app-root">
+            <!-- 1. MISA ENTERPRISE FUNCTIONAL TOPBAR -->
+            <AppTopBar />
 
-            <!-- Brand Logo & Name -->
-            <a href="dashboard" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0 ms-1">
-                <img src="/images/misa-logo.svg" alt="B2B Logo" class="misa-brand-logo-img" />
-                <span class="misa-brand-text fw-bold">Kế toán & Bán hàng B2B</span>
-            </a>
+            <!-- 2. WORKSPACE AREA (BELOW TOPBAR: SIDEBAR ON LEFT, CANVAS ON RIGHT) -->
+            <div class="misa-workspace">
+                <!-- 2.1 LEFT SIDEBAR (COLLAPSIBLE: 52px or 220px) -->
+                <aside class="misa-sidebar @(LayoutState.IsSidebarCollapsed ? "is-collapsed" : "is-expanded")">
+                    <NavMenu />
+                </aside>
 
-            <span class="misa-header-divider d-none d-md-inline ms-1"></span>
-
-            <!-- Company Selector Dropdown & Working Mode Popover -->
-            <div class="position-relative d-none d-md-block">
-                <div class="misa-company-selector d-flex align-items-center gap-1 text-truncate" 
-                     role="button"
-                     style="cursor: pointer;"
-                     @onclick="LayoutState.ToggleRoleModal"
-                     title="Bấm để đổi chế độ làm việc: @LayoutState.SelectedCompany">
-                    <span class="fw-semibold text-truncate text-slate-navy small">@LayoutState.SelectedCompany</span>
-                    <i class="bi bi-chevron-down text-muted small ms-0.5"></i>
-                </div>
-
-                @if (LayoutState.IsRoleModalOpen)
-                {
-                    <!-- Backdrop to close popover when clicking outside -->
-                    <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="LayoutState.ToggleRoleModal"></div>
-
-                    <!-- Popover Card (Matching Screenshot media_1791966322056_fb1cada3.png) -->
-                    <div class="position-absolute bg-white rounded-3 shadow-lg border p-3" 
-                         style="top: 100%; left: 0; z-index: 1050; min-width: 330px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);" 
-                         @onclick:stopPropagation="true">
-                        <div class="fw-bold text-dark mb-2.5 fs-6" style="letter-spacing: -0.2px;">Chế độ làm việc</div>
-                        
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="form-check d-flex align-items-center gap-1.5 mb-0">
-                                <input class="form-check-input" type="radio" name="workingMode" id="modeAccountant" 
-                                       checked="@(selectedRoleMode == "accountant")" 
-                                       @onchange='() => selectedRoleMode = "accountant"' />
-                                <label class="form-check-label small fw-medium text-slate-navy cursor-pointer" for="modeAccountant">
-                                    Kế toán
-                                </label>
-                            </div>
-                            <div class="form-check d-flex align-items-center gap-1.5 mb-0">
-                                <input class="form-check-input" type="radio" name="workingMode" id="modeSales" 
-                                       checked="@(selectedRoleMode == "sales")" 
-                                       @onchange='() => selectedRoleMode = "sales"' />
-                                <label class="form-check-label small fw-medium text-slate-navy cursor-pointer" for="modeSales">
-                                    Thủ kho (Bán hàng)
-                                </label>
-                            </div>
-                            <div class="form-check d-flex align-items-center gap-1.5 mb-0">
-                                <input class="form-check-input" type="radio" name="workingMode" id="modeCustomer" 
-                                       checked="@(selectedRoleMode == "customer")" 
-                                       @onchange='() => selectedRoleMode = "customer"' />
-                                <label class="form-check-label small fw-medium text-slate-navy cursor-pointer" for="modeCustomer">
-                                    Đại lý B2B
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="border-top pt-2.5 d-flex justify-content-end gap-2">
-                            <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-2" @onclick="LayoutState.ToggleRoleModal">
-                                Hủy
-                            </button>
-                            <button type="button" class="btn btn-success btn-sm px-3 rounded-2 fw-semibold" style="background-color: #00b060; border-color: #00b060;" @onclick="ApplyRoleSwitch">
-                                Đồng ý
-                            </button>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <!-- Fiscal Year Green Badge -->
-            <div class="misa-fiscal-badge d-none d-lg-inline-flex align-items-center gap-1.5 flex-shrink-0">
-                <span class="misa-fiscal-dot"></span>
-                <span>Dữ liệu kế toán @LayoutState.FiscalYear</span>
+                <!-- 2.2 MAIN CONTENT CANVAS (SCROLLABLE) -->
+                <main class="misa-content-canvas">
+                    @Body
+                </main>
             </div>
         </div>
 
-        <!-- RIGHT: GLOBAL AI SEARCH + ACTION TOOLBAR + USER PROFILE -->
-        <div class="d-flex align-items-center gap-2.5">
-            <!-- Global AI Search Bar -->
-            <div class="misa-search-bar d-none d-xl-flex align-items-center gap-2">
-                <i class="bi bi-search text-muted small"></i>
-                <input type="text" class="misa-search-input" placeholder="Tìm kiếm thông minh..." />
-                <span class="misa-search-ai-badge">AI</span>
-            </div>
-
-            <!-- Action Toolbar Icons -->
-            <div class="d-flex align-items-center gap-1">
-                <button class="misa-tool-btn" title="Tải xuống ứng dụng / Báo cáo">
-                    <i class="bi bi-cloud-arrow-down fs-6"></i>
-                </button>
-                
-                <button class="misa-tool-btn" title="Video hướng dẫn nghiệp vụ">
-                    <i class="bi bi-play-circle fs-6"></i>
-                </button>
-
-                <button class="misa-tool-btn" title="Mời đồng nghiệp / Thêm người dùng">
-                    <i class="bi bi-person-plus fs-6"></i>
-                </button>
-
-                <button class="misa-tool-btn position-relative" title="Tin nhắn & Hỗ trợ">
-                    <i class="bi bi-chat-dots-fill fs-6 text-primary"></i>
-                    <span class="misa-counter-badge">2</span>
-                </button>
-
-                <button class="misa-tool-btn position-relative" title="Thông báo hệ thống">
-                    <i class="bi bi-bell fs-6"></i>
-                    <span class="misa-dot-badge"></span>
-                </button>
-
-                <button class="misa-tool-btn" title="Trung tâm trợ giúp">
-                    <i class="bi bi-question-circle fs-6"></i>
-                </button>
-
-                <button class="misa-tool-btn" title="Thiết lập hệ thống">
-                    <i class="bi bi-gear fs-6"></i>
-                </button>
-            </div>
-
-            <!-- User Profile & Authentication -->
-            <AuthorizeView>
-                <Authorized>
-                    <div class="dropdown">
-                        <div class="misa-user-btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button">
-                            <div class="misa-user-avatar d-flex align-items-center justify-content-center text-white fw-bold">
-                                @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
-                            </div>
-                            <div class="d-none d-xxl-block text-start lh-1">
-                                <div class="small fw-bold text-slate-navy text-truncate" style="max-width: 140px;">
-                                    @context.User.Identity?.Name
-                                </div>
-                                <small class="text-muted" style="font-size: 0.7rem;">
-                                    @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-                                </small>
-                            </div>
-                            <i class="bi bi-chevron-down text-muted small ms-1"></i>
-                        </div>
-
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1">
-                            <li class="px-3 py-2 border-bottom">
-                                <div class="fw-bold small text-dark">@context.User.Identity?.Name</div>
-                                <div class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small mt-1">
-                                    @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-                                </div>
-                            </li>
-                            <li>
-                                <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/portal/dashboard">
-                                    <i class="bi bi-person-workspace text-muted"></i> Cổng đại lý B2B
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/aging-report">
-                                    <i class="bi bi-bar-chart-line text-muted"></i> Báo cáo tuổi nợ 4 xô
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider my-1"></li>
-                            <li>
-                                <a class="dropdown-item small py-2 text-danger d-flex align-items-center gap-2" href="/api/auth/logout">
-                                    <i class="bi bi-box-arrow-right"></i> Đăng xuất hệ thống
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="/login" class="btn btn-misa btn-sm d-flex align-items-center gap-1.5 py-1 px-3">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span>Đăng nhập</span>
-                    </a>
-                </NotAuthorized>
-            </AuthorizeView>
+        <div id="blazor-error-ui">
+            An unhandled error has occurred.
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
         </div>
-    </header>
-
-    <!-- 2. WORKSPACE AREA (BELOW TOPBAR: SIDEBAR ON LEFT, CANVAS ON RIGHT) -->
-    <div class="misa-workspace">
-        
-        <!-- 2.1 LEFT SIDEBAR (COLLAPSIBLE: 52px or 220px) -->
-        <aside class="misa-sidebar @(LayoutState.IsSidebarCollapsed ? "is-collapsed" : "is-expanded")">
-            <NavMenu />
-        </aside>
-
-        <!-- 2.2 MAIN CONTENT CANVAS (SCROLLABLE) -->
-        <main class="misa-content-canvas">
-            @Body
-        </main>
-
-    </div>
-
-</div>
-
-<!-- 3. MODAL: "+ THÊM NHANH CHỨNG TỪ & DANH MỤC" -->
-@if (LayoutState.IsQuickAddOpen)
-{
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.45); z-index: 1050;" @onclick="LayoutState.CloseQuickAdd">
-        <div class="modal-dialog modal-dialog-centered" @onclick:stopPropagation="true" style="max-width: 580px;">
-            <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
-                <div class="modal-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
-                    <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2 fs-6">
-                        <i class="bi bi-plus-circle-fill text-success"></i> Thêm Nhanh Chứng Từ & Nghiệp Vụ
-                    </h5>
-                    <button type="button" class="btn-close" @onclick="LayoutState.CloseQuickAdd"></button>
-                </div>
-                <div class="modal-body p-4 bg-light">
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <a href="/create-invoice" class="misa-quick-card text-decoration-none" @onclick="LayoutState.CloseQuickAdd">
-                                <div class="misa-quick-icon bg-primary text-white">
-                                    <i class="bi bi-cart-plus-fill fs-4"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark small">Lập Hóa Đơn Bán Hàng</div>
-                                    <small class="text-muted" style="font-size: 0.72rem;">Xuất đơn bán buôn, kiểm tra hạn mức AI</small>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6">
-                            <a href="/payments" class="misa-quick-card text-decoration-none" @onclick="LayoutState.CloseQuickAdd">
-                                <div class="misa-quick-icon bg-success text-white">
-                                    <i class="bi bi-cash-stack fs-4"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark small">Thu Tiền Cấn Trừ FIFO</div>
-                                    <small class="text-muted" style="font-size: 0.72rem;">Phân bổ dòng tiền vào hóa đơn cũ nhất</small>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6">
-                            <a href="/manage-customers" class="misa-quick-card text-decoration-none" @onclick="LayoutState.CloseQuickAdd">
-                                <div class="misa-quick-icon bg-info text-white">
-                                    <i class="bi bi-person-plus-fill fs-4"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark small">Thêm Khách Hàng / Hạn Mức</div>
-                                    <small class="text-muted" style="font-size: 0.72rem;">Hạn mức tín dụng & đánh giá rủi ro AI</small>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6">
-                            <a href="/manage-products" class="misa-quick-card text-decoration-none" @onclick="LayoutState.CloseQuickAdd">
-                                <div class="misa-quick-icon bg-warning text-dark">
-                                    <i class="bi bi-box-seam-fill fs-4"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark small">Thêm Sản Phẩm / Tồn Kho</div>
-                                    <small class="text-muted" style="font-size: 0.72rem;">Danh mục hàng hóa, đơn giá bán buôn</small>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6">
-                            <a href="/aging-report" class="misa-quick-card text-decoration-none" @onclick="LayoutState.CloseQuickAdd">
-                                <div class="misa-quick-icon bg-danger text-white">
-                                    <i class="bi bi-bar-chart-fill fs-4"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark small">Báo Cáo Tuổi Nợ 4 Xô</div>
-                                    <small class="text-muted" style="font-size: 0.72rem;">0-30, 31-60, 61-90, >90 ngày</small>
-                                </div>
-                            </a>
-                        </div>
-
-                        <div class="col-6">
-                            <a href="/customer-ledger" class="misa-quick-card text-decoration-none" @onclick="LayoutState.CloseQuickAdd">
-                                <div class="misa-quick-icon bg-secondary text-white">
-                                    <i class="bi bi-journal-text fs-4"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-bold text-dark small">Sổ Chi Tiết Công Nợ</div>
-                                    <small class="text-muted" style="font-size: 0.72rem;">Đối soát công nợ chi tiết & xuất in</small>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
-    private string selectedRoleMode = "accountant";
-
     protected override void OnInitialized()
     {
         LayoutState.OnChange += StateHasChanged;
-    }
-
-    private void ApplyRoleSwitch()
-    {
-        LayoutState.IsRoleModalOpen = false;
-        Navigation.NavigateTo($"/api/auth/switch?role={selectedRoleMode}", forceLoad: true);
     }
 
     public void Dispose()

@@ -1,4 +1,5 @@
 @page "/invoices/print/{Id:int}"
+@attribute [Authorize(Roles = "Accountant,Sales,Customer")]
 @rendermode InteractiveServer
 
 @using WebBanHang.UseCases.Invoices

@@ -1,0 +1,171 @@
+@using WebBanHang.UseCases.GlobalSearch
+@using WebBanHang.UseCases.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.JSInterop
+@inject IGlobalSearchUseCase GlobalSearchUseCase
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JS
+@implements IDisposable
+
+<div class="position-relative misa-search-container" id="globalSearchContainer">
+    <div class="input-group input-group-sm rounded-pill overflow-hidden border shadow-xs bg-light bg-opacity-75" style="max-width: 380px;">
+        <span class="input-group-text bg-transparent border-0 text-muted ps-3">
+            @if (isSearching)
+            {
+                <span class="spinner-border spinner-border-sm text-primary" role="status"></span>
+            }
+            else
+            {
+                <i class="bi bi-search"></i>
+            }
+        </span>
+        <input id="globalSearchInput"
+               type="text"
+               class="form-control bg-transparent border-0 ps-1 small"
+               placeholder="Tìm khách hàng, hóa đơn, sản phẩm... (Ctrl+K)"
+               @bind="searchKeyword"
+               @bind:event="oninput"
+               @onkeyup="HandleKeyUp"
+               @onfocus="ShowResultsIfAny" />
+        @if (!string.IsNullOrEmpty(searchKeyword))
+        {
+            <button class="btn btn-link text-muted border-0 pe-2 text-decoration-none" type="button" @onclick="ClearSearch">
+                <i class="bi bi-x-circle-fill"></i>
+            </button>
+        }
+        <span class="input-group-text bg-transparent border-0 text-muted pe-3 d-none d-md-inline small font-monospace" style="font-size: 0.72rem;">
+            <kbd class="bg-secondary bg-opacity-25 text-dark border-0">Ctrl+K</kbd>
+        </span>
+    </div>
+
+    @if (isOpen && searchResults != null)
+    {
+        <!-- BACKDROP TO CLOSE DROPDOWN WHEN CLICKING OUTSIDE -->
+        <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1050; background: transparent;" @onclick="CloseDropdown"></div>
+
+        <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 overflow-hidden" 
+             style="top: 100%; left: 0; min-width: 380px; max-width: 480px; max-height: 440px; overflow-y: auto; z-index: 1060;"
+             @onclick:stopPropagation="true">
+            @if (!searchResults.Any())
+            {
+                <div class="p-3 text-center text-muted small">
+                    <i class="bi bi-inbox fs-4 d-block mb-1 text-secondary opacity-50"></i>
+                    Không tìm thấy kết quả nào phù hợp với "<strong>@searchKeyword</strong>".
+                </div>
+            }
+            else
+            {
+                @foreach (var group in searchResults.GroupBy(r => r.Category))
+                {
+                    <div class="px-3 py-1.5 bg-light border-bottom small fw-bold text-uppercase text-muted d-flex align-items-center justify-content-between" style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                        <span>@group.Key</span>
+                        <span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill">@group.Count()</span>
+                    </div>
+
+                    <div class="list-group list-group-flush">
+                        @foreach (var item in group)
+                        {
+                            <button type="button" 
+                                    class="list-group-item list-group-item-action px-3 py-2 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
+                                    @onclick="() => NavigateToItem(item.Url)">
+                                <div class="overflow-hidden">
+                                    <div class="fw-semibold text-slate-navy small text-truncate">@item.Title</div>
+                                    <div class="text-muted text-truncate" style="font-size: 0.74rem;">@item.Subtitle</div>
+                                </div>
+                                <span class="badge bg-@item.BadgeColor-subtle text-@item.BadgeColor border border-@item.BadgeColor border-opacity-25 small flex-shrink-0" style="font-size: 0.7rem;">
+                                    @item.BadgeText
+                                </span>
+                            </button>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string searchKeyword = "";
+    private bool isSearching = false;
+    private bool isOpen = false;
+    private IEnumerable<GlobalSearchResultDto>? searchResults;
+    private System.Threading.Timer? debounceTimer;
+    private string currentUserRole = "Sales";
+    private int? currentCustomerId = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            currentUserRole = user.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Sales";
+            if (int.TryParse(user.FindFirst("CustomerId")?.Value, out int cid))
+            {
+                currentCustomerId = cid;
+            }
+        }
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs e)
+    {
+        debounceTimer?.Dispose();
+        if (string.IsNullOrWhiteSpace(searchKeyword) || searchKeyword.Trim().Length < 2)
+        {
+            searchResults = null;
+            isOpen = false;
+            return;
+        }
+
+        isSearching = true;
+        debounceTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                try
+                {
+                    searchResults = await GlobalSearchUseCase.ExecuteAsync(searchKeyword, currentUserRole, currentCustomerId);
+                    isOpen = true;
+                }
+                finally
+                {
+                    isSearching = false;
+                    StateHasChanged();
+                }
+            });
+        }, null, 300, System.Threading.Timeout.Infinite);
+    }
+
+    private void ShowResultsIfAny()
+    {
+        if (searchResults != null && searchResults.Any())
+        {
+            isOpen = true;
+        }
+    }
+
+    private void CloseDropdown()
+    {
+        isOpen = false;
+    }
+
+    private void ClearSearch()
+    {
+        searchKeyword = "";
+        searchResults = null;
+        isOpen = false;
+    }
+
+    private void NavigateToItem(string url)
+    {
+        isOpen = false;
+        searchKeyword = "";
+        Navigation.NavigateTo(url);
+    }
+
+    public void Dispose()
+    {
+        debounceTimer?.Dispose();
+    }
+}

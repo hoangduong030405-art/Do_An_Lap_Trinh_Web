@@ -1,0 +1,86 @@
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+
+<div class="position-relative">
+    <button class="misa-tool-btn" 
+            title="Thiết lập hệ thống & Giao diện"
+            @onclick="ToggleDropdown">
+        <i class="bi bi-gear fs-6"></i>
+    </button>
+
+    @if (isOpen)
+    {
+        <!-- BACKDROP -->
+        <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="CloseDropdown"></div>
+
+        <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 p-2" 
+             style="top: 100%; right: 0; min-width: 250px; z-index: 1050;"
+             @onclick:stopPropagation="true">
+            <div class="px-2 py-1 small text-muted fw-bold text-uppercase" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+                Cài đặt & Giao diện
+            </div>
+
+            <!-- THEME TOGGLE -->
+            <button class="btn btn-light btn-sm text-start py-2 px-2.5 w-100 d-flex align-items-center justify-content-between rounded-2 mb-1"
+                    @onclick="ToggleTheme">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi @(isDarkMode ? "bi-moon-stars-fill text-warning" : "bi-sun-fill text-warning") fs-6"></i>
+                    <span class="small fw-semibold text-dark">Chế độ hiển thị</span>
+                </div>
+                <span class="badge @(isDarkMode ? "bg-dark" : "bg-light text-dark border") small">
+                    @(isDarkMode ? "Tối" : "Sáng")
+                </span>
+            </button>
+
+            <!-- CHANGE PASSWORD -->
+            <button class="btn btn-light btn-sm text-start py-2 px-2.5 w-100 d-flex align-items-center gap-2 rounded-2 mb-1"
+                    @onclick="ShowPasswordInfo">
+                <i class="bi bi-key-fill text-primary fs-6"></i>
+                <div class="small fw-semibold text-dark">Đổi mật khẩu tài khoản</div>
+            </button>
+
+            <!-- SYSTEM VERSION INFO -->
+            <div class="p-2 mt-1 rounded bg-light small text-muted border" style="font-size: 0.7rem;">
+                <div>Phiên bản: <strong>Capstone 18.2.0</strong></div>
+                <div>Kiến trúc: Clean Architecture 4 tầng</div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isOpen = false;
+    private bool isDarkMode = false;
+
+    private void ToggleDropdown() => isOpen = !isOpen;
+    private void CloseDropdown() => isOpen = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var theme = await JS.InvokeAsync<string>("getAppTheme");
+                isDarkMode = (theme == "dark");
+                StateHasChanged();
+            }
+            catch { }
+        }
+    }
+
+    private async Task ToggleTheme()
+    {
+        isDarkMode = !isDarkMode;
+        try
+        {
+            await JS.InvokeVoidAsync("setAppTheme", isDarkMode ? "dark" : "light");
+        }
+        catch { }
+    }
+
+    private void ShowPasswordInfo()
+    {
+        isOpen = false;
+    }
+}
