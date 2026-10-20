@@ -112,7 +112,11 @@ VALUES
 (N'SP005', N'Sữa tươi Vinamilk có đường (Lốc 4 hộp 180ml)', N'Lốc', 35000, 28000, 300, '/images/products/sp005-vinamilk.svg', N'Sữa tươi tiệt trùng Vinamilk 100%'),
 (N'SP006', N'Bia Tiger Crystal (Thùng 24 lon 330ml)', N'Thùng', 410000, 370000, 120, '/images/products/sp006-tiger-crystal.svg', N'Bia Tiger Crystal lên men lạnh sảng khoái'),
 (N'SP007', N'Nước tinh khiết Aquafina (Thùng 24 chai 500ml)', N'Thùng', 95000, 78000, 180, '/images/products/sp007-aquafina.svg', N'Nước uống tinh khiết Aquafina đóng thùng 24 chai'),
-(N'SP008', N'Mì Omachi Xốt Bò Hầm (Thùng 30 gói)', N'Thùng', 230000, 195000, 95, '/images/products/sp008-omachi.svg', N'Mì khoai tây Omachi xốt bò hầm cao cấp');
+(N'SP008', N'Mì Omachi Xốt Bò Hầm (Thùng 30 gói)', N'Thùng', 230000, 195000, 95, '/images/products/sp008-omachi.svg', N'Mì khoai tây Omachi xốt bò hầm cao cấp'),
+(N'SP009', N'Nước tăng lực Red Bull Thái Lan (Thùng 24 lon 250ml)', N'Thùng', 265000, 230000, 150, '/images/products/sp009-red-bull.svg', N'Nước tăng lực lon vàng Red Bull chính hãng, cung cấp năng lượng và tỉnh táo tức thì.'),
+(N'SP010', N'Cà phê hòa tan G7 3in1 Trung Nguyên (Thùng 24 hộp x 18 gói)', N'Thùng', 360000, 310000, 120, '/images/products/sp010-g7-coffee.svg', N'Cà phê hòa tan đậm đà vị cà phê Việt Nam, đóng thùng sỉ cho tạp hóa và quán nước.'),
+(N'SP011', N'Bánh ChocoPie Orion Truyền Thống (Thùng 8 hộp x 12 cái)', N'Thùng', 230000, 195000, 160, '/images/products/sp011-chocopie.svg', N'Bánh mềm phủ socola với nhân kem marshmallow dẻo xốp, phân phối đại lý tạp hóa.'),
+(N'SP012', N'Nước mắm Nam Ngư Đệ Nhị (Thùng 15 chai 900ml)', N'Thùng', 175000, 145000, 200, '/images/products/sp012-nam-ngu.svg', N'Nước mắm Nam Ngư hương vị cá cơm thơm ngon, đóng thùng tiện lợi cho phân phối sỉ.');
 
 -- SEED MẪU 2 HÓA ĐƠN & 1 PHIẾU THU ĐỂ CÓ DỮ LIỆU CÔNG NỢ ĐỐI SOÁT
 INSERT INTO Invoices (InvoiceNumber, CustomerId, InvoiceDate, DueDate, TotalAmount, PaidAmount, Balance, Status)

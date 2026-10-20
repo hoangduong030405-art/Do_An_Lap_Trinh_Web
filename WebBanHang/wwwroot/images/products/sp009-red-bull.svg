@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="goldBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="25%" stop-color="#f59e0b"/>
+      <stop offset="55%" stop-color="#fbbf24"/>
+      <stop offset="85%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="metalTop" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="40%" stop-color="#f1f5f9"/>
+      <stop offset="70%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- NỀN TRANG TRÍ -->
+  <rect width="400" height="400" rx="24" fill="url(#bg)"/>
+  
+  <!-- BÓNG ĐỔ LON -->
+  <ellipse cx="200" cy="340" rx="72" ry="14" fill="#000000" opacity="0.2"/>
+
+  <!-- THÂN LON RED BULL VÀNG 250ML -->
+  <g filter="url(#shadow)">
+    <!-- Đỉnh lon kim loại -->
+    <ellipse cx="200" cy="80" rx="52" ry="11" fill="url(#metalTop)"/>
+    <ellipse cx="200" cy="78" rx="46" ry="8" fill="#cbd5e1"/>
+    <!-- Nắp mở lon màu xanh/bạc -->
+    <ellipse cx="200" cy="77" rx="16" ry="4" fill="#1e3a8a"/>
+    <circle cx="206" cy="77" r="3" fill="#cbd5e1"/>
+
+    <!-- Thân lon lùn mập đặc trưng Red Bull -->
+    <path d="M 148 80 L 146 308 Q 146 322 168 322 L 232 322 Q 254 322 254 308 L 252 80 Z" fill="url(#goldBody)"/>
+
+    <!-- Đáy lon kim loại -->
+    <path d="M 158 320 Q 200 328 242 320 L 238 330 Q 200 336 162 330 Z" fill="url(#metalTop)"/>
+
+    <!-- MẶT TRỜI ĐỎ CHÍNH GIỮA -->
+    <circle cx="200" cy="180" r="32" fill="#dc2626"/>
+
+    <!-- HÌNH BÒ HÚC 2 BÊN HÚC NHAU (STYLIZED SILHOUETTES) -->
+    <!-- Bò trái hướng sang phải -->
+    <path d="M 160 178 Q 170 170 185 174 Q 192 178 190 182 L 180 186 Q 168 184 160 178 Z" fill="#b91c1c"/>
+    <circle cx="188" cy="176" r="3" fill="#ffffff"/>
+    <path d="M 175 168 L 185 172 L 180 176 Z" fill="#facc15"/>
+
+    <!-- Bò phải hướng sang trái -->
+    <path d="M 240 178 Q 230 170 215 174 Q 208 178 210 182 L 220 186 Q 232 184 240 178 Z" fill="#b91c1c"/>
+    <circle cx="212" cy="176" r="3" fill="#ffffff"/>
+    <path d="M 225 168 L 215 172 L 220 176 Z" fill="#facc15"/>
+
+    <!-- CHỮ RED BULL NỔI BẬT XANH DƯƠNG ĐẬM -->
+    <text x="200" y="234" font-family="'Impact', 'Arial Black', sans-serif" font-size="28" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">Red Bull</text>
+    
+    <!-- SUBTITLE NĂNG LƯỢNG -->
+    <rect x="162" y="246" width="76" height="15" rx="3" fill="#1e3a8a"/>
+    <text x="200" y="257" font-family="'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="1">ENERGY DRINK</text>
+    <text x="200" y="295" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="900" fill="#78350f" text-anchor="middle">250 ml</text>
+  </g>
+
+  <!-- HUY HIỆU QUY CÁCH ĐÓNG THÙNG B2B -->
+  <g transform="translate(20, 20)">
+    <rect width="130" height="28" rx="14" fill="#d97706"/>
+    <text x="65" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">THÙNG 24 LON</text>
+  </g>
+  <g transform="translate(270, 20)">
+    <rect width="110" height="28" rx="14" fill="#ffffff" stroke="#fcd34d" stroke-width="1.5"/>
+    <text x="325" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#b45309" text-anchor="middle">LON VÀNG 250ML</text>
+  </g>
+</svg>
