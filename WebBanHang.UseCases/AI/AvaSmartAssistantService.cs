@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebBanHang.CoreBusiness.Entities;
 using WebBanHang.UseCases.DTOs;
 using WebBanHang.UseCases.PluginInterfaces.DataStore;
 
@@ -39,9 +40,9 @@ namespace WebBanHang.UseCases.AI
 
             foreach (var inv in activeInvoices)
             {
-                if (inv.DueDate < now)
+                int overdueDays = Invoice.CalculateOverdueDays(inv.DueDate, inv.Balance, now);
+                if (overdueDays > 0)
                 {
-                    int overdueDays = Math.Max(1, (int)(now - inv.DueDate).TotalDays);
                     if (overdueDays >= 10)
                     {
                         reminders.Add(new SmartReminderDto
@@ -165,18 +166,18 @@ namespace WebBanHang.UseCases.AI
 
             if (q.Contains("nợ quá hạn") || q.Contains("ai đang nợ"))
             {
-                var overdueInvoices = allInvoices.Where(i => i.Balance > 0 && i.DueDate < now).ToList();
+                var overdueInvoices = allInvoices.Where(i => Invoice.CheckIsOverdue(i.DueDate, i.Balance, now)).ToList();
                 if (!overdueInvoices.Any())
                 {
                     answerText = "Tin tốt! Hiện tại toàn bộ khách hàng và đại lý đều thanh toán đúng hạn, không có hóa đơn nào quá hạn thanh toán.";
                 }
                 else
                 {
-                    var debtorNames = overdueInvoices.Select(i => $"{i.CustomerName} (HĐ #{i.InvoiceNumber}: {i.Balance:N0} đ, quá hạn {Math.Max(1, (int)(now - i.DueDate).TotalDays)} ngày)").Distinct();
+                    var debtorNames = overdueInvoices.Select(i => $"{i.CustomerName} (HĐ #{i.InvoiceNumber}: {i.Balance:N0} đ, quá hạn {Invoice.CalculateOverdueDays(i.DueDate, i.Balance, now)} ngày)").Distinct();
                     decimal totalOverdue = overdueInvoices.Sum(i => i.Balance);
                     answerText = $"Tổng cộng có {overdueInvoices.Count} hóa đơn quá hạn với tổng số tiền nợ là {totalOverdue:N0} đ:\n• " + string.Join("\n• ", debtorNames);
                     suggestedActions.Add("Soạn email đòi nợ");
-                    suggestedActions.Add("Xem báo cáo tuổi nợ 4 xô");
+                    suggestedActions.Add("Xem báo cáo phân tích tuổi nợ");
                 }
             }
             else if (q.Contains("tóm tắt") || q.Contains("tổng quan") || q.Contains("hôm nay"))

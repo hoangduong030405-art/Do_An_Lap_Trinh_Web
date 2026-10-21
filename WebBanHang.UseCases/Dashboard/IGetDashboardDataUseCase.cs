@@ -5,6 +5,6 @@ namespace WebBanHang.UseCases.Dashboard
 {
     public interface IGetDashboardDataUseCase
     {
-        Task<DashboardSummaryDto> ExecuteAsync();
+        Task<DashboardSummaryDto> ExecuteAsync(string period = "this_month");
     }
 }

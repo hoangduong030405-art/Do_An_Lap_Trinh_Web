@@ -1,6 +1,7 @@
 -- ==========================================================
 -- CƠ SỞ DỮ LIỆU ĐỒ ÁN CAPSTONE ECO2415
--- ĐỀ TÀI 18: BÁN HÀNG & CÔNG NỢ KHÁCH HÀNG (SALES & AR)
+-- ĐỀ TÀI 18: BÁN HÀNG & CÔNG NỢ KHÁCH HÀNG B2B (SALES & AR)
+-- CHUẨN HÓA: MỘT NGUỒN CHÂN LÝ DUY NHẤT VỀ TUỔI NỢ & FIFO
 -- ==========================================================
 
 USE master;
@@ -15,7 +16,7 @@ GO
 USE CSDLBANHANG;
 GO
 
--- 1. BẢNG KHÁCH HÀNG (Customers)
+-- 1. XÓA BẢNG CŨ NẾU ĐÃ TỒN TẠI (THEO THỨ TỰ PHỤ THUỘC KHÓA NGOẠI)
 IF OBJECT_ID('dbo.PaymentAllocations', 'U') IS NOT NULL DROP TABLE dbo.PaymentAllocations;
 IF OBJECT_ID('dbo.Payments', 'U') IS NOT NULL DROP TABLE dbo.Payments;
 IF OBJECT_ID('dbo.InvoiceLines', 'U') IS NOT NULL DROP TABLE dbo.InvoiceLines;
@@ -24,6 +25,7 @@ IF OBJECT_ID('dbo.Products', 'U') IS NOT NULL DROP TABLE dbo.Products;
 IF OBJECT_ID('dbo.Customers', 'U') IS NOT NULL DROP TABLE dbo.Customers;
 GO
 
+-- 2. TẠO CÁC BẢNG THEO CHUẨN THIẾT KẾ CSDL & RÀNG BUỘC TOÀN VẸN
 CREATE TABLE Customers (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     CustomerCode NVARCHAR(20) NOT NULL UNIQUE,
@@ -35,7 +37,6 @@ CREATE TABLE Customers (
     CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- 2. BẢNG HÀNG HÓA (Products)
 CREATE TABLE Products (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     ProductCode NVARCHAR(20) NOT NULL UNIQUE,
@@ -49,7 +50,6 @@ CREATE TABLE Products (
     CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- 3. BẢNG HÓA ĐƠN (Invoices)
 CREATE TABLE Invoices (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     InvoiceNumber NVARCHAR(30) NOT NULL UNIQUE,
@@ -63,7 +63,6 @@ CREATE TABLE Invoices (
     CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- 4. BẢNG CHI TIẾT HÓA ĐƠN (InvoiceLines)
 CREATE TABLE InvoiceLines (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     InvoiceId INT NOT NULL FOREIGN KEY REFERENCES Invoices(Id) ON DELETE CASCADE,
@@ -74,7 +73,6 @@ CREATE TABLE InvoiceLines (
     LineTotal AS (Quantity * UnitPrice)
 );
 
--- 5. BẢNG PHIẾU THU TIỀN (Payments)
 CREATE TABLE Payments (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     PaymentNumber NVARCHAR(30) NOT NULL UNIQUE,
@@ -86,7 +84,6 @@ CREATE TABLE Payments (
     CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
 );
 
--- 6. BẢNG PHÂN BỔ THU TIỀN (PaymentAllocations - FIFO)
 CREATE TABLE PaymentAllocations (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     PaymentId INT NOT NULL FOREIGN KEY REFERENCES Payments(Id) ON DELETE CASCADE,
@@ -94,15 +91,17 @@ CREATE TABLE PaymentAllocations (
     AllocatedAmount DECIMAL(18,2) NOT NULL CHECK (AllocatedAmount > 0),
     AllocationDate DATETIME2 NOT NULL DEFAULT GETDATE()
 );
+GO
 
--- DỮ LIỆU KHỞI TẠO (SEED DATA)
+-- 3. SEED DỮ LIỆU DANH MỤC KHÁCH HÀNG (4 ĐẠI LÝ TRỌNG ĐIỂM)
 INSERT INTO Customers (CustomerCode, FullName, PhoneNumber, Address, CreditLimit, PaymentTermsDays)
 VALUES 
-(N'KH001', N'Tạp Hóa Bà Ba - Chợ Đông Ba', N'0905123456', N'12 Trần Hưng Đạo, TP. Huế', 20000000, 30),
+(N'KH001', N'Tạp Hóa Bà Ba - Chợ Đông Ba', N'0905123456', N'12 Trần Hưng Đạo, TP. Huế', 25000000, 30),
 (N'KH002', N'Siêu Thị Mini Tuấn Hương', N'0914987654', N'145 Đinh Tiên Hoàng, TP. Huế', 50000000, 30),
 (N'KH003', N'Cửa Hàng Tiện Lợi An Phú', N'0983222333', N'88 Hùng Vương, TP. Huế', 15000000, 15),
 (N'KH004', N'Đại Lý Phân Phối Nam Hà', N'0977888999', N'55 Lê Lợi, TP. Huế', 80000000, 45);
 
+-- 4. SEED DỮ LIỆU DANH MỤC HÀNG HÓA (12 SẢN PHẨM PHÂN PHỐI SỈ B2B)
 INSERT INTO Products (ProductCode, Name, Unit, UnitPrice, CostPrice, StockQuantity, ImageUrl, Description)
 VALUES
 (N'SP001', N'Nước ngọt Coca-Cola Sleek (Thùng 24 lon 320ml)', N'Thùng', 210000, 185000, 150, '/images/products/sp001-coca-cola.svg', N'Hàng chính hãng Coca-Cola Việt Nam'),
@@ -113,32 +112,73 @@ VALUES
 (N'SP006', N'Bia Tiger Crystal (Thùng 24 lon 330ml)', N'Thùng', 410000, 370000, 120, '/images/products/sp006-tiger-crystal.svg', N'Bia Tiger Crystal lên men lạnh sảng khoái'),
 (N'SP007', N'Nước tinh khiết Aquafina (Thùng 24 chai 500ml)', N'Thùng', 95000, 78000, 180, '/images/products/sp007-aquafina.svg', N'Nước uống tinh khiết Aquafina đóng thùng 24 chai'),
 (N'SP008', N'Mì Omachi Xốt Bò Hầm (Thùng 30 gói)', N'Thùng', 230000, 195000, 95, '/images/products/sp008-omachi.svg', N'Mì khoai tây Omachi xốt bò hầm cao cấp'),
-(N'SP009', N'Nước tăng lực Red Bull Thái Lan (Thùng 24 lon 250ml)', N'Thùng', 265000, 230000, 150, '/images/products/sp009-red-bull.svg', N'Nước tăng lực lon vàng Red Bull chính hãng, cung cấp năng lượng và tỉnh táo tức thì.'),
-(N'SP010', N'Cà phê hòa tan G7 3in1 Trung Nguyên (Thùng 24 hộp x 18 gói)', N'Thùng', 360000, 310000, 120, '/images/products/sp010-g7-coffee.svg', N'Cà phê hòa tan đậm đà vị cà phê Việt Nam, đóng thùng sỉ cho tạp hóa và quán nước.'),
-(N'SP011', N'Bánh ChocoPie Orion Truyền Thống (Thùng 8 hộp x 12 cái)', N'Thùng', 230000, 195000, 160, '/images/products/sp011-chocopie.svg', N'Bánh mềm phủ socola với nhân kem marshmallow dẻo xốp, phân phối đại lý tạp hóa.'),
-(N'SP012', N'Nước mắm Nam Ngư Đệ Nhị (Thùng 15 chai 900ml)', N'Thùng', 175000, 145000, 200, '/images/products/sp012-nam-ngu.svg', N'Nước mắm Nam Ngư hương vị cá cơm thơm ngon, đóng thùng tiện lợi cho phân phối sỉ.');
+(N'SP009', N'Nước tăng lực Red Bull Thái Lan (Thùng 24 lon 250ml)', N'Thùng', 265000, 230000, 150, '/images/products/sp009-red-bull.svg', N'Nước tăng lực lon vàng Red Bull chính hãng'),
+(N'SP010', N'Cà phê hòa tan G7 3in1 Trung Nguyên (Thùng 24 hộp x 18 gói)', N'Thùng', 360000, 310000, 120, '/images/products/sp010-g7-coffee.svg', N'Cà phê hòa tan Trung Nguyên đậm đà'),
+(N'SP011', N'Bánh ChocoPie Orion Truyền Thống (Thùng 8 hộp x 12 cái)', N'Thùng', 230000, 195000, 160, '/images/products/sp011-chocopie.svg', N'Bánh mềm phủ socola nhân kem dẻo marshmallow'),
+(N'SP012', N'Nước mắm Nam Ngư Đệ Nhị (Thùng 15 chai 900ml)', N'Thùng', 175000, 145000, 200, '/images/products/sp012-nam-ngu.svg', N'Nước mắm Nam Ngư hương vị cá cơm thơm ngon');
 
--- SEED MẪU 2 HÓA ĐƠN & 1 PHIẾU THU ĐỂ CÓ DỮ LIỆU CÔNG NỢ ĐỐI SOÁT
+-- 5. SEED DỮ LIỆU HÓA ĐƠN BÁN HÀNG VỚI NGÀY TƯƠNG ĐỐI (DATEADD TỪ GETDATE())
+-- Đầy đủ tất cả các ca kiểm thử tuổi nợ & thanh toán:
+-- 1. Đã trả đủ (Balance = 0, Status = 'Paid') -> HD-2026-001
+-- 2. Trả một phần (PartiallyPaid) VÀ Quá hạn 15 ngày (Xô 1-30) -> HD-2026-002
+-- 3. Quá hạn 45 ngày (Xô 31-60) -> HD-2026-003
+-- 4. Quá hạn 70 ngày (Xô 61-90) -> HD-2026-004
+-- 5. Quá hạn 100 ngày (Xô >90 - Nợ xấu) -> HD-2026-005
+-- 6. Chưa đến hạn (DueDate tương lai +25 ngày) -> HD-2026-006
+-- 7. Chưa đến hạn trong kỳ này (DueDate tương lai +28 ngày) -> HD-2026-007
 INSERT INTO Invoices (InvoiceNumber, CustomerId, InvoiceDate, DueDate, TotalAmount, PaidAmount, Balance, Status)
 VALUES
-(N'HD-20261001-001', 1, DATEADD(DAY, -45, GETDATE()), DATEADD(DAY, -15, GETDATE()), 4200000, 2000000, 2200000, 'PartiallyPaid'),
-(N'HD-20261010-002', 1, DATEADD(DAY, -10, GETDATE()), DATEADD(DAY, 20, GETDATE()), 6500000, 0, 6500000, 'Pending'),
-(N'HD-20261012-003', 2, DATEADD(DAY, -5, GETDATE()), DATEADD(DAY, 25, GETDATE()), 12500000, 0, 12500000, 'Pending');
+(N'HD-2026-001', 1, DATEADD(DAY, -70, GETDATE()), DATEADD(DAY, -40, GETDATE()), 3000000,  3000000,        0, 'Paid'),
+(N'HD-2026-002', 1, DATEADD(DAY, -45, GETDATE()), DATEADD(DAY, -15, GETDATE()), 5000000,  2000000,  3000000, 'PartiallyPaid'),
+(N'HD-2026-003', 2, DATEADD(DAY, -75, GETDATE()), DATEADD(DAY, -45, GETDATE()), 6000000,        0,  6000000, 'Pending'),
+(N'HD-2026-004', 2, DATEADD(DAY, -100, GETDATE()), DATEADD(DAY, -70, GETDATE()), 2000000,       0,  2000000, 'Pending'),
+(N'HD-2026-005', 3, DATEADD(DAY, -115, GETDATE()), DATEADD(DAY, -100, GETDATE()), 4500000,      0,  4500000, 'Pending'),
+(N'HD-2026-006', 4, DATEADD(DAY, -5, GETDATE()),  DATEADD(DAY, 25, GETDATE()), 10000000,       0, 10000000, 'Pending'),
+(N'HD-2026-007', 1, DATEADD(DAY, -2, GETDATE()),  DATEADD(DAY, 28, GETDATE()),  4200000,       0,  4200000, 'Pending');
 
+-- 6. SEED CHI TIẾT HÓA ĐƠN (KHỚP CHÍNH XÁC TOTALAMOUNT & GIÁ VỐN THỰC TẾ)
 INSERT INTO InvoiceLines (InvoiceId, ProductId, Quantity, UnitPrice, CostPrice)
 VALUES
-(1, 1, 10, 210000, 185000),
-(1, 2, 5, 420000, 390000),
-(2, 3, 20, 125000, 108000),
-(2, 2, 10, 400000, 390000),
-(3, 2, 20, 435000, 390000),
-(3, 1, 18, 210000, 185000);
+-- HD-2026-001: Total = 3,000,000 | Cost = 2,586,000
+(1, 1, 10, 210000, 185000), -- 2,100,000
+(1, 7,  8,  95000,  78000), --   760,000
+(1, 5,  4,  35000,  28000), --   140,000
 
+-- HD-2026-002: Total = 5,000,000 | Cost = 4,420,000
+(2, 2, 10, 435000, 390000), -- 4,350,000
+(2, 4, 10,  65000,  52000), --   650,000
+
+-- HD-2026-003: Total = 6,000,000 | Cost = 5,220,000
+(3, 4, 20,  65000,  52000), -- 1,300,000
+(3, 2, 10, 435000, 390000), -- 4,350,000
+(3, 5, 10,  35000,  28000), --   350,000
+
+-- HD-2026-004: Total = 2,000,000 | Cost = 1,705,000
+(4, 1,  5, 210000, 185000), -- 1,050,000
+(4, 7, 10,  95000,  78000), --   950,000
+
+-- HD-2026-005: Total = 4,500,000 | Cost = 3,850,000
+(5, 8, 15, 230000, 195000), -- 3,450,000
+(5, 1,  5, 210000, 185000), -- 1,050,000
+
+-- HD-2026-006: Total = 10,000,000 | Cost = 8,840,000
+(6, 2, 20, 435000, 390000), -- 8,700,000
+(6, 4, 20,  65000,  52000), -- 1,300,000
+
+-- HD-2026-007: Total = 4,200,000 | Cost = 3,700,000
+(7, 1, 20, 210000, 185000); -- 4,200,000
+
+-- 7. SEED PHIẾU THU TIỀN VÀ PHÂN BỔ CÔNG NỢ THEO NGUYÊN TẮC FIFO
+-- Khách hàng KH001 có 2 hóa đơn phát sinh theo thứ tự: HD-2026-001 (cũ hơn), HD-2026-002 (mới hơn).
+-- Phiếu thu 1: 3,000,000 đ thanh toán trọn vẹn HD-2026-001.
+-- Phiếu thu 2: 2,000,000 đ cấn trừ tiếp theo FIFO vào HD-2026-002 (còn dư nợ 3,000,000 đ).
 INSERT INTO Payments (PaymentNumber, CustomerId, PaymentDate, Amount, UnallocatedAmount, Note)
 VALUES
-(N'PT-20261005-001', 1, DATEADD(DAY, -30, GETDATE()), 2000000, 0, N'Tạp hóa Bà Ba thanh toán đợt 1 tiền mặt');
+(N'PT-2026-001', 1, DATEADD(DAY, -50, GETDATE()), 3000000, 0, N'Tạp hóa Bà Ba thanh toán tiền mặt đợt 1 cấn trừ FIFO cho HĐ cũ nhất'),
+(N'PT-2026-002', 1, DATEADD(DAY, -20, GETDATE()), 2000000, 0, N'Tạp hóa Bà Ba chuyển khoản VietQR đợt 2 cấn trừ FIFO cho HĐ tiếp theo');
 
 INSERT INTO PaymentAllocations (PaymentId, InvoiceId, AllocatedAmount, AllocationDate)
 VALUES
-(1, 1, 2000000, DATEADD(DAY, -30, GETDATE()));
+(1, 1, 3000000, DATEADD(DAY, -50, GETDATE())),
+(2, 2, 2000000, DATEADD(DAY, -20, GETDATE()));
 GO

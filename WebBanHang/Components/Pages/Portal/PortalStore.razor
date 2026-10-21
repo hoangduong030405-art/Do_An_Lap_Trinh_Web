@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @using WebBanHang.CoreBusiness.Entities
+@using WebBanHang.CoreBusiness.Exceptions
 @using WebBanHang.UseCases.Customers
 @using WebBanHang.UseCases.Products
 @using WebBanHang.UseCases.Invoices
@@ -521,6 +522,10 @@
                 // Tải lại thông tin hạn mức và kho hàng
                 await LoadDataAsync();
             }
+        }
+        catch (BusinessRuleException)
+        {
+            await LoadDataAsync();
         }
         finally
         {

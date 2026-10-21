@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanHang.CoreBusiness.Entities;
+using WebBanHang.CoreBusiness.Exceptions;
 using WebBanHang.UseCases.DTOs;
 using WebBanHang.UseCases.PluginInterfaces.DataStore;
 
@@ -69,11 +70,8 @@ namespace WebBanHang.UseCases.Invoices
 
                 if (product.StockQuantity < item.Quantity)
                 {
-                    return new CustomerPortalOrderResultDto
-                    {
-                        Success = false,
-                        ErrorMessage = $"Sản phẩm '{product.Name}' không đủ tồn kho (Hiện có: {product.StockQuantity} {product.Unit}, Yêu cầu: {item.Quantity} {product.Unit})."
-                    };
+                    throw new BusinessRuleException(
+                        $"Sản phẩm '{product.Name}' không đủ tồn kho (Hiện có: {product.StockQuantity} {product.Unit}, Yêu cầu: {item.Quantity} {product.Unit}).");
                 }
             }
 
@@ -85,11 +83,8 @@ namespace WebBanHang.UseCases.Invoices
             if (currentDebt + orderTotal > customer.CreditLimit)
             {
                 var exceededAmount = (currentDebt + orderTotal) - customer.CreditLimit;
-                return new CustomerPortalOrderResultDto
-                {
-                    Success = false,
-                    ErrorMessage = $"Đơn hàng {orderTotal:N0} đ vượt hạn mức nợ còn lại (vượt {exceededAmount:N0} đ / Hạn mức khả dụng: {availableCredit:N0} đ). Quý khách vui lòng thanh toán bớt nợ cũ hoặc giảm bớt số lượng."
-                };
+                throw new CreditLimitExceededException(
+                    $"Đơn hàng {orderTotal:N0} đ vượt hạn mức nợ còn lại (vượt {exceededAmount:N0} đ / Hạn mức khả dụng: {availableCredit:N0} đ). Quý khách vui lòng thanh toán bớt nợ cũ hoặc giảm bớt số lượng.");
             }
 
             // 3. Khởi tạo Hóa đơn B2B ghi nợ

@@ -12,6 +12,7 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
 @inject LayoutStateService LayoutState
+@implements IDisposable
 
 <PageTitle>Tổng Quan - Phân Hệ Bán Hàng & Quản Trị Công Nợ B2B</PageTitle>
 
@@ -101,7 +102,9 @@ else if (dashboard != null)
                         @((dashboard.TotalRevenue / 1000000m).ToString("N2")) <small class="fs-6 fw-semibold text-muted">Trđ</small>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light-subtle small" style="font-size: 0.72rem;">
-                        <span class="text-success fw-bold"><i class="bi bi-arrow-up-right"></i> +12.4% so kỳ trước</span>
+                        <span class="@(dashboard.PreviousPeriodComparisonText.StartsWith("+") ? "text-success fw-bold" : "text-muted")">
+                            <i class="bi @(dashboard.PreviousPeriodComparisonText.StartsWith("+") ? "bi-arrow-up-right" : "bi-graph-up")"></i> @dashboard.PreviousPeriodComparisonText
+                        </span>
                         <span class="text-muted">@dashboard.TotalInvoicesCount hóa đơn</span>
                     </div>
                 </div>
@@ -143,8 +146,8 @@ else if (dashboard != null)
                         @((dashboard.TotalOutstandingDebt / 1000000m).ToString("N2")) <small class="fs-6 fw-semibold text-muted">Trđ</small>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-2 pt-2 border-top border-light-subtle small" style="font-size: 0.72rem;">
-                        <span class="text-muted">Đang theo dõi hạn mức</span>
-                        <span class="text-slate-navy fw-bold">@dashboard.TotalCustomersCount khách hàng</span>
+                        <span class="text-muted">Khách nợ / Hệ thống:</span>
+                        <span class="text-slate-navy fw-bold">@dashboard.TotalDebtorsCount / @dashboard.TotalCustomersCount KH</span>
                     </div>
                 </div>
             </div>
@@ -240,7 +243,11 @@ else if (dashboard != null)
                             <span>Tập Trung Công Nợ Khách Hàng</span>
                         </div>
                         <p class="text-muted mb-0 small" style="font-size: 0.78rem; line-height: 1.4;">
-                            Tổng công nợ 5 KH lớn nhất chiếm <strong>@(top5DebtPercentage.ToString("N1"))%</strong> tổng nợ phải thu. Nguồn thu phụ thuộc vào nhóm đại lý trọng điểm, cần giám sát chặt chẽ trần tín dụng.
+                            @{
+                                var debtorCount = dashboard.TopDebtors.Count;
+                                var debtorLabel = debtorCount < 5 ? $"{debtorCount} KH đang nợ" : "Top 5 KH nợ lớn nhất";
+                            }
+                            Tổng công nợ @debtorLabel chiếm <strong>@(top5DebtPercentage.ToString("N1"))%</strong> tổng nợ phải thu. Nguồn thu phụ thuộc vào nhóm đại lý trọng điểm, cần giám sát chặt chẽ trần tín dụng.
                         </p>
                     </div>
                     <a href="/aging-report" class="small fw-bold text-decoration-none text-purple" style="font-size: 0.72rem; color: #7c3aed;">
@@ -370,30 +377,40 @@ else if (dashboard != null)
                         </div>
                     </div>
 
-                    <!-- Breakdown Table 4 Buckets -->
+                    <!-- Breakdown Table 5 Buckets (Single Source of Truth) -->
                     <div class="border rounded p-2 bg-light-subtle">
                         <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 0.7rem;">
-                            <span>0 - 30 ngày (Trong hạn):</span>
-                            <span class="fw-bold text-slate-navy">@((dashboard.OverallAging.Bucket0To30 / 1000000m).ToString("N1")) Trđ</span>
+                            <span><i class="bi bi-shield-check text-success me-1"></i>Chưa đến hạn:</span>
+                            <span class="fw-bold text-slate-navy">@((dashboard.OverallAging.BucketNotDue / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 0.7rem;">
-                            <span>31 - 60 ngày:</span>
+                            <span><i class="bi bi-clock-history text-info me-1"></i>Quá hạn 1 - 30 ngày:</span>
+                            <span class="fw-bold text-info">@((dashboard.OverallAging.Bucket1To30 / 1000000m).ToString("N1")) Trđ</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 0.7rem;">
+                            <span><i class="bi bi-exclamation-circle text-warning me-1"></i>Quá hạn 31 - 60 ngày:</span>
                             <span class="fw-bold text-warning">@((dashboard.OverallAging.Bucket31To60 / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 0.7rem;">
-                            <span>61 - 90 ngày:</span>
+                            <span><i class="bi bi-exclamation-triangle text-orange me-1"></i>Quá hạn 61 - 90 ngày:</span>
                             <span class="fw-bold text-orange" style="color: #ff7700;">@((dashboard.OverallAging.Bucket61To90 / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         <div class="d-flex justify-content-between small text-muted" style="font-size: 0.7rem;">
-                            <span>> 90 ngày (Nợ xấu):</span>
+                            <span><i class="bi bi-x-octagon text-danger me-1"></i>Quá hạn > 90 ngày:</span>
                             <span class="fw-bold text-danger">@((dashboard.OverallAging.BucketOver90 / 1000000m).ToString("N1")) Trđ</span>
                         </div>
+                        @if (!dashboard.OverallAging.IsIntegrityValid)
+                        {
+                            <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small text-center" style="font-size: 0.68rem;">
+                                <i class="bi bi-exclamation-octagon-fill me-1"></i> Cảnh báo: Lệch số liệu giữa các xô và tổng nợ!
+                            </div>
+                        }
                     </div>
                 </div>
 
                 <div class="app-card-footer">
                     <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
-                    <a href="/aging-report" class="text-primary fw-bold text-decoration-none">Báo cáo 4 xô ↗</a>
+                    <a href="/aging-report" class="text-primary fw-bold text-decoration-none">Báo cáo phân tích tuổi nợ ↗</a>
                 </div>
             </div>
         </div>
@@ -448,12 +465,24 @@ else if (dashboard != null)
                         </div>
                     </div>
 
-                    <div class="alert alert-success py-1.5 px-2.5 mb-0 small border-0 bg-success-subtle d-flex align-items-center gap-2">
-                        <i class="bi bi-shield-check text-success fs-5"></i>
-                        <span style="font-size: 0.72rem;">
-                            Đã thu hồi <strong>@collectionRate.ToString("N1")%</strong> doanh số. Dòng tiền kinh doanh thặng dư dương.
-                        </span>
-                    </div>
+                    @if (dashboard.TotalCollectedAmount > 0)
+                    {
+                        <div class="alert alert-success py-1.5 px-2.5 mb-0 small border-0 bg-success-subtle d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-check text-success fs-5"></i>
+                            <span style="font-size: 0.72rem;">
+                                Đã thu hồi <strong>@collectionRate.ToString("N1")%</strong> doanh số. Dòng tiền kinh doanh thặng dư dương.
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning py-1.5 px-2.5 mb-0 small border-0 bg-warning-subtle d-flex align-items-center gap-2">
+                            <i class="bi bi-exclamation-triangle text-warning fs-5"></i>
+                            <span style="font-size: 0.72rem;">
+                                Chưa phát sinh thu hồi công nợ trong kỳ (@collectionRate.ToString("N1")%). Cần theo dõi chặt chẽ hạn nợ.
+                            </span>
+                        </div>
+                    }
                 </div>
 
                 <div class="app-card-footer">
@@ -545,12 +574,21 @@ else if (dashboard != null)
                             </div>
                         }
 
+                        @{
+                            var monthsList = dashboard.MonthlyRevenues;
+                            decimal maxRevenueOrCost = monthsList.Any() 
+                                ? monthsList.Max(x => Math.Max(x.Revenue, x.Cost)) / 1000000m 
+                                : 0m;
+                            decimal maxScale = Math.Max(10m, (decimal)Math.Ceiling((double)maxRevenueOrCost * 1.25));
+                            int baselineY = 130;
+                            int chartHeightPositive = 100;
+                        }
                         <svg viewBox="0 0 740 220" style="width: 100%; height: 100%; overflow: visible;">
-                            <!-- Y-Axis Labels -->
-                            <text x="42" y="34" fill="#94a3b8" font-size="10" text-anchor="end">4.000</text>
-                            <text x="42" y="84" fill="#94a3b8" font-size="10" text-anchor="end">2.000</text>
+                            <!-- Y-Axis Labels (Dynamic theo maxScale) -->
+                            <text x="42" y="34" fill="#94a3b8" font-size="10" text-anchor="end">@maxScale.ToString("N0")</text>
+                            <text x="42" y="84" fill="#94a3b8" font-size="10" text-anchor="end">@((maxScale / 2m).ToString("N0"))</text>
                             <text x="42" y="134" fill="#94a3b8" font-size="10" text-anchor="end">0</text>
-                            <text x="42" y="184" fill="#94a3b8" font-size="10" text-anchor="end">(2.000)</text>
+                            <text x="42" y="184" fill="#94a3b8" font-size="10" text-anchor="end">(@((maxScale / 2m).ToString("N0")))</text>
 
                             <!-- Horizontal Grid Lines -->
                             <line x1="48" y1="30" x2="720" y2="30" stroke="#f1f5f9" stroke-dasharray="3 3" />
@@ -559,12 +597,6 @@ else if (dashboard != null)
                             <line x1="48" y1="180" x2="720" y2="180" stroke="#f1f5f9" stroke-dasharray="3 3" />
 
                             <!-- 12 MONTH COLUMNS -->
-                            @{
-                                var monthsList = dashboard.MonthlyRevenues;
-                                decimal maxScale = 4000m; // Scale factor in Trđ
-                                int baselineY = 130;
-                                int chartHeightPositive = 100; // 0 to 4.000 Trđ
-                            }
 
                             @for (int i = 1; i <= 12; i++)
                             {
@@ -575,8 +607,8 @@ else if (dashboard != null)
                                 decimal costTrd = mDto != null ? mDto.Cost / 1000000m : 0m;
                                 decimal profitTrd = mDto != null ? mDto.Profit / 1000000m : 0m;
 
-                                int revH = (int)Math.Min(100, (revTrd / maxScale) * chartHeightPositive);
-                                int costH = (int)Math.Min(100, (costTrd / maxScale) * chartHeightPositive);
+                                int revH = revTrd > 0 ? Math.Max(4, (int)Math.Min(100, (revTrd / maxScale) * chartHeightPositive)) : 0;
+                                int costH = costTrd > 0 ? Math.Max(4, (int)Math.Min(100, (costTrd / maxScale) * chartHeightPositive)) : 0;
 
                                 bool isHovered = hoveredMonth == m;
 
@@ -1039,7 +1071,7 @@ else if (dashboard != null)
                                     <i class="bi bi-graph-up-arrow"></i> Khả Năng Sinh Lời
                                 </div>
                                 <p class="text-muted small mb-0" style="font-size: 0.76rem; line-height: 1.4;">
-                                    Biên lợi nhuận gộp đạt <strong>28.0%</strong>. Nhóm hàng giải khát (Coca-Cola, Bia Heineken) có vòng quay kho nhanh nhất (dưới 15 ngày).
+                                    Biên lợi nhuận gộp đạt <strong>@profitMargin.ToString("N1")%</strong>. Nhóm hàng giải khát (Coca-Cola, Bia Heineken) có vòng quay kho nhanh nhất (dưới 15 ngày).
                                 </p>
                             </div>
                         </div>
@@ -1050,7 +1082,7 @@ else if (dashboard != null)
                                     <i class="bi bi-exclamation-diamond-fill"></i> Rủi Ro Công Nợ
                                 </div>
                                 <p class="text-muted small mb-0" style="font-size: 0.76rem; line-height: 1.4;">
-                                    Có <strong>@dashboard.OverdueInvoicesCount hóa đơn</strong> đã quá hạn thanh toán 30 ngày. Khuyến nghị gửi mẫu email nhắc nợ AI và áp dụng cấn trừ công nợ ngay khi khách thanh toán.
+                                    Có <strong>@dashboard.OverdueInvoicesCount hóa đơn</strong> đã quá hạn thanh toán (@((dashboard.OverdueDebt / 1000000m).ToString("N1")) trđ). Khuyến nghị gửi mẫu email nhắc nợ AI và áp dụng cấn trừ công nợ ngay khi khách thanh toán.
                                 </p>
                             </div>
                         </div>
@@ -1178,38 +1210,24 @@ else if (dashboard != null)
     private void ToggleCost() => showCost = !showCost;
     private void ToggleProfit() => showProfit = !showProfit;
 
-    // Calculations: Real COGS & Real Profit from products CostPrice
-    private decimal actualCost => dashboard != null ? dashboard.MonthlyRevenues.Sum(m => m.Cost) : 0;
-    private decimal actualProfit => dashboard != null ? dashboard.TotalRevenue - actualCost : 0;
-    private decimal profitMargin => dashboard != null && dashboard.TotalRevenue > 0
-        ? Math.Round((actualProfit / dashboard.TotalRevenue) * 100, 1)
-        : 0;
+    // Calculations: Real COGS & Real Profit directly from DTO
+    private decimal actualCost => dashboard?.TotalActualCost ?? 0m;
+    private decimal actualProfit => dashboard?.TotalActualProfit ?? 0m;
+    private decimal profitMargin => dashboard?.ActualProfitMargin ?? 0m;
     
-    private decimal collectionRate => dashboard != null && dashboard.TotalRevenue > 0
-        ? Math.Min(100, (dashboard.TotalCollectedAmount / dashboard.TotalRevenue) * 100)
-        : 0;
+    private decimal collectionRate => dashboard?.CollectionRate ?? 0m;
 
-    private decimal overdueDebt => dashboard != null && dashboard.OverallAging != null
-        ? Math.Min(dashboard.OverallAging.TotalOutstandingDebt, dashboard.TotalOutstandingDebt)
-        : 0;
+    private decimal overdueDebt => dashboard?.OverdueDebt ?? 0m;
 
-    private decimal withinTermDebt => dashboard != null 
-        ? Math.Max(0, dashboard.TotalOutstandingDebt - overdueDebt) 
-        : 0;
+    private decimal withinTermDebt => dashboard?.CurrentDebt ?? 0m;
 
-    private decimal overdueBarWidth => dashboard != null && dashboard.TotalOutstandingDebt > 0
-        ? Math.Min(100, Math.Max(5, (overdueDebt / dashboard.TotalOutstandingDebt) * 100))
-        : 0;
+    private decimal overdueBarWidth => overduePercent;
 
-    private decimal currentBarWidth => 100 - overdueBarWidth;
+    private decimal currentBarWidth => 100m - overdueBarWidth;
 
-    private decimal top5DebtPercentage => dashboard != null && dashboard.TotalOutstandingDebt > 0
-        ? Math.Min(100, (dashboard.TopDebtors.Sum(d => d.CurrentDebt) / dashboard.TotalOutstandingDebt) * 100)
-        : 56.67m;
+    private decimal top5DebtPercentage => dashboard?.Top5DebtorsPercentage ?? 0m;
 
-    private decimal overduePercent => dashboard != null && dashboard.TotalOutstandingDebt > 0
-        ? (overdueDebt / dashboard.TotalOutstandingDebt) * 100
-        : 0m;
+    private decimal overduePercent => dashboard?.OverduePercent ?? 0m;
 
     protected override async Task OnInitializedAsync()
     {
@@ -1220,7 +1238,29 @@ else if (dashboard != null)
             return;
         }
 
+        LayoutState.OnChange += OnLayoutStateChanged;
+        selectedPeriod = LayoutState.SelectedPeriod;
+        UpdatePeriodDates();
         await LoadDashboard();
+    }
+
+    private async void OnLayoutStateChanged()
+    {
+        await InvokeAsync(async () =>
+        {
+            if (selectedPeriod != LayoutState.SelectedPeriod)
+            {
+                selectedPeriod = LayoutState.SelectedPeriod;
+                UpdatePeriodDates();
+            }
+            await LoadDashboard();
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        LayoutState.OnChange -= OnLayoutStateChanged;
     }
 
     private async Task LoadDashboard()
@@ -1228,7 +1268,7 @@ else if (dashboard != null)
         isRefreshing = true;
         try
         {
-            dashboard = await GetDashboardDataUseCase.ExecuteAsync();
+            dashboard = await GetDashboardDataUseCase.ExecuteAsync(selectedPeriod);
             lastUpdated = DateTime.Now;
         }
         finally
@@ -1238,9 +1278,16 @@ else if (dashboard != null)
         }
     }
 
-    private void OnPeriodChanged(ChangeEventArgs e)
+    private async Task OnPeriodChanged(ChangeEventArgs e)
     {
         selectedPeriod = e.Value?.ToString() ?? "this_month";
+        LayoutState.SetSelectedPeriod(selectedPeriod);
+        UpdatePeriodDates();
+        await LoadDashboard();
+    }
+
+    private void UpdatePeriodDates()
+    {
         var now = DateTime.Now;
         switch (selectedPeriod)
         {

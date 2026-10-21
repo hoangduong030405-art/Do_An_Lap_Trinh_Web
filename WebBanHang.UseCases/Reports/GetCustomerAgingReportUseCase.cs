@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebBanHang.CoreBusiness.Entities;
 using WebBanHang.UseCases.DTOs;
 using WebBanHang.UseCases.PluginInterfaces.DataStore;
 
@@ -26,7 +27,13 @@ namespace WebBanHang.UseCases.Reports
             foreach (var customer in customers)
             {
                 var unpaidInvoices = await _invoiceRepository.GetUnpaidInvoicesByCustomerOrderedByDateAsync(customer.Id);
-                if (!unpaidInvoices.Any()) continue;
+                
+                // Loại bỏ tuyệt đối hóa đơn đã thanh toán xong (Paid) hoặc bị hủy (Cancelled)
+                var validInvoices = unpaidInvoices
+                    .Where(i => i.Balance > 0 && i.Status != InvoiceStatus.Paid && i.Status != InvoiceStatus.Cancelled)
+                    .ToList();
+
+                if (!validInvoices.Any()) continue;
 
                 var report = new CustomerAgingReportDto
                 {
@@ -37,10 +44,10 @@ namespace WebBanHang.UseCases.Reports
                     CreditLimit = customer.CreditLimit
                 };
 
-                foreach (var invoice in unpaidInvoices)
+                foreach (var invoice in validInvoices)
                 {
-                    var overdueDays = (int)(asOfDate.Date - invoice.DueDate.Date).TotalDays;
-                    if (overdueDays < 0) overdueDays = 0;
+                    // Dùng hàm Domain duy nhất từ Invoice.cs
+                    var overdueDays = invoice.GetOverdueDays(asOfDate);
 
                     var invoiceDto = new InvoiceAgingItemDto
                     {
@@ -54,10 +61,15 @@ namespace WebBanHang.UseCases.Reports
                         OverdueDays = overdueDays
                     };
 
-                    if (overdueDays <= 30)
+                    if (overdueDays <= 0)
                     {
-                        report.Bucket0To30 += invoice.Balance;
-                        invoiceDto.AgingCategory = "0-30";
+                        report.BucketNotDue += invoice.Balance;
+                        invoiceDto.AgingCategory = "Chưa đến hạn";
+                    }
+                    else if (overdueDays <= 30)
+                    {
+                        report.Bucket1To30 += invoice.Balance;
+                        invoiceDto.AgingCategory = "1-30";
                     }
                     else if (overdueDays <= 60)
                     {

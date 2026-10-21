@@ -24,7 +24,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
             using var connection = new SqlConnection(_connectionString);
             var notifications = new List<NotificationItemDto>();
 
-            // 1. Invoices Overdue or Due within 3 days
+            // 1. Invoices Overdue or Due within 3 days (sử dụng chuẩn tham số @AsOfDate đồng bộ với CoreBusiness)
+            var asOfDate = DateTime.Now;
             string invoiceQuery;
             if (role == "Customer" && customerId.HasValue)
             {
@@ -32,16 +33,18 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     SELECT TOP 8
                         i.Id,
                         CASE 
-                            WHEN i.DueDate < GETDATE() THEN CONCAT('Hóa đơn #', i.InvoiceNumber, ' đã quá hạn!')
+                            WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN CONCAT('Hóa đơn #', i.InvoiceNumber, ' đã quá hạn!')
                             ELSE CONCAT('Hóa đơn #', i.InvoiceNumber, ' sắp đến hạn thanh toán')
                         END AS Title,
                         CONCAT('Số dư nợ còn lại: ', FORMAT(i.Balance, 'N0'), ' đ (Hạn chót: ', FORMAT(i.DueDate, 'dd/MM/yyyy'), ')') AS Message,
-                        CASE WHEN i.DueDate < GETDATE() THEN 'danger' ELSE 'warning' END AS Type,
+                        CASE WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN 'danger' ELSE 'warning' END AS Type,
                         '/portal/invoices' AS Url,
                         i.DueDate AS CreatedAt,
-                        CASE WHEN i.DueDate < GETDATE() THEN 'bi-exclamation-octagon-fill' ELSE 'bi-hourglass-split' END AS Icon
+                        CASE WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN 'bi-exclamation-octagon-fill' ELSE 'bi-hourglass-split' END AS Icon
                     FROM Invoices i
-                    WHERE i.CustomerId = @CustomerId AND i.Balance > 0 AND i.DueDate <= DATEADD(DAY, 3, GETDATE())
+                    WHERE i.CustomerId = @CustomerId 
+                      AND i.Balance > 0 
+                      AND CAST(i.DueDate AS DATE) <= DATEADD(DAY, 3, CAST(@AsOfDate AS DATE))
                     ORDER BY i.DueDate ASC;
                 ";
             }
@@ -51,24 +54,26 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     SELECT TOP 8
                         i.Id,
                         CASE 
-                            WHEN i.DueDate < GETDATE() THEN CONCAT('Nợ quá hạn: HĐ #', i.InvoiceNumber, ' - ', c.FullName)
+                            WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN CONCAT('Nợ quá hạn: HĐ #', i.InvoiceNumber, ' - ', c.FullName)
                             ELSE CONCAT('HĐ #', i.InvoiceNumber, ' sắp đến hạn - ', c.FullName)
                         END AS Title,
                         CONCAT('Còn nợ: ', FORMAT(i.Balance, 'N0'), ' đ / Tổng ', FORMAT(i.TotalAmount, 'N0'), ' đ (Hạn: ', FORMAT(i.DueDate, 'dd/MM/yyyy'), ')') AS Message,
-                        CASE WHEN i.DueDate < GETDATE() THEN 'danger' ELSE 'warning' END AS Type,
+                        CASE WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN 'danger' ELSE 'warning' END AS Type,
                         '/invoices' AS Url,
                         i.DueDate AS CreatedAt,
-                        CASE WHEN i.DueDate < GETDATE() THEN 'bi-exclamation-octagon-fill' ELSE 'bi-hourglass-split' END AS Icon
+                        CASE WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN 'bi-exclamation-octagon-fill' ELSE 'bi-hourglass-split' END AS Icon
                     FROM Invoices i
                     INNER JOIN Customers c ON i.CustomerId = c.Id
-                    WHERE i.Balance > 0 AND i.DueDate <= DATEADD(DAY, 3, GETDATE())
+                    WHERE i.Balance > 0 
+                      AND CAST(i.DueDate AS DATE) <= DATEADD(DAY, 3, CAST(@AsOfDate AS DATE))
                     ORDER BY i.DueDate ASC;
                 ";
             }
 
             var invoices = await connection.QueryAsync<NotificationItemDto>(invoiceQuery, new
             {
-                CustomerId = customerId ?? 0
+                CustomerId = customerId ?? 0,
+                AsOfDate = asOfDate
             });
             notifications.AddRange(invoices);
 

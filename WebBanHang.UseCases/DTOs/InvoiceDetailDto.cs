@@ -17,7 +17,8 @@ namespace WebBanHang.UseCases.DTOs
         public decimal PaidAmount { get; set; }
         public decimal Balance { get; set; }
         public InvoiceStatus Status { get; set; }
-        public int OverdueDays => Balance > 0 && DateTime.Now > DueDate ? (DateTime.Now - DueDate).Days : 0;
+        public int OverdueDays => Invoice.CalculateOverdueDays(DueDate, Balance, DateTime.Now);
+        public bool IsOverdue => Invoice.CheckIsOverdue(DueDate, Balance, DateTime.Now);
     }
 
     public class InvoiceDetailDto
@@ -30,6 +31,8 @@ namespace WebBanHang.UseCases.DTOs
         public decimal PaidAmount { get; set; }
         public decimal Balance { get; set; }
         public InvoiceStatus Status { get; set; }
+        public int OverdueDays => Invoice.CalculateOverdueDays(DueDate, Balance, DateTime.Now);
+        public bool IsOverdue => Invoice.CheckIsOverdue(DueDate, Balance, DateTime.Now);
 
         public int CustomerId { get; set; }
         public string CustomerCode { get; set; } = string.Empty;

@@ -14,7 +14,7 @@
 @inject IEmailSenderService EmailSenderService
 @inject IJSRuntime JSRuntime
 
-<h3>Báo Cáo Tuổi Nợ 4 Xô</h3>
+<h3>Báo Cáo Phân Tích Tuổi Nợ (Aging Report)</h3>
 
 <div class="row mb-4">
     <div class="col-md-8">
@@ -113,21 +113,25 @@ else
                         <td class="text-danger fw-bold">@inv.Balance.ToString("N0")</td>
                         <td>@inv.OverdueDays</td>
                         <td>
-                            @if (inv.AgingCategory == "0-30")
+                            @if (inv.AgingCategory == "Chưa đến hạn")
                             {
-                                <span class="badge bg-success">@inv.AgingCategory</span>
+                                <span class="badge bg-info text-white">Chưa đến hạn</span>
+                            }
+                            else if (inv.AgingCategory == "1-30")
+                            {
+                                <span class="badge bg-success">1-30 Ngày</span>
                             }
                             else if (inv.AgingCategory == "31-60")
                             {
-                                <span class="badge bg-warning text-dark">@inv.AgingCategory</span>
+                                <span class="badge bg-warning text-dark">31-60 Ngày</span>
                             }
                             else if (inv.AgingCategory == "61-90")
                             {
-                                <span class="badge text-white" style="background-color: #fd7e14;">@inv.AgingCategory</span>
+                                <span class="badge text-white" style="background-color: #fd7e14;">61-90 Ngày</span>
                             }
                             else
                             {
-                                <span class="badge bg-danger">@inv.AgingCategory</span>
+                                <span class="badge bg-danger">>90 Ngày</span>
                             }
                         </td>
                     </tr>
@@ -206,12 +210,12 @@ else
 
     private async Task ExportCSV()
     {
-        var csvContent = "Mã KH,Tên Khách Hàng,Tổng Nợ,0-30 Ngày,31-60 Ngày,61-90 Ngày,>90 Ngày\n";
+        var csvContent = "Mã KH,Tên Khách Hàng,Tổng Nợ,Chưa Đến Hạn,1-30 Ngày,31-60 Ngày,61-90 Ngày,>90 Ngày\n";
         if (reports != null)
         {
             foreach (var r in reports)
             {
-                csvContent += $"{r.CustomerCode},{r.CustomerName},{r.TotalOutstandingDebt},{r.Bucket0To30},{r.Bucket31To60},{r.Bucket61To90},{r.BucketOver90}\n";
+                csvContent += $"{r.CustomerCode},\"{r.CustomerName}\",{r.TotalOutstandingDebt},{r.BucketNotDue},{r.Bucket1To30},{r.Bucket31To60},{r.Bucket61To90},{r.BucketOver90}\n";
             }
         }
         

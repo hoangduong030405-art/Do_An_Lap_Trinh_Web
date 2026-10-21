@@ -28,7 +28,8 @@
             <span class="text-muted fw-semibold" style="font-size: 0.72rem;">Kỳ báo cáo:</span>
             <select class="form-select form-select-sm border-0 bg-transparent py-0 ps-1 pe-4 text-slate-navy fw-bold" 
                     style="font-size: 0.72rem; cursor: pointer; width: auto;"
-                    @bind="selectedPeriod">
+                    value="@LayoutState.SelectedPeriod"
+                    @onchange="OnPeriodChanged">
                 <option value="this_month">Tháng này (@DateTime.Now.ToString("MM/yyyy"))</option>
                 <option value="this_quarter">Quý này (Q@(((DateTime.Now.Month - 1) / 3) + 1)/@DateTime.Now.Year)</option>
                 <option value="this_year">Năm nay (@DateTime.Now.Year)</option>
@@ -94,7 +95,12 @@
     private bool isAvaOpen = false;
     private bool isHelpOpen = false;
     private int avaBadgeCount = 3;
-    private string selectedPeriod = "this_month";
+
+    private void OnPeriodChanged(ChangeEventArgs e)
+    {
+        var period = e.Value?.ToString() ?? "this_month";
+        LayoutState.SetSelectedPeriod(period);
+    }
 
     private async Task ToggleSidebar()
     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebBanHang.CoreBusiness.Entities;
 using WebBanHang.CoreBusiness.Exceptions;
@@ -25,7 +26,16 @@ namespace WebBanHang.UseCases.Payments
                 throw new BusinessRuleException("Số tiền thanh toán phải lớn hơn 0.");
             }
 
-            var unpaidInvoices = await _invoiceRepository.GetUnpaidInvoicesByCustomerOrderedByDateAsync(customerId);
+            var rawInvoices = await _invoiceRepository.GetUnpaidInvoicesByCustomerOrderedByDateAsync(customerId);
+            var unpaidInvoices = rawInvoices?
+                .Where(i => i.Balance > 0 && i.Status != InvoiceStatus.Paid && i.Status != InvoiceStatus.Cancelled)
+                .OrderBy(i => i.InvoiceDate)
+                .ToList() ?? new List<Invoice>();
+
+            if (!unpaidInvoices.Any())
+            {
+                throw new BusinessRuleException("Khách hàng không có nợ cần thanh toán.");
+            }
             
             var allocations = new List<PaymentAllocation>();
             var updatedInvoices = new List<Invoice>();

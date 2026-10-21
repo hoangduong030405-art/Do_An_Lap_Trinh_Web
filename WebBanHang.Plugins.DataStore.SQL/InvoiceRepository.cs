@@ -35,8 +35,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
         public async Task<IEnumerable<Invoice>> GetUnpaidInvoicesByCustomerOrderedByDateAsync(int customerId)
         {
             using var connection = new SqlConnection(_connectionString);
-            var query = "SELECT * FROM Invoices WHERE CustomerId = @CustomerId AND Balance > 0 AND Status != @Status ORDER BY InvoiceDate ASC";
-            return await connection.QueryAsync<Invoice>(query, new { CustomerId = customerId, Status = (int)InvoiceStatus.Cancelled });
+            var query = "SELECT * FROM Invoices WHERE CustomerId = @CustomerId AND Balance > 0 AND Status NOT IN ('Cancelled', '4', 'Paid', '3') ORDER BY InvoiceDate ASC";
+            return await connection.QueryAsync<Invoice>(query, new { CustomerId = customerId });
         }
 
         public async Task<int> CreateInvoiceWithLinesAsync(Invoice invoice, IEnumerable<InvoiceLine> lines)
@@ -170,7 +170,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     FORMAT(i.InvoiceDate, 'MM/yyyy') AS MonthLabel,
                     SUM(i.TotalAmount) AS Revenue,
                     SUM(i.PaidAmount) AS Collected,
-                    SUM(COALESCE(c.TotalCost, i.TotalAmount * 0.72)) AS Cost
+                    SUM(COALESCE(c.TotalCost, 0)) AS Cost
                 FROM Invoices i
                 LEFT JOIN InvoiceCost c ON i.Id = c.InvoiceId
                 WHERE i.InvoiceDate >= DATEADD(month, -@Months, GETDATE())

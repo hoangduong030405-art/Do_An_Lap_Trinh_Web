@@ -10,6 +10,16 @@ namespace WebBanHang.Services
         public bool IsRoleModalOpen { get; set; } = false;
         public string SelectedCompany { get; set; } = "TỔNG KHO PHÂN PHỐI SỈ & CÔNG NỢ B2B";
         public string FiscalYear { get; set; } = "2024";
+        public string SelectedPeriod { get; private set; } = "this_month";
+
+        public void SetSelectedPeriod(string period)
+        {
+            if (SelectedPeriod != period)
+            {
+                SelectedPeriod = period;
+                NotifyStateChanged();
+            }
+        }
 
         public void ToggleRoleModal()
         {

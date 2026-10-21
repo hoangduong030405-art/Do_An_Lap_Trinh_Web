@@ -6,29 +6,35 @@
         <button class="btn btn-sm btn-light" @onclick="() => OnViewDetails.InvokeAsync(Report.CustomerId)">Chi tiết</button>
     </div>
     <div class="card-body">
-        <div class="row text-center mb-2">
-            <div class="col-3">
+        <div class="row text-center mb-2 g-1">
+            <div class="col">
+                <div class="p-2 bg-info bg-opacity-75 text-white rounded">
+                    <small style="font-size: 0.72rem;">Chưa Đến Hạn</small><br />
+                    <strong style="font-size: 0.85rem;">@Report.BucketNotDue.ToString("N0")</strong>
+                </div>
+            </div>
+            <div class="col">
                 <div class="p-2 bg-success text-white rounded">
-                    <small>0-30 Ngày</small><br />
-                    <strong>@Report.Bucket0To30.ToString("N0")</strong>
+                    <small style="font-size: 0.72rem;">1-30 Ngày</small><br />
+                    <strong style="font-size: 0.85rem;">@Report.Bucket1To30.ToString("N0")</strong>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col">
                 <div class="p-2 bg-warning text-dark rounded">
-                    <small>31-60 Ngày</small><br />
-                    <strong>@Report.Bucket31To60.ToString("N0")</strong>
+                    <small style="font-size: 0.72rem;">31-60 Ngày</small><br />
+                    <strong style="font-size: 0.85rem;">@Report.Bucket31To60.ToString("N0")</strong>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col">
                 <div class="p-2 text-white rounded" style="background-color: #fd7e14;">
-                    <small>61-90 Ngày</small><br />
-                    <strong>@Report.Bucket61To90.ToString("N0")</strong>
+                    <small style="font-size: 0.72rem;">61-90 Ngày</small><br />
+                    <strong style="font-size: 0.85rem;">@Report.Bucket61To90.ToString("N0")</strong>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col">
                 <div class="p-2 bg-danger text-white rounded">
-                    <small>>90 Ngày</small><br />
-                    <strong>@Report.BucketOver90.ToString("N0")</strong>
+                    <small style="font-size: 0.72rem;">>90 Ngày</small><br />
+                    <strong style="font-size: 0.85rem;">@Report.BucketOver90.ToString("N0")</strong>
                 </div>
             </div>
         </div>
@@ -36,11 +42,11 @@
             <h6 class="mb-0">Tổng Nợ: <strong>@Report.TotalOutstandingDebt.ToString("N0") đ</strong></h6>
             @if (Report.IsIntegrityValid)
             {
-                <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill"></i> Đối soát toàn vẹn (Tổng 4 xô khớp 100% tổng nợ)</span>
+                <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill"></i> Đối soát toàn vẹn (Tổng các nhóm khớp 100% tổng nợ)</span>
             }
             else
             {
-                <span class="text-danger small fw-bold"><i class="bi bi-x-circle-fill"></i> Lỗi đối soát dữ liệu!</span>
+                <span class="text-danger small fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> CẢNH BÁO: Lệch đối soát dữ liệu (Tổng các xô != Tổng nợ)!</span>
             }
         </div>
     </div>

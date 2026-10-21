@@ -3,4 +3,5 @@
   <Project Path="WebBanHang.Plugins.DataStore.SQL/WebBanHang.Plugins.DataStore.SQL.csproj" />
   <Project Path="WebBanHang.UseCases/WebBanHang.UseCases.csproj" />
   <Project Path="WebBanHang/WebBanHang.csproj" />
+  <Project Path="WebBanHang.Tests/WebBanHang.Tests.csproj" />
 </Solution>

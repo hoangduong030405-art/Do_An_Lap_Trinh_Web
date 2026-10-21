@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebBanHang.CoreBusiness.Entities;
 using WebBanHang.UseCases.DTOs;
 using WebBanHang.UseCases.PluginInterfaces.DataStore;
 using WebBanHang.UseCases.Reports;
@@ -30,22 +31,57 @@ namespace WebBanHang.UseCases.Dashboard
             _agingReportUseCase = agingReportUseCase;
         }
 
-        public async Task<DashboardSummaryDto> ExecuteAsync()
+        public async Task<DashboardSummaryDto> ExecuteAsync(string period = "this_month")
         {
+            var now = DateTime.Now;
             var invoices = (await _invoiceRepository.GetAllAsync()).ToList();
             var customers = (await _customerRepository.GetAllAsync()).ToList();
             var products = (await _productRepository.GetAllAsync()).ToList();
             var payments = (await _paymentRepository.GetAllAsync()).ToList();
 
+            // 1. Xác định khung thời gian kỳ hiện tại và kỳ trước cùng độ dài
+            DateTime currentStart, currentEnd, prevStart, prevEnd;
+            if (period == "this_quarter")
+            {
+                int currentQuarter = (now.Month - 1) / 3 + 1;
+                currentStart = new DateTime(now.Year, (currentQuarter - 1) * 3 + 1, 1);
+                currentEnd = currentStart.AddMonths(3);
+                prevStart = currentStart.AddMonths(-3);
+                prevEnd = currentStart;
+            }
+            else if (period == "this_year")
+            {
+                currentStart = new DateTime(now.Year, 1, 1);
+                currentEnd = currentStart.AddYears(1);
+                prevStart = currentStart.AddYears(-1);
+                prevEnd = currentStart;
+            }
+            else // default: "this_month"
+            {
+                currentStart = new DateTime(now.Year, now.Month, 1);
+                currentEnd = currentStart.AddMonths(1);
+                prevStart = currentStart.AddMonths(-1);
+                prevEnd = currentStart;
+            }
+
+            // Hóa đơn & Thu tiền trong kỳ báo cáo
+            var invoicesInPeriod = invoices
+                .Where(i => i.InvoiceDate >= currentStart && i.InvoiceDate < currentEnd)
+                .ToList();
+            var invoicesInPrevPeriod = invoices
+                .Where(i => i.InvoiceDate >= prevStart && i.InvoiceDate < prevEnd)
+                .ToList();
+            var paymentsInPeriod = payments
+                .Where(p => p.PaymentDate >= currentStart && p.PaymentDate < currentEnd)
+                .ToList();
+
             var summary = new DashboardSummaryDto
             {
-                TotalRevenue = invoices.Sum(i => i.TotalAmount),
-                TotalOutstandingDebt = invoices.Sum(i => i.Balance),
-                TotalCollectedAmount = payments.Sum(p => p.Amount),
-                OverdueInvoicesCount = invoices.Count(i => i.Balance > 0 && DateTime.Now > i.DueDate),
+                TotalRevenue = invoicesInPeriod.Sum(i => i.TotalAmount),
+                TotalInvoicesCount = invoicesInPeriod.Count,
+                TotalCollectedAmount = paymentsInPeriod.Sum(p => p.Amount),
                 TotalCustomersCount = customers.Count,
                 TotalProductsCount = products.Count,
-                TotalInvoicesCount = invoices.Count,
                 TotalInventoryCost = products.Sum(p => p.StockQuantity * p.CostPrice),
                 TotalInventoryValuation = products.Sum(p => p.StockQuantity * p.UnitPrice),
                 TopInventoryProducts = products
@@ -65,8 +101,45 @@ namespace WebBanHang.UseCases.Dashboard
                     .ToList()
             };
 
+            // So sánh kỳ trước thật sự:
+            var prevRevenue = invoicesInPrevPeriod.Sum(i => i.TotalAmount);
+            if (prevRevenue > 0)
+            {
+                var diffPercent = Math.Round(((summary.TotalRevenue - prevRevenue) / prevRevenue) * 100, 1);
+                summary.PreviousPeriodComparisonText = diffPercent >= 0 
+                    ? $"+{diffPercent:N1}% so kỳ trước" 
+                    : $"{diffPercent:N1}% so kỳ trước";
+            }
+            else
+            {
+                summary.PreviousPeriodComparisonText = "Chưa có dữ liệu kỳ trước";
+            }
+
+            // 2. Tuổi nợ toàn hệ thống (Single Source of Truth từ GetCustomerAgingReportUseCase)
+            var agingReports = (await _agingReportUseCase.ExecuteAsync(now)).ToList();
+            summary.OverallAging = new CustomerAgingReportDto
+            {
+                CustomerName = "Toàn hệ thống",
+                BucketNotDue = agingReports.Sum(r => r.BucketNotDue),
+                Bucket1To30 = agingReports.Sum(r => r.Bucket1To30),
+                Bucket31To60 = agingReports.Sum(r => r.Bucket31To60),
+                Bucket61To90 = agingReports.Sum(r => r.Bucket61To90),
+                BucketOver90 = agingReports.Sum(r => r.BucketOver90),
+                TotalOutstandingDebt = agingReports.Sum(r => r.TotalOutstandingDebt)
+            };
+
+            summary.TotalOutstandingDebt = summary.OverallAging.TotalOutstandingDebt;
+            summary.OverdueDebt = summary.OverallAging.TotalOverdueDebt;
+            summary.CurrentDebt = summary.OverallAging.BucketNotDue;
+            summary.TotalDebtorsCount = agingReports.Count(r => r.TotalOutstandingDebt > 0);
+
+            // Số hóa đơn quá hạn: dùng đúng hàm Domain Invoice.GetOverdueDays(now) > 0
+            summary.OverdueInvoicesCount = invoices.Count(i => 
+                i.Status != InvoiceStatus.Paid && 
+                i.Status != InvoiceStatus.Cancelled && 
+                i.GetOverdueDays(now) > 0);
+
             // Top Debtors
-            var agingReports = (await _agingReportUseCase.ExecuteAsync(DateTime.Now)).ToList();
             summary.TopDebtors = agingReports
                 .Where(r => r.TotalOutstandingDebt > 0)
                 .OrderByDescending(r => r.TotalOutstandingDebt)
@@ -86,21 +159,15 @@ namespace WebBanHang.UseCases.Dashboard
                     };
                 }).ToList();
 
-            // Overall Aging 4 Buckets
-            summary.OverallAging = new CustomerAgingReportDto
-            {
-                CustomerName = "Toàn hệ thống",
-                Bucket0To30 = agingReports.Sum(r => r.Bucket0To30),
-                Bucket31To60 = agingReports.Sum(r => r.Bucket31To60),
-                Bucket61To90 = agingReports.Sum(r => r.Bucket61To90),
-                BucketOver90 = agingReports.Sum(r => r.BucketOver90),
-                TotalOutstandingDebt = agingReports.Sum(r => r.TotalOutstandingDebt)
-            };
+            // Tỷ lệ tập trung công nợ Top 5 KH
+            summary.Top5DebtorsPercentage = summary.TotalOutstandingDebt > 0 
+                ? Math.Round((summary.TopDebtors.Sum(d => d.CurrentDebt) / summary.TotalOutstandingDebt) * 100, 1) 
+                : 0m;
 
-            // Top Selling Products from Dapper
+            // Top Selling Products từ Dapper
             summary.TopProducts = (await _invoiceRepository.GetTopSellingProductsAsync(5)).ToList();
 
-            // Monthly Revenue Stats from Dapper (12 months)
+            // Doanh thu, Chi phí, Lợi nhuận 12 tháng từ Dapper (XÓA HỆ SỐ 0.72)
             var rawMonthly = (await _invoiceRepository.GetMonthlyRevenueStatisticsAsync(12)).ToList();
             var all12Months = new List<MonthlyRevenueDto>();
             for (int m = 1; m <= 12; m++)
@@ -110,7 +177,7 @@ namespace WebBanHang.UseCases.Dashboard
                 {
                     match.MonthNumber = m;
                     match.MonthLabel = $"Th {m}";
-                    if (match.Cost == 0) match.Cost = match.Revenue * 0.72m;
+                    // Không áp hệ số 0.72 - Giá vốn phản ánh thật từ InvoiceLines
                     all12Months.Add(match);
                 }
                 else
@@ -126,6 +193,24 @@ namespace WebBanHang.UseCases.Dashboard
                 }
             }
             summary.MonthlyRevenues = all12Months;
+
+            // Giá vốn thực tế trong kỳ tương ứng
+            if (period == "this_quarter")
+            {
+                int currentQuarter = (now.Month - 1) / 3 + 1;
+                summary.TotalActualCost = all12Months
+                    .Where(m => (m.MonthNumber - 1) / 3 + 1 == currentQuarter)
+                    .Sum(m => m.Cost);
+            }
+            else if (period == "this_year")
+            {
+                summary.TotalActualCost = all12Months.Sum(m => m.Cost);
+            }
+            else // "this_month"
+            {
+                summary.TotalActualCost = all12Months
+                    .FirstOrDefault(m => m.MonthNumber == now.Month)?.Cost ?? 0m;
+            }
 
             return summary;
         }

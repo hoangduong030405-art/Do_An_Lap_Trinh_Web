@@ -16,13 +16,14 @@ namespace WebBanHang.UseCases.AI
             sb.AppendLine();
             sb.AppendLine($"Công ty xin thông báo quý khách hiện có các hóa đơn chưa thanh toán với tổng số tiền {agingReport.TotalOutstandingDebt:N0} đ.");
             
-            if (agingReport.BucketOver90 > 0 || agingReport.Bucket61To90 > 0 || agingReport.Bucket31To60 > 0)
+            if (agingReport.BucketOver90 > 0 || agingReport.Bucket61To90 > 0 || agingReport.Bucket31To60 > 0 || agingReport.Bucket1To30 > 0)
             {
                 sb.AppendLine("Trong đó, số dư nợ theo thời gian quá hạn như sau:");
                 if (agingReport.BucketOver90 > 0) sb.AppendLine($"- Quá hạn > 90 ngày: {agingReport.BucketOver90:N0} đ");
                 if (agingReport.Bucket61To90 > 0) sb.AppendLine($"- Quá hạn 61-90 ngày: {agingReport.Bucket61To90:N0} đ");
                 if (agingReport.Bucket31To60 > 0) sb.AppendLine($"- Quá hạn 31-60 ngày: {agingReport.Bucket31To60:N0} đ");
-                if (agingReport.Bucket0To30 > 0) sb.AppendLine($"- Trong hạn 0-30 ngày: {agingReport.Bucket0To30:N0} đ");
+                if (agingReport.Bucket1To30 > 0) sb.AppendLine($"- Quá hạn 1-30 ngày: {agingReport.Bucket1To30:N0} đ");
+                if (agingReport.BucketNotDue > 0) sb.AppendLine($"- Chưa đến hạn (trong hạn): {agingReport.BucketNotDue:N0} đ");
             }
 
             sb.AppendLine();

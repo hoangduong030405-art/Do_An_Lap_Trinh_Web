@@ -8,10 +8,22 @@ namespace WebBanHang.UseCases.DTOs
         public decimal TotalRevenue { get; set; }
         public decimal TotalOutstandingDebt { get; set; }
         public decimal TotalCollectedAmount { get; set; }
+        public decimal OverdueDebt { get; set; }
+        public decimal CurrentDebt { get; set; }
         public int OverdueInvoicesCount { get; set; }
         public int TotalCustomersCount { get; set; }
         public int TotalProductsCount { get; set; }
         public int TotalInvoicesCount { get; set; }
+        public int TotalDebtorsCount { get; set; }
+        public decimal Top5DebtorsPercentage { get; set; }
+        public string PreviousPeriodComparisonText { get; set; } = "Chưa có dữ liệu kỳ trước";
+
+        public decimal TotalActualCost { get; set; }
+        public decimal TotalActualProfit => TotalRevenue - TotalActualCost;
+        public decimal ActualProfitMargin => TotalRevenue > 0 ? Math.Round((TotalActualProfit / TotalRevenue) * 100, 1) : 0;
+
+        public decimal CollectionRate => TotalRevenue > 0 ? Math.Min(100, Math.Round((TotalCollectedAmount / TotalRevenue) * 100, 1)) : 0;
+        public decimal OverduePercent => TotalOutstandingDebt > 0 ? Math.Round((OverdueDebt / TotalOutstandingDebt) * 100, 1) : 0;
 
         public decimal TotalInventoryCost { get; set; }
         public decimal TotalInventoryValuation { get; set; }

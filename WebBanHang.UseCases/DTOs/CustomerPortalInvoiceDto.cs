@@ -15,8 +15,8 @@ namespace WebBanHang.UseCases.DTOs
         public decimal Balance { get; set; }
         public InvoiceStatus Status { get; set; }
 
-        public bool IsOverdue => Balance > 0 && DueDate.Date < DateTime.Today;
-        public int OverdueDays => IsOverdue ? (DateTime.Today - DueDate.Date).Days : 0;
-        public int RemainingDays => (!IsOverdue && Balance > 0) ? (DueDate.Date - DateTime.Today).Days : 0;
+        public bool IsOverdue => Invoice.CheckIsOverdue(DueDate, Balance, DateTime.Today);
+        public int OverdueDays => Invoice.CalculateOverdueDays(DueDate, Balance, DateTime.Today);
+        public int RemainingDays => (!IsOverdue && Balance > 0) ? Math.Max(0, (DueDate.Date - DateTime.Today).Days) : 0;
     }
 }
