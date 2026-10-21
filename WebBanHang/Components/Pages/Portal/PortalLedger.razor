@@ -245,7 +245,7 @@
         try
         {
             customerInfo = await GetCustomerPortalInfoUseCase.ExecuteAsync(customerId);
-            ledger = await ViewCustomerLedgerUseCase.ExecuteAsync(customerId);
+            ledger = await ViewCustomerLedgerUseCase.ExecuteAsync(customerId, "Customer", customerId);
         }
         finally
         {

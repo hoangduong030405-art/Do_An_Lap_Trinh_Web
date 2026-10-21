@@ -22,9 +22,7 @@
     </filter>
   </defs>
 
-  <!-- NỀN TRANG TRÍ -->
-  <rect width="400" height="400" rx="24" fill="url(#bg)"/>
-  
+
   <!-- BÓNG ĐỔ LON -->
   <ellipse cx="200" cy="340" rx="75" ry="14" fill="#000000" opacity="0.2"/>
 
@@ -57,13 +55,4 @@
     <text x="200" y="295" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="900" fill="#fef08a" text-anchor="middle">320 ml</text>
   </g>
 
-  <!-- HUY HIỆU QUY CÁCH ĐÓNG THÙNG B2B -->
-  <g transform="translate(20, 20)">
-    <rect width="130" height="28" rx="14" fill="#dc2626"/>
-    <text x="65" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">THÙNG 24 LON</text>
-  </g>
-  <g transform="translate(280, 20)">
-    <rect width="100" height="28" rx="14" fill="#ffffff" stroke="#fca5a5" stroke-width="1.5"/>
-    <text x="330" y="18" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="bold" fill="#dc2626" text-anchor="middle">SLEEK 320ML</text>
-  </g>
 </svg>

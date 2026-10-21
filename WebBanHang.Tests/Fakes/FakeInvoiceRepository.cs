@@ -46,9 +46,29 @@ namespace WebBanHang.Tests.Fakes
             return Task.FromResult(invoice.Id);
         }
 
+        public List<InvoiceListDto> CustomInvoicesWithCustomer { get; } = new();
+
         public Task<IEnumerable<InvoiceListDto>> GetInvoicesWithCustomerAsync(string? keyword = null, string? status = null)
         {
-            return Task.FromResult<IEnumerable<InvoiceListDto>>(new List<InvoiceListDto>());
+            if (CustomInvoicesWithCustomer.Any())
+            {
+                return Task.FromResult<IEnumerable<InvoiceListDto>>(CustomInvoicesWithCustomer);
+            }
+
+            var list = Invoices.Select(i => new InvoiceListDto
+            {
+                Id = i.Id,
+                InvoiceNumber = i.InvoiceNumber,
+                CustomerId = i.CustomerId,
+                InvoiceDate = i.InvoiceDate,
+                DueDate = i.DueDate,
+                TotalAmount = i.TotalAmount,
+                PaidAmount = i.PaidAmount,
+                Balance = i.Balance,
+                Status = i.Status
+            }).ToList();
+
+            return Task.FromResult<IEnumerable<InvoiceListDto>>(list);
         }
 
         public Task<InvoiceDetailDto?> GetInvoiceDetailByIdAsync(int id)

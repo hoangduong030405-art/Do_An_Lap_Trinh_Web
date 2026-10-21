@@ -55,8 +55,19 @@ namespace WebBanHang.UseCases.Invoices
                 };
             }
 
-            // 1. Kiểm tra tồn kho từng sản phẩm
-            foreach (var item in items)
+            // Gộp các dòng cùng ProductId (GroupBy, cộng Quantity) trước khi kiểm tra tồn kho
+            var mergedItems = items
+                .GroupBy(i => i.ProductId)
+                .Select(g => new InvoiceLine
+                {
+                    ProductId = g.Key,
+                    Quantity = g.Sum(x => x.Quantity)
+                })
+                .ToList();
+
+            // 1. Kiểm tra tồn kho từng sản phẩm và gán giá chính thức từ IProductRepository
+            // Bỏ qua hoàn toàn UnitPrice và CostPrice do client gửi lên nhằm bảo vệ an ninh giá
+            foreach (var item in mergedItems)
             {
                 var product = await _productRepository.GetByIdAsync(item.ProductId);
                 if (product == null)
@@ -73,11 +84,22 @@ namespace WebBanHang.UseCases.Invoices
                     throw new BusinessRuleException(
                         $"Sản phẩm '{product.Name}' không đủ tồn kho (Hiện có: {product.StockQuantity} {product.Unit}, Yêu cầu: {item.Quantity} {product.Unit}).");
                 }
+
+                // Ép buộc lấy đơn giá và giá vốn chính thức từ CSDL IProductRepository
+                item.UnitPrice = product.UnitPrice;
+                item.CostPrice = product.CostPrice;
+
+                // Cập nhật lại giá cho các phần tử gốc trong items truyền vào
+                foreach (var orig in items.Where(x => x.ProductId == item.ProductId))
+                {
+                    orig.UnitPrice = product.UnitPrice;
+                    orig.CostPrice = product.CostPrice;
+                }
             }
 
             // 2. Kiểm tra hạn mức nợ tín dụng thương mại (Luật 1)
             var currentDebt = await _customerRepository.GetTotalOutstandingDebtAsync(customerId);
-            var orderTotal = items.Sum(i => i.Quantity * i.UnitPrice);
+            var orderTotal = mergedItems.Sum(i => i.Quantity * i.UnitPrice);
             var availableCredit = Math.Max(0, customer.CreditLimit - currentDebt);
 
             if (currentDebt + orderTotal > customer.CreditLimit)
@@ -88,19 +110,20 @@ namespace WebBanHang.UseCases.Invoices
             }
 
             // 3. Khởi tạo Hóa đơn B2B ghi nợ
+            var now = DateTime.Now;
             var invoice = new Invoice
             {
-                InvoiceNumber = $"INV-B2B-{DateTime.Now:yyyyMMddHHmmss}-{Random.Shared.Next(100, 999)}",
+                InvoiceNumber = $"INV-B2B-{now:yyyyMMddHHmmss}-{Random.Shared.Next(100, 999)}",
                 CustomerId = customerId,
-                InvoiceDate = DateTime.Now,
-                DueDate = DateTime.Now.AddDays(customer.PaymentTermsDays > 0 ? customer.PaymentTermsDays : 30),
+                InvoiceDate = now,
+                DueDate = customer.CalculateDueDate(now),
                 TotalAmount = orderTotal,
                 PaidAmount = 0,
                 Balance = orderTotal,
                 Status = InvoiceStatus.Unpaid
             };
 
-            var invoiceId = await _invoiceRepository.CreateInvoiceWithLinesAsync(invoice, items);
+            var invoiceId = await _invoiceRepository.CreateInvoiceWithLinesAsync(invoice, mergedItems);
 
             return new CustomerPortalOrderResultDto
             {

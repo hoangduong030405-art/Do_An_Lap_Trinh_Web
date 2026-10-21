@@ -5,10 +5,13 @@
 @using WebBanHang.UseCases.Invoices
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.CoreBusiness.Entities
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 
 @inject IViewInvoiceDetailUseCase ViewInvoiceDetailUseCase
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>In Hóa Đơn @(invoice?.InvoiceNumber ?? "") - ECO2415</PageTitle>
 
@@ -66,7 +69,7 @@
                     </div>
                     <div class="small text-muted">Địa chỉ: 123 Đường Công Nghệ, Quận Tân Bình, TP. Hồ Chí Minh</div>
                     <div class="small text-muted">Hotline: 1900 6868 • Email: sales@eco2415.vn</div>
-                    <div class="small text-muted">Mã số thuế: <strong>0312345678</strong> • TK VCB: 101870000001</div>
+                    <div class="small text-muted">Mã số thuế: <strong>0312345678</strong> • TK ACB: 35782747</div>
                 </div>
                 <div class="col-5 text-end">
                     <h4 class="fw-extrabold text-slate-navy mb-1 tracking-tight">HÓA ĐƠN BÁN HÀNG</h4>
@@ -140,13 +143,13 @@
                     @if (invoice.Balance > 0)
                     {
                         <div class="border rounded-3 p-3 bg-light d-flex align-items-center gap-3">
-                            <img src="https://img.vietqr.io/image/970436-101870000001-compact2.png?amount=@Convert.ToInt64(invoice.Balance)&addInfo=HD%20@invoice.InvoiceNumber&accountName=CONG%20TY%20ECO2415"
+                            <img src="https://img.vietqr.io/image/acb-35782747-compact2.png?amount=@Convert.ToInt64(invoice.Balance)&addInfo=HD%20@invoice.InvoiceNumber"
                                  alt="VietQR Napas 247"
                                  style="width: 125px; height: 125px; object-fit: contain;" />
                             <div class="small">
                                 <div class="fw-bold text-primary mb-1"><i class="bi bi-qr-code-scan"></i> QUÉT MÃ VIETQR NAPAS 24/7</div>
-                                <div>Ngân hàng: <strong>Vietcombank (VCB)</strong></div>
-                                <div>Số TK: <strong>101870000001</strong></div>
+                                <div>Ngân hàng: <strong>Á Châu (ACB)</strong></div>
+                                <div>Số TK: <strong>35782747</strong></div>
                                 <div>Số tiền: <strong class="text-danger">@invoice.Balance.ToString("N0") đ</strong></div>
                                 <div>Nội dung: <strong class="font-monospace text-primary">HD @invoice.InvoiceNumber</strong></div>
                             </div>
@@ -209,13 +212,23 @@
 
     private InvoiceDetailDto? invoice;
     private bool loading = true;
+    private string? userRole;
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         try
         {
-            invoice = await ViewInvoiceDetailUseCase.ExecuteAsync(Id);
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+            int? customerId = null;
+            if (int.TryParse(user.FindFirst("CustomerId")?.Value, out int cid))
+            {
+                customerId = cid;
+            }
+
+            invoice = await ViewInvoiceDetailUseCase.ExecuteAsync(Id, userRole, customerId);
         }
         finally
         {
@@ -225,7 +238,14 @@
 
     private void GoBack()
     {
-        Navigation.NavigateTo("/invoices");
+        if (string.Equals(userRole, "Customer", StringComparison.OrdinalIgnoreCase))
+        {
+            Navigation.NavigateTo("/portal/invoices");
+        }
+        else
+        {
+            Navigation.NavigateTo("/invoices");
+        }
     }
 
     private async Task TriggerPrint()

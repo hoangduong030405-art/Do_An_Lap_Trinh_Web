@@ -220,5 +220,90 @@ namespace WebBanHang.Tests
 
             Assert.Contains("không đủ tồn kho", ex.Message);
         }
+
+        [Fact(DisplayName = "Luật 1: Gộp dòng cùng ProductId - Khi tổng số lượng các dòng trùng sản phẩm vượt tồn kho thì ném BusinessRuleException")]
+        public async Task CreateInvoice_WhenMultipleLinesForSameProductExceedStock_ThrowsBusinessRuleException()
+        {
+            // Arrange: Tồn kho chỉ còn 15
+            var customer = new Customer
+            {
+                Id = 1,
+                CustomerCode = "KH001",
+                FullName = "Tạp Hóa Bà Ba",
+                CreditLimit = 20_000_000m,
+                PaymentTermsDays = 30
+            };
+            _customerRepo.Customers.Add(customer);
+            _customerRepo.OutstandingDebts[1] = 0m;
+
+            var product = new Product
+            {
+                Id = 301,
+                ProductCode = "SP301",
+                Name = "Nước Tăng Lực Red Bull",
+                UnitPrice = 250_000m,
+                StockQuantity = 15 // Tồn kho 15
+            };
+            _productRepo.Products.Add(product);
+
+            // Gửi 2 dòng cùng ProductId 301: Dòng 1 (10) + Dòng 2 (10) = 20 > 15
+            // Nếu không gộp, từng dòng 10 <= 15 sẽ lọt qua kiểm tra riêng lẻ!
+            var lines = new List<InvoiceLine>
+            {
+                new() { ProductId = 301, Quantity = 10, UnitPrice = 250_000m },
+                new() { ProductId = 301, Quantity = 10, UnitPrice = 250_000m }
+            };
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<BusinessRuleException>(() =>
+                _useCase.ExecuteAsync(customer.Id, DateTime.Now, lines));
+
+            Assert.Contains("không đủ tồn kho", ex.Message);
+            Assert.Contains("Yêu cầu: 20", ex.Message);
+        }
+
+        [Fact(DisplayName = "Luật 1: Gộp dòng cùng ProductId - Khi tổng số lượng đủ tồn kho thì hợp nhất thành 1 dòng chi tiết trong hóa đơn")]
+        public async Task CreateInvoice_WhenMultipleLinesForSameProductWithinStock_MergesIntoSingleInvoiceLine()
+        {
+            // Arrange: Tồn kho 30
+            var customer = new Customer
+            {
+                Id = 2,
+                CustomerCode = "KH002",
+                FullName = "Đại Lý Hùng Thắng",
+                CreditLimit = 20_000_000m,
+                PaymentTermsDays = 30
+            };
+            _customerRepo.Customers.Add(customer);
+            _customerRepo.OutstandingDebts[2] = 0m;
+
+            var product = new Product
+            {
+                Id = 302,
+                ProductCode = "SP302",
+                Name = "Sữa Tươi Vinamilk",
+                UnitPrice = 350_000m,
+                StockQuantity = 30
+            };
+            _productRepo.Products.Add(product);
+
+            // Gửi 2 dòng cùng ProductId 302: Dòng 1 (5) + Dòng 2 (8) = 13 <= 30
+            var lines = new List<InvoiceLine>
+            {
+                new() { ProductId = 302, Quantity = 5, UnitPrice = 350_000m },
+                new() { ProductId = 302, Quantity = 8, UnitPrice = 350_000m }
+            };
+
+            // Act
+            var invoiceId = await _useCase.ExecuteAsync(customer.Id, DateTime.Now, lines);
+
+            // Assert
+            Assert.True(invoiceId > 0);
+            var savedLines = _invoiceRepo.InvoiceLines.Where(l => l.InvoiceId == invoiceId).ToList();
+            // Đã được gộp thành đúng 1 dòng với số lượng 13
+            Assert.Single(savedLines);
+            Assert.Equal(13, savedLines[0].Quantity);
+            Assert.Equal(13 * 350_000m, _invoiceRepo.Invoices.First(i => i.Id == invoiceId).TotalAmount);
+        }
     }
 }

@@ -5,6 +5,6 @@ namespace WebBanHang.UseCases.Invoices
 {
     public interface IViewInvoiceDetailUseCase
     {
-        Task<InvoiceDetailDto?> ExecuteAsync(int id);
+        Task<InvoiceDetailDto?> ExecuteAsync(int id, string? role = null, int? customerId = null);
     }
 }

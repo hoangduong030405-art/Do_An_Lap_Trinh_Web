@@ -151,6 +151,7 @@ app.MapPost("/api/auth/login", async (HttpContext httpContext, IFormCollection f
             claims.Add(new Claim("CustomerId", "1"));
         }
 
+        await httpContext.SignOutAsync("Cookies");
         var identity = new ClaimsIdentity(claims, "Cookies");
         await httpContext.SignInAsync("Cookies", new ClaimsPrincipal(identity));
 
@@ -176,35 +177,6 @@ app.MapPost("/api/auth/login", async (HttpContext httpContext, IFormCollection f
     string errRedirect = "/login?error=true" + (!string.IsNullOrEmpty(returnUrl) ? $"&returnUrl={Uri.EscapeDataString(returnUrl)}" : "");
     return Results.Redirect(errRedirect);
 }).DisableAntiforgery();
-
-app.MapGet("/api/auth/switch", async (string role, HttpContext httpContext) => {
-    string r = (role ?? "").Trim().ToLower();
-    string targetRole = r == "customer" ? "Customer" : (r == "sales" ? "Sales" : "Accountant");
-    string fullName = targetRole == "Accountant" ? "Kế Toán Nguyễn Văn A" : (targetRole == "Customer" ? "Tạp Hóa Bà Ba - Chợ Đông Ba" : "Nhân Viên Trần Văn B");
-    string nameId = targetRole == "Customer" ? "customer" : (targetRole == "Accountant" ? "accountant" : "sales");
-
-    var claims = new List<Claim>
-    {
-        new(ClaimTypes.Name, fullName),
-        new(ClaimTypes.NameIdentifier, nameId),
-        new(ClaimTypes.Role, targetRole)
-    };
-
-    if (targetRole == "Customer")
-    {
-        claims.Add(new Claim("CustomerId", "1"));
-    }
-
-    var identity = new ClaimsIdentity(claims, "Cookies");
-    await httpContext.SignInAsync("Cookies", new ClaimsPrincipal(identity));
-
-    if (targetRole == "Customer")
-    {
-        return Results.Redirect("/portal/dashboard");
-    }
-    return Results.Redirect("/dashboard");
-});
-
 app.MapGet("/api/auth/logout", async (HttpContext httpContext) => {
     await httpContext.SignOutAsync("Cookies");
     httpContext.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0";

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanHang.CoreBusiness.Entities;
+using WebBanHang.CoreBusiness.Exceptions;
 using WebBanHang.UseCases.DTOs;
 using WebBanHang.UseCases.PluginInterfaces.DataStore;
 
@@ -14,6 +15,11 @@ namespace WebBanHang.Plugins.DataStore.SQL
     {
         private readonly string _connectionString;
 
+        static PaymentRepository()
+        {
+            SqlMapper.AddTypeHandler(new InvoiceStatusTypeHandler());
+        }
+
         public PaymentRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
@@ -22,7 +28,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
         public async Task<IEnumerable<Payment>> GetAllAsync()
         {
             using var connection = new SqlConnection(_connectionString);
-            return await connection.QueryAsync<Payment>("SELECT * FROM Payments ORDER BY PaymentDate DESC");
+            return await connection.QueryAsync<Payment>("SELECT * FROM Payments ORDER BY PaymentDate DESC, Id DESC");
         }
 
         public async Task<int> RecordPaymentWithAllocationsAsync(Payment payment, IEnumerable<PaymentAllocation> allocations, IEnumerable<Invoice> updatedInvoices)
@@ -51,6 +57,13 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     INSERT INTO PaymentAllocations (PaymentId, InvoiceId, AllocatedAmount, AllocationDate)
                     VALUES (@PaymentId, @InvoiceId, @AllocatedAmount, @AllocationDate)";
 
+                var updateInvoiceQuery = @"
+                    UPDATE Invoices 
+                    SET PaidAmount = PaidAmount + @A, 
+                        Balance = Balance - @A, 
+                        Status = CASE WHEN Balance - @A <= 0 THEN 'Paid' ELSE 'PartiallyPaid' END 
+                    WHERE Id = @Id AND Balance >= @A";
+
                 foreach (var allocation in allocations)
                 {
                     allocation.PaymentId = paymentId;
@@ -61,19 +74,17 @@ namespace WebBanHang.Plugins.DataStore.SQL
                         allocation.AllocatedAmount,
                         allocation.AllocationDate
                     }, transaction);
-                }
 
-                var updateInvoiceQuery = "UPDATE Invoices SET PaidAmount = @PaidAmount, Balance = @Balance, Status = @Status WHERE Id = @Id";
-
-                foreach (var invoice in updatedInvoices)
-                {
-                    await connection.ExecuteAsync(updateInvoiceQuery, new
+                    var rowsAffected = await connection.ExecuteAsync(updateInvoiceQuery, new
                     {
-                        invoice.PaidAmount,
-                        invoice.Balance,
-                        Status = (int)invoice.Status,
-                        invoice.Id
+                        A = allocation.AllocatedAmount,
+                        Id = allocation.InvoiceId
                     }, transaction);
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new BusinessRuleException("Dữ liệu đã thay đổi, vui lòng thử lại.");
+                    }
                 }
 
                 transaction.Commit();
@@ -147,8 +158,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
                 CreditLimit = customer?.CreditLimit ?? 0
             };
 
-            var invoices = await connection.QueryAsync<Invoice>("SELECT * FROM Invoices WHERE CustomerId = @CustomerId ORDER BY InvoiceDate ASC", new { CustomerId = customerId });
-            var payments = await connection.QueryAsync<Payment>("SELECT * FROM Payments WHERE CustomerId = @CustomerId ORDER BY PaymentDate ASC", new { CustomerId = customerId });
+            var invoices = await connection.QueryAsync<Invoice>("SELECT * FROM Invoices WHERE CustomerId = @CustomerId ORDER BY InvoiceDate ASC, Id ASC", new { CustomerId = customerId });
+            var payments = await connection.QueryAsync<Payment>("SELECT * FROM Payments WHERE CustomerId = @CustomerId ORDER BY PaymentDate ASC, Id ASC", new { CustomerId = customerId });
 
             var list = new List<LedgerEntryDto>();
 

@@ -173,5 +173,63 @@ namespace WebBanHang.Tests
             Assert.Equal(InvoiceStatus.PartiallyPaid, inv2.Status);
             Assert.Equal(2_000_000m, inv2.Balance);
         }
+
+        [Fact(DisplayName = "Luật 2: Thứ tự FIFO khi trùng ngày lập hóa đơn - Dùng khóa phụ Id ASC để ưu tiên hóa đơn tạo trước")]
+        public async Task RecordPayment_WhenInvoicesHaveSameDate_AllocatesInOrderOfSecondaryKeyId()
+        {
+            // Arrange: 2 hóa đơn cùng lập vào ngày 2026-10-01
+            var sameDate = new DateTime(2026, 10, 1, 8, 0, 0);
+
+            var earlierInvoice = new Invoice
+            {
+                Id = 10, // Tạo trước (Id nhỏ hơn)
+                InvoiceNumber = "HD-TRUOC",
+                CustomerId = 1,
+                InvoiceDate = sameDate,
+                DueDate = sameDate.AddDays(30),
+                TotalAmount = 3_000_000m,
+                Balance = 3_000_000m,
+                PaidAmount = 0,
+                Status = InvoiceStatus.Unpaid
+            };
+
+            var laterInvoice = new Invoice
+            {
+                Id = 20, // Tạo sau (Id lớn hơn)
+                InvoiceNumber = "HD-SAU",
+                CustomerId = 1,
+                InvoiceDate = sameDate, // Trùng ngày hoàn toàn
+                DueDate = sameDate.AddDays(30),
+                TotalAmount = 4_000_000m,
+                Balance = 4_000_000m,
+                PaidAmount = 0,
+                Status = InvoiceStatus.Unpaid
+            };
+
+            // CỐ TÌNH nạp hóa đơn Id lớn hơn (20) vào Fake trước, Id nhỏ hơn (10) sau
+            _invoiceRepo.Invoices.Add(laterInvoice);
+            _invoiceRepo.Invoices.Add(earlierInvoice);
+
+            // Act: Khách thanh toán 5 triệu
+            var paymentId = await _useCase.ExecuteAsync(1, 5_000_000m, DateTime.Now, "Thanh toán cho 2 hóa đơn trùng ngày");
+
+            // Assert
+            Assert.True(paymentId > 0);
+            Assert.Equal(2, _paymentRepo.Allocations.Count);
+
+            // Phân bổ 1: Hóa đơn tạo trước (Id=10) phải được cấn trừ trước toàn bộ 3tr
+            var alloc1 = _paymentRepo.Allocations[0];
+            Assert.Equal(10, alloc1.InvoiceId);
+            Assert.Equal(3_000_000m, alloc1.AllocatedAmount);
+            Assert.Equal(0m, earlierInvoice.Balance);
+            Assert.Equal(InvoiceStatus.Paid, earlierInvoice.Status);
+
+            // Phân bổ 2: Hóa đơn tạo sau (Id=20) nhận 2tr còn lại
+            var alloc2 = _paymentRepo.Allocations[1];
+            Assert.Equal(20, alloc2.InvoiceId);
+            Assert.Equal(2_000_000m, alloc2.AllocatedAmount);
+            Assert.Equal(2_000_000m, laterInvoice.Balance);
+            Assert.Equal(InvoiceStatus.PartiallyPaid, laterInvoice.Status);
+        }
     }
 }

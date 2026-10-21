@@ -1,0 +1,790 @@
+@page "/"
+@page "/gioi-thieu"
+@page "/gioi-thieu-dong"
+@layout Layout.EmptyLayout
+@attribute [AllowAnonymous]
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+
+<PageTitle>WebBanHang B2B - Nền Tảng Phân Phối Sỉ & Quản Trị Công Nợ Doanh Nghiệp</PageTitle>
+
+<div class="dong-layout">
+    <!-- Nền chuyển động động học Cyber Mesh & Constellation Nodes xuyên suốt toàn bộ trang -->
+    <div class="dong-animated-bg" aria-hidden="true">
+        <canvas id="dong-ambient-canvas"></canvas>
+        <div class="dong-ambient-grid"></div>
+        <div class="dong-ambient-scanline"></div>
+        <div class="dong-ambient-orb orb-1"></div>
+        <div class="dong-ambient-orb orb-2"></div>
+        <div class="dong-ambient-orb orb-3"></div>
+        <div class="dong-ambient-orb orb-4"></div>
+    </div>
+
+    <!-- 0. Navbar dính cố định, blur -->
+    <nav class="dong-nav" aria-label="Main Navigation">
+        <div class="nav-inner">
+            <button type="button" class="nav-brand" @onclick='async () => await SmoothScrollTo("#hero")'>
+                Web<span class="brand-accent">BanHang</span> <span class="b2b-pill">B2B</span>
+            </button>
+            <div class="nav-menu">
+                <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#stats")'>Chỉ số</button>
+                <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#values")'>Giá trị</button>
+                <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#steps")'>Cách hoạt động</button>
+                <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#products")'>Sản phẩm</button>
+                <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#credit")'>Công nợ B2B</button>
+                <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#cta")'>Đăng ký</button>
+            </div>
+            <div class="nav-actions">
+                @if (_isAuthenticated)
+                {
+                    <a href="@_dashboardUrl" class="nav-btn nav-btn-primary">
+                        <i class="bi bi-speedometer2 me-1"></i>Bàn làm việc
+                    </a>
+                }
+                else
+                {
+                    <a href="/login" class="nav-login-btn">Đăng nhập</a>
+                    <button type="button" class="nav-btn" @onclick='async () => await SmoothScrollTo("#cta")'>Mở tài khoản</button>
+                }
+            </div>
+            <button class="nav-hamburger" @onclick="ToggleMenu" aria-label="Mở menu điều hướng" aria-expanded="@_mobileOpen">
+                <span class="@(_mobileOpen ? "spin-1" : "")"></span>
+                <span class="@(_mobileOpen ? "fade" : "")"></span>
+                <span class="@(_mobileOpen ? "spin-2" : "")"></span>
+            </button>
+        </div>
+        <div class="@(_mobileOpen ? "dong-mobile open" : "dong-mobile")">
+            <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#stats"); _mobileOpen = false; }'>Chỉ số nền tảng</button>
+            <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#values"); _mobileOpen = false; }'>Giá trị cốt lõi</button>
+            <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#steps"); _mobileOpen = false; }'>Quy trình 3 bước</button>
+            <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#products"); _mobileOpen = false; }'>Danh mục hàng sỉ</button>
+            <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#credit"); _mobileOpen = false; }'>Hạn mức công nợ</button>
+            @if (_isAuthenticated)
+            {
+                <a href="@_dashboardUrl" class="mobile-login-link text-center fw-bold text-white bg-blue-600 rounded py-2">
+                    <i class="bi bi-speedometer2 me-1"></i>Vào Bàn Làm Việc
+                </a>
+            }
+            else
+            {
+                <a href="/login" class="mobile-login-link">Đăng nhập cổng đại lý</a>
+                <button type="button" class="mobile-btn" @onclick='async () => { await SmoothScrollTo("#cta"); _mobileOpen = false; }'>Đăng ký bán sỉ</button>
+            }
+        </div>
+    </nav>
+
+    <!-- 1. Hero với 3D Tech HUD + Floating holographic pills + Trust Strip -->
+    <section id="hero" class="dong-hero">
+        <div class="hero-container">
+            <div class="hero-content hero-entrance">
+                <div class="hero-live-badge">
+                    <span class="live-dot"></span> B2B PLATFORM V2.4 • HẠN MỨC TÍN DỤNG QUÝ 2 ĐANG MỞ
+                </div>
+                <h1 class="hero-title">
+                    Bán sỉ lớn,<br>
+                    <span class="gradient-text">quản lý công nợ linh hoạt</span>
+                </h1>
+                <p class="hero-desc">
+                    Kết nối trực tiếp nhà phân phối cấp 1 và chuỗi bán lẻ. Đặt hàng lô lớn theo kiện/pallet, phê duyệt hạn mức công nợ tự động, đối soát hóa đơn điện tử VAT tức thì.
+                </p>
+                <div class="hero-actions">
+                    <button type="button" class="btn btn-primary btn-magnetic" @onclick='async () => await SmoothScrollTo("#cta")'>
+                        <span>Đăng ký doanh nghiệp</span>
+                        <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                    <button type="button" class="btn btn-outline btn-magnetic" @onclick='async () => await SmoothScrollTo("#credit")'>
+                        <span>Xem giải pháp công nợ</span>
+                    </button>
+                </div>
+
+                <!-- Hero Trust Strip chống trống trải -->
+                <div class="hero-trust-strip">
+                    <div class="trust-item"><i class="bi bi-patch-check-fill text-emerald"></i> <span>Phê duyệt hạn mức trong 4h</span></div>
+                    <div class="trust-item"><i class="bi bi-bank2 text-amber"></i> <span>Bảo lãnh tín dụng BIDV & VCB</span></div>
+                    <div class="trust-item"><i class="bi bi-truck text-blue"></i> <span>Phân phối Pallet & Container 24h</span></div>
+                    <div class="trust-item"><i class="bi bi-shield-lock-fill text-purple"></i> <span>Hóa đơn VAT điện tử tức thì</span></div>
+                </div>
+            </div>
+
+            <div class="hero-visual hero-entrance">
+                <div class="hero-visual-frame">
+                    <img src="images/gioi-thieu/hero-tech-hud.png" alt="B2B E-commerce Tech Warehouse" class="hero-visual-img" />
+                    <div class="hero-visual-overlay"></div>
+                    
+                    <div class="hero-float-pill pill-1">
+                        <div class="pill-value"><i class="bi bi-box-seam text-amber"></i> 10,000+</div>
+                        <div class="pill-label">Đơn hàng lô hoàn tất</div>
+                    </div>
+                    <div class="hero-float-pill pill-2">
+                        <div class="pill-value"><i class="bi bi-shield-check text-emerald"></i> 500+</div>
+                        <div class="pill-label">Doanh nghiệp đối tác B2B</div>
+                    </div>
+                    <div class="hero-float-pill pill-3">
+                        <div class="pill-value"><i class="bi bi-credit-card text-blue"></i> 50 Tỷ+</div>
+                        <div class="pill-label">Hạn mức tín dụng kích hoạt</div>
+                    </div>
+
+                    <!-- Watermark Blocker & Cloud Verified Badge -->
+                    <div class="hero-watermark-blocker">
+                        <i class="bi bi-shield-fill-check text-cyan"></i> B2B Cloud Verified
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. Ticker đối tác (Dạng icon 3D claymorphic) -->
+    <section class="dong-ticker" aria-label="Ticker đối tác">
+        <div class="ticker-track">
+            <span class="ticker-badge"><i class="bi bi-shop text-amber"></i> Cửa hàng bán lẻ</span>
+            <span class="ticker-badge"><i class="bi bi-buildings text-blue"></i> Tổng kho phân phối</span>
+            <span class="ticker-badge"><i class="bi bi-truck text-emerald"></i> Vận tải Pallet & Container</span>
+            <span class="ticker-badge"><i class="bi bi-bank text-amber"></i> Bảo lãnh tín dụng</span>
+            <span class="ticker-badge"><i class="bi bi-phone text-blue"></i> Thiết bị di động sỉ</span>
+            <span class="ticker-badge"><i class="bi bi-laptop text-emerald"></i> Laptop văn phòng theo lô</span>
+            <span class="ticker-badge"><i class="bi bi-headphones text-purple"></i> Phụ kiện chính hãng</span>
+            <span class="ticker-badge"><i class="bi bi-smartwatch text-amber"></i> Thiết bị IoT thông minh</span>
+            <!-- Lặp lại để chạy vô tận -->
+            <span class="ticker-badge"><i class="bi bi-shop text-amber"></i> Cửa hàng bán lẻ</span>
+            <span class="ticker-badge"><i class="bi bi-buildings text-blue"></i> Tổng kho phân phối</span>
+            <span class="ticker-badge"><i class="bi bi-truck text-emerald"></i> Vận tải Pallet & Container</span>
+            <span class="ticker-badge"><i class="bi bi-bank text-amber"></i> Bảo lãnh tín dụng</span>
+        </div>
+    </section>
+
+    <!-- 3. Stats / Chỉ số tăng trưởng với Micro-Charts -->
+    <section id="stats" class="dong-stats">
+        <div class="section-head reveal">
+            <div class="section-tag">Dữ liệu thực tế</div>
+            <h2 class="section-title">Chỉ số tăng trưởng nói lên tất cả</h2>
+            <p class="section-desc">Hệ sinh thái phân phối sỉ và chuỗi cung ứng mở rộng liên tục mỗi ngày.</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item reveal">
+                <span class="stat-growth-tag"><i class="bi bi-graph-up-arrow"></i> +145% YoY</span>
+                <div class="stat-counter" data-target="10000">10,000+</div>
+                <div class="stat-text">Đơn hàng sỉ / tháng</div>
+                <div class="stat-sparkline">
+                    <div class="spark-bar h-1"></div>
+                    <div class="spark-bar h-2"></div>
+                    <div class="spark-bar h-3"></div>
+                    <div class="spark-bar h-4"></div>
+                    <div class="spark-bar h-5"></div>
+                    <div class="spark-bar h-6"></div>
+                </div>
+                <div class="stat-sub-info"><i class="bi bi-graph-up text-emerald"></i> Tăng trưởng quy mô đơn hàng</div>
+            </div>
+            <div class="stat-item reveal">
+                <span class="stat-growth-tag"><i class="bi bi-patch-check"></i> Toàn quốc</span>
+                <div class="stat-counter" data-target="500">500+</div>
+                <div class="stat-text">Doanh nghiệp đối tác</div>
+                <div class="stat-sub-info mt-4"><i class="bi bi-shop text-blue"></i> 350 chuỗi bán lẻ • 150 tổng kho</div>
+            </div>
+            <div class="stat-item reveal">
+                <span class="stat-growth-tag"><i class="bi bi-shield-check"></i> SLA 99.8%</span>
+                <div class="stat-counter" data-target="99">99%</div>
+                <div class="stat-text">Đơn hàng giao đúng hẹn</div>
+                <div class="stat-sub-info mt-4"><i class="bi bi-geo-alt-fill text-amber"></i> Cam kết SLA trên 63 tỉnh thành</div>
+            </div>
+            <div class="stat-item reveal">
+                <span class="stat-growth-tag"><i class="bi bi-lightning-charge"></i> Phê duyệt 4h</span>
+                <div class="stat-counter" data-target="24">24/7</div>
+                <div class="stat-text">Hỗ trợ đối soát & Cấp hạn mức</div>
+                <div class="stat-sub-info mt-4"><i class="bi bi-broadcast text-cyan"></i> Thời gian giải ngân tự động 1.2s</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Values / Giá trị cốt lõi (4 thẻ 3D + Bullet Checklists) -->
+    <section id="values" class="dong-values">
+        <div class="section-head reveal">
+            <div class="section-tag">Giá trị cốt lõi</div>
+            <h2 class="section-title">Tại sao chọn WebBanHang B2B</h2>
+            <p class="section-desc">Giải pháp tối ưu hóa dòng tiền và năng lực cung ứng cho nhà bán sỉ & đại lý.</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-card reveal">
+                <div class="value-badge">01</div>
+                <div class="value-icon-box">
+                    <i class="bi bi-rocket-takeoff-fill fs-3 text-amber"></i>
+                </div>
+                <h3>Đặt hàng lô & Giao hỏa tốc</h3>
+                <p>Tra cứu bảng giá sỉ theo cấp bậc (Tier pricing), tạo đơn PO theo kiện chỉ trong vài phút.</p>
+                <ul class="value-checklist">
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Chiết khấu bậc thang theo số lượng (MOQ)</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Tự động tính giá sỉ theo kiện/pallet</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Giao hỏa tốc liên tỉnh 24-48 giờ</li>
+                </ul>
+            </div>
+
+            <div class="value-card reveal">
+                <div class="value-badge">02</div>
+                <div class="value-icon-box">
+                    <i class="bi bi-shield-check fs-3 text-emerald"></i>
+                </div>
+                <h3>Công nợ linh hoạt T+30 / T+60</h3>
+                <p>Hạn mức tín dụng trả chậm linh hoạt với bảng đối soát tự động theo chu kỳ chuẩn B2B.</p>
+                <ul class="value-checklist">
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Hạn mức trả chậm T+30, T+45, T+60 ngày</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> 0% lãi suất trong thời hạn cam kết</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Bảng đối soát tự động theo chu kỳ</li>
+                </ul>
+            </div>
+
+            <div class="value-card reveal">
+                <div class="value-badge">03</div>
+                <div class="value-icon-box">
+                    <i class="bi bi-truck fs-3 text-blue"></i>
+                </div>
+                <h3>Giao vận Pallet & Container</h3>
+                <p>Điều phối mạng lưới vận tải toàn quốc, biên bản giao nhận điện tử kèm theo dõi hành trình thực tế.</p>
+                <ul class="value-checklist">
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Đội xe tải & container chuyên trách</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Biên bản bàn giao số (e-POD) chuẩn xác</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Bảo hiểm hàng hóa 100% khi vận chuyển</li>
+                </ul>
+            </div>
+
+            <div class="value-card reveal">
+                <div class="value-badge">04</div>
+                <div class="value-icon-box">
+                    <i class="bi bi-receipt-cutoff fs-3 text-purple"></i>
+                </div>
+                <h3>Bảo mật & Ký số hóa đơn VAT</h3>
+                <p>Ký số hợp đồng nguyên tắc điện tử, tích hợp tự động xuất hóa đơn điện tử hợp lệ ngay khi giao hàng.</p>
+                <ul class="value-checklist">
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Ký số hợp đồng nguyên tắc điện tử CA</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Tự động xuất hóa đơn VAT điện tử hợp lệ</li>
+                    <li class="value-check-item"><i class="bi bi-check-circle-fill"></i> Đối soát tự động ngân hàng qua VietQR</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Steps / Quy trình 3 bước với SLA & Meta Badges -->
+    <section id="steps" class="dong-steps">
+        <div class="section-head reveal">
+            <div class="section-tag">Quy trình số hóa</div>
+            <h2 class="section-title">Cách hoạt động trong 3 bước</h2>
+            <p class="section-desc">Từ thẩm định doanh nghiệp đến nhận hàng và thanh toán công nợ theo kỳ.</p>
+        </div>
+        <div class="steps-wrap">
+            <div class="step-panel reveal">
+                <div class="step-circle">1</div>
+                <h3>Đăng ký doanh nghiệp</h3>
+                <p>Nộp hồ sơ mã số thuế và giấy phép kinh doanh. Hệ thống thẩm định và kích hoạt hạn mức công nợ nhanh chóng.</p>
+                <span class="step-meta-badge">SLA: 4 giờ • Hạn mức đến 2 Tỷ</span>
+            </div>
+            <div class="step-panel reveal">
+                <div class="step-circle">2</div>
+                <h3>Chọn sản phẩm & đặt đơn PO</h3>
+                <p>Tra cứu bảng giá sỉ chiết khấu theo số lượng (MOQ). Tạo đơn đặt hàng lô lớn với hợp đồng điện tử tự động.</p>
+                <span class="step-meta-badge">10,000+ SKU sỉ • Hợp đồng số tức thì</span>
+            </div>
+            <div class="step-panel reveal">
+                <div class="step-circle">3</div>
+                <h3>Nhận hàng & Thanh toán kỳ hạn</h3>
+                <p>Giao hàng tận kho doanh nghiệp. Đối soát hóa đơn và thanh toán theo chu kỳ thỏa thuận (T+30 đến T+60 ngày).</p>
+                <span class="step-meta-badge">Giao tận kho • Chu kỳ T+30 / T+60</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Products / Danh mục sản phẩm sỉ với ảnh sản phẩm thật nổi bật & không bị đè ô -->
+    <section id="products" class="dong-products">
+        <div class="section-head reveal">
+            <div class="section-tag">
+                <i class="bi bi-stars me-1 text-amber"></i>Kho Hàng Sỉ Trọng Điểm
+            </div>
+            <h2 class="section-title">Danh mục sản phẩm bán sỉ nổi bật</h2>
+            <p class="section-desc">Hàng chính hãng 100%, bảo hành date mới, bảng giá đại lý chiết khấu sâu theo kiện và pallet.</p>
+        </div>
+
+        <div class="products-grid">
+            @foreach (var p in _products)
+            {
+                <div class="product-card reveal">
+                    <!-- Top Meta Bar: Category và MOQ trên một hàng Flex riêng biệt, KHÔNG BỊ ĐÈ NHAU -->
+                    <div class="product-card-top">
+                        <span class="product-cat-pill">
+                            <i class="bi bi-tag-fill me-1"></i>@p.Category
+                        </span>
+                        <span class="product-moq-pill">
+                            <i class="bi bi-box-seam me-1"></i>MOQ: <strong>@p.Moq @p.Unit</strong>
+                        </span>
+                    </div>
+
+                    <!-- Visual Stage: Hiển thị sản phẩm 3D nổi bật kèm hiệu ứng ánh hào quang cực quang -->
+                    <div class="product-stage">
+                        <div class="product-ambient-halo" style="background: radial-gradient(circle, @p.GlowColor 0%, rgba(15, 28, 63, 0) 70%);"></div>
+                        <img src="@p.ImgUrl" alt="@p.Name" class="product-showcase-img" loading="lazy" />
+                        <span class="product-spec-chip">@p.PackSpec</span>
+                    </div>
+
+                    <!-- Product Body Content -->
+                    <div class="product-body">
+                        <h3 class="product-name">@p.Name</h3>
+                        <p class="product-desc">@p.Desc</p>
+
+                        <!-- Micro Perks / B2B Advantages -->
+                        <div class="product-micro-perks">
+                            <span class="perk-item"><i class="bi bi-patch-check-fill text-emerald me-1"></i>Date &gt; 12T</span>
+                            <span class="perk-item"><i class="bi bi-receipt text-cyan me-1"></i>VAT 100%</span>
+                            <span class="perk-item margin-pill"><i class="bi bi-graph-up-arrow me-1"></i>@p.Margin</span>
+                        </div>
+
+                        <!-- Footer: Pricing & Action -->
+                        <div class="product-footer">
+                            <div class="product-pricing-col">
+                                <div class="product-retail-ref">Giá lẻ ĐX: <s>@p.RetailPrice.ToString("#,##") ₫</s></div>
+                                <div class="product-price-label">Giá sỉ đại lý</div>
+                                <div class="product-price">
+                                    @p.Price.ToString("#,##") <span class="price-currency">₫ / @p.Unit</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-product-order" @onclick='() => SelectProduct(p.Id)' title="Xem chiết khấu bậc thang">
+                                <span>Báo giá sỉ</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Banner Mạng lưới cung ứng thông minh -->
+        <div class="supply-network-banner reveal">
+            <div class="supply-banner-content">
+                <span class="hero-badge mb-2 d-inline-block">Mạng Lưới Vận Hành 4.0</span>
+                <h3 class="fs-4 fw-bold text-white mb-2">Hệ sinh thái phân phối số kết nối đa kênh</h3>
+                <p class="text-secondary small mb-3">
+                    Đồng bộ kho thời gian thực, tự động xuất hóa đơn VAT và tích hợp quản trị hạn mức công nợ thông minh cho từng đối tác nhượng quyền &amp; chuỗi bán lẻ.
+                </p>
+                <button type="button" class="btn btn-sm btn-primary" @onclick='async () => await SmoothScrollTo("#cta")'>
+                    Hợp tác phân phối ngay
+                </button>
+            </div>
+            <div>
+                <img src="images/gioi-thieu/ecommerce-network.png" alt="E-Commerce B2B Supply Chain Network" class="supply-banner-img" />
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Xem Chi Tiết Sản Phẩm -->
+    @if (_selectedProduct != null)
+    {
+        <div class="modal-backdrop-custom" @onclick="CloseProductModal">
+            <div class="modal-card-custom" @onclick:stopPropagation>
+                <div class="modal-header-custom">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-prod-preview" style="background: radial-gradient(circle, @_selectedProduct.GlowColor 0%, rgba(15, 28, 63, 0) 70%);">
+                            <img src="@_selectedProduct.ImgUrl" alt="@_selectedProduct.Name" />
+                        </div>
+                        <div>
+                            <h3 class="m-0 fs-5 fw-bold text-white">@_selectedProduct.Name</h3>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span class="badge bg-emerald-950 text-emerald-300 border border-emerald-800">Hàng sỉ chính ngạch</span>
+                                <span class="badge bg-blue-950 text-blue-300 border border-blue-800">@_selectedProduct.PackSpec</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close-custom" @onclick="CloseProductModal" aria-label="Đóng">&times;</button>
+                </div>
+                <div class="modal-body-custom">
+                    <p class="text-slate-300 small mb-3">@_selectedProduct.Desc</p>
+                    <div class="tier-pricing-box">
+                        <h4 class="tier-title"><i class="bi bi-tags-fill me-2 text-cyan"></i>Bảng giá chiết khấu theo số lượng (MOQ)</h4>
+                        <div class="tier-row">
+                            <span>Từ @_selectedProduct.Moq @_selectedProduct.Unit (Mức tiêu chuẩn):</span>
+                            <span class="fw-bold text-white">@_selectedProduct.Price.ToString("#,##") ₫ / @_selectedProduct.Unit</span>
+                        </div>
+                        <div class="tier-row">
+                            <span>Từ @(_selectedProduct.Moq * 2) @_selectedProduct.Unit (Chiết khấu 5%):</span>
+                            <span class="fw-bold text-emerald">@((_selectedProduct.Price * 0.95m).ToString("#,##")) ₫ (Tiết kiệm @((_selectedProduct.Price * 0.05m).ToString("#,##")) ₫)</span>
+                        </div>
+                        <div class="tier-row">
+                            <span>Từ @(_selectedProduct.Moq * 5) @_selectedProduct.Unit (Chiết khấu 10% - Cấp Pallet):</span>
+                            <span class="fw-bold text-amber">@((_selectedProduct.Price * 0.90m).ToString("#,##")) ₫ (Tiết kiệm @((_selectedProduct.Price * 0.10m).ToString("#,##")) ₫)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-custom">
+                    <button type="button" class="btn btn-outline" @onclick="CloseProductModal">Đóng</button>
+                    <button type="button" class="btn btn-primary" @onclick='async () => { CloseProductModal(); await SmoothScrollTo("#cta"); }'>
+                        Tạo đơn đặt sỉ ngay
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- 7. Credit / Giải pháp công nợ B2B với 3 Gói Hạn Mức & Aging Buckets -->
+    <section id="credit" class="dong-credit">
+        <div class="credit-glass reveal">
+            <div class="credit-head">
+                <span class="credit-tag">Tài chính chuỗi cung ứng</span>
+                <h2 class="section-title">Giải pháp công nợ doanh nghiệp B2B</h2>
+                <p class="section-desc">
+                    Tối ưu vốn lưu động. Nhập hàng trước, bán hàng thu tiền, sau đó thanh toán nợ theo chu kỳ thỏa thuận với 0% lãi suất trong hạn.
+                </p>
+            </div>
+
+            <!-- 3 Hạng Hạn Mức Tín Dụng -->
+            <div class="credit-tiers-grid">
+                <div class="credit-tier-card">
+                    <div class="tier-name text-blue"><i class="bi bi-award me-1"></i>Hạng Bạc (Silver)</div>
+                    <div class="tier-limit">500 Triệu</div>
+                    <div class="tier-cycle">Chu kỳ trả chậm T+30 ngày</div>
+                    <ul class="tier-points">
+                        <li><i class="bi bi-check2 text-emerald"></i> Doanh nghiệp mới gia nhập</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Duyệt hồ sơ trong 4 giờ</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Miễn phí thẩm định ban đầu</li>
+                    </ul>
+                </div>
+                <div class="credit-tier-card featured">
+                    <div class="tier-name text-amber"><i class="bi bi-stars me-1"></i>Hạng Vàng (Gold) • Phổ biến</div>
+                    <div class="tier-limit">1.2 Tỷ VNĐ</div>
+                    <div class="tier-cycle">Chu kỳ trả chậm T+45 ngày</div>
+                    <ul class="tier-points">
+                        <li><i class="bi bi-check2 text-emerald"></i> Doanh số sỉ &gt; 1 tỷ/tháng</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Tự động nâng hạn mức</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Chuyên viên đối soát riêng 1-1</li>
+                    </ul>
+                </div>
+                <div class="credit-tier-card">
+                    <div class="tier-name text-purple"><i class="bi bi-gem me-1"></i>Hạng Kim Cương</div>
+                    <div class="tier-limit">2.0 Tỷ VNĐ</div>
+                    <div class="tier-cycle">Chu kỳ trả chậm T+60 ngày</div>
+                    <ul class="tier-points">
+                        <li><i class="bi bi-check2 text-emerald"></i> Chuỗi bán lẻ trên 5 cửa hàng</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Ưu tiên xuất kho hỏa tốc 24h</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Hỗ trợ bảo lãnh ngân hàng</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 4 Phân nhóm tuổi nợ (Aging Report - FIFO) -->
+            <div class="aging-preview-wrap reveal">
+                <div class="aging-preview-title">
+                    <span><i class="bi bi-bar-chart-line text-emerald me-2"></i>Mô phỏng 4 nhóm tuổi nợ (Aging Report - FIFO)</span>
+                    <span class="badge bg-emerald-950 text-emerald-300 border border-emerald-800">Chuẩn Doanh Nghiệp</span>
+                </div>
+                <div class="aging-preview-grid">
+                    <div class="aging-box b-green">
+                        <span class="aging-box-label">0 - 30 ngày (Trong hạn)</span>
+                        <span class="aging-box-val">1.2 Tỷ VNĐ</span>
+                    </div>
+                    <div class="aging-box b-yellow">
+                        <span class="aging-box-label">31 - 60 ngày (Nhắc nhẹ)</span>
+                        <span class="aging-box-val">150 Triệu VNĐ</span>
+                    </div>
+                    <div class="aging-box b-orange">
+                        <span class="aging-box-label">61 - 90 ngày (Cảnh báo)</span>
+                        <span class="aging-box-val">20 Triệu VNĐ</span>
+                    </div>
+                    <div class="aging-box b-red">
+                        <span class="aging-box-label">&gt; 90 ngày (Nợ xấu)</span>
+                        <span class="aging-box-val">0 ₫ (0.00%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-lg btn-magnetic mt-2" @onclick='async () => await SmoothScrollTo("#cta")'>
+                <span>Đăng ký xét duyệt hạn mức công nợ</span>
+                <svg class="btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- 8. CTA / Đăng ký doanh nghiệp -->
+    <section id="cta" class="dong-cta">
+        <div class="cta-card reveal">
+            <h2>Sẵn sàng mở rộng kinh doanh sỉ?</h2>
+            <p>Đăng ký tài khoản doanh nghiệp ngay hôm nay để nhận bảng giá sỉ độc quyền và hạn mức công nợ ban đầu.</p>
+            
+            @if (_formSubmitted)
+            {
+                <div class="cta-success-box">
+                    <div class="success-icon-wrap">
+                        <svg class="svg-icon text-emerald" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h3 class="fs-5 fw-bold text-white mb-1">Đăng ký thành công!</h3>
+                    <p class="text-slate-300 small mb-0">
+                        Chuyên viên giải pháp B2B của chúng tôi sẽ liên hệ trong 4 giờ làm việc để kích hoạt hạn mức ban đầu.
+                    </p>
+                </div>
+            }
+            else
+            {
+                <form class="cta-form" @onsubmit="HandleSubmit">
+                    <div class="form-group">
+                        <label for="fullName" class="form-label-sr">Họ tên người liên hệ</label>
+                        <input id="fullName" type="text" placeholder="Họ và tên người đại diện" required @bind="_contactName" />
+                    </div>
+                    <div class="form-group">
+                        <label for="companyEmail" class="form-label-sr">Email doanh nghiệp</label>
+                        <input id="companyEmail" type="email" placeholder="Email doanh nghiệp (vd: contact@company.vn)" required @bind="_contactEmail" />
+                    </div>
+                    <div class="form-group">
+                        <label for="companyPhone" class="form-label-sr">Số điện thoại</label>
+                        <input id="companyPhone" type="tel" placeholder="Số điện thoại / Zalo" required @bind="_contactPhone" />
+                    </div>
+                    <div class="form-group">
+                        <label for="taxCode" class="form-label-sr">Mã số thuế</label>
+                        <input id="taxCode" type="text" placeholder="Mã số thuế doanh nghiệp (tùy chọn)" @bind="_taxCode" />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-magnetic w-100">
+                        <span>Gửi thông tin đăng ký</span>
+                    </button>
+                </form>
+            }
+            <p class="cta-note">Hỗ trợ miễn phí kiểm tra hạn mức tín dụng ban đầu • Không phát sinh phí duy trì</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="dong-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="nav-brand">Web<span class="brand-accent">BanHang</span> <span class="b2b-pill">B2B</span></div>
+                <p class="footer-desc">
+                    Hệ thống phân phối sỉ và quản trị tín dụng thương mại B2B hiện đại, phục vụ hơn 500 chuỗi bán lẻ và đại lý toàn quốc.
+                </p>
+            </div>
+            <div class="footer-cols">
+                <div>
+                    <strong>Sản phẩm sỉ</strong>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#products")'>Danh mục hàng sỉ</button>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#credit")'>Hạn mức công nợ</button>
+                    <a href="/portal/store" class="footer-link-btn">Cổng đặt hàng đại lý</a>
+                </div>
+                <div>
+                    <strong>Hỗ trợ đối tác</strong>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#steps")'>Quy trình giao nhận</button>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#values")'>Chính sách bảo hành</button>
+                    <a href="/login" class="footer-link-btn">Đăng nhập tài khoản</a>
+                </div>
+                <div>
+                    <strong>Công ty</strong>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#hero")'>Về WebBanHang</button>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#stats")'>Chỉ số tăng trưởng</button>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#cta")'>Hợp tác phân phối</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 WebBanHang B2B. Nền tảng bán sỉ & quản lý công nợ doanh nghiệp. Bảo mật &amp; bản quyền.
+        </div>
+    </footer>
+
+    <!-- Back to top -->
+    <button id="back-to-top" class="back-to-top" @onclick='async () => await SmoothScrollTo("#hero")' aria-label="Cuộn lên đầu trang">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
+        </svg>
+    </button>
+</div>
+
+@code {
+    private bool _mobileOpen = false;
+    private bool _formSubmitted = false;
+    private string _contactName = "";
+    private string _contactEmail = "";
+    private string _contactPhone = "";
+    private string _taxCode = "";
+    private bool _isAuthenticated = false;
+    private string _dashboardUrl = "/dashboard";
+
+    private record B2bProduct(
+        int Id, 
+        string ImgUrl, 
+        string Name, 
+        string Desc, 
+        decimal Price, 
+        decimal RetailPrice, 
+        int Moq, 
+        string Unit, 
+        string Category, 
+        string PackSpec, 
+        string Margin, 
+        string GlowColor
+    );
+
+    private List<B2bProduct> _products = new()
+    {
+        new(
+            1, 
+            "images/products/sp001-coca-cola.svg", 
+            "Nước ngọt Coca-Cola 320ml", 
+            "Phân phối sỉ theo thùng 24 lon Sleek chính hãng, bảo đảm date mới nguyên seal pallet tiêu chuẩn.", 
+            195000, 
+            240000, 
+            50, 
+            "thùng", 
+            "Nước giải khát", 
+            "Thùng 24 lon Sleek 320ml", 
+            "+23% Lợi nhuận", 
+            "rgba(220, 38, 38, 0.35)"
+        ),
+        new(
+            2, 
+            "images/products/sp002-heineken.svg", 
+            "Bia Heineken Silver 330ml", 
+            "Dòng bia thượng hạng phân phối đại lý tạp hóa, nhà hàng & bar club, chuẩn nguồn gốc bia tươi lon bạc.", 
+            425000, 
+            510000, 
+            30, 
+            "thùng", 
+            "Bia & Đồ uống có cồn", 
+            "Thùng 24 lon 330ml", 
+            "+20% Lợi nhuận", 
+            "rgba(16, 185, 129, 0.35)"
+        ),
+        new(
+            3, 
+            "images/products/sp003-hao-hao.svg", 
+            "Mì Hảo Hảo Tôm Chua Cay", 
+            "Mặt hàng tiêu dùng thiết yếu bán chạy số 1, thùng 30 gói xuất kho đều đặn hàng tuần cho chuỗi bán lẻ.", 
+            118000, 
+            145000, 
+            100, 
+            "thùng", 
+            "Thực phẩm thiết yếu", 
+            "Thùng 30 gói x 75g", 
+            "+23% Lợi nhuận", 
+            "rgba(244, 63, 94, 0.35)"
+        ),
+        new(
+            4, 
+            "images/products/sp005-vinamilk.svg", 
+            "Sữa tươi tiệt trùng Vinamilk 100%", 
+            "Thùng 48 hộp 180ml sữa tươi tiệt trùng, bảo quản kho nhiệt độ chuẩn mát, cung cấp đầy đủ chứng từ VAT.", 
+            365000, 
+            435000, 
+            40, 
+            "thùng", 
+            "Sữa & Chế phẩm", 
+            "Thùng 48 hộp (12 lốc)", 
+            "+19% Lợi nhuận", 
+            "rgba(14, 165, 233, 0.35)"
+        ),
+        new(
+            5, 
+            "images/products/sp009-red-bull.svg", 
+            "Nước tăng lực Red Bull Thái", 
+            "Khay 24 lon 250ml nhập khẩu chính ngạch từ Thái Lan, đầy đủ CO/CQ kiểm định chất lượng cho nhà phân phối.", 
+            245000, 
+            305000, 
+            50, 
+            "khay", 
+            "Nước tăng lực", 
+            "Khay 24 lon vàng 250ml", 
+            "+24% Lợi nhuận", 
+            "rgba(245, 158, 11, 0.35)"
+        ),
+        new(
+            6, 
+            "images/products/sp010-g7-coffee.svg", 
+            "Cà phê G7 3in1 Trung Nguyên", 
+            "Thùng 24 hộp x 18 gói hương vị đậm đà thuần túy, chính sách chiết khấu sâu đặc biệt cho chuỗi tiện lợi.", 
+            580000, 
+            710000, 
+            25, 
+            "thùng", 
+            "Cà phê hòa tan", 
+            "Thùng 24 hộp x 18 gói", 
+            "+22% Lợi nhuận", 
+            "rgba(217, 119, 6, 0.35)"
+        ),
+    };
+
+    private B2bProduct? _selectedProduct;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                _isAuthenticated = true;
+                _dashboardUrl = user.IsInRole("Customer") ? "/portal/dashboard" : "/dashboard";
+            }
+        }
+        catch
+        {
+            _isAuthenticated = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("initDongAnimations");
+            }
+            catch (JSException)
+            {
+                // Fallback nếu GSAP tải chậm
+            }
+        }
+    }
+
+    private void ToggleMenu() => _mobileOpen = !_mobileOpen;
+
+    private async Task SmoothScrollTo(string selector)
+    {
+        _mobileOpen = false;
+        try
+        {
+            await JS.InvokeVoidAsync("SmoothScroll", selector);
+        }
+        catch
+        {
+            // Fallback nếu JS interop bận
+        }
+    }
+
+    private void SelectProduct(int id)
+    {
+        _selectedProduct = _products.FirstOrDefault(p => p.Id == id);
+    }
+
+    private void CloseProductModal()
+    {
+        _selectedProduct = null;
+    }
+
+    private void HandleSubmit()
+    {
+        if (!string.IsNullOrWhiteSpace(_contactName) && !string.IsNullOrWhiteSpace(_contactEmail))
+        {
+            _formSubmitted = true;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("destroyDongAnimations");
+        }
+        catch
+        {
+            // Bỏ qua lỗi dispose
+        }
+    }
+}

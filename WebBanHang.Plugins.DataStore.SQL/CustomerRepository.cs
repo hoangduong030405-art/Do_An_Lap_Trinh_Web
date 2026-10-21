@@ -32,8 +32,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
         public async Task<decimal> GetTotalOutstandingDebtAsync(int customerId)
         {
             using var connection = new SqlConnection(_connectionString);
-            var query = "SELECT ISNULL(SUM(Balance), 0) FROM Invoices WHERE CustomerId = @CustomerId AND Balance > 0 AND Status != @Status";
-            return await connection.ExecuteScalarAsync<decimal>(query, new { CustomerId = customerId, Status = (int)InvoiceStatus.Cancelled });
+            var query = "SELECT ISNULL(SUM(Balance), 0) FROM Invoices WHERE CustomerId = @CustomerId AND Balance > 0 AND Status NOT IN ('Cancelled', '4')";
+            return await connection.ExecuteScalarAsync<decimal>(query, new { CustomerId = customerId });
         }
 
         public async Task<int> AddAsync(Customer customer)

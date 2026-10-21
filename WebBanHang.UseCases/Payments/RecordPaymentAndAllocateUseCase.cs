@@ -30,6 +30,7 @@ namespace WebBanHang.UseCases.Payments
             var unpaidInvoices = rawInvoices?
                 .Where(i => i.Balance > 0 && i.Status != InvoiceStatus.Paid && i.Status != InvoiceStatus.Cancelled)
                 .OrderBy(i => i.InvoiceDate)
+                .ThenBy(i => i.Id)
                 .ToList() ?? new List<Invoice>();
 
             if (!unpaidInvoices.Any())

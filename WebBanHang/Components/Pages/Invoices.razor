@@ -267,13 +267,13 @@ else
                                 @if (selectedInvoiceDetail.Balance > 0)
                                 {
                                     <div class="d-inline-flex align-items-center border p-2 rounded bg-light">
-                                        <img src="https://img.vietqr.io/image/970436-101870000001-compact2.png?amount=@Convert.ToInt64(selectedInvoiceDetail.Balance)&addInfo=HD%20@selectedInvoiceDetail.InvoiceNumber&accountName=CONG%20TY%20ECO2415"
+                                        <img src="https://img.vietqr.io/image/acb-35782747-compact2.png?amount=@Convert.ToInt64(selectedInvoiceDetail.Balance)&addInfo=HD%20@selectedInvoiceDetail.InvoiceNumber"
                                              alt="Mã VietQR Chuyển Khoản"
                                              style="width: 130px; height: 130px; object-fit: contain;" />
                                         <div class="ms-3 text-start small">
                                             <div class="fw-bold text-primary"><i class="bi bi-qr-code-scan"></i> QUÉT MÃ VIETQR</div>
-                                            <div class="text-muted">Ngân hàng: Vietcombank</div>
-                                            <div class="text-muted">STK: <strong>101870000001</strong></div>
+                                            <div class="text-muted">Ngân hàng: Á Châu (ACB)</div>
+                                            <div class="text-muted">STK: <strong>35782747</strong></div>
                                             <div class="text-muted">Số tiền: <strong>@selectedInvoiceDetail.Balance.ToString("N0") đ</strong></div>
                                             <div class="text-muted">Nội dung: <strong>HD @selectedInvoiceDetail.InvoiceNumber</strong></div>
                                         </div>

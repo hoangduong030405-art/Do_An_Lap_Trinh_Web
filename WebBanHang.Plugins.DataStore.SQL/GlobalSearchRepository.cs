@@ -62,7 +62,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
                         CASE WHEN i.Balance <= 0 THEN 'success' ELSE 'warning' END AS BadgeColor
                     FROM Invoices i
                     WHERE i.CustomerId = @CustomerId AND i.InvoiceNumber LIKE @Keyword
-                    ORDER BY i.InvoiceDate DESC;
+                    ORDER BY i.InvoiceDate DESC, i.Id DESC;
                 ";
             }
             else
@@ -79,7 +79,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     FROM Invoices i
                     INNER JOIN Customers c ON i.CustomerId = c.Id
                     WHERE i.InvoiceNumber LIKE @Keyword OR c.FullName LIKE @Keyword OR c.CustomerCode LIKE @Keyword
-                    ORDER BY i.InvoiceDate DESC;
+                    ORDER BY i.InvoiceDate DESC, i.Id DESC;
                 ";
             }
 

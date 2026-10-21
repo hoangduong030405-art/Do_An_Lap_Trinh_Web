@@ -42,8 +42,20 @@ namespace WebBanHang.UseCases.Invoices
                 throw new BusinessRuleException("Không tìm thấy thông tin khách hàng.");
             }
 
+            // Gộp các dòng cùng ProductId (GroupBy, cộng Quantity) trước khi kiểm tra tồn kho
+            var mergedLines = lines
+                .GroupBy(l => l.ProductId)
+                .Select(g => new InvoiceLine
+                {
+                    ProductId = g.Key,
+                    Quantity = g.Sum(x => x.Quantity),
+                    UnitPrice = g.First().UnitPrice,
+                    CostPrice = g.First().CostPrice
+                })
+                .ToList();
+
             // Kiểm tra tồn kho từng sản phẩm
-            foreach (var line in lines)
+            foreach (var line in mergedLines)
             {
                 var product = await _productRepository.GetByIdAsync(line.ProductId);
                 if (product == null)
@@ -55,11 +67,15 @@ namespace WebBanHang.UseCases.Invoices
                     throw new BusinessRuleException(
                         $"Sản phẩm '{product.Name}' không đủ tồn kho (Hiện có: {product.StockQuantity}, Yêu cầu: {line.Quantity}).");
                 }
+                if (line.CostPrice == 0)
+                {
+                    line.CostPrice = product.CostPrice;
+                }
             }
 
             // Kiểm tra hạn mức nợ
             var currentDebt = await _customerRepository.GetTotalOutstandingDebtAsync(customerId);
-            var newInvoiceAmount = lines.Sum(l => l.Quantity * l.UnitPrice);
+            var newInvoiceAmount = mergedLines.Sum(l => l.Quantity * l.UnitPrice);
 
             if (currentDebt + newInvoiceAmount > customer.CreditLimit)
             {
@@ -72,14 +88,14 @@ namespace WebBanHang.UseCases.Invoices
                 InvoiceNumber = $"INV-{DateTime.Now:yyyyMMddHHmmss}-{Random.Shared.Next(100, 999)}",
                 CustomerId = customerId,
                 InvoiceDate = invoiceDate,
-                DueDate = invoiceDate.AddDays(customer.PaymentTermsDays),
+                DueDate = customer.CalculateDueDate(invoiceDate),
                 TotalAmount = newInvoiceAmount,
                 Balance = newInvoiceAmount,
                 PaidAmount = 0,
                 Status = InvoiceStatus.Unpaid
             };
 
-            return await _invoiceRepository.CreateInvoiceWithLinesAsync(invoice, lines);
+            return await _invoiceRepository.CreateInvoiceWithLinesAsync(invoice, mergedLines);
         }
     }
 }

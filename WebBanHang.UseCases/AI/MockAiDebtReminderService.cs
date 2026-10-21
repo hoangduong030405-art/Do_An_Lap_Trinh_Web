@@ -44,7 +44,7 @@ namespace WebBanHang.UseCases.AI
             }
 
             sb.AppendLine();
-            sb.AppendLine("Rất mong Quý khách sắp xếp thanh toán sớm qua Số Tài Khoản: 123456789 - Ngân hàng Vietcombank - CN Tân Bình.");
+            sb.AppendLine("Rất mong Quý khách sắp xếp thanh toán sớm qua Số Tài Khoản: 35782747 - Ngân hàng TMCP Á Châu (ACB).");
             sb.AppendLine();
             sb.AppendLine("Trân trọng cảm ơn!");
             sb.AppendLine("Phòng Kế Toán - Công Ty XYZ");

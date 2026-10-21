@@ -157,12 +157,89 @@ namespace WebBanHang.UseCases.AI
         public async Task<AvaAiAnswerDto> AnswerAccountingQuestionAsync(string question, string role, int? customerId = null)
         {
             var q = (question ?? "").Trim().ToLowerInvariant();
-            var allInvoices = await _invoiceRepository.GetInvoicesWithCustomerAsync();
-            var customers = await _customerRepository.GetAllAsync();
+            var allInvoices = (await _invoiceRepository.GetInvoicesWithCustomerAsync()).ToList();
+            var customers = (await _customerRepository.GetAllAsync()).ToList();
             var now = DateTime.Now;
 
             string answerText;
             var suggestedActions = new List<string>();
+
+            // NẾU LÀ KHÁCH HÀNG (CUSTOMER): Mọi truy vấn chỉ lấy dữ liệu của customerId đó, tuyệt đối không lộ dữ liệu khách khác
+            if (string.Equals(role, "Customer", StringComparison.OrdinalIgnoreCase) && customerId.HasValue)
+            {
+                int cid = customerId.Value;
+                allInvoices = allInvoices.Where(i => i.CustomerId == cid).ToList();
+                customers = customers.Where(c => c.Id == cid).ToList();
+                var currentCustomer = customers.FirstOrDefault();
+
+                if (q.Contains("nợ quá hạn") || q.Contains("ai đang nợ") || q.Contains("quá hạn"))
+                {
+                    var overdueInvoices = allInvoices.Where(i => Invoice.CheckIsOverdue(i.DueDate, i.Balance, now)).ToList();
+                    if (!overdueInvoices.Any())
+                    {
+                        answerText = "Tin tốt! Quý khách hiện không có hóa đơn nào quá hạn thanh toán. Cảm ơn Quý khách đã luôn thanh toán đúng hạn!";
+                        suggestedActions.Add("Xem hóa đơn của tôi");
+                        suggestedActions.Add("Đặt hàng sỉ mới");
+                    }
+                    else
+                    {
+                        var overdueLines = overdueInvoices.Select(i => $"HĐ #{i.InvoiceNumber}: còn nợ {i.Balance:N0} đ (Quá hạn {Invoice.CalculateOverdueDays(i.DueDate, i.Balance, now)} ngày, hạn chót: {i.DueDate:dd/MM/yyyy})");
+                        decimal totalOverdue = overdueInvoices.Sum(i => i.Balance);
+                        answerText = $"Quý khách có {overdueInvoices.Count} hóa đơn quá hạn với tổng số tiền nợ là {totalOverdue:N0} đ:\n• " + string.Join("\n• ", overdueLines) + "\nQuý khách vui lòng quét mã VietQR để thanh toán sớm.";
+                        suggestedActions.Add("Quét mã VietQR thanh toán");
+                        suggestedActions.Add("Xem sổ đối soát nợ");
+                    }
+                }
+                else if (q.Contains("tóm tắt") || q.Contains("tổng quan") || q.Contains("hôm nay"))
+                {
+                    decimal totalDebt = currentCustomer != null ? await _customerRepository.GetTotalOutstandingDebtAsync(currentCustomer.Id) : allInvoices.Sum(i => i.Balance);
+                    decimal totalCollected = allInvoices.Sum(i => i.PaidAmount);
+                    decimal totalPurchases = allInvoices.Sum(i => i.TotalAmount);
+                    decimal creditLimit = currentCustomer?.CreditLimit ?? 0;
+                    decimal availableCredit = Math.Max(0, creditLimit - totalDebt);
+
+                    answerText = $"Tình hình công nợ của Quý khách ({currentCustomer?.FullName ?? "Đại lý"}):\n" +
+                                 $"• Hạn mức tín dụng được cấp: {creditLimit:N0} đ\n" +
+                                 $"• Tổng giá trị mua hàng: {totalPurchases:N0} đ\n" +
+                                 $"• Đã thanh toán: {totalCollected:N0} đ\n" +
+                                 $"• Dư nợ hiện tại: {totalDebt:N0} đ\n" +
+                                 $"• Hạn mức khả dụng còn lại: {availableCredit:N0} đ.";
+                    suggestedActions.Add("Đặt hàng sỉ mới");
+                    suggestedActions.Add("Xem hóa đơn của tôi");
+                }
+                else if (q.Contains("siết hạn mức") || q.Contains("rủi ro") || q.Contains("tín dụng"))
+                {
+                    decimal totalDebt = currentCustomer != null ? await _customerRepository.GetTotalOutstandingDebtAsync(currentCustomer.Id) : 0;
+                    decimal creditLimit = currentCustomer?.CreditLimit ?? 0;
+                    decimal ratio = creditLimit > 0 ? (totalDebt / creditLimit) : 0;
+
+                    if (ratio >= 0.8m)
+                    {
+                        answerText = $"Cảnh báo tín dụng: Quý khách đang sử dụng {ratio:P0} hạn mức tín dụng (Đang nợ {totalDebt:N0} đ / Hạn mức {creditLimit:N0} đ). Quý khách nên thanh toán bớt nợ cũ để duy trì khả năng đặt hàng sỉ tiếp theo.";
+                        suggestedActions.Add("Quét mã VietQR thanh toán");
+                    }
+                    else
+                    {
+                        answerText = $"Hạn mức tín dụng của Quý khách đang ở mức an toàn: Đang nợ {totalDebt:N0} đ / Hạn mức {creditLimit:N0} đ (Sử dụng {ratio:P0}). Quý khách vẫn còn {Math.Max(0, creditLimit - totalDebt):N0} đ hạn mức khả dụng để đặt hàng.";
+                        suggestedActions.Add("Đặt hàng sỉ mới");
+                    }
+                }
+                else
+                {
+                    decimal totalDebt = currentCustomer != null ? await _customerRepository.GetTotalOutstandingDebtAsync(currentCustomer.Id) : 0;
+                    answerText = $"Trợ lý AVA sẵn sàng hỗ trợ Quý khách ({currentCustomer?.FullName ?? "Đại lý"}). Quý khách có {allInvoices.Count} hóa đơn với dư nợ hiện tại là {totalDebt:N0} đ. Tôi có thể hỗ trợ kiểm tra nợ quá hạn, đối soát sổ nợ hoặc hạn mức đặt hàng.";
+                    suggestedActions.Add("Ai đang nợ quá hạn?");
+                    suggestedActions.Add("Tóm tắt công nợ hôm nay");
+                }
+
+                return new AvaAiAnswerDto
+                {
+                    Question = question ?? string.Empty,
+                    Answer = answerText,
+                    GeneratedAt = DateTime.Now,
+                    SuggestedActions = suggestedActions.ToArray()
+                };
+            }
 
             if (q.Contains("nợ quá hạn") || q.Contains("ai đang nợ"))
             {

@@ -1,3 +1,5 @@
+using System;
+
 namespace WebBanHang.CoreBusiness.Entities
 {
     public class Customer
@@ -9,5 +11,11 @@ namespace WebBanHang.CoreBusiness.Entities
         public string Address { get; set; } = string.Empty;
         public decimal CreditLimit { get; set; }
         public int PaymentTermsDays { get; set; }
+
+        public DateTime CalculateDueDate(DateTime invoiceDate)
+        {
+            int terms = PaymentTermsDays > 0 ? PaymentTermsDays : 30;
+            return invoiceDate.AddDays(terms);
+        }
     }
 }

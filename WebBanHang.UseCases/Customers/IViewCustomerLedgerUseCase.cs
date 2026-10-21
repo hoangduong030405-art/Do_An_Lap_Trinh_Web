@@ -5,6 +5,6 @@ namespace WebBanHang.UseCases.Customers
 {
     public interface IViewCustomerLedgerUseCase
     {
-        Task<CustomerLedgerDto> ExecuteAsync(int customerId);
+        Task<CustomerLedgerDto?> ExecuteAsync(int customerId, string? role = null, int? callerCustomerId = null);
     }
 }

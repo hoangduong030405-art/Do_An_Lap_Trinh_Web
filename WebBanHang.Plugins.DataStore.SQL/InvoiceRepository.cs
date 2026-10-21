@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanHang.CoreBusiness.Entities;
+using WebBanHang.CoreBusiness.Exceptions;
 using WebBanHang.UseCases.DTOs;
 using WebBanHang.UseCases.PluginInterfaces.DataStore;
 
@@ -15,6 +16,11 @@ namespace WebBanHang.Plugins.DataStore.SQL
     {
         private readonly string _connectionString;
 
+        static InvoiceRepository()
+        {
+            SqlMapper.AddTypeHandler(new InvoiceStatusTypeHandler());
+        }
+
         public InvoiceRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
@@ -23,7 +29,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
         public async Task<IEnumerable<Invoice>> GetAllAsync()
         {
             using var connection = new SqlConnection(_connectionString);
-            return await connection.QueryAsync<Invoice>("SELECT * FROM Invoices ORDER BY InvoiceDate DESC");
+            return await connection.QueryAsync<Invoice>("SELECT * FROM Invoices ORDER BY InvoiceDate DESC, Id DESC");
         }
 
         public async Task<Invoice?> GetByIdAsync(int id)
@@ -35,7 +41,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
         public async Task<IEnumerable<Invoice>> GetUnpaidInvoicesByCustomerOrderedByDateAsync(int customerId)
         {
             using var connection = new SqlConnection(_connectionString);
-            var query = "SELECT * FROM Invoices WHERE CustomerId = @CustomerId AND Balance > 0 AND Status NOT IN ('Cancelled', '4', 'Paid', '3') ORDER BY InvoiceDate ASC";
+            var query = "SELECT * FROM Invoices WHERE CustomerId = @CustomerId AND Balance > 0 AND Status NOT IN ('Cancelled', '4', 'Paid', '3') ORDER BY InvoiceDate ASC, Id ASC";
             return await connection.QueryAsync<Invoice>(query, new { CustomerId = customerId });
         }
 
@@ -46,6 +52,28 @@ namespace WebBanHang.Plugins.DataStore.SQL
             using var transaction = connection.BeginTransaction();
             try
             {
+                // Khóa dòng khách hàng với (UPDLOCK, HOLDLOCK) và kiểm tra lại hạn mức tín dụng trong cùng transaction (chống tranh chấp đồng thời)
+                var customer = await connection.QuerySingleOrDefaultAsync<Customer>(
+                    "SELECT Id, CustomerCode, FullName, CreditLimit, PaymentTermsDays FROM Customers WITH (UPDLOCK, HOLDLOCK) WHERE Id = @CustomerId",
+                    new { invoice.CustomerId },
+                    transaction);
+
+                if (customer == null)
+                {
+                    throw new BusinessRuleException("Không tìm thấy thông tin khách hàng.");
+                }
+
+                var currentDebt = await connection.ExecuteScalarAsync<decimal>(
+                    "SELECT ISNULL(SUM(Balance), 0) FROM Invoices WHERE CustomerId = @CustomerId AND Balance > 0 AND Status NOT IN ('Cancelled', '4')",
+                    new { invoice.CustomerId },
+                    transaction);
+
+                if (currentDebt + invoice.TotalAmount > customer.CreditLimit)
+                {
+                    throw new CreditLimitExceededException(
+                        $"Không thể lập hóa đơn! Khách hàng '{customer.FullName}' đang nợ {currentDebt:N0} đ. Đơn mới {invoice.TotalAmount:N0} đ khiến tổng nợ ({currentDebt + invoice.TotalAmount:N0} đ) vượt quá hạn mức tín dụng cho phép ({customer.CreditLimit:N0} đ).");
+                }
+
                 var insertInvoiceQuery = @"
                     INSERT INTO Invoices (InvoiceNumber, CustomerId, InvoiceDate, DueDate, TotalAmount, PaidAmount, Balance, Status)
                     OUTPUT INSERTED.Id
@@ -60,14 +88,17 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     invoice.TotalAmount,
                     invoice.PaidAmount,
                     invoice.Balance,
-                    Status = (int)invoice.Status
+                    Status = invoice.Status.ToString()
                 }, transaction);
 
                 var insertLineQuery = @"
                     INSERT INTO InvoiceLines (InvoiceId, ProductId, Quantity, UnitPrice, CostPrice)
                     VALUES (@InvoiceId, @ProductId, @Quantity, @UnitPrice, (SELECT COALESCE(CostPrice, 0) FROM Products WHERE Id = @ProductId))";
 
-                var updateProductQuery = "UPDATE Products SET StockQuantity = StockQuantity - @Quantity WHERE Id = @ProductId";
+                var updateProductQuery = @"
+                    UPDATE Products 
+                    SET StockQuantity = StockQuantity - @Quantity 
+                    WHERE Id = @ProductId AND StockQuantity >= @Quantity";
 
                 foreach (var line in lines)
                 {
@@ -80,11 +111,16 @@ namespace WebBanHang.Plugins.DataStore.SQL
                         line.UnitPrice
                     }, transaction);
 
-                    await connection.ExecuteAsync(updateProductQuery, new
+                    var rowsAffected = await connection.ExecuteAsync(updateProductQuery, new
                     {
                         line.Quantity,
                         line.ProductId
                     }, transaction);
+
+                    if (rowsAffected == 0)
+                    {
+                        throw new BusinessRuleException($"Sản phẩm mã #{line.ProductId} không đủ tồn kho.");
+                    }
                 }
 
                 transaction.Commit();
@@ -107,7 +143,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
                 INNER JOIN Customers c ON i.CustomerId = c.Id
                 WHERE (@Keyword IS NULL OR i.InvoiceNumber LIKE @KeywordSearch OR c.FullName LIKE @KeywordSearch OR c.CustomerCode LIKE @KeywordSearch)
                   AND (@Status IS NULL OR i.Status = @Status)
-                ORDER BY i.InvoiceDate DESC";
+                ORDER BY i.InvoiceDate DESC, i.Id DESC";
 
             return await connection.QueryAsync<InvoiceListDto>(sql, new
             {
@@ -183,7 +219,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
         public async Task<IEnumerable<Invoice>> GetInvoicesByCustomerIdAsync(int customerId)
         {
             using var connection = new SqlConnection(_connectionString);
-            var query = "SELECT * FROM Invoices WHERE CustomerId = @CustomerId ORDER BY InvoiceDate DESC";
+            var query = "SELECT * FROM Invoices WHERE CustomerId = @CustomerId ORDER BY InvoiceDate DESC, Id DESC";
             return await connection.QueryAsync<Invoice>(query, new { CustomerId = customerId });
         }
     }

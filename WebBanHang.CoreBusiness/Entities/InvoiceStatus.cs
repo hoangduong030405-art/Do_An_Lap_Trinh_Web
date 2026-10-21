@@ -4,6 +4,7 @@ namespace WebBanHang.CoreBusiness.Entities
     {
         Draft = 0,
         Unpaid = 1,
+        Pending = 1,
         PartiallyPaid = 2,
         Paid = 3,
         Cancelled = 4

@@ -112,7 +112,7 @@
 
                 <div class="mb-4">
                     <label class="form-label fw-bold">4. Ghi Chú / Nội Dung Thu</label>
-                    <input type="text" class="form-control" placeholder="VD: Khách trả nợ đợt 1 chuyển khoản qua VCB..." @bind="note" />
+                    <input type="text" class="form-control" placeholder="VD: Khách trả nợ đợt 1 chuyển khoản qua ACB..." @bind="note" />
                 </div>
 
                 <button class="btn btn-primary btn-lg w-100 shadow-sm" @onclick="RecordPayment" disabled="@(selectedCustomerId <= 0 || paymentAmount <= 0)">
