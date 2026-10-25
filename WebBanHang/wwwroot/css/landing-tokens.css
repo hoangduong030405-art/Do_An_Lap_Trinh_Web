@@ -6,7 +6,7 @@
 /* 1. NATIVE SYSTEM TYPOGRAPHY (Tiêu chuẩn font hệ thống hoàn hảo cho dấu tiếng Việt) */
 
 /* 2. DESIGN TOKENS VARIABLES */
-:root, .lp-root {
+.lp-root {
   /* --- Color Palette: Deep Space Navy --- */
   --color-bg-base: #060b18;
   --color-bg-surface: #0b1530;

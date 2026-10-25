@@ -28,13 +28,21 @@
         </Actions>
     </PageHeader>
 
-<div class="row mb-4">
-    <div class="col-md-8">
-        <label class="form-label">Tính đến ngày:</label>
-        <div class="d-flex">
-            <input type="date" class="form-control me-2" @bind="asOfDate" style="max-width:200px;" />
-            <button class="btn btn-primary me-2" @onclick="LoadReport">Xem</button>
-            <button class="btn btn-success" @onclick="ExportCSV">📥 Xuất Báo Cáo Tuổi Nợ (CSV)</button>
+<div class="card mb-4 border shadow-sm p-3 bg-white" style="border-radius: 14px; border-color: #e5eaf1 !important;">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center gap-2.5">
+            <label class="form-label mb-0 fw-semibold text-secondary" style="font-size: 14px; white-space: nowrap;">
+                <i class="bi bi-calendar-event text-primary me-1"></i> Tính đến ngày:
+            </label>
+            <input type="date" class="form-control" @bind="asOfDate" style="width: 180px; min-height: 40px;" />
+            <button class="btn btn-primary" @onclick="LoadReport">
+                <i class="bi bi-search me-1"></i> Xem báo cáo
+            </button>
+        </div>
+        <div>
+            <button class="btn btn-outline-success" @onclick="ExportCSV">
+                <i class="bi bi-file-earmark-excel me-1"></i> Xuất Báo Cáo CSV
+            </button>
         </div>
     </div>
 </div>
