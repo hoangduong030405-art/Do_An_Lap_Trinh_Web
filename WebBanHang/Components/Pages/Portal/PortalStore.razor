@@ -21,28 +21,16 @@
 <PageTitle>Cửa Hàng B2B - Đặt Hàng Sỉ Trực Tuyến & Ghi Nợ Tín Dụng</PageTitle>
 
 <div class="portal-container py-3">
-    <!-- 1. BREADCRUMBS & TIÊU ĐỀ -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1 small">
-                    <li class="breadcrumb-item"><a href="/portal/dashboard" class="text-decoration-none text-muted">Cổng Đại Lý</a></li>
-                    <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">Đặt Hàng Sỉ B2B</li>
-                </ol>
-            </nav>
-            <h3 class="fw-bold mb-0 text-slate-navy">
-                <i class="bi bi-cart3 text-primary me-2"></i>Cửa Hàng B2B Đặt Hàng Sỉ Trực Tuyến
-            </h3>
-            <p class="text-muted small mb-0">
-                Lựa chọn sản phẩm số lượng lớn theo đơn vị Thùng/Bao/Két & thanh toán ghi nợ theo hạn mức tín dụng
-            </p>
-        </div>
-        <div>
-            <a href="/portal/invoices" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-                <i class="bi bi-receipt me-1"></i> Tra cứu hóa đơn của tôi
+    <div class="app-page-container">
+    <PageHeader Title="Cửa Hàng B2B Đặt Hàng Sỉ Trực Tuyến"
+                Subtitle="Đặt hàng nhanh theo kiện và pallet, tự động ghi nợ tín dụng theo hạn mức được phê duyệt"
+                Icon="bi-cart3">
+        <Actions>
+            <a href="/portal/invoices" class="btn btn-secondary">
+                <i class="bi bi-receipt me-1"></i> Hóa Đơn Của Tôi
             </a>
-        </div>
-    </div>
+        </Actions>
+    </PageHeader>
 
     <!-- 2. CREDIT STATUS BAR -->
     <CreditStatusBar CustomerInfo="@customerInfo" />
@@ -181,7 +169,7 @@
             <!-- 4. GIỎ HÀNG SỈ B2B & KIỂM TRA HẠN MỨC (COL 4) -->
             <div class="col-12 col-lg-4">
                 <div class="card border-0 shadow-sm rounded-3 bg-white sticky-top" style="top: 1rem;">
-                    <div class="card-header bg-slate-navy text-white py-3 px-3 d-flex justify-content-between align-items-center">
+                    <div class="card-header bg-white border-bottom py-3 px-3 text-dark d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center gap-2">
                             <i class="bi bi-bag-check-fill text-warning fs-5"></i>
                             <h6 class="fw-bold mb-0 text-white">Đơn Hàng Sỉ Đang Chọn</h6>
@@ -350,6 +338,8 @@
         </div>
     </div>
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private bool loading = true;

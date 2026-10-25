@@ -1,0 +1,783 @@
+/* ==========================================================================
+   APP DESIGN TOKENS (STRIPE / LINEAR / VERCEL INSPIRED)
+   WebBanHang Enterprise Design System - Foundation Tokens
+   ========================================================================== */
+
+/* 1. TYPOGRAPHY - LOCAL INTER FONT */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/inter-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* Font Families */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --app-font: var(--font-sans);
+  --bs-font-sans-serif: var(--font-sans);
+
+  /* Typography Scale - Minimum 13px anywhere in logged-in area */
+  --text-xs: 13px;       /* Nhãn nhỏ tối thiểu 13px */
+  --text-sm: 14px;       /* Nhãn form, hint, phụ đề nhỏ */
+  --text-base: 15px;     /* Nội dung bảng, input, nút bấm */
+  --text-body: 16px;     /* Nội dung thường, chữ chuẩn */
+  --text-lg: 18px;       /* Tiêu đề thẻ (card title) */
+  --text-xl: 20px;       /* Tiêu đề phân nhóm */
+  --text-2xl: 24px;      /* Tiêu đề trung */
+  --text-title: 30px;    /* Tiêu đề trang 28-32px */
+  --text-kpi: 36px;      /* Số liệu KPI 32-40px */
+
+  /* Neutral Background & Card */
+  --bg-page: #f6f8fb;
+  --bg-card: #ffffff;
+  --bg-subtle: #f8fafc;
+  --bg-muted: #f1f5f9;
+  --bg-hover: #f8fafc;
+
+  /* Borders */
+  --border-color: #e5eaf1;
+  --border-subtle: #edf2f7;
+  --border-focus: #2563eb;
+
+  /* Single Brand Primary (Indigo/Blue Stripe Style) */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-active: #1e40af;
+  --primary-light: #eff6ff;
+  --primary-border: #bfdbfe;
+  --primary-rgb: 37, 99, 235;
+
+  /* Standardized Semantic Statuses */
+  --success: #059669;
+  --success-hover: #047857;
+  --success-light: #ecfdf5;
+  --success-border: #a7f3d0;
+  --success-text: #065f46;
+
+  --warning: #d97706;
+  --warning-hover: #b45309;
+  --warning-light: #fffbeb;
+  --warning-border: #fde68a;
+  --warning-text: #92400e;
+
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-light: #fef2f2;
+  --danger-border: #fecaca;
+  --danger-text: #991b1b;
+
+  --info: #0891b2;
+  --info-hover: #0e7490;
+  --info-light: #ecfeff;
+  --info-border: #a5f3fc;
+  --info-text: #155e75;
+
+  /* Neutral Text Colors (Contrast >= 4.5:1 on white) */
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-disabled: #94a3b8;
+  --text-inverse: #ffffff;
+
+  /* Spacing Scale (4/8px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Container & Layout */
+  --content-max-width: 1440px;
+  --page-padding: 32px;
+  --page-padding-mobile: 16px;
+  --card-gap: 24px;
+  --card-padding: 24px;
+
+  /* Radii */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;      /* Buttons, inputs, chips */
+  --radius-lg: 16px;      /* Cards, modal dialogs */
+  --radius-full: 9999px;  /* Pills, avatar circles */
+
+  /* Shadows (Stripe Subtle Elevation) */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 6px 12px -2px rgba(15, 23, 42, 0.08), 0 3px 6px -2px rgba(15, 23, 42, 0.05);
+
+  /* Focus Ring */
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-base: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 2. BASE HTML & BODY STYLES FOR LOGGED-IN AREA */
+html {
+  font-size: 100%; /* 16px */
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Tabular numbers for monetary columns and financial amounts */
+.tnum,
+.font-tabular,
+.col-money,
+.app-stat-value,
+.text-money {
+  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Global Typography Protection - No font under 13px */
+small,
+.small,
+.badge,
+.form-text,
+.text-muted,
+.app-kpi-sub,
+.app-stat-hint {
+  font-size: var(--text-xs) !important;
+}
+
+/* 4. WORKSPACE & PAGE CONTAINER (MAX-WIDTH 1440PX, PADDING 32PX) */
+.app-content-canvas {
+  background-color: var(--bg-page) !important;
+  padding: var(--page-padding) !important;
+  color: var(--text-main);
+  transition: background-color var(--transition-base);
+}
+
+@media (max-width: 768px) {
+  .app-content-canvas {
+    padding: var(--page-padding-mobile) !important;
+  }
+}
+
+.app-page-container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* 5. PAGE HEADER COMPONENT (UNIFIED 30PX BOLD, 48PX ICON BOX) */
+.app-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.app-page-header-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  border: 1px solid var(--primary-border);
+}
+
+.app-page-title {
+  font-size: var(--text-title) !important;
+  font-weight: 700 !important;
+  color: var(--text-main) !important;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.app-page-subtitle {
+  font-size: var(--text-body);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+.app-page-breadcrumb {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.app-page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* 6. CARDS (WHITE, RADIUS 16PX, BORDER 1PX, SUBTLE SHADOW) */
+.app-card,
+.card {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-sm) !important;
+  padding: var(--card-padding);
+  margin-bottom: var(--card-gap);
+  color: var(--text-main);
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.app-card-header,
+.card-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding: 0 0 var(--space-4) 0 !important;
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-card-title,
+.card-title {
+  font-size: var(--text-lg) !important;
+  font-weight: 700 !important;
+  color: var(--text-main) !important;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-border) !important;
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* 7. STAT CARD COMPONENT (36PX NUMBER, 14PX LABEL, TREND ARROW) */
+.app-stat-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-fast);
+  height: 100%;
+}
+
+.app-stat-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-md);
+}
+
+.app-stat-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.app-stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.app-stat-value {
+  font-size: var(--text-kpi);
+  font-weight: 800;
+  color: #0f172a !important;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: var(--space-2) 0;
+  font-feature-settings: 'tnum' 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-stat-unit {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.app-stat-footer {
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.app-stat-trend {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: var(--text-xs);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.app-stat-trend.trend-up {
+  background: var(--success-light);
+  color: var(--success-text);
+}
+
+.app-stat-trend.trend-down {
+  background: var(--danger-light);
+  color: var(--danger-text);
+}
+
+.app-stat-trend.trend-neutral {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+}
+
+.app-stat-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Tone Variants for Stat Cards (Icon highlights) */
+.tone-success .app-stat-icon {
+  background: var(--success-light);
+  color: var(--success);
+}
+.tone-warning .app-stat-icon {
+  background: var(--warning-light);
+  color: var(--warning);
+}
+.tone-danger .app-stat-icon {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+.tone-info .app-stat-icon {
+  background: var(--info-light);
+  color: var(--info);
+}
+
+/* 8. BUTTONS (MIN HEIGHT 44PX, RADIUS 12PX, 15PX SEMIBOLD, FOCUS RING 3PX) */
+.btn {
+  min-height: 44px !important;
+  border-radius: var(--radius-md) !important;
+  font-size: var(--text-base) !important;
+  font-weight: 600 !important;
+  padding: 10px 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--space-2) !important;
+  line-height: 1.4 !important;
+  transition: all var(--transition-fast) !important;
+  cursor: pointer;
+  text-decoration: none !important;
+}
+
+.btn:focus-visible {
+  outline: none !important;
+  box-shadow: var(--focus-ring) !important;
+}
+
+/* Primary Button */
+.btn-primary,
+.btn-brand {
+  background-color: var(--primary) !important;
+  border: 1px solid var(--primary) !important;
+  color: var(--text-inverse) !important;
+}
+
+.btn-primary:hover,
+.btn-brand:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  color: var(--text-inverse) !important;
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.25) !important;
+}
+
+.btn-primary:active,
+.btn-brand:active {
+  background-color: var(--primary-active) !important;
+  border-color: var(--primary-active) !important;
+}
+
+/* Secondary / Outline Button */
+.btn-outline-secondary,
+.btn-secondary,
+.btn-white,
+.btn-outline {
+  background-color: #ffffff !important;
+  border: 1px solid #e5eaf1 !important;
+  color: #0f172a !important;
+}
+
+.btn-outline-secondary:hover,
+.btn-secondary:hover,
+.btn-white:hover,
+.btn-outline:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Danger Button (Soft Red Background) */
+.btn-danger,
+.btn-outline-danger {
+  background-color: var(--danger-light) !important;
+  border: 1px solid var(--danger-border) !important;
+  color: var(--danger-text) !important;
+}
+
+.btn-danger:hover,
+.btn-outline-danger:hover {
+  background-color: var(--danger) !important;
+  border-color: var(--danger) !important;
+  color: var(--text-inverse) !important;
+}
+
+/* Compact Button (for inline tables) */
+.btn-sm {
+  min-height: 36px !important;
+  padding: 6px 12px !important;
+  font-size: var(--text-sm) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+/* 9. FORMS (INPUT 46PX, RADIUS 12PX, 14PX BOLD LABELS, 14PX RED ERRORS) */
+.form-label {
+  font-size: var(--text-sm) !important;
+  font-weight: 600 !important;
+  color: var(--text-main) !important;
+  margin-bottom: var(--space-2) !important;
+  display: inline-block;
+}
+
+.form-control,
+.form-select {
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  color: var(--text-main);
+  padding: 10px 14px;
+  line-height: 1.5;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:not(.bg-transparent):not(.form-control-sm),
+.form-select:not(.bg-transparent):not(.form-select-sm) {
+  min-height: 46px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--focus-ring);
+  outline: none;
+  background-color: #ffffff;
+  color: var(--text-main);
+}
+
+/* Explicit Transparent input support for topbar / search / period dropdown */
+.form-control.bg-transparent,
+.form-select.bg-transparent,
+.bg-transparent.form-control,
+.bg-transparent.form-select {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  min-height: auto !important;
+  box-shadow: none !important;
+}
+
+.input-group-text {
+  background-color: var(--bg-muted) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-secondary) !important;
+  font-size: var(--text-base) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+/* 10. TABLES (HEADER #F1F5F9 TEXT #475569 UPPERCASE 13PX BOLD, ROW >= 56PX) */
+.table-responsive {
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--border-color) !important;
+  background-color: var(--bg-card) !important;
+  margin-bottom: var(--space-6);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  font-size: var(--text-base) !important;
+  margin-bottom: 0 !important;
+  color: var(--text-main) !important;
+}
+
+.table thead th,
+.table thead tr th {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 14px 16px !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  border-top: none !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+}
+
+
+
+.table tbody tr {
+  min-height: 56px !important;
+  transition: background-color var(--transition-fast) !important;
+}
+
+.table tbody td {
+  padding: 16px !important;
+  vertical-align: middle !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  font-size: var(--text-base) !important;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.table tbody tr:hover,
+.table-hover tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+
+
+/* Sticky First Column for horizontal scrolling */
+.table-sticky-first th:first-child,
+.table-sticky-first td:first-child {
+  position: sticky !important;
+  left: 0 !important;
+  background-color: inherit !important;
+  z-index: 2 !important;
+}
+
+/* Total / Summary Row */
+.table tr.table-total td,
+.table tr.row-total td,
+.table tfoot tr td {
+  font-weight: 700 !important;
+  font-size: var(--text-base) !important;
+  background-color: #f8fafc !important;
+  border-top: 2px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+
+
+/* 11. STATUS BADGES (PILL, LIGHT BG + BOLD TEXT SAME TONE, 13PX, DOT) */
+.status-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px 10px !important;
+  border-radius: var(--radius-full) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  border: 1px solid transparent !important;
+  white-space: nowrap !important;
+}
+
+.status-badge .badge-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+}
+
+/* Success (Đã thu đủ, Active, Hạng A) */
+.status-badge.badge-success {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+  border-color: #a7f3d0 !important;
+}
+.status-badge.badge-success .badge-dot {
+  background-color: #059669 !important;
+}
+
+/* Danger (Quá hạn, Inactive, Nợ xấu) */
+.status-badge.badge-danger {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border-color: #fca5a5 !important;
+}
+.status-badge.badge-danger .badge-dot {
+  background-color: #dc2626 !important;
+}
+
+/* Warning (Sắp đến hạn, Cận hạn mức, Hạng C) */
+.status-badge.badge-warning {
+  background-color: #fffbeb !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+}
+.status-badge.badge-warning .badge-dot {
+  background-color: #d97706 !important;
+}
+
+/* Info (Trả một phần, Hạng B) */
+.status-badge.badge-info {
+  background-color: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border-color: #bfdbfe !important;
+}
+.status-badge.badge-info .badge-dot {
+  background-color: #2563eb !important;
+}
+
+/* Neutral (Chưa thanh toán, Chờ duyệt, Hạng D) */
+.status-badge.badge-neutral {
+  background-color: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+.status-badge.badge-neutral .badge-dot {
+  background-color: #64748b !important;
+}
+
+/* Dark mode adjustments for badges */
+
+
+
+
+
+
+/* 12. EMPTY STATE COMPONENT */
+.app-empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  background-color: var(--bg-card);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-4) 0;
+}
+
+.app-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--primary-border);
+}
+
+.app-empty-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: var(--space-2);
+}
+
+.app-empty-desc {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  max-width: 440px;
+  margin-bottom: var(--space-6);
+  line-height: 1.5;
+}
+
+.app-empty-action {
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* 13. SKELETON LOADING (SHIMMER ANIMATION) */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+  border-radius: var(--radius-xs);
+  display: inline-block;
+}
+
+
+
+/* 14. PREFERS-REDUCED-MOTION SUPPORT */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

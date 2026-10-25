@@ -18,76 +18,16 @@
 <PageTitle>Hóa Đơn Của Tôi & Thanh Toán VietQR</PageTitle>
 
 <div class="portal-container py-3">
-    <!-- 1. HEADER -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-        <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1 small">
-                    <li class="breadcrumb-item"><a href="/portal/dashboard" class="text-decoration-none text-muted">Cổng Đại Lý</a></li>
-                    <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">Hóa Đơn Của Tôi</li>
-                </ol>
-            </nav>
-            <h3 class="fw-bold mb-0 text-slate-navy">
-                <i class="bi bi-receipt text-primary me-2"></i>Tra Cứu Hóa Đơn & Quét Mã VietQR
-            </h3>
-            <p class="text-muted small mb-0">
-                Quản lý toàn bộ hóa đơn mua hàng, theo dõi kỳ hạn thanh toán và quét mã Napas cấn trừ công nợ 24/7
-            </p>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <a href="/portal/store" class="btn btn-primary btn-sm rounded-pill px-3 shadow-xs fw-semibold">
-                <i class="bi bi-cart-plus me-1"></i> Đặt hàng sỉ mới
+    <div class="app-page-container">
+    <PageHeader Title="Tra Cứu Hóa Đơn & Quét Mã VietQR"
+                Subtitle="Quản lý toàn bộ hóa đơn mua hàng, theo dõi kỳ hạn thanh toán và quét mã Napas cấn trừ công nợ 24/7"
+                Icon="bi-receipt">
+        <Actions>
+            <a href="/portal/store" class="btn btn-primary">
+                <i class="bi bi-cart-plus me-1"></i> Đặt Hàng Mới
             </a>
-            <a href="/portal/ledger" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
-                <i class="bi bi-journal-text me-1"></i> Sổ đối soát nợ
-            </a>
-        </div>
-    </div>
-
-    <!-- 2. CREDIT STATUS BAR -->
-    <CreditStatusBar CustomerInfo="@customerInfo" />
-
-    @if (loading)
-    {
-        <div class="text-center py-5">
-            <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2 text-muted">Đang truy vấn lịch sử hóa đơn của Quý đại lý...</p>
-        </div>
-    }
-    else
-    {
-        <!-- 3. BỘ LỌC HÓA ĐƠN -->
-        <div class="card border-0 shadow-sm rounded-3 p-3 mb-3 bg-white">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <div class="btn-group rounded-pill p-1 bg-light" role="group">
-                    <button type="button"
-                            class="btn btn-sm rounded-pill px-3 @(activeFilter == "All" ? "btn-primary text-white fw-semibold" : "btn-light text-muted")"
-                            @onclick='() => SetFilter("All")'>
-                        Tất cả (@allInvoices.Count)
-                    </button>
-                    <button type="button"
-                            class="btn btn-sm rounded-pill px-3 @(activeFilter == "Unpaid" ? "btn-primary text-white fw-semibold" : "btn-light text-muted")"
-                            @onclick='() => SetFilter("Unpaid")'>
-                        Còn nợ (@allInvoices.Count(x => x.Balance > 0 && !x.IsOverdue))
-                    </button>
-                    <button type="button"
-                            class="btn btn-sm rounded-pill px-3 @(activeFilter == "Overdue" ? "btn-danger text-white fw-semibold" : "btn-light text-muted")"
-                            @onclick='() => SetFilter("Overdue")'>
-                        Quá hạn (@allInvoices.Count(x => x.IsOverdue))
-                    </button>
-                    <button type="button"
-                            class="btn btn-sm rounded-pill px-3 @(activeFilter == "Paid" ? "btn-success text-white fw-semibold" : "btn-light text-muted")"
-                            @onclick='() => SetFilter("Paid")'>
-                        Đã tất toán (@allInvoices.Count(x => x.Balance <= 0))
-                    </button>
-                </div>
-
-                <div class="d-flex align-items-center gap-2 text-muted small">
-                    <i class="bi bi-shield-check text-success"></i>
-                    Thuật toán cấn trừ nợ: <strong>FIFO (First In - First Out)</strong>
-                </div>
-            </div>
-        </div>
+        </Actions>
+    </PageHeader>
 
         <!-- 4. BẢNG HÓA ĐƠN -->
         <div class="card border-0 shadow-sm rounded-3 bg-white overflow-hidden">
@@ -208,7 +148,7 @@
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.65);" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-slate-navy text-white py-3 px-4">
+                <div class="modal-header bg-white border-bottom py-3 px-4 text-dark">
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-qr-code-scan fs-4 text-warning"></i>
                         <h5 class="modal-title fw-bold text-white mb-0">Thanh Toán VietQR Napas 24/7</h5>
@@ -354,6 +294,8 @@
         </div>
     </div>
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private bool loading = true;

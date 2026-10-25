@@ -1,0 +1,55 @@
+@namespace WebBanHang.Components.Controls
+@using WebBanHang.CoreBusiness.Entities
+
+<span class="status-badge @GetStatusClass()">
+    <span class="badge-dot" aria-hidden="true"></span>
+    <span class="badge-text">@GetDisplayLabel()</span>
+</span>
+
+@code {
+    [Parameter] public string? Status { get; set; }
+    [Parameter] public InvoiceStatus? InvoiceStatus { get; set; }
+    [Parameter] public string? CustomText { get; set; }
+
+    private string GetStatusKey()
+    {
+        if (InvoiceStatus.HasValue) return InvoiceStatus.Value.ToString();
+        return Status ?? "";
+    }
+
+    private string GetStatusClass()
+    {
+        var key = GetStatusKey().Trim().ToLowerInvariant();
+        return key switch
+        {
+            "paid" or "dathudu" or "đã thu đủ" or "đã thanh toán" or "hoàn tất" or "active" or "hoạt động" or "a" => "badge-success",
+            "unpaid" or "chuathanhtoan" or "chưa thanh toán" or "còn nợ" or "chờ duyệt" or "d" => "badge-neutral",
+            "partiallypaid" or "tramotphan" or "trả một phần" or "đang trả" or "b" => "badge-info",
+            "overdue" or "quahan" or "quá hạn" or "nợ xấu" or "khóa" or "inactive" => "badge-danger",
+            "duesoon" or "sapdenhan" or "sắp đến hạn" or "nhắc nhở" or "c" => "badge-warning",
+            _ => "badge-neutral"
+        };
+    }
+
+    private string GetDisplayLabel()
+    {
+        if (!string.IsNullOrEmpty(CustomText)) return CustomText;
+        var key = GetStatusKey().Trim();
+        var lower = key.ToLowerInvariant();
+        return lower switch
+        {
+            "paid" => "Đã thu đủ",
+            "unpaid" => "Chưa thanh toán",
+            "partiallypaid" => "Trả một phần",
+            "overdue" => "Quá hạn",
+            "duesoon" => "Sắp đến hạn",
+            "active" => "Hoạt động",
+            "inactive" => "Tạm dừng",
+            "a" => "Hạng A (Tín nhiệm cao)",
+            "b" => "Hạng B (Tiêu chuẩn)",
+            "c" => "Hạng C (Cần theo dõi)",
+            "d" => "Hạng D (Rủi ro cao)",
+            _ => string.IsNullOrEmpty(key) ? "Chưa xác định" : key
+        };
+    }
+}

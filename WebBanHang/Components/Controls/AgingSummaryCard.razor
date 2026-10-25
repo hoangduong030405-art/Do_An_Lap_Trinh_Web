@@ -1,39 +1,39 @@
 @using WebBanHang.UseCases.DTOs
 
 <div class="card mb-3 shadow-sm border-0">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">@Report.CustomerName - @Report.CustomerCode</h5>
-        <button class="btn btn-sm btn-light" @onclick="() => OnViewDetails.InvokeAsync(Report.CustomerId)">Chi tiết</button>
+    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold text-dark">@Report.CustomerName <span class="badge bg-light text-primary border ms-1">@Report.CustomerCode</span></h6>
+        <button class="btn btn-sm btn-outline-primary" @onclick="() => OnViewDetails.InvokeAsync(Report.CustomerId)">Chi tiết</button>
     </div>
     <div class="card-body">
         <div class="row text-center mb-2 g-1">
             <div class="col">
-                <div class="p-2 bg-info bg-opacity-75 text-white rounded">
-                    <small style="font-size: 0.72rem;">Chưa Đến Hạn</small><br />
+                <div class="p-2 bg-info-subtle text-info-emphasis border border-info-subtle rounded">
+                    <small style="font-size: 13px;">Chưa Đến Hạn</small><br />
                     <strong style="font-size: 0.85rem;">@Report.BucketNotDue.ToString("N0")</strong>
                 </div>
             </div>
             <div class="col">
-                <div class="p-2 bg-success text-white rounded">
-                    <small style="font-size: 0.72rem;">1-30 Ngày</small><br />
+                <div class="p-2 bg-success-subtle text-success-emphasis border border-success-subtle rounded">
+                    <small style="font-size: 13px;">1-30 Ngày</small><br />
                     <strong style="font-size: 0.85rem;">@Report.Bucket1To30.ToString("N0")</strong>
                 </div>
             </div>
             <div class="col">
-                <div class="p-2 bg-warning text-dark rounded">
-                    <small style="font-size: 0.72rem;">31-60 Ngày</small><br />
+                <div class="p-2 bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded">
+                    <small style="font-size: 13px;">31-60 Ngày</small><br />
                     <strong style="font-size: 0.85rem;">@Report.Bucket31To60.ToString("N0")</strong>
                 </div>
             </div>
             <div class="col">
-                <div class="p-2 text-white rounded" style="background-color: #fd7e14;">
-                    <small style="font-size: 0.72rem;">61-90 Ngày</small><br />
+                <div class="p-2 text-white rounded" style="background-color: #fff7ed; color: #c2410c; border: 1px solid #fed7aa;">
+                    <small style="font-size: 13px;">61-90 Ngày</small><br />
                     <strong style="font-size: 0.85rem;">@Report.Bucket61To90.ToString("N0")</strong>
                 </div>
             </div>
             <div class="col">
-                <div class="p-2 bg-danger text-white rounded">
-                    <small style="font-size: 0.72rem;">>90 Ngày</small><br />
+                <div class="p-2 bg-danger-subtle text-danger border border-danger-subtle rounded">
+                    <small style="font-size: 13px;">>90 Ngày</small><br />
                     <strong style="font-size: 0.85rem;">@Report.BucketOver90.ToString("N0")</strong>
                 </div>
             </div>

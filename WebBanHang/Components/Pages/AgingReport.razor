@@ -14,7 +14,19 @@
 @inject IEmailSenderService EmailSenderService
 @inject IJSRuntime JSRuntime
 
-<h3>Báo Cáo Phân Tích Tuổi Nợ (Aging Report)</h3>
+<div class="app-page-container">
+    <PageHeader Title="Báo Cáo Phân Tích Tuổi Nợ (FIFO)"
+                Subtitle="Theo dõi 4 xô tuổi nợ (0-30, 31-60, 61-90, >90 ngày) và cảnh báo rủi ro thanh khoản"
+                Icon="bi-bar-chart-line-fill">
+        <Actions>
+            <button class="btn btn-secondary" @onclick="LoadReport">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
+            </button>
+            <button class="btn btn-primary" @onclick="ExportCSV">
+                <i class="bi bi-file-earmark-excel me-1"></i> Xuất Báo Cáo CSV
+            </button>
+        </Actions>
+    </PageHeader>
 
 <div class="row mb-4">
     <div class="col-md-8">
@@ -88,8 +100,8 @@ else
             </div>
         }
 
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="table table-bordered table-hover align-middle shadow-xs rounded-3 overflow-hidden bg-white">
+            <thead>
                 <tr>
                     <th>Mã Hóa Đơn</th>
                     <th>Ngày HĐ</th>
@@ -140,6 +152,8 @@ else
         </table>
     }
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private DateTime asOfDate = DateTime.Now;

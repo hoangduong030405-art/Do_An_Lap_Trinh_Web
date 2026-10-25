@@ -17,29 +17,19 @@
 
 <div class="portal-container py-3">
     <!-- 1. HEADER & ACTIONS -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 d-print-none">
-        <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1 small">
-                    <li class="breadcrumb-item"><a href="/portal/dashboard" class="text-decoration-none text-muted">Cổng Đại Lý</a></li>
-                    <li class="breadcrumb-item active text-primary fw-semibold" aria-current="page">Sổ Đối Soát Công Nợ</li>
-                </ol>
-            </nav>
-            <h3 class="fw-bold mb-0 text-slate-navy">
-                <i class="bi bi-journal-text text-primary me-2"></i>Sổ Đối Soát Công Nợ Tự Phục Vụ
-            </h3>
-            <p class="text-muted small mb-0">
-                Minh bạch toàn bộ dòng tiền mua hàng (Ghi Nợ), nộp tiền (Ghi Có) và số dư nợ lũy kế sau từng giao dịch
-            </p>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-xs" @onclick="LoadLedgerAsync">
-                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới sổ cái
-            </button>
-            <button class="btn btn-success btn-sm rounded-pill px-3 shadow-xs fw-semibold" @onclick="PrintLedger">
-                <i class="bi bi-printer me-1"></i> 🖨️ In Biên Bản Đối Soát Nợ
-            </button>
-        </div>
+    <div class="d-print-none mb-3">
+        <PageHeader Title="Sổ Đối Soát Công Nợ Tự Phục Vụ"
+                    Subtitle="Minh bạch toàn bộ dòng tiền mua hàng (Ghi Nợ), nộp tiền (Ghi Có) và số dư nợ lũy kế sau từng giao dịch"
+                    Icon="bi-journal-text">
+            <Actions>
+                <button class="btn btn-outline-primary me-2" @onclick="LoadLedgerAsync">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
+                </button>
+                <button class="btn btn-primary" @onclick="PrintLedger">
+                    <i class="bi bi-printer me-1"></i> In Biên Bản
+                </button>
+            </Actions>
+        </PageHeader>
     </div>
 
     <!-- 2. CREDIT STATUS BAR -->
@@ -57,7 +47,7 @@
     else if (ledger != null)
     {
         <!-- 3. KHUNG BIÊN BẢN ĐỐI SOÁT CÔNG NỢ (HỖ TRỢ IN ẤN CHUẨN DOANH NGHIỆP) -->
-        <div class="card border-0 shadow-sm rounded-3 bg-white p-4 mb-4 printable-area" id="printableInvoiceArea">
+        <div class="card border shadow-sm rounded-3 bg-white p-4 mb-4 printable-area" id="printableInvoiceArea" style="background-color: #ffffff !important; color: #0f172a !important;">
             <!-- HEADER TIÊU CHUẨN IN ẤN -->
             <div class="text-center mb-4 pb-3 border-bottom">
                 <div class="fw-bold small text-uppercase">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
@@ -66,7 +56,7 @@
                 <h4 class="fw-bold text-slate-navy mt-3 mb-1 text-uppercase">
                     BIÊN BẢN ĐỐI SOÁT CÔNG NỢ THƯƠNG MẠI
                 </h4>
-                <div class="small text-muted">
+                <div class="text-muted">
                     Thời điểm kết xuất: <strong>@DateTime.Now.ToString("HH:mm - dd/MM/yyyy")</strong> • Đơn vị tính: <strong>VNĐ</strong>
                 </div>
             </div>
@@ -78,10 +68,10 @@
                         <div class="fw-bold text-primary mb-2 text-uppercase small">
                             <i class="bi bi-building me-1"></i>BÊN BÁN (BÊN A): CÔNG TY ECO2415
                         </div>
-                        <div class="small text-muted mb-1"><strong>Tên doanh nghiệp:</strong> CÔNG TY CP CÔNG NGHỆ & THƯƠNG MẠI ECO2415</div>
-                        <div class="small text-muted mb-1"><strong>Địa chỉ:</strong> 123 Đường Công Nghệ, Quận Tân Bình, TP. Hồ Chí Minh</div>
-                        <div class="small text-muted mb-1"><strong>Mã số thuế:</strong> 0312345678</div>
-                        <div class="small text-muted"><strong>Hotline bán buôn:</strong> 1900 6868 | <strong>Email:</strong> ketoan.ar@eco2415.vn</div>
+                        <div class="text-muted mb-1"><strong>Tên doanh nghiệp:</strong> CÔNG TY CP CÔNG NGHỆ & THƯƠNG MẠI ECO2415</div>
+                        <div class="text-muted mb-1"><strong>Địa chỉ:</strong> 123 Đường Công Nghệ, Quận Tân Bình, TP. Hồ Chí Minh</div>
+                        <div class="text-muted mb-1"><strong>Mã số thuế:</strong> 0312345678</div>
+                        <div class="text-muted"><strong>Hotline bán buôn:</strong> 1900 6868 | <strong>Email:</strong> ketoan.ar@eco2415.vn</div>
                     </div>
                 </div>
 
@@ -90,10 +80,10 @@
                         <div class="fw-bold text-success mb-2 text-uppercase small">
                             <i class="bi bi-shop me-1"></i>BÊN MUA (BÊN B): ĐẠI LÝ ĐỐI TÁC
                         </div>
-                        <div class="small text-muted mb-1"><strong>Tên đại lý:</strong> <span class="fw-bold text-dark">@ledger.CustomerName</span></div>
-                        <div class="small text-muted mb-1"><strong>Mã khách hàng:</strong> <span class="font-monospace fw-bold text-primary">@ledger.CustomerCode</span></div>
-                        <div class="small text-muted mb-1"><strong>Điện thoại:</strong> @ledger.CustomerPhone</div>
-                        <div class="small text-muted"><strong>Địa chỉ giao dịch:</strong> @ledger.CustomerAddress</div>
+                        <div class="text-muted mb-1"><strong>Tên đại lý:</strong> <span class="fw-bold text-dark">@ledger.CustomerName</span></div>
+                        <div class="text-muted mb-1"><strong>Mã khách hàng:</strong> <span class="font-monospace fw-bold text-primary">@ledger.CustomerCode</span></div>
+                        <div class="text-muted mb-1"><strong>Điện thoại:</strong> @ledger.CustomerPhone</div>
+                        <div class="text-muted"><strong>Địa chỉ giao dịch:</strong> @ledger.CustomerAddress</div>
                     </div>
                 </div>
             </div>
@@ -198,20 +188,20 @@
             </div>
 
             <!-- CAM KẾT & CHỮ KÝ XÁC NHẬN HAI BÊN -->
-            <div class="mb-4 small text-muted">
+            <div class="mb-4 text-muted">
                 <strong>Cam kết xác nhận:</strong> Hai bên cùng đối soát và thống nhất xác nhận toàn bộ số liệu công nợ tính đến ngày hôm nay là hoàn toàn chính xác. Bên B cam kết thực hiện nghĩa vụ thanh toán đối với số dư nợ đến hạn theo đúng các điều khoản trong Hợp đồng mua bán phân phối sỉ đã ký kết.
             </div>
 
             <div class="row text-center mt-5 pt-3">
                 <div class="col-6">
                     <div class="fw-bold small text-uppercase">ĐẠI DIỆN BÊN MUA (BÊN B)</div>
-                    <div class="text-muted small fst-italic">(Ký, ghi rõ họ tên, đóng dấu nếu có)</div>
+                    <div class="text-muted fst-italic">(Ký, ghi rõ họ tên, đóng dấu nếu có)</div>
                     <div style="height: 80px;"></div>
                     <div class="fw-bold text-dark">@ledger.CustomerName</div>
                 </div>
                 <div class="col-6">
                     <div class="fw-bold small text-uppercase">ĐẠI DIỆN BÊN BÁN (BÊN A)</div>
-                    <div class="text-muted small fst-italic">(Kế toán trưởng / Giám đốc ký tên)</div>
+                    <div class="text-muted fst-italic">(Kế toán trưởng / Giám đốc ký tên)</div>
                     <div style="height: 80px;"></div>
                     <div class="fw-bold text-primary">Kế Toán Phụ Trách Công Nợ AR</div>
                 </div>

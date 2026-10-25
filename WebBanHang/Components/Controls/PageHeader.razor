@@ -1,0 +1,39 @@
+@namespace WebBanHang.Components.Controls
+
+<div class="app-page-header">
+    <div class="d-flex align-items-center gap-3">
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <div class="app-page-header-icon" aria-hidden="true">
+                <i class="bi @Icon"></i>
+            </div>
+        }
+        <div>
+            @if (Breadcrumb != null)
+            {
+                <div class="app-page-breadcrumb mb-1">
+                    @Breadcrumb
+                </div>
+            }
+            <h1 class="app-page-title mb-1">@Title</h1>
+            @if (!string.IsNullOrEmpty(Subtitle))
+            {
+                <p class="app-page-subtitle mb-0">@Subtitle</p>
+            }
+        </div>
+    </div>
+    @if (Actions != null)
+    {
+        <div class="app-page-header-actions">
+            @Actions
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string? Subtitle { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public RenderFragment? Actions { get; set; }
+    [Parameter] public RenderFragment? Breadcrumb { get; set; }
+}

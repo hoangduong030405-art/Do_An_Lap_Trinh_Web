@@ -16,33 +16,23 @@
         <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 p-2" 
              style="top: 100%; right: 0; min-width: 250px; z-index: 1050;"
              @onclick:stopPropagation="true">
-            <div class="px-2 py-1 small text-muted fw-bold text-uppercase" style="font-size: 0.68rem; letter-spacing: 0.5px;">
+            <div class="px-2 py-1 text-muted fw-bold text-uppercase" style="font-size: 13px; letter-spacing: 0.5px;">
                 Cài đặt & Giao diện
             </div>
 
-            <!-- THEME TOGGLE -->
-            <button class="btn btn-light btn-sm text-start py-2 px-2.5 w-100 d-flex align-items-center justify-content-between rounded-2 mb-1"
-                    @onclick="ToggleTheme">
+            <!-- THEME DISPLAY (LIGHT ONLY) -->
+            <div class="px-2.5 py-2 w-100 d-flex align-items-center justify-content-between rounded-2 mb-1 bg-light border">
                 <div class="d-flex align-items-center gap-2">
-                    <i class="bi @(isDarkMode ? "bi-moon-stars-fill text-warning" : "bi-sun-fill text-warning") fs-6"></i>
-                    <span class="small fw-semibold text-dark">Chế độ hiển thị</span>
+                    <i class="bi bi-sun-fill text-warning fs-6"></i>
+                    <span class="fw-semibold text-dark" style="font-size: 14px;">Chế độ hiển thị</span>
                 </div>
-                <span class="badge @(isDarkMode ? "bg-dark" : "bg-light text-dark border") small">
-                    @(isDarkMode ? "Tối" : "Sáng")
+                <span class="badge bg-white text-primary border" style="font-size: 13px;">
+                    Sáng (Chuẩn)
                 </span>
-            </button>
-
-            @* Ẩn nút "Đổi mật khẩu" vì chưa có chức năng thật theo yêu cầu chuẩn hóa *@
-            @*
-            <button class="btn btn-light btn-sm text-start py-2 px-2.5 w-100 d-flex align-items-center gap-2 rounded-2 mb-1"
-                    @onclick="ShowPasswordInfo">
-                <i class="bi bi-key-fill text-primary fs-6"></i>
-                <div class="small fw-semibold text-dark">Đổi mật khẩu tài khoản</div>
-            </button>
-            *@
+            </div>
 
             <!-- SYSTEM VERSION INFO -->
-            <div class="p-2 mt-1 rounded bg-light small text-muted border" style="font-size: 0.7rem;">
+            <div class="p-2 mt-1 rounded bg-light text-muted border" style="font-size: 13px;">
                 <div>Phiên bản: <strong>Capstone 18.2.0</strong></div>
                 <div>Kiến trúc: Clean Architecture 4 tầng</div>
             </div>

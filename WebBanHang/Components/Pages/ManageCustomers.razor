@@ -13,12 +13,16 @@
 
 <PageTitle>Quản Lý Khách Hàng & AI Tín Dụng</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-1 text-primary">👥 Quản Lý Khách Hàng & Xếp Hạng Tín Dụng AI</h2>
-        <p class="text-muted mb-0">Quản lý hồ sơ đối tác, điều chỉnh hạn mức tín dụng và phân tích rủi ro nợ khó đòi bằng AI</p>
-    </div>
-</div>
+<div class="app-page-container">
+    <PageHeader Title="Hồ Sơ Khách Hàng & Hạn Mức Tín Dụng"
+                Subtitle="Thẩm định hạn mức, giám sát nợ tồn và xếp hạng tín dụng doanh nghiệp"
+                Icon="bi-people-fill">
+        <Actions>
+            <button class="btn btn-primary" @onclick="ResetForm">
+                <i class="bi bi-person-plus me-1"></i> Thêm Khách Hàng
+            </button>
+        </Actions>
+    </PageHeader>
 
 @if (!string.IsNullOrEmpty(successMessage))
 {
@@ -196,7 +200,7 @@
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-white">
+                <div class="modal-header bg-white border-bottom text-dark">
                     <h5 class="modal-title fw-bold">
                         <i class="bi bi-cpu me-2 text-warning"></i>Báo Cáo Thẩm Định Tín Dụng AI: @selectedRiskAssessment.CustomerName
                     </h5>
@@ -296,6 +300,8 @@
         </div>
     </div>
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private CustomerInputModel customerModel = new();

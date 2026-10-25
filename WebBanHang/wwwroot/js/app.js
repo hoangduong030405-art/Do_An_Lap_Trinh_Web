@@ -339,27 +339,24 @@
     });
 
     // -------------------------------------------------------------------------
-    // 3. THEME CONTROLLER & UTILITIES
+    // 3. THEME CONTROLLER & UTILITIES (PERMANENT LIGHT THEME)
     // -------------------------------------------------------------------------
     window.setAppTheme = function (theme) {
-        if (theme === 'dark') {
-            document.documentElement.setAttribute('data-bs-theme', 'dark');
-            localStorage.setItem('theme_preference', 'dark');
-        } else {
+        try {
+            localStorage.removeItem('theme_preference');
+            document.documentElement.setAttribute('data-theme', 'light');
             document.documentElement.setAttribute('data-bs-theme', 'light');
-            localStorage.setItem('theme_preference', 'light');
-        }
+        } catch (e) { }
     };
 
     window.getAppTheme = function () {
-        return localStorage.getItem('theme_preference') || 'light';
+        return 'light';
     };
 
     try {
-        const storedTheme = localStorage.getItem('theme_preference');
-        if (storedTheme === 'dark') {
-            document.documentElement.setAttribute('data-bs-theme', 'dark');
-        }
+        localStorage.removeItem('theme_preference');
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-bs-theme', 'light');
     } catch (e) { }
 
     window.copyToClipboard = async function (text) {

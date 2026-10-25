@@ -12,17 +12,16 @@
 
 <PageTitle>Quản Lý Hóa Đơn & In Ấn</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-1 text-primary">📑 Danh Sách Hóa Đơn Bán Hàng</h2>
-        <p class="text-muted mb-0">Theo dõi trạng thái thanh toán, tra cứu chi tiết và in ấn hóa đơn kèm mã VietQR</p>
-    </div>
-    <div>
-        <a href="/create-invoice" class="btn btn-primary shadow-sm">
-            <i class="bi bi-cart-plus me-1"></i> + Lập Hóa Đơn Mới
-        </a>
-    </div>
-</div>
+<div class="app-page-container">
+    <PageHeader Title="Danh Sách Hóa Đơn Bán Hàng"
+                Subtitle="Theo dõi trạng thái thanh toán, tra cứu chi tiết và in ấn hóa đơn kèm mã VietQR"
+                Icon="bi-receipt">
+        <Actions>
+            <a href="/create-invoice" class="btn btn-primary">
+                <i class="bi bi-cart-plus me-1"></i> Lập Hóa Đơn Mới
+            </a>
+        </Actions>
+    </PageHeader>
 
 <!-- BỘ LỌC TÌM KIẾM -->
 <div class="card border-0 shadow-sm mb-4 p-3 bg-light">
@@ -59,17 +58,16 @@
 }
 else if (invoices == null || !invoices.Any())
 {
-    <div class="alert alert-info text-center py-4">
-        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
-        Không tìm thấy hóa đơn nào phù hợp với điều kiện tìm kiếm.
-    </div>
+    <EmptyState Title="Không tìm thấy hóa đơn"
+            Description="Chưa có hóa đơn nào phù hợp với điều kiện tìm kiếm hiện tại."
+            Icon="bi-receipt" />
 }
 else
 {
     <div class="card border-0 shadow-sm">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
+                <thead>
                     <tr>
                         <th>Số Hóa Đơn</th>
                         <th>Khách Hàng</th>
@@ -109,19 +107,19 @@ else
                             <td>
                                 @if (inv.Balance <= 0)
                                 {
-                                    <span class="badge bg-success">Đã thu đủ</span>
+                                    <StatusBadge Status="Paid" />
                                 }
                                 else if (inv.OverdueDays > 0)
                                 {
-                                    <span class="badge bg-danger">Quá hạn</span>
+                                    <StatusBadge Status="Overdue" />
                                 }
                                 else if (inv.PaidAmount > 0)
                                 {
-                                    <span class="badge bg-warning text-dark">Thu một phần</span>
+                                    <StatusBadge Status="PartiallyPaid" />
                                 }
                                 else
                                 {
-                                    <span class="badge bg-secondary">Chưa thanh toán</span>
+                                    <StatusBadge Status="Unpaid" />
                                 }
                             </td>
                             <td class="text-center">
@@ -191,19 +189,19 @@ else
                         <div class="card bg-light border-0 p-3 mb-3 d-print-none rounded-3">
                             <div class="row align-items-center text-center text-md-start">
                                 <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Doanh thu xuất sỉ</small>
+                                    <small class="text-muted d-block" style="font-size: 13px;">Doanh thu xuất sỉ</small>
                                     <span class="fs-5 fw-bold text-primary">@selectedInvoiceDetail.TotalAmount.ToString("N0") đ</span>
                                 </div>
                                 <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Tiền vốn nhập kho (COGS)</small>
+                                    <small class="text-muted d-block" style="font-size: 13px;">Tiền vốn nhập kho (COGS)</small>
                                     <span class="fs-5 fw-bold text-danger">@selectedInvoiceDetail.TotalCost.ToString("N0") đ</span>
                                 </div>
                                 <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Lợi nhuận gộp đơn hàng</small>
+                                    <small class="text-muted d-block" style="font-size: 13px;">Lợi nhuận gộp đơn hàng</small>
                                     <span class="fs-5 fw-bold text-success">+@selectedInvoiceDetail.TotalProfit.ToString("N0") đ</span>
                                 </div>
                                 <div class="col-md-3">
-                                    <small class="text-muted d-block" style="font-size: 0.72rem;">Biên lợi nhuận gộp</small>
+                                    <small class="text-muted d-block" style="font-size: 13px;">Biên lợi nhuận gộp</small>
                                     <span class="fs-5 fw-bold text-dark">@selectedInvoiceDetail.ProfitMargin%</span>
                                 </div>
                             </div>
@@ -320,6 +318,8 @@ else
         </div>
     </div>
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private IEnumerable<InvoiceListDto>? allInvoices;

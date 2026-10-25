@@ -25,9 +25,9 @@
         <!-- Functional Reporting Period Selector (Replaces static 2024 badge) -->
         <div class="d-none d-lg-flex align-items-center gap-1.5 bg-light rounded-pill px-2.5 py-1 border small">
             <i class="bi bi-calendar3 text-success"></i>
-            <span class="text-muted fw-semibold" style="font-size: 0.72rem;">Kỳ báo cáo:</span>
+            <span class="text-muted fw-semibold" style="font-size: 13px;">Kỳ báo cáo:</span>
             <select class="form-select form-select-sm border-0 bg-transparent py-0 ps-1 pe-4 text-slate-navy fw-bold" 
-                    style="font-size: 0.72rem; cursor: pointer; width: auto;"
+                    style="font-size: 13px; cursor: pointer; width: auto;"
                     value="@LayoutState.SelectedPeriod"
                     @onchange="OnPeriodChanged">
                 <option value="this_month">Tháng này (@DateTime.Now.ToString("MM/yyyy"))</option>

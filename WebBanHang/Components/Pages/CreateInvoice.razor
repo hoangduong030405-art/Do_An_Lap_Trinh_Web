@@ -19,7 +19,16 @@
 @inject IGetCustomerDebtUseCase GetCustomerDebtUseCase
 @inject DraftInvoiceStateService State
 
-<h3>Lập Hóa Đơn</h3>
+<div class="app-page-container">
+    <PageHeader Title="Lập Hóa Đơn Bán Hàng"
+                Subtitle="Xuất kho hàng sỉ, tự động kiểm tra hạn mức tín dụng và tạo mã VietQR"
+                Icon="bi-cart-plus-fill">
+        <Actions>
+            <a href="/invoices" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Danh Sách Hóa Đơn
+            </a>
+        </Actions>
+    </PageHeader>
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
@@ -153,7 +162,7 @@
                                      style="width: 44px; height: 44px; object-fit: contain;" 
                                      class="rounded border bg-white p-1 shadow-xs" />
                             </td>
-                            <td><span class="badge bg-dark font-monospace">@p.ProductCode</span></td>
+                            <td><span class="badge bg-light text-secondary border font-monospace">@p.ProductCode</span></td>
                             <td class="fw-semibold">@p.Name</td>
                             <td class="text-center">@p.Unit</td>
                             <td class="text-end text-muted small">@p.CostPrice.ToString("N0") đ</td>
@@ -185,6 +194,8 @@
 {
     <button class="btn btn-success btn-lg mb-5" @onclick="SubmitInvoice">Xác Nhận Lập Hóa Đơn</button>
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private IEnumerable<Customer>? customers;

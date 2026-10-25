@@ -3,16 +3,16 @@
     --bs-font-sans-serif: var(--app-font);
     
     /* Enterprise Brand Colors */
-    --brand-green: #00b060;
-    --brand-green-hover: #009653;
-    --brand-green-light: #e6f7ef;
-    --brand-green-border: #a3e6cd;
+    --brand-green: var(--primary, #2563eb);
+    --brand-green-hover: var(--primary-hover, #1d4ed8);
+    --brand-green-light: var(--primary-light, #eff6ff);
+    --brand-green-border: var(--primary-border, #bfdbfe);
     --app-dark-bg: #1e222d;
     --app-sidebar-btn: #2a303c;
     --app-sidebar-border: #353d4c;
     --app-sidebar-text: #abb4c4;
     --app-sidebar-heading: #717d91;
-    --app-body-bg: #f4f5f8;
+    --app-body-bg: var(--bg-page, #f6f8fb);
     --app-card-bg: #ffffff;
     --app-border: #e2e8f0;
     --app-text-heading: #1e293b;
@@ -25,7 +25,7 @@
     --navy-dark: #1e222d;
     --navy-slate: #252b38;
     --slate-border: #e2e8f0;
-    --slate-bg: #f4f5f8;
+    --slate-bg: var(--bg-page, #f6f8fb);
     --blue-accent: #00b060;
     --blue-hover: #009653;
 }
@@ -136,7 +136,7 @@ a:hover, .btn-link:hover {
 }
 
 .text-slate-navy {
-    color: var(--navy-dark) !important;
+    color: #0f172a !important;
 }
 
 .text-slate-light {
@@ -238,9 +238,9 @@ a:hover, .btn-link:hover {
 }
 
 .app-card-title {
-    font-size: 13.5px;
+    font-size: 16px;
     font-weight: 700;
-    color: #1e293b;
+    color: #0f172a !important;
     margin: 0;
     display: flex;
     align-items: center;
@@ -266,7 +266,7 @@ a:hover, .btn-link:hover {
 .app-dropdown-filter {
     border: none;
     background: transparent;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #475569;
     padding: 2px 4px;
@@ -301,7 +301,7 @@ a:hover, .btn-link:hover {
     font-size: 14.5px;
 }
 .app-metric-val-dark {
-    color: #1e293b;
+    color: #0f172a !important;
     font-weight: 700;
     font-size: 14.5px;
 }
@@ -362,7 +362,7 @@ a:hover, .btn-link:hover {
     display: flex;
     gap: 16px;
     align-items: center;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -371,7 +371,7 @@ a:hover, .btn-link:hover {
 .app-legend-btn {
     border: 1px solid transparent;
     background: transparent;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -825,7 +825,7 @@ html:has(.app-root), body:has(.app-root) {
     border: none;
     outline: none;
     background: transparent;
-    font-size: 12px;
+    font-size: 13px;
     width: 100%;
     color: #1e293b;
 }
@@ -833,7 +833,7 @@ html:has(.app-root), body:has(.app-root) {
 .app-search-ai-badge {
     background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
     color: #ffffff;
-    font-size: 9.5px;
+    font-size: 13px;
     font-weight: 700;
     padding: 1px 5px;
     border-radius: 4px;
@@ -863,7 +863,7 @@ html:has(.app-root), body:has(.app-root) {
     right: 1px;
     background-color: #ef4444;
     color: #ffffff;
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 700;
     border-radius: 9999px;
     padding: 0 4px;
@@ -899,7 +899,7 @@ html:has(.app-root), body:has(.app-root) {
     height: 28px;
     border-radius: 50%;
     background: linear-gradient(135deg, #00b060 0%, #0075ff 100%);
-    font-size: 12px;
+    font-size: 13px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 

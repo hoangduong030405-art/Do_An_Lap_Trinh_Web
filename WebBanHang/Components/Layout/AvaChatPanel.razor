@@ -32,14 +32,14 @@
                 </div>
                 <div>
                     <h6 class="fw-bold mb-0 text-white" style="font-size: 0.95rem;">AVA Kế Toán</h6>
-                    <small class="text-white-50" style="font-size: 0.7rem;">Trợ lý tài chính & Nhắc nợ thông minh</small>
+                    <small class="text-white-50" style="font-size: 13px;">Trợ lý tài chính & Nhắc nợ thông minh</small>
                 </div>
             </div>
             <button type="button" class="btn-close btn-close-white" @onclick="OnClose" title="Đóng panel"></button>
         </div>
 
         <!-- DISCLAIMER BANNER (COMPLIANCE RUBRIC SECTION 10) -->
-        <div class="py-1.5 px-3 bg-warning bg-opacity-25 border-bottom d-flex align-items-center gap-1.5 text-warning-emphasis small" style="font-size: 0.72rem;">
+        <div class="py-1.5 px-3 bg-warning bg-opacity-25 border-bottom d-flex align-items-center gap-1.5 text-warning-emphasis small" style="font-size: 13px;">
             <i class="bi bi-info-circle-fill flex-shrink-0 text-warning"></i>
             <span><strong>Nguyên tắc:</strong> AVA chỉ đóng vai trò tư vấn; Kế toán trưởng trực tiếp quyết định.</span>
         </div>
@@ -48,10 +48,10 @@
         <div class="flex-grow-1 p-3 overflow-y-auto" style="scroll-behavior: smooth;">
             <!-- SECTION 1: NHẮC NHỞ HÔM NAY -->
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="fw-bold text-slate-navy small text-uppercase" style="font-size: 0.74rem; letter-spacing: 0.5px;">
+                <span class="fw-bold text-slate-navy small text-uppercase" style="font-size: 13px; letter-spacing: 0.5px;">
                     <i class="bi bi-bell-fill text-primary me-1"></i> Nhắc Nhở Cần Xử Lý (@activeReminders.Count)
                 </span>
-                <button class="btn btn-link btn-sm text-decoration-none p-0 text-primary small" style="font-size: 0.72rem;" @onclick="RefreshReminders">
+                <button class="btn btn-link btn-sm text-decoration-none p-0 text-primary small" style="font-size: 13px;" @onclick="RefreshReminders">
                     <i class="bi bi-arrow-clockwise"></i> Làm mới
                 </button>
             </div>
@@ -60,7 +60,7 @@
             {
                 <div class="text-center py-3">
                     <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                    <small class="d-block text-muted mt-1" style="font-size: 0.72rem;">Đang quét sổ nợ và hạn mức...</small>
+                    <small class="d-block text-muted mt-1" style="font-size: 13px;">Đang quét sổ nợ và hạn mức...</small>
                 </div>
             }
             else if (!activeReminders.Any())
@@ -84,19 +84,19 @@
             }
 
             <!-- SECTION 2: CHAT VỚI AVA AI -->
-            <div class="fw-bold text-slate-navy small text-uppercase mb-2" style="font-size: 0.74rem; letter-spacing: 0.5px;">
+            <div class="fw-bold text-slate-navy small text-uppercase mb-2" style="font-size: 13px; letter-spacing: 0.5px;">
                 <i class="bi bi-chat-quote-fill text-success me-1"></i> Hỏi Nhanh Dòng Tiền & Công Nợ
             </div>
 
             <!-- QUICK CHIP PROMPTS -->
             <div class="d-flex flex-wrap gap-1.5 mb-3">
-                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 0.72rem;" @onclick='() => AskQuestion("Ai đang nợ quá hạn?")'>
+                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 13px;" @onclick='() => AskQuestion("Ai đang nợ quá hạn?")'>
                     Ai đang nợ quá hạn?
                 </button>
-                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 0.72rem;" @onclick='() => AskQuestion("Tóm tắt công nợ hôm nay")'>
+                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 13px;" @onclick='() => AskQuestion("Tóm tắt công nợ hôm nay")'>
                     Tóm tắt công nợ hôm nay
                 </button>
-                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 0.72rem;" @onclick='() => AskQuestion("Khách nào nên siết hạn mức?")'>
+                <button type="button" class="btn btn-white btn-sm rounded-pill border shadow-xs small py-1 px-2.5 text-slate-navy" style="font-size: 13px;" @onclick='() => AskQuestion("Khách nào nên siết hạn mức?")'>
                     Khách nào nên siết hạn mức?
                 </button>
             </div>
@@ -109,14 +109,14 @@
                     {
                         @if (msg.IsUser)
                         {
-                            <div class="align-self-end p-2.5 rounded-3 bg-primary text-white shadow-xs small" style="max-width: 85%; font-size: 0.78rem;">
+                            <div class="align-self-end p-2.5 rounded-3 bg-primary text-white shadow-xs small" style="max-width: 85%; font-size: 14px;">
                                 @msg.Text
                             </div>
                         }
                         else
                         {
-                            <div class="align-self-start p-2.5 rounded-3 bg-white border shadow-xs small text-slate-navy" style="max-width: 95%; font-size: 0.76rem; line-height: 1.45; white-space: pre-line;">
-                                <div class="d-flex align-items-center gap-1.5 text-primary fw-bold mb-1" style="font-size: 0.72rem;">
+                            <div class="align-self-start p-2.5 rounded-3 bg-white border shadow-xs small text-slate-navy" style="max-width: 95%; font-size: 14px; line-height: 1.45; white-space: pre-line;">
+                                <div class="d-flex align-items-center gap-1.5 text-primary fw-bold mb-1" style="font-size: 13px;">
                                     <i class="bi bi-stars"></i> AVA Kế Toán:
                                 </div>
                                 @msg.Text
@@ -171,7 +171,7 @@
                     </div>
                 </div>
                 <div class="modal-footer py-2.5 bg-white border-top d-flex justify-content-between">
-                    <span class="text-muted small" style="font-size: 0.72rem;">Kế toán xác nhận trước khi gửi</span>
+                    <span class="text-muted small" style="font-size: 13px;">Kế toán xác nhận trước khi gửi</span>
                     <button type="button" class="btn btn-primary btn-sm rounded-pill px-4" @onclick="() => showEmailModal = false">
                         Đóng xem trước
                     </button>

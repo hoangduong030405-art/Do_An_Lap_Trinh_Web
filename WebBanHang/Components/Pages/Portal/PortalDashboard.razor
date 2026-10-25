@@ -17,29 +17,19 @@
 <PageTitle>Cổng Đại Lý B2B - Tổng Quan Hạn Mức & Đơn Hàng</PageTitle>
 
 <div class="portal-container py-3">
-    <!-- 1. BREADCRUMB & WELCOME HEADER -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge bg-primary px-2.5 py-1.5 fw-semibold"><i class="bi bi-box-seam me-1"></i>B2B PORTAL</span>
-                <span class="text-muted small">Cổng Dịch Vụ Khách Hàng Doanh Nghiệp & Đại Lý</span>
-            </div>
-            <h2 class="fw-bold mb-0 text-slate-navy">
-                Kính Chào Quý Đại Lý: <span class="text-primary">@(customerInfo?.FullName ?? "Tạp Hóa Bà Ba")</span>
-            </h2>
-            <p class="text-muted small mb-0 mt-1">
-                Hệ thống bán buôn phân phối ghi công nợ thương mại & đối soát tự phục vụ 24/7
-            </p>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-outline-primary btn-sm rounded-pill px-3 shadow-sm" @onclick="LoadDataAsync">
-                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới dữ liệu
+    <div class="app-page-container">
+    <PageHeader Title="@($"Kính Chào Quý Đại Lý: {(customerInfo?.FullName ?? "Tạp Hóa")}")"
+                Subtitle="Hệ thống bán buôn phân phối ghi công nợ thương mại & đối soát tự phục vụ 24/7"
+                Icon="bi-shop">
+        <Actions>
+            <button class="btn btn-secondary" @onclick="LoadDataAsync">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
             </button>
-            <a href="/portal/store" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm fw-semibold">
+            <a href="/portal/store" class="btn btn-primary">
                 <i class="bi bi-cart-plus me-1"></i> Đặt hàng sỉ ngay
             </a>
-        </div>
-    </div>
+        </Actions>
+    </PageHeader>
 
     @if (loading)
     {
@@ -234,6 +224,8 @@
         </div>
     }
 </div>
+
+</div><!-- /app-page-container -->
 
 @code {
     private bool loading = true;

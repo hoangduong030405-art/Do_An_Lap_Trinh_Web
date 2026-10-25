@@ -1,0 +1,25 @@
+@namespace WebBanHang.Components.Controls
+
+<div class="app-empty-state">
+    <div class="app-empty-icon" aria-hidden="true">
+        <i class="bi @Icon"></i>
+    </div>
+    <h3 class="app-empty-title">@Title</h3>
+    @if (!string.IsNullOrEmpty(Description))
+    {
+        <p class="app-empty-desc">@Description</p>
+    }
+    @if (Action != null)
+    {
+        <div class="app-empty-action">
+            @Action
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Chưa có dữ liệu";
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string Icon { get; set; } = "bi-inbox";
+    [Parameter] public RenderFragment? Action { get; set; }
+}

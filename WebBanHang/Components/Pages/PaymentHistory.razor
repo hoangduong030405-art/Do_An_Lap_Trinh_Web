@@ -11,17 +11,16 @@
 
 <PageTitle>Lịch Sử Phiếu Thu Tiền</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-1 text-primary">💵 Lịch Sử Thu Tiền & Phân Bổ (FIFO)</h2>
-        <p class="text-muted mb-0">Theo dõi dòng tiền thực thu, các khoản cấn trừ hóa đơn và in phiếu thu tiền mặt / chuyển khoản</p>
-    </div>
-    <div>
-        <a href="/payments" class="btn btn-success shadow-sm">
-            <i class="bi bi-cash-stack me-1"></i> + Lập Phiếu Thu Tiền
-        </a>
-    </div>
-</div>
+<div class="app-page-container">
+    <PageHeader Title="Lịch Sử Thu Tiền & Phân Bổ FIFO"
+                Subtitle="Theo dõi dòng tiền thực thu, các khoản cấn trừ hóa đơn và in phiếu thu tiền mặt / chuyển khoản"
+                Icon="bi-clock-history">
+        <Actions>
+            <a href="/payments" class="btn btn-primary">
+                <i class="bi bi-cash-stack me-1"></i> Lập Phiếu Thu Mới
+            </a>
+        </Actions>
+    </PageHeader>
 
 @if (loading)
 {
@@ -32,17 +31,16 @@
 }
 else if (payments == null || !payments.Any())
 {
-    <div class="alert alert-info text-center py-4">
-        <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
-        Chưa có phiếu thu tiền nào được ghi nhận trong hệ thống.
-    </div>
+    <EmptyState Title="Chưa có phiếu thu nào"
+            Description="Hệ thống chưa ghi nhận giao dịch thanh toán nào phù hợp."
+            Icon="bi-cash-stack" />
 }
 else
 {
     <div class="card border-0 shadow-sm">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead class="table-dark">
+                <thead>
                     <tr>
                         <th>Mã Phiếu Thu</th>
                         <th>Ngày Thu</th>
@@ -218,6 +216,8 @@ else
         </div>
     </div>
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private IEnumerable<PaymentHistoryDto>? payments;

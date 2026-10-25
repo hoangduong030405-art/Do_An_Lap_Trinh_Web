@@ -12,60 +12,16 @@
 
 <PageTitle>Sổ Chi Tiết Công Nợ Khách Hàng</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="fw-bold mb-1 text-primary">📖 Sổ Chi Tiết Công Nợ Khách Hàng (AR Ledger)</h2>
-        <p class="text-muted mb-0">Theo dõi dòng giao dịch phát sinh nợ/có, số dư lũy kế và in biên bản đối soát công nợ</p>
-    </div>
-    @if (ledger != null && ledger.Entries.Any())
-    {
-        <div>
-            <button class="btn btn-outline-success shadow-sm" @onclick="PrintLedger">
-                <i class="bi bi-printer me-1"></i> 🖨️ In Bảng Đối Soát Công Nợ
+<div class="app-page-container">
+    <PageHeader Title="Sổ Chi Tiết Công Nợ Khách Hàng"
+                Subtitle="Tra cứu phát sinh nợ, đối soát thanh toán và in biên bản đối chiếu công nợ"
+                Icon="bi-journal-text">
+        <Actions>
+            <button class="btn btn-secondary" @onclick="PrintLedger">
+                <i class="bi bi-printer me-1"></i> In Sổ Đối Soát
             </button>
-        </div>
-    }
-</div>
-
-<!-- KHUNG CHỌN KHÁCH HÀNG -->
-<div class="card border-0 shadow-sm p-3 mb-4 bg-light">
-    <div class="row align-items-center">
-        <div class="col-md-6">
-            <label class="form-label fw-bold">Chọn Khách Hàng Cần Tra Cứu Đối Soát:</label>
-            <select class="form-select form-select-lg" @bind="selectedCustomerId" @bind:after="LoadLedger">
-                <option value="0">-- Vui lòng chọn một khách hàng --</option>
-                @if (customers != null)
-                {
-                    @foreach (var c in customers)
-                    {
-                        <option value="@c.Id">@c.CustomerCode - @c.FullName (@c.PhoneNumber)</option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="col-md-6 text-end">
-            @if (ledger != null && selectedCustomerId > 0)
-            {
-                <div class="d-inline-flex gap-3 text-start bg-white p-2 rounded border">
-                    <div>
-                        <small class="text-muted d-block">Tổng Mua Hàng (+)</small>
-                        <span class="fw-bold text-primary">@ledger.TotalDebit.ToString("N0") đ</span>
-                    </div>
-                    <div class="border-start ps-3">
-                        <small class="text-muted d-block">Đã Thanh Toán (-)</small>
-                        <span class="fw-bold text-success">@ledger.TotalCredit.ToString("N0") đ</span>
-                    </div>
-                    <div class="border-start ps-3">
-                        <small class="text-muted d-block">DƯ NỢ CÒN LẠI</small>
-                        <span class="fw-bold fs-6 @(ledger.EndingBalance > 0 ? "text-danger" : "text-muted")">
-                            @ledger.EndingBalance.ToString("N0") đ
-                        </span>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</div>
+        </Actions>
+    </PageHeader>
 
 @if (loading)
 {
@@ -104,7 +60,7 @@ else if (ledger != null)
             <!-- BẢNG GIAO DỊCH LŨY KẾ -->
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle mb-4">
-                    <thead class="table-dark text-center">
+                    <thead class="text-center">
                         <tr>
                             <th style="width: 110px;">Ngày</th>
                             <th style="width: 120px;">Chứng Từ</th>
@@ -188,6 +144,8 @@ else if (ledger != null)
         </div>
     </div>
 }
+
+</div><!-- /app-page-container -->
 
 @code {
     private IEnumerable<Customer>? customers;

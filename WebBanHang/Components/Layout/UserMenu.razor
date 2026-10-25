@@ -11,7 +11,7 @@
                     <div class="small fw-bold text-slate-navy text-truncate" style="max-width: 140px;">
                         @context.User.Identity?.Name
                     </div>
-                    <small class="text-muted" style="font-size: 0.7rem;">
+                    <small class="text-muted" style="font-size: 13px;">
                         @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
                     </small>
                 </div>
