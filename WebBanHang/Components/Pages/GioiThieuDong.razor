@@ -39,6 +39,9 @@
                 <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#cta")'>Đăng ký</button>
             </div>
             <div class="nav-actions">
+                <a href="/login" class="nav-login-btn">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
+                </a>
                 @if (_isAuthenticated)
                 {
                     <a href="@_dashboardUrl" class="nav-btn nav-btn-primary">
@@ -47,7 +50,6 @@
                 }
                 else
                 {
-                    <a href="/login" class="nav-login-btn">Đăng nhập</a>
                     <button type="button" class="nav-btn" @onclick='async () => await SmoothScrollTo("#cta")'>Mở tài khoản</button>
                 }
             </div>
@@ -63,6 +65,9 @@
             <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#steps"); _mobileOpen = false; }'>Quy trình 3 bước</button>
             <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#products"); _mobileOpen = false; }'>Danh mục hàng sỉ</button>
             <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#credit"); _mobileOpen = false; }'>Hạn mức công nợ</button>
+            <a href="/login" class="mobile-login-link">
+                <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập cổng đại lý
+            </a>
             @if (_isAuthenticated)
             {
                 <a href="@_dashboardUrl" class="mobile-login-link text-center fw-bold text-white bg-blue-600 rounded py-2">
@@ -71,7 +76,6 @@
             }
             else
             {
-                <a href="/login" class="mobile-login-link">Đăng nhập cổng đại lý</a>
                 <button type="button" class="mobile-btn" @onclick='async () => { await SmoothScrollTo("#cta"); _mobileOpen = false; }'>Đăng ký bán sỉ</button>
             }
         </div>

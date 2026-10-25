@@ -10,6 +10,7 @@
     let hideTimer = null;
     let isPinned = false;
     let isInitialized = false;
+    let lastToggleTime = 0;
 
     function getElements() {
         return {
@@ -64,9 +65,7 @@
                 pinBtn.setAttribute('title', 'Ghim menu (Ctrl+B)');
                 pinBtn.innerHTML = '<i class="bi bi-pin fs-6"></i>';
             }
-            // In unpinned mode, if not hover-open and not mobile-open, disable accessibility focus
             if (!sidebar.classList.contains('is-hover-open') && !sidebar.classList.contains('is-mobile-open')) {
-                sidebar.setAttribute('inert', '');
                 sidebar.setAttribute('aria-hidden', 'true');
             }
         }
@@ -105,7 +104,6 @@
             }
 
             sidebar.classList.remove('is-hover-open');
-            sidebar.setAttribute('inert', '');
             sidebar.setAttribute('aria-hidden', 'true');
             if (workspace) workspace.classList.remove('sidebar-hover-open');
         }, 300);
@@ -144,7 +142,6 @@
         const { sidebar, backdrop } = getElements();
         if (!sidebar) return;
         sidebar.classList.remove('is-mobile-open');
-        sidebar.setAttribute('inert', '');
         sidebar.setAttribute('aria-hidden', 'true');
         if (backdrop) backdrop.classList.remove('show');
         document.body.style.overflow = '';
@@ -161,6 +158,11 @@
     }
 
     function toggleFromTopbar() {
+        const now = Date.now();
+        if (now - lastToggleTime < 250) {
+            return; // Prevent double execution from both DOM click and Blazor Interop!
+        }
+        lastToggleTime = now;
         if (isDesktop()) {
             togglePin();
         } else {
@@ -178,7 +180,6 @@
         }
         if (!isPinned && sidebar.classList.contains('is-hover-open')) {
             sidebar.classList.remove('is-hover-open');
-            sidebar.setAttribute('inert', '');
             sidebar.setAttribute('aria-hidden', 'true');
             if (workspace) workspace.classList.remove('sidebar-hover-open');
             return true;
@@ -187,18 +188,13 @@
     }
 
     function bindEvents() {
-        const { sidebar, trigger, backdrop, pinBtn, mobileCloseBtn, toggleBtn } = getElements();
+        const { sidebar, trigger } = getElements();
         if (!sidebar) return;
 
         // Trigger zone hover
         if (trigger) {
             trigger.onmouseenter = openHover;
             trigger.onmouseleave = scheduleHide;
-            trigger.onclick = function () {
-                if (isDesktop() && !isPinned) {
-                    openHover();
-                }
-            };
         }
 
         // Sidebar hover
@@ -216,48 +212,6 @@
                 }
             }, 60);
         };
-
-        // Pin button
-        if (pinBtn) {
-            pinBtn.onclick = function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                togglePin();
-            };
-        }
-
-        // Mobile close button
-        if (mobileCloseBtn) {
-            mobileCloseBtn.onclick = function (e) {
-                e.preventDefault();
-                closeMobile();
-            };
-        }
-
-        // Mobile backdrop click
-        if (backdrop) {
-            backdrop.onclick = function () {
-                closeMobile();
-            };
-        }
-
-        // Fallback direct click for hamburger button if needed
-        if (toggleBtn) {
-            toggleBtn.onclick = function (e) {
-                toggleFromTopbar();
-            };
-        }
-
-        // Nav links click on mobile should close sidebar
-        sidebar.querySelectorAll('.app-nav-link').forEach(link => {
-            link.onclick = function () {
-                if (!isDesktop()) {
-                    closeMobile();
-                } else if (!isPinned) {
-                    closeFloatingOverlay();
-                }
-            };
-        });
     }
 
     function init() {
@@ -268,6 +222,83 @@
         bindEvents();
         isInitialized = true;
     }
+
+    // -------------------------------------------------------------------------
+    // GLOBAL DELEGATED EVENTS (GUARANTEES 100% RELIABILITY ACROSS NAVIGATION)
+    // -------------------------------------------------------------------------
+    document.addEventListener('click', function (e) {
+        // 1. Topbar Hamburger Button
+        const toggleBtn = e.target.closest('#appSidebarToggleBtn');
+        if (toggleBtn) {
+            e.preventDefault();
+            toggleFromTopbar();
+            return;
+        }
+
+        // 2. Pin Button inside sidebar header
+        const pinBtn = e.target.closest('#appSidebarPinBtn');
+        if (pinBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            togglePin();
+            return;
+        }
+
+        // 3. Mobile Close Button
+        const closeBtn = e.target.closest('#appSidebarMobileCloseBtn');
+        if (closeBtn) {
+            e.preventDefault();
+            closeMobile();
+            return;
+        }
+
+        // 4. Mobile Backdrop
+        const backdrop = e.target.closest('#appSidebarBackdrop');
+        if (backdrop) {
+            closeMobile();
+            return;
+        }
+
+        // 5. Trigger zone click
+        const trigger = e.target.closest('#appSidebarTrigger');
+        if (trigger && isDesktop() && !isPinned) {
+            openHover();
+            return;
+        }
+
+        // 6. Navigation links click
+        const navLink = e.target.closest('.app-nav-link');
+        if (navLink) {
+            if (!isDesktop()) {
+                closeMobile();
+            } else if (!isPinned) {
+                closeFloatingOverlay();
+            }
+        }
+    });
+
+    // Global Edge Mouse Tracking for smooth, flawless hover slide-out
+    window.addEventListener('mousemove', function (e) {
+        if (!isDesktop() || isPinned) return;
+        const els = getElements();
+        if (!els.sidebar) return;
+
+        // When mouse cursor reaches the left edge strip (<= 18px from screen edge, below topbar >= 48px)
+        if (e.clientX <= 18 && e.clientY >= 48) {
+            openHover();
+            return;
+        }
+
+        // When sidebar is currently floating open in hover mode:
+        if (els.sidebar.classList.contains('is-hover-open')) {
+            // Keep open while cursor is within sidebar (width 240px + 15px buffer)
+            if (e.clientX <= 255 && e.clientY >= 48) {
+                clearHideTimer();
+            } else {
+                scheduleHide();
+            }
+        }
+    });
 
     // Window resize handler: handles crossing desktop/mobile breakpoint
     window.addEventListener('resize', function () {
@@ -294,12 +325,34 @@
         syncState: applyPinnedState
     };
 
-    // Auto-init when ready
+    // Auto-init when ready or via MutationObserver
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
+
+    // MutationObserver to auto-init whenever #appSidebar is inserted into DOM
+    if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(function () {
+            if (document.getElementById('appSidebar')) {
+                init();
+            }
+        });
+        if (document.body) {
+            observer.observe(document.body, { childList: true, subtree: true });
+        } else {
+            document.addEventListener('DOMContentLoaded', function () {
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
+        }
+    }
+
+    // Blazor enhanced navigation listener
+    if (window.Blazor && window.Blazor.addEventListener) {
+        window.Blazor.addEventListener('enhancedload', init);
+    }
+    window.addEventListener('popstate', init);
 
     // -------------------------------------------------------------------------
     // 2. GLOBAL KEYBOARD SHORTCUTS
