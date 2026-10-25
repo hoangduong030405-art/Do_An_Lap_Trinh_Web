@@ -35,10 +35,10 @@
 <div class="row g-4">
     <!-- FORM BÊN TRÁI -->
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-header bg-primary text-white py-3">
-                <h5 class="mb-0 fw-bold">
-                    <i class="bi @(customerModel.Id == 0 ? "bi-person-plus-fill" : "bi-pencil-square") me-2"></i>
+        <div class="card border shadow-sm" style="border-radius: 16px; border-color: #e5eaf1 !important; background: #ffffff;">
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: #e5eaf1 !important;">
+                <h5 class="mb-0 fw-bold text-dark fs-6 d-flex align-items-center gap-2">
+                    <i class="bi @(customerModel.Id == 0 ? "bi-person-plus-fill" : "bi-pencil-square") text-primary"></i>
                     @(customerModel.Id == 0 ? "Thêm Khách Hàng Mới" : "Sửa Khách Hàng")
                 </h5>
             </div>
@@ -99,8 +99,8 @@
 
     <!-- BẢNG KHÁCH HÀNG & XẾP HẠNG AI -->
     <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-3">
-            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+        <div class="card border shadow-sm" style="border-radius: 16px; border-color: #e5eaf1 !important; background: #ffffff;">
+            <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center" style="border-color: #e5eaf1 !important;">
                 <h5 class="mb-0 fw-bold text-dark">
                     <i class="bi bi-people-fill text-primary me-2"></i>Danh Sách Khách Hàng & Đánh Giá Tín Dụng AI
                 </h5>

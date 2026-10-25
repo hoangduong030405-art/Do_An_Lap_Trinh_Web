@@ -24,7 +24,7 @@
     </PageHeader>
 
 <!-- BỘ LỌC TÌM KIẾM -->
-<div class="card border-0 shadow-sm mb-4 p-3 bg-light">
+<div class="card border mb-4 p-3.5 bg-white shadow-sm" style="border-radius: 14px; border-color: #e5eaf1 !important;">
     <div class="row g-2 align-items-center">
         <div class="col-md-5">
             <div class="input-group">
@@ -146,11 +146,11 @@ else
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold">
-                        <i class="bi bi-file-earmark-text me-2"></i>Hóa Đơn Bán Hàng #@selectedInvoiceDetail.InvoiceNumber
+                <div class="modal-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: #e5eaf1 !important;">
+                    <h5 class="modal-title mb-0 fw-bold text-dark fs-6 d-flex align-items-center gap-2">
+                        <i class="bi bi-file-earmark-text text-primary"></i> Chi Tiết Hóa Đơn #@selectedInvoiceDetail.InvoiceNumber
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal"></button>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
                 </div>
                 <div class="modal-body p-4" id="printableInvoiceArea">
                     <!-- KHUNG HÓA ĐƠN CHUẨN IN -->

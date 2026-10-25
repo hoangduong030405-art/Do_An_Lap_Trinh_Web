@@ -86,9 +86,10 @@ else if (dashboard != null)
                           Value="@((dashboard.TotalRevenue / 1000000m).ToString("N2"))"
                           Unit="Trđ"
                           Trend="@dashboard.PreviousPeriodComparisonText"
-                          Hint="@($"{dashboard.TotalInvoicesCount} hóa đơn")"
+                          Hint="@($"{dashboard.TotalInvoicesCount} hóa đơn ↗")"
                           Tone="primary"
-                          Icon="bi-cash-coin" />
+                          Icon="bi-cash-coin"
+                          OnClick="@(() => Navigation.NavigateTo("/invoices"))" />
             </div>
 
             <!-- KPI 2: TIỀN THỰC THU -->
@@ -97,9 +98,10 @@ else if (dashboard != null)
                           Value="@((dashboard.TotalCollectedAmount / 1000000m).ToString("N2"))"
                           Unit="Trđ"
                           Trend="@($"{collectionRate:N1}% thu hồi")"
-                          Hint="Thu hồi nợ kỳ này"
+                          Hint="Gạch nợ FIFO ↗"
                           Tone="success"
-                          Icon="bi-wallet2" />
+                          Icon="bi-wallet2"
+                          OnClick="@(() => Navigation.NavigateTo("/payments"))" />
             </div>
 
             <!-- KPI 3: TỔNG NỢ PHẢI THU (TK 131) -->
@@ -108,9 +110,10 @@ else if (dashboard != null)
                           Value="@((dashboard.TotalOutstandingDebt / 1000000m).ToString("N2"))"
                           Unit="Trđ"
                           Trend="@($"{dashboard.TotalDebtorsCount}/{dashboard.TotalCustomersCount} KH")"
-                          Hint="Khách hàng còn nợ"
+                          Hint="Báo cáo tuổi nợ ↗"
                           Tone="warning"
-                          Icon="bi-clock-history" />
+                          Icon="bi-clock-history"
+                          OnClick="@(() => Navigation.NavigateTo("/aging-report"))" />
             </div>
 
             <!-- KPI 4: NỢ QUÁ HẠN (CẢNH BÁO) -->
@@ -119,9 +122,10 @@ else if (dashboard != null)
                           Value="@((overdueDebt / 1000000m).ToString("N2"))"
                           Unit="Trđ"
                           Trend="@($"{dashboard.OverdueInvoicesCount} HĐ quá hạn")"
-                          Hint="@($"{overduePercent:N1}% tổng nợ")"
+                          Hint="@($"{overduePercent:N1}% tổng nợ ↗")"
                           Tone="danger"
-                          Icon="bi-exclamation-triangle-fill" />
+                          Icon="bi-exclamation-triangle-fill"
+                          OnClick="@(() => Navigation.NavigateTo("/aging-report"))" />
             </div>
         </div>
 
