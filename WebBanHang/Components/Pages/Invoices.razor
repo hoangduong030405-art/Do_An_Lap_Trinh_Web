@@ -64,44 +64,44 @@ else if (invoices == null || !invoices.Any())
 }
 else
 {
-    <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Số Hóa Đơn</th>
-                        <th>Khách Hàng</th>
-                        <th>Ngày Lập</th>
-                        <th>Hạn Thu</th>
-                        <th>Tổng Tiền</th>
-                        <th>Đã Thu</th>
-                        <th>Còn Nợ</th>
-                        <th>Trạng Thái</th>
-                        <th class="text-center">Thao Tác</th>
+    <div class="card border shadow-sm" style="border-radius: 16px; border-color: #e5eaf1 !important; background-color: #ffffff !important;">
+        <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
+            <table class="table table-hover align-middle mb-0 bg-white" style="background-color: #ffffff !important; --bs-table-bg: #ffffff !important;">
+                <thead style="background-color: #f1f5f9 !important;">
+                    <tr style="background-color: #f1f5f9 !important;">
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Số Hóa Đơn</th>
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Khách Hàng</th>
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Ngày Lập</th>
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Hạn Thu</th>
+                        <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Tổng Tiền</th>
+                        <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Đã Thu</th>
+                        <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Còn Nợ</th>
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Trạng Thái</th>
+                        <th class="text-center" style="font-size: 14.5px; font-weight: 700; color: #334155;">Thao Tác</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="background-color: #ffffff !important; color: #0f172a !important;">
                     @foreach (var inv in invoices)
                     {
-                        <tr>
-                            <td>
-                                <span class="fw-bold text-primary">@inv.InvoiceNumber</span>
+                        <tr style="background-color: #ffffff !important;">
+                            <td style="background-color: #ffffff !important;">
+                                <span class="fw-bold font-monospace text-primary" style="font-size: 16px;">@inv.InvoiceNumber</span>
                             </td>
-                            <td>
-                                <div class="fw-bold">@inv.CustomerName</div>
-                                <small class="text-muted">@inv.CustomerCode</small>
+                            <td style="background-color: #ffffff !important;">
+                                <div class="fw-bold text-dark" style="font-size: 16px;">@inv.CustomerName</div>
+                                <span class="badge bg-light text-secondary border px-2 py-0.5" style="font-size: 14.5px;">@inv.CustomerCode</span>
                             </td>
-                            <td>@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
-                            <td>
-                                <span>@inv.DueDate.ToString("dd/MM/yyyy")</span>
+                            <td style="font-size: 16px; color: #0f172a; background-color: #ffffff !important;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                            <td style="background-color: #ffffff !important;">
+                                <span style="font-size: 16px; color: #0f172a;">@inv.DueDate.ToString("dd/MM/yyyy")</span>
                                 @if (inv.OverdueDays > 0)
                                 {
-                                    <span class="badge bg-danger ms-1">Trễ @inv.OverdueDays ngày</span>
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle ms-1" style="font-size: 14.5px;">Trễ @inv.OverdueDays ngày</span>
                                 }
                             </td>
-                            <td class="fw-bold">@inv.TotalAmount.ToString("N0") đ</td>
-                            <td class="text-success">@inv.PaidAmount.ToString("N0") đ</td>
-                            <td class="fw-bold @(inv.Balance > 0 ? "text-danger" : "text-muted")">
+                            <td class="text-end fw-semibold text-dark" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">@inv.TotalAmount.ToString("N0") đ</td>
+                            <td class="text-end text-success fw-semibold" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">@inv.PaidAmount.ToString("N0") đ</td>
+                            <td class="text-end fw-bold @(inv.Balance > 0 ? "text-danger" : "text-dark")" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">
                                 @inv.Balance.ToString("N0") đ
                             </td>
                             <td>
@@ -189,19 +189,19 @@ else
                         <div class="card bg-light border-0 p-3 mb-3 d-print-none rounded-3">
                             <div class="row align-items-center text-center text-md-start">
                                 <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 13px;">Doanh thu xuất sỉ</small>
+                                    <small class="text-muted d-block" style="font-size: 14.5px;">Doanh thu xuất sỉ</small>
                                     <span class="fs-5 fw-bold text-primary">@selectedInvoiceDetail.TotalAmount.ToString("N0") đ</span>
                                 </div>
                                 <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 13px;">Tiền vốn nhập kho (COGS)</small>
+                                    <small class="text-muted d-block" style="font-size: 14.5px;">Tiền vốn nhập kho (COGS)</small>
                                     <span class="fs-5 fw-bold text-danger">@selectedInvoiceDetail.TotalCost.ToString("N0") đ</span>
                                 </div>
                                 <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 13px;">Lợi nhuận gộp đơn hàng</small>
+                                    <small class="text-muted d-block" style="font-size: 14.5px;">Lợi nhuận gộp đơn hàng</small>
                                     <span class="fs-5 fw-bold text-success">+@selectedInvoiceDetail.TotalProfit.ToString("N0") đ</span>
                                 </div>
                                 <div class="col-md-3">
-                                    <small class="text-muted d-block" style="font-size: 13px;">Biên lợi nhuận gộp</small>
+                                    <small class="text-muted d-block" style="font-size: 14.5px;">Biên lợi nhuận gộp</small>
                                     <span class="fs-5 fw-bold text-dark">@selectedInvoiceDetail.ProfitMargin%</span>
                                 </div>
                             </div>

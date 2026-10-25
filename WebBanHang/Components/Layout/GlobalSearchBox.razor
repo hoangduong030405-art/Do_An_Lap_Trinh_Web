@@ -22,7 +22,7 @@
         </span>
         <input id="globalSearchInput"
                type="text"
-               class="form-control bg-transparent border-0 ps-1 text-dark" style="font-size: 13.5px;"
+               class="form-control bg-transparent border-0 ps-1 text-dark" style="font-size: 15px;"
                placeholder="Tìm khách hàng, hóa đơn, sản phẩm... (Ctrl+K)"
                @bind="searchKeyword"
                @bind:event="oninput"
@@ -34,8 +34,8 @@
                 <i class="bi bi-x-circle-fill"></i>
             </button>
         }
-        <span class="input-group-text bg-transparent border-0 text-muted pe-3 d-none d-md-inline small font-monospace" style="font-size: 13px;">
-            <kbd class="bg-light text-secondary border px-1.5 py-0.5 rounded" style="font-size: 13px;">Ctrl+K</kbd>
+        <span class="input-group-text bg-transparent border-0 text-muted pe-3 d-none d-md-inline small font-monospace" style="font-size: 14px;">
+            <kbd class="bg-light text-secondary border px-1.5 py-0.5 rounded" style="font-size: 14px;">Ctrl+K</kbd>
         </span>
     </div>
 
@@ -58,7 +58,7 @@
             {
                 @foreach (var group in searchResults.GroupBy(r => r.Category))
                 {
-                    <div class="px-3 py-1.5 bg-light border-bottom small fw-bold text-uppercase text-muted d-flex align-items-center justify-content-between" style="font-size: 13px; letter-spacing: 0.5px;">
+                    <div class="px-3 py-1.5 bg-light border-bottom small fw-bold text-uppercase text-muted d-flex align-items-center justify-content-between" style="font-size: 14px; letter-spacing: 0.5px;">
                         <span>@group.Key</span>
                         <span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill">@group.Count()</span>
                     </div>
@@ -71,9 +71,9 @@
                                     @onclick="() => NavigateToItem(item.Url)">
                                 <div class="overflow-hidden">
                                     <div class="fw-semibold text-slate-navy small text-truncate">@item.Title</div>
-                                    <div class="text-muted text-truncate" style="font-size: 13px;">@item.Subtitle</div>
+                                    <div class="text-muted text-truncate" style="font-size: 14px;">@item.Subtitle</div>
                                 </div>
-                                <span class="badge bg-@item.BadgeColor-subtle text-@item.BadgeColor border border-@item.BadgeColor border-opacity-25 small flex-shrink-0" style="font-size: 13px;">
+                                <span class="badge bg-@item.BadgeColor-subtle text-@item.BadgeColor border border-@item.BadgeColor border-opacity-25 small flex-shrink-0" style="font-size: 14px;">
                                     @item.BadgeText
                                 </span>
                             </button>

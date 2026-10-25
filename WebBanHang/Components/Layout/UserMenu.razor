@@ -11,7 +11,7 @@
                     <div class="small fw-bold text-slate-navy text-truncate" style="max-width: 140px;">
                         @context.User.Identity?.Name
                     </div>
-                    <small class="text-muted" style="font-size: 13px;">
+                    <small class="text-muted" style="font-size: 14px;">
                         @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
                     </small>
                 </div>
@@ -20,8 +20,8 @@
 
             <ul class="dropdown-menu dropdown-menu-end shadow-lg border mt-1" style="min-width: 220px;">
                 <li class="px-3 py-2 border-bottom">
-                    <div class="fw-bold small text-dark">@context.User.Identity?.Name</div>
-                    <div class="badge @(context.User.IsInRole("Customer") ? "bg-success" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary") small mt-1">
+                    <div class="fw-bold text-dark" style="font-size: 15px;">@context.User.Identity?.Name</div>
+                    <div class="badge @(context.User.IsInRole("Customer") ? "bg-success text-white" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary text-white") mt-1" style="font-size: 14px;">
                         @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
                     </div>
                 </li>

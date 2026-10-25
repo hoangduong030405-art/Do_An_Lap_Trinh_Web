@@ -38,31 +38,31 @@ else if (payments == null || !payments.Any())
 else
 {
     <div class="card border shadow-sm" style="border-radius: 16px; border-color: #e5eaf1 !important; background: #ffffff;">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Mã Phiếu Thu</th>
-                        <th>Ngày Thu</th>
-                        <th>Khách Hàng</th>
-                        <th class="text-end">Số Tiền Thu</th>
-                        <th class="text-end">Tiền Chưa Phân Bổ</th>
-                        <th>Ghi Chú</th>
-                        <th class="text-center">Số HĐ Cấn Trừ</th>
-                        <th class="text-center">Thao Tác</th>
+        <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
+            <table class="table table-hover align-middle mb-0 bg-white" style="background-color: #ffffff !important; --bs-table-bg: #ffffff !important;">
+                <thead style="background-color: #f1f5f9 !important;">
+                    <tr style="background-color: #f1f5f9 !important;">
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Mã Phiếu Thu</th>
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Ngày Thu</th>
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Khách Hàng</th>
+                        <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Số Tiền Thu</th>
+                        <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Tiền Chưa Phân Bổ</th>
+                        <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Ghi Chú</th>
+                        <th class="text-center" style="font-size: 14.5px; font-weight: 700; color: #334155;">Số HĐ Cấn Trừ</th>
+                        <th class="text-center" style="font-size: 14.5px; font-weight: 700; color: #334155;">Thao Tác</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody style="background-color: #ffffff !important; color: #0f172a !important;">
                     @foreach (var p in payments)
                     {
-                        <tr>
-                            <td>
-                                <span class="fw-bold text-primary">@p.PaymentNumber</span>
+                        <tr style="background-color: #ffffff !important;">
+                            <td style="background-color: #ffffff !important;">
+                                <span class="fw-bold font-monospace text-primary" style="font-size: 16px;">@p.PaymentNumber</span>
                             </td>
-                            <td>@p.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>
-                                <div class="fw-bold">@p.CustomerName</div>
-                                <small class="text-muted">@p.CustomerCode</small>
+                            <td style="font-size: 16px; color: #0f172a; background-color: #ffffff !important;">@p.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td style="background-color: #ffffff !important;">
+                                <div class="fw-bold text-dark" style="font-size: 16px;">@p.CustomerName</div>
+                                <span class="badge bg-light text-secondary border px-2 py-0.5" style="font-size: 14.5px;">@p.CustomerCode</span>
                             </td>
                             <td class="text-end fw-bold text-success fs-6" style="font-variant-numeric: tabular-nums;">
                                 @p.Amount.ToString("N0") đ

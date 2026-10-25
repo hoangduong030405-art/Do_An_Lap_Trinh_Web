@@ -33,7 +33,7 @@
     <div class="card border mb-4 p-3.5 bg-white shadow-sm d-print-none" style="border-radius: 14px; border-color: #e5eaf1 !important;">
         <div class="row g-3 align-items-center">
             <div class="col-12 col-md-6">
-                <label class="form-label fw-bold text-dark mb-1" style="font-size: 14px;">
+                <label class="form-label fw-bold text-dark mb-1" style="font-size: 16px;">
                     <i class="bi bi-person-check text-primary me-1"></i> Chọn Đại Lý / Khách Hàng Cần Tra Cứu Sổ Cái
                 </label>
                 <select class="form-select" @onchange="OnCustomerSelected" style="min-height: 44px; font-size: 15px;">
@@ -53,7 +53,7 @@
                 @if (ledger != null)
                 {
                     <div class="d-flex align-items-center justify-content-md-end gap-2">
-                        <span class="badge bg-light text-secondary border px-3 py-2" style="font-size: 13px;">
+                        <span class="badge bg-light text-secondary border px-3 py-2" style="font-size: 16px;">
                             Tổng @ledger.Entries.Count giao dịch phát sinh
                         </span>
                         <button class="btn btn-primary" @onclick="PrintLedger">
@@ -86,7 +86,7 @@
         <div class="row g-3 mb-4 d-print-none">
             <div class="col-6 col-lg-3">
                 <div class="p-3 rounded-3 bg-white border shadow-xs text-center" style="border-color: #e5eaf1 !important;">
-                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 12px;">Hạn Mức Tín Dụng</span>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 16px;">Hạn Mức Tín Dụng</span>
                     <div class="fs-5 fw-bold text-dark mt-1" style="font-variant-numeric: tabular-nums;">
                         @ledger.CreditLimit.ToString("N0") đ
                     </div>
@@ -94,7 +94,7 @@
             </div>
             <div class="col-6 col-lg-3">
                 <div class="p-3 rounded-3 bg-white border shadow-xs text-center" style="border-color: #e5eaf1 !important;">
-                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 12px;">Phát Sinh Nợ (+) Mua Hàng</span>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 16px;">Phát Sinh Nợ (+) Mua Hàng</span>
                     <div class="fs-5 fw-bold text-primary mt-1" style="font-variant-numeric: tabular-nums;">
                         +@ledger.TotalDebit.ToString("N0") đ
                     </div>
@@ -102,7 +102,7 @@
             </div>
             <div class="col-6 col-lg-3">
                 <div class="p-3 rounded-3 bg-white border shadow-xs text-center" style="border-color: #e5eaf1 !important;">
-                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 12px;">Phát Sinh Có (-) Đã Nộp</span>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 16px;">Phát Sinh Có (-) Đã Nộp</span>
                     <div class="fs-5 fw-bold text-success mt-1" style="font-variant-numeric: tabular-nums;">
                         -@ledger.TotalCredit.ToString("N0") đ
                     </div>
@@ -110,7 +110,7 @@
             </div>
             <div class="col-6 col-lg-3">
                 <div class="p-3 rounded-3 bg-white border shadow-xs text-center" style="border-color: #e5eaf1 !important;">
-                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 12px;">Dư Nợ Cuối Kỳ Còn Lại</span>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 16px;">Dư Nợ Cuối Kỳ Còn Lại</span>
                     <div class="fs-5 fw-bold @(ledger.EndingBalance > 0 ? "text-danger" : "text-success") mt-1" style="font-variant-numeric: tabular-nums;">
                         @ledger.EndingBalance.ToString("N0") đ
                     </div>
@@ -137,45 +137,45 @@
                 </div>
 
                 <!-- BẢNG GIAO DỊCH LŨY KẾ -->
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle mb-4">
-                        <thead class="text-center">
-                            <tr>
-                                <th style="width: 110px;">Ngày</th>
-                                <th style="width: 120px;">Chứng Từ</th>
-                                <th>Số Hiệu</th>
-                                <th>Diễn Giải Giao Dịch</th>
-                                <th style="width: 140px;" class="text-end">Phát Sinh Nợ (+)</th>
-                                <th style="width: 140px;" class="text-end">Phát Sinh Có (-)</th>
-                                <th style="width: 150px;" class="text-end">Dư Nợ Lũy Kế</th>
+                <div class="table-responsive border mb-4 bg-white" style="border-radius: 14px; border-color: #e5eaf1 !important; background-color: #ffffff !important;">
+                    <table class="table table-bordered table-hover align-middle mb-0 bg-white" style="background-color: #ffffff !important; --bs-table-bg: #ffffff !important;">
+                        <thead class="text-center" style="background-color: #f1f5f9 !important;">
+                            <tr style="background-color: #f1f5f9 !important;">
+                                <th style="width: 120px; font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">Ngày</th>
+                                <th style="width: 120px; font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">Chứng Từ</th>
+                                <th style="width: 140px; font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">Số Hiệu</th>
+                                <th style="font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">Diễn Giải Giao Dịch</th>
+                                <th style="width: 150px; font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;" class="text-end">Phát Sinh Nợ (+)</th>
+                                <th style="width: 150px; font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;" class="text-end">Phát Sinh Có (-)</th>
+                                <th style="width: 160px; font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;" class="text-end">Dư Nợ Lũy Kế</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="background-color: #ffffff !important; color: #0f172a !important;">
                             @if (ledger.Entries.Any())
                             {
                                 @foreach (var entry in ledger.Entries)
                                 {
-                                    <tr>
-                                        <td class="text-center" style="font-size: 14px;">@entry.TransactionDate.ToString("dd/MM/yyyy")</td>
-                                        <td class="text-center">
+                                    <tr style="background-color: #ffffff !important;">
+                                        <td class="text-center" style="font-size: 16px; color: #0f172a; background-color: #ffffff !important;">@entry.TransactionDate.ToString("dd/MM/yyyy")</td>
+                                        <td class="text-center" style="background-color: #ffffff !important;">
                                             @if (entry.DocumentType == "Hóa Đơn")
                                             {
-                                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1" style="font-size: 12px;">Hóa Đơn</span>
+                                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1" style="font-size: 14px; font-weight: 600;">Hóa Đơn</span>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size: 12px;">Phiếu Thu</span>
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1" style="font-size: 14px; font-weight: 600;">Phiếu Thu</span>
                                             }
                                         </td>
-                                        <td class="fw-bold font-monospace" style="font-size: 14px;">@entry.DocumentNumber</td>
-                                        <td style="font-size: 14px;">@entry.Description</td>
-                                        <td class="text-end text-primary fw-semibold" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                        <td class="fw-bold font-monospace text-dark" style="font-size: 16px; background-color: #ffffff !important;">@entry.DocumentNumber</td>
+                                        <td style="font-size: 16px; color: #0f172a; background-color: #ffffff !important;">@entry.Description</td>
+                                        <td class="text-end text-primary fw-semibold" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">
                                             @(entry.Debit > 0 ? entry.Debit.ToString("N0") + " đ" : "-")
                                         </td>
-                                        <td class="text-end text-success fw-semibold" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                        <td class="text-end text-success fw-semibold" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">
                                             @(entry.Credit > 0 ? entry.Credit.ToString("N0") + " đ" : "-")
                                         </td>
-                                        <td class="text-end fw-bold @(entry.RunningBalance > 0 ? "text-danger" : "text-muted")" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                        <td class="text-end fw-bold @(entry.RunningBalance > 0 ? "text-danger" : "text-dark")" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">
                                             @entry.RunningBalance.ToString("N0") đ
                                         </td>
                                     </tr>
@@ -183,23 +183,23 @@
                             }
                             else
                             {
-                                <tr>
-                                    <td colspan="7" class="text-center py-4 text-muted">
+                                <tr style="background-color: #ffffff !important;">
+                                    <td colspan="7" class="text-center py-5 text-muted" style="background-color: #ffffff !important; font-size: 15px;">
                                         Khách hàng chưa có giao dịch phát sinh nào trong hệ thống.
                                     </td>
                                 </tr>
                             }
                         </tbody>
-                        <tfoot class="table-light fw-bold" style="font-size: 14px;">
-                            <tr>
-                                <td colspan="4" class="text-end">TỔNG PHÁT SINH TRONG KỲ:</td>
-                                <td class="text-end text-primary" style="font-variant-numeric: tabular-nums;">@ledger.TotalDebit.ToString("N0") đ</td>
-                                <td class="text-end text-success" style="font-variant-numeric: tabular-nums;">@ledger.TotalCredit.ToString("N0") đ</td>
+                        <tfoot style="background-color: #f8fafc !important; font-weight: 700;">
+                            <tr style="background-color: #f8fafc !important;">
+                                <td colspan="4" class="text-end text-dark" style="font-size: 16px; font-weight: 700; background-color: #f8fafc !important;">TỔNG PHÁT SINH TRONG KỲ:</td>
+                                <td class="text-end text-primary" style="font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; background-color: #f8fafc !important;">+@ledger.TotalDebit.ToString("N0") đ</td>
+                                <td class="text-end text-success" style="font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; background-color: #f8fafc !important;">-@ledger.TotalCredit.ToString("N0") đ</td>
                                 <td></td>
                             </tr>
                             <tr class="table-warning">
-                                <td colspan="4" class="text-end text-danger fs-6">SỐ DƯ NỢ CUỐI KỲ CẦN THU HỒI:</td>
-                                <td colspan="3" class="text-end text-danger fs-5" style="font-variant-numeric: tabular-nums;">
+                                <td colspan="4" class="text-end text-danger" style="font-size: 16px; font-weight: 700;">SỐ DƯ NỢ CUỐI KỲ CẦN THU HỒI:</td>
+                                <td colspan="3" class="text-end text-danger" style="font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums;">
                                     @ledger.EndingBalance.ToString("N0") đ
                                 </td>
                             </tr>

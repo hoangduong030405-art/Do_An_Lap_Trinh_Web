@@ -30,15 +30,15 @@
   --bs-font-sans-serif: var(--font-sans);
 
   /* Typography Scale - Minimum 13px anywhere in logged-in area */
-  --text-xs: 13px;       /* Nhãn nhỏ tối thiểu 13px */
-  --text-sm: 14px;       /* Nhãn form, hint, phụ đề nhỏ */
-  --text-base: 15px;     /* Nội dung bảng, input, nút bấm */
-  --text-body: 16px;     /* Nội dung thường, chữ chuẩn */
-  --text-lg: 18px;       /* Tiêu đề thẻ (card title) */
-  --text-xl: 20px;       /* Tiêu đề phân nhóm */
-  --text-2xl: 24px;      /* Tiêu đề trung */
-  --text-title: 30px;    /* Tiêu đề trang 28-32px */
-  --text-kpi: 36px;      /* Số liệu KPI 32-40px */
+  --text-xs: 14.5px;       /* Nhãn nhỏ tối thiểu 14px */
+  --text-sm: 15.5px;       /* Nhãn form, hint, phụ đề nhỏ */
+  --text-base: 16.5px;     /* Nội dung bảng, input, nút bấm */
+  --text-body: 17px;     /* Nội dung thường, chữ chuẩn */
+  --text-lg: 19.5px;       /* Tiêu đề thẻ (card title) */
+  --text-xl: 22px;       /* Tiêu đề phân nhóm */
+  --text-2xl: 26px;      /* Tiêu đề trung */
+  --text-title: 32px;    /* Tiêu đề trang 28-32px */
+  --text-kpi: 38px;      /* Số liệu KPI 32-40px */
 
   /* Neutral Background & Card */
   --bg-page: #f6f8fb;
@@ -273,7 +273,7 @@ small,
 
 .app-card-title,
 .card-title {
-  font-size: 18px !important;
+  font-size: 19px !important;
   font-weight: 700 !important;
   color: #0f172a !important;
   margin: 0 !important;
@@ -296,7 +296,7 @@ small,
   background: #f8fafc !important;
   border-top: 1px solid #e5eaf1 !important;
   color: #475569 !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   padding: 12px 20px !important;
 }
 
@@ -330,7 +330,7 @@ small,
 }
 
 .app-stat-label {
-  font-size: 14px !important;
+  font-size: 15px !important;
   font-weight: 600 !important;
   color: #475569 !important;
   text-transform: uppercase !important;
@@ -351,7 +351,7 @@ small,
 }
 
 .app-stat-value {
-  font-size: 32px !important;
+  font-size: 36px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
   line-height: 1.15 !important;
@@ -372,7 +372,7 @@ small,
   border-top: 1px solid #edf2f7 !important;
   padding-top: 10px !important;
   margin-top: 10px !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   color: #64748b !important;
 }
 
@@ -567,7 +567,7 @@ small,
 .table-responsive {
   border-radius: var(--radius-md) !important;
   border: 1px solid var(--border-color) !important;
-  background-color: var(--bg-card) !important;
+  background-color: #ffffff !important;
   margin-bottom: var(--space-6);
   overflow-x: auto;
 }
@@ -579,6 +579,9 @@ small,
   font-size: var(--text-base) !important;
   margin-bottom: 0 !important;
   color: var(--text-main) !important;
+  background-color: #ffffff !important;
+  --bs-table-bg: #ffffff !important;
+  --bs-table-accent-bg: transparent !important;
 }
 
 .table thead th,
@@ -599,7 +602,8 @@ small,
 
 
 .table tbody tr {
-  min-height: 56px !important;
+  min-height: 58px !important;
+  background-color: #ffffff !important;
   transition: background-color var(--transition-fast) !important;
 }
 
@@ -608,6 +612,9 @@ small,
   vertical-align: middle !important;
   border-bottom: 1px solid var(--border-color) !important;
   color: var(--text-main) !important;
+  background-color: #ffffff !important;
+  --bs-table-bg: #ffffff !important;
+  --bs-table-accent-bg: transparent !important;
   font-size: var(--text-base) !important;
 }
 
@@ -616,7 +623,9 @@ small,
 }
 
 .table tbody tr:hover,
-.table-hover tbody tr:hover {
+.table-hover tbody tr:hover,
+.table tbody tr:hover td,
+.table-hover tbody tr:hover td {
   background-color: #f8fafc !important;
 }
 
@@ -639,7 +648,7 @@ small,
   font-size: var(--text-base) !important;
   background-color: #f8fafc !important;
   border-top: 2px solid var(--border-color) !important;
-  color: var(--text-main) !important;
+  color: #0f172a !important;
 }
 
 

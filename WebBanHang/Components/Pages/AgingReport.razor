@@ -31,7 +31,7 @@
 <div class="card mb-4 border shadow-sm p-3 bg-white" style="border-radius: 14px; border-color: #e5eaf1 !important;">
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
         <div class="d-flex align-items-center gap-2.5">
-            <label class="form-label mb-0 fw-semibold text-secondary" style="font-size: 14px; white-space: nowrap;">
+            <label class="form-label mb-0 fw-semibold text-secondary" style="font-size: 16px; white-space: nowrap;">
                 <i class="bi bi-calendar-event text-primary me-1"></i> Tính đến ngày:
             </label>
             <input type="date" class="form-control" @bind="asOfDate" style="width: 180px; min-height: 40px;" />
@@ -87,7 +87,7 @@ else
             <div class="card border-warning mb-3 shadow-sm">
                 <div class="card-header bg-warning text-dark fw-bold d-flex justify-content-between align-items-center">
                     <span><i class="bi bi-robot me-1"></i> Bản thảo thư nhắc nợ (AI tự động soạn)</span>
-                    <button class="btn btn-sm btn-outline-dark" @onclick="() => aiEmailContent = string.Empty">Đóng</button>
+                    <button class="btn btn-sm btn-dark px-3 fw-semibold" @onclick="() => aiEmailContent = string.Empty">Đóng</button>
                 </div>
                 <div class="card-body">
                     <textarea class="form-control mb-3 font-monospace" rows="10" @bind="aiEmailContent"></textarea>
@@ -111,29 +111,29 @@ else
         <div class="card border shadow-sm overflow-hidden mb-4" style="border-radius: 16px; border-color: #e5eaf1 !important;">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0 bg-white">
-            <thead>
-                <tr>
-                    <th>Mã Hóa Đơn</th>
-                    <th>Ngày HĐ</th>
-                    <th>Hạn Thu</th>
-                    <th class="text-end">Tổng Tiền</th>
-                    <th class="text-end">Đã Trả</th>
-                    <th class="text-end">Còn Nợ</th>
-                    <th>Số Ngày Quá Hạn</th>
-                    <th>Phân Loại Tuổi Nợ</th>
+            <thead style="background-color: #f1f5f9 !important;">
+                <tr style="background-color: #f1f5f9 !important;">
+                    <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Mã Hóa Đơn</th>
+                    <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Ngày HĐ</th>
+                    <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Hạn Thu</th>
+                    <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Tổng Tiền</th>
+                    <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Đã Trả</th>
+                    <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Còn Nợ</th>
+                    <th class="text-center" style="font-size: 14.5px; font-weight: 700; color: #334155;">Số Ngày Quá Hạn</th>
+                    <th class="text-center" style="font-size: 14.5px; font-weight: 700; color: #334155;">Phân Loại Tuổi Nợ</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var inv in selectedReport.Invoices)
                 {
-                    <tr>
-                        <td>@inv.InvoiceNumber</td>
-                        <td>@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
-                        <td>@inv.DueDate.ToString("dd/MM/yyyy")</td>
-                        <td class="text-end" style="font-variant-numeric: tabular-nums;">@inv.TotalAmount.ToString("N0") đ</td>
-                        <td class="text-end text-success" style="font-variant-numeric: tabular-nums;">@inv.PaidAmount.ToString("N0") đ</td>
-                        <td class="text-end text-danger fw-bold" style="font-variant-numeric: tabular-nums;">@inv.Balance.ToString("N0") đ</td>
-                        <td>@inv.OverdueDays</td>
+                    <tr style="background-color: #ffffff !important;">
+                        <td class="fw-bold font-monospace text-primary" style="font-size: 16px; background-color: #ffffff !important;">@inv.InvoiceNumber</td>
+                        <td style="font-size: 16px; background-color: #ffffff !important;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
+                        <td style="font-size: 16px; background-color: #ffffff !important;">@inv.DueDate.ToString("dd/MM/yyyy")</td>
+                        <td class="text-end fw-semibold text-dark" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">@inv.TotalAmount.ToString("N0") đ</td>
+                        <td class="text-end text-success fw-semibold" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">@inv.PaidAmount.ToString("N0") đ</td>
+                        <td class="text-end text-danger fw-bold" style="font-size: 16px; font-variant-numeric: tabular-nums; background-color: #ffffff !important;">@inv.Balance.ToString("N0") đ</td>
+                        <td class="text-center fw-semibold @(inv.OverdueDays > 0 ? "text-danger" : "text-muted")" style="font-size: 16px; background-color: #ffffff !important;">@(inv.OverdueDays > 0 ? $"Trễ {inv.OverdueDays} ngày" : "-")</td>
                         <td>
                             @if (inv.AgingCategory == "Chưa đến hạn")
                             {

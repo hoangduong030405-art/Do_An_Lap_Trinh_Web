@@ -98,28 +98,28 @@
         </div>
 
         <!-- 4. HÓA ĐƠN CHỜ THANH TOÁN GẦN ĐÂY -->
-        <div class="card border shadow-sm mb-4 bg-white overflow-hidden" style="border-radius: 16px; border-color: #e5eaf1 !important;">
-            <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+        <div class="card border shadow-sm mb-4 bg-white overflow-hidden" style="border-radius: 16px; border-color: #e5eaf1 !important; background-color: #ffffff !important;">
+            <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center" style="border-color: #e5eaf1 !important;">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-clock-history text-primary fs-5"></i>
-                    <h6 class="fw-bold mb-0 text-slate-navy">Hóa Đơn Mua Hàng Gần Đây Của Đại Lý</h6>
+                    <h5 class="fw-bold mb-0 text-dark" style="font-size: 18px;">Hóa Đơn Mua Hàng Gần Đây Của Đại Lý</h5>
                 </div>
-                <a href="/portal/invoices" class="btn btn-link btn-sm text-decoration-none fw-semibold">
+                <a href="/portal/invoices" class="btn btn-link btn-sm text-decoration-none fw-semibold" style="font-size: 16px;">
                     Xem toàn bộ (@(recentInvoices.Count)) <i class="bi bi-chevron-right"></i>
                 </a>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="ps-4">Số Hóa Đơn</th>
-                            <th>Ngày Xuất</th>
-                            <th>Hạn Thanh Toán</th>
-                            <th class="text-end">Tổng Tiền</th>
-                            <th class="text-end">Đã Trả</th>
-                            <th class="text-end">Còn Nợ</th>
-                            <th class="text-center">Trạng Thái</th>
-                            <th class="text-center pe-4">Thao Tác</th>
+            <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
+                <table class="table table-hover align-middle mb-0 bg-white" style="background-color: #ffffff !important; --bs-table-bg: #ffffff !important;">
+                    <thead style="background-color: #f1f5f9 !important;">
+                        <tr style="background-color: #f1f5f9 !important;">
+                            <th class="ps-4" style="font-size: 14.5px; font-weight: 700; color: #334155;">Số Hóa Đơn</th>
+                            <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Ngày Xuất</th>
+                            <th style="font-size: 14.5px; font-weight: 700; color: #334155;">Hạn Thanh Toán</th>
+                            <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Tổng Tiền</th>
+                            <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Đã Trả</th>
+                            <th class="text-end" style="font-size: 14.5px; font-weight: 700; color: #334155;">Còn Nợ</th>
+                            <th class="text-center" style="font-size: 14.5px; font-weight: 700; color: #334155;">Trạng Thái</th>
+                            <th class="text-center pe-4" style="font-size: 14.5px; font-weight: 700; color: #334155;">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody>

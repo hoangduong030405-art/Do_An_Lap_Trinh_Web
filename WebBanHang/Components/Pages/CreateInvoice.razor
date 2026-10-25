@@ -63,7 +63,7 @@
             </div>
             @if (State.SelectedCustomer != null)
             {
-                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5" style="font-size: 13px; font-weight: 600;">
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1.5" style="font-size: 14.5px; font-weight: 600;">
                     <i class="bi bi-check2 me-1"></i>Đã chọn đại lý
                 </span>
             }
@@ -71,7 +71,7 @@
         <div class="card-body p-4">
             <div class="row g-4 align-items-start">
                 <div class="col-12 col-lg-5">
-                    <label class="form-label fw-bold text-dark mb-1.5" style="font-size: 14px;">
+                    <label class="form-label fw-bold text-dark mb-1.5" style="font-size: 16px;">
                         Tên Khách Hàng / Đại Lý <span class="text-danger">*</span>
                     </label>
                     <select class="form-select" @onchange="OnCustomerSelected" style="min-height: 44px; font-size: 15px;">
@@ -86,7 +86,7 @@
                             }
                         }
                     </select>
-                    <div class="form-text text-muted" style="font-size: 13px;">
+                    <div class="form-text text-muted" style="font-size: 16px;">
                         Hệ thống tự động tra cứu số dư nợ TK 131 và đối soát trần tín dụng theo thời gian thực.
                     </div>
                 </div>
@@ -103,32 +103,32 @@
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <div>
                                     <h6 class="fw-bold text-dark mb-0.5">@State.SelectedCustomer.FullName</h6>
-                                    <span class="text-muted small" style="font-size: 13px;">Mã KH: <strong>@State.SelectedCustomer.CustomerCode</strong> • Hạn nợ: <strong>@State.SelectedCustomer.PaymentTermsDays ngày</strong></span>
+                                    <span class="text-muted small" style="font-size: 16px;">Mã KH: <strong>@State.SelectedCustomer.CustomerCode</strong> • Hạn nợ: <strong>@State.SelectedCustomer.PaymentTermsDays ngày</strong></span>
                                 </div>
                                 <div>
                                     @if (customerRisk != null)
                                     {
                                         @if (customerRisk.RatingGrade == "A")
                                         {
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1.5" style="font-size: 13px; font-weight: 600;" title="@customerRisk.Recommendation">
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1.5" style="font-size: 14.5px; font-weight: 600;" title="@customerRisk.Recommendation">
                                                 <i class="bi bi-shield-check me-1"></i>Hạng A (@customerRisk.CreditScore/100)
                                             </span>
                                         }
                                         else if (customerRisk.RatingGrade == "B")
                                         {
-                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1.5" style="font-size: 13px; font-weight: 600;" title="@customerRisk.Recommendation">
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2.5 py-1.5" style="font-size: 14.5px; font-weight: 600;" title="@customerRisk.Recommendation">
                                                 <i class="bi bi-shield me-1"></i>Hạng B (@customerRisk.CreditScore/100)
                                             </span>
                                         }
                                         else if (customerRisk.RatingGrade == "C")
                                         {
-                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2.5 py-1.5" style="font-size: 13px; font-weight: 600;" title="@customerRisk.Recommendation">
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2.5 py-1.5" style="font-size: 14.5px; font-weight: 600;" title="@customerRisk.Recommendation">
                                                 <i class="bi bi-shield-exclamation me-1"></i>Hạng C (@customerRisk.CreditScore/100)
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1.5" style="font-size: 13px; font-weight: 600;" title="@customerRisk.Recommendation">
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1.5" style="font-size: 14.5px; font-weight: 600;" title="@customerRisk.Recommendation">
                                                 <i class="bi bi-shield-x me-1"></i>Hạng D - Cảnh báo nợ (@customerRisk.CreditScore/100)
                                             </span>
                                         }
@@ -140,19 +140,19 @@
                             <div class="row g-2 mb-3 text-center">
                                 <div class="col-4">
                                     <div class="p-2.5 rounded-3 bg-white border">
-                                        <div class="text-muted" style="font-size: 13px; font-weight: 500;">Hạn Mức Cấp</div>
+                                        <div class="text-muted" style="font-size: 16px; font-weight: 600;">Hạn Mức Cấp</div>
                                         <div class="fw-bold text-dark fs-6" style="font-variant-numeric: tabular-nums;">@creditLimit.ToString("N0") đ</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="p-2.5 rounded-3 bg-white border">
-                                        <div class="text-muted" style="font-size: 13px; font-weight: 500;">Nợ Hiện Tại</div>
+                                        <div class="text-muted" style="font-size: 16px; font-weight: 600;">Nợ Hiện Tại</div>
                                         <div class="fw-bold text-danger fs-6" style="font-variant-numeric: tabular-nums;">@currentDebt.ToString("N0") đ</div>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="p-2.5 rounded-3 bg-white border">
-                                        <div class="text-muted" style="font-size: 13px; font-weight: 500;">Còn Được Mua Nợ</div>
+                                        <div class="text-muted" style="font-size: 16px; font-weight: 600;">Còn Được Mua Nợ</div>
                                         <div class="fw-bold @(remainingCredit > 0 ? "text-success" : "text-danger") fs-6" style="font-variant-numeric: tabular-nums;">
                                             @remainingCredit.ToString("N0") đ
                                         </div>
@@ -162,7 +162,7 @@
 
                             <!-- UTILIZATION PROGRESS BAR -->
                             <div>
-                                <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 13px;">
+                                <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 16px;">
                                     <span class="text-muted">Tỷ lệ sử dụng hạn mức tín dụng:</span>
                                     <span class="fw-bold @(isWarning ? "text-danger" : "text-primary")">@utilizationRate.ToString("N1")%</span>
                                 </div>
@@ -197,7 +197,7 @@
             </div>
             @if (State.Items.Any())
             {
-                <span class="badge bg-primary px-3 py-1.5" style="font-size: 13px; font-weight: 600;">
+                <span class="badge bg-primary px-3 py-1.5" style="font-size: 14.5px; font-weight: 600;">
                     @State.TotalItemCount sản phẩm (@State.Items.Count loại hàng)
                 </span>
             }
@@ -214,18 +214,18 @@
                 <div class="card p-3.5 mt-3 border bg-light" style="border-radius: 12px; border-color: #e5eaf1 !important;">
                     <div class="row align-items-center text-center text-md-start g-3">
                         <div class="col-6 col-md-3">
-                            <span class="text-muted d-block" style="font-size: 13px;">Tổng Giá Vốn (COGS):</span>
+                            <span class="text-muted d-block" style="font-size: 16px;">Tổng Giá Vốn (COGS):</span>
                             <span class="fs-5 fw-bold text-secondary" style="font-variant-numeric: tabular-nums;">@State.TotalCost.ToString("N0") đ</span>
                         </div>
                         <div class="col-6 col-md-3">
-                            <span class="text-muted d-block" style="font-size: 13px;">Lợi Nhuận Gộp Kỳ Vọng:</span>
+                            <span class="text-muted d-block" style="font-size: 16px;">Lợi Nhuận Gộp Kỳ Vọng:</span>
                             <span class="fs-5 fw-bold text-success" style="font-variant-numeric: tabular-nums;">
                                 +@State.TotalProfit.ToString("N0") đ
                             </span>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" style="font-size: 12px;">@State.ProfitMargin%</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" style="font-size: 16px;">@State.ProfitMargin%</span>
                         </div>
                         <div class="col-12 col-md-3">
-                            <span class="text-muted d-block" style="font-size: 13px;">Tổng Tiền Bán Sỉ (Chưa thanh toán):</span>
+                            <span class="text-muted d-block" style="font-size: 16px;">Tổng Tiền Bán Sỉ (Chưa thanh toán):</span>
                             <span class="fs-4 fw-extrabold text-primary" style="font-variant-numeric: tabular-nums;">@State.TotalAmount.ToString("N0") đ</span>
                         </div>
                         <div class="col-12 col-md-3 text-md-end">
@@ -265,7 +265,7 @@
                         </button>
                     }
                 </div>
-                <span class="badge bg-light text-secondary border px-2.5 py-1.5" style="font-size: 13px;">
+                <span class="badge bg-light text-secondary border px-2.5 py-1.5" style="font-size: 16px;">
                     @(filteredProducts?.Count() ?? 0) mặt hàng
                 </span>
             </div>
@@ -273,19 +273,19 @@
         <div class="card-body p-0">
             @if (filteredProducts != null && filteredProducts.Any())
             {
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th style="width: 60px;" class="text-center">Ảnh</th>
-                                <th style="min-width: 100px;">Mã SP</th>
-                                <th style="min-width: 200px;">Tên Hàng Hóa</th>
-                                <th class="text-center" style="min-width: 70px;">ĐVT</th>
-                                <th class="text-end" style="min-width: 120px;">Giá Nhập (Vốn)</th>
-                                <th class="text-end" style="min-width: 120px;">Giá Bán Sỉ</th>
-                                <th class="text-end" style="min-width: 130px;">Lãi Gộp / SP</th>
-                                <th class="text-center" style="min-width: 90px;">Tồn Kho</th>
-                                <th class="text-center" style="width: 120px;">Thao Tác</th>
+                <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
+                    <table class="table table-hover align-middle mb-0 bg-white" style="background-color: #ffffff !important; --bs-table-bg: #ffffff !important;">
+                        <thead style="background-color: #f1f5f9 !important;">
+                            <tr style="background-color: #f1f5f9 !important;">
+                                <th style="width: 60px; font-size: 14.5px; font-weight: 700; color: #334155;" class="text-center">Ảnh</th>
+                                <th style="min-width: 100px; font-size: 14.5px; font-weight: 700; color: #334155;">Mã SP</th>
+                                <th style="min-width: 200px; font-size: 14.5px; font-weight: 700; color: #334155;">Tên Hàng Hóa</th>
+                                <th class="text-center" style="min-width: 70px; font-size: 14.5px; font-weight: 700; color: #334155;">ĐVT</th>
+                                <th class="text-end" style="min-width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Nhập (Vốn)</th>
+                                <th class="text-end" style="min-width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Bán Sỉ</th>
+                                <th class="text-end" style="min-width: 130px; font-size: 14.5px; font-weight: 700; color: #334155;">Lãi Gộp / SP</th>
+                                <th class="text-center" style="min-width: 90px; font-size: 14.5px; font-weight: 700; color: #334155;">Tồn Kho</th>
+                                <th class="text-center" style="width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Thao Tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -299,23 +299,23 @@
                                              class="rounded border bg-white p-1 shadow-xs" />
                                     </td>
                                     <td>
-                                        <span class="badge bg-light text-secondary border font-monospace px-2 py-1" style="font-size: 13px;">@p.ProductCode</span>
+                                        <span class="badge bg-light text-secondary border font-monospace px-2 py-1" style="font-size: 16px;">@p.ProductCode</span>
                                     </td>
                                     <td class="fw-semibold text-dark">@p.Name</td>
-                                    <td class="text-center text-secondary" style="font-size: 14px;">@p.Unit</td>
-                                    <td class="text-end text-muted" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                    <td class="text-center text-secondary" style="font-size: 16px;">@p.Unit</td>
+                                    <td class="text-end text-muted" style="font-size: 16px; font-variant-numeric: tabular-nums;">
                                         @p.CostPrice.ToString("N0") đ
                                     </td>
-                                    <td class="text-end fw-bold text-primary" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                    <td class="text-end fw-bold text-primary" style="font-size: 16px; font-variant-numeric: tabular-nums;">
                                         @p.UnitPrice.ToString("N0") đ
                                     </td>
                                     <td class="text-end">
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size: 13px;">
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size: 16px;">
                                             +@p.UnitProfit.ToString("N0") đ (@p.ProfitMargin%)
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge @(p.StockQuantity <= 10 ? "bg-warning text-dark" : "bg-success") px-2.5 py-1" style="font-size: 13px; font-weight: 600;">
+                                        <span class="badge @(p.StockQuantity <= 10 ? "bg-warning text-dark" : "bg-success") px-2.5 py-1" style="font-size: 14.5px; font-weight: 600;">
                                             @p.StockQuantity
                                         </span>
                                     </td>

@@ -9,7 +9,7 @@
                     </span>
                     <div>
                         <h6 class="modal-title fw-bold text-white mb-0">Trung Tâm Trợ Giúp & Hướng Dẫn Nghiệp Vụ</h6>
-                        <small class="text-white-50" style="font-size: 13px;">Đồ án Capstone ECO2415 — Đề tài 18: Bán hàng & Công nợ B2B</small>
+                        <small class="text-white-50" style="font-size: 15px;">Đồ án Capstone ECO2415 — Đề tài 18: Bán hàng & Công nợ B2B</small>
                     </div>
                 </div>
                 <button type="button" class="btn-close btn-close-white" @onclick="OnClose"></button>
@@ -27,8 +27,8 @@
                     <div class="col-12 col-md-6">
                         <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-primary">
                             <span class="badge bg-primary-subtle text-primary small mb-1.5 align-self-start">LUẬT 1: HẠN MỨC TÍN DỤNG</span>
-                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 0.88rem;">Kiểm Soát Khi Lập Hóa Đơn</h6>
-                            <p class="text-muted small mb-0" style="font-size: 14px; line-height: 1.5;">
+                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 15px;">Kiểm Soát Khi Lập Hóa Đơn</h6>
+                            <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.6;">
                                 Khi nhân viên kinh doanh lập đơn bán buôn, hệ thống bắt buộc kiểm tra: <code>(Nợ Hiện Tại + Đơn Mới) &le; Hạn Mức Tín Dụng</code>. Nếu vượt trần, hệ thống từ chối ghi nhận và ném ngoại lệ <code>CreditLimitExceededException</code>.
                             </p>
                         </div>
@@ -38,8 +38,8 @@
                     <div class="col-12 col-md-6">
                         <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-success">
                             <span class="badge bg-success-subtle text-success small mb-1.5 align-self-start">LUẬT 2: THU NỢ FIFO</span>
-                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 0.88rem;">Cấn Trừ Nợ Cũ Nhất Trước</h6>
-                            <p class="text-muted small mb-0" style="font-size: 14px; line-height: 1.5;">
+                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 15px;">Cấn Trừ Nợ Cũ Nhất Trước</h6>
+                            <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.6;">
                                 Khi đại lý thanh toán, tiền thu tự động cấn trừ ưu tiên vào hóa đơn có <code>InvoiceDate ASC</code> (cũ nhất / quá hạn lâu nhất trước). Đồng thời đối soát bảng tuổi nợ 4 xô với cờ <code>IsIntegrityValid</code> khớp 100%.
                             </p>
                         </div>

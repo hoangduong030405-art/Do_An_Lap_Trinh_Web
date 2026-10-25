@@ -57,7 +57,7 @@
                     </h5>
                     @if (selectedCustomer != null && currentDebt > 0)
                     {
-                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1" style="font-size: 13px; font-weight: 600;">
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2.5 py-1" style="font-size: 14.5px; font-weight: 600;">
                             Đang nợ: @currentDebt.ToString("N0") đ
                         </span>
                     }
@@ -65,7 +65,7 @@
                 <div class="card-body p-4">
                     <!-- 1. CHỌN KHÁCH HÀNG -->
                     <div class="mb-3.5">
-                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 14px;">
+                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 15px;">
                             1. Chọn Khách Hàng Nộp Tiền <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" @onchange="OnCustomerSelected" style="min-height: 44px; font-size: 15px;">
@@ -89,24 +89,24 @@
                             <div class="row g-2 text-center">
                                 <div class="col-4">
                                     <div class="p-2 rounded bg-white border">
-                                        <div class="text-muted" style="font-size: 12px; font-weight: 500;">Hạn Mức Cấp</div>
-                                        <div class="fw-bold text-dark" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                        <div class="text-muted" style="font-size: 15px; font-weight: 600;">Hạn Mức Cấp</div>
+                                        <div class="fw-bold text-dark" style="font-size: 15px; font-variant-numeric: tabular-nums;">
                                             @selectedCustomer.CreditLimit.ToString("N0") đ
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="p-2 rounded bg-white border">
-                                        <div class="text-muted" style="font-size: 12px; font-weight: 500;">Hạn Nợ Chuẩn</div>
-                                        <div class="fw-bold text-dark" style="font-size: 14px;">
+                                        <div class="text-muted" style="font-size: 15px; font-weight: 600;">Hạn Nợ Chuẩn</div>
+                                        <div class="fw-bold text-dark" style="font-size: 15px;">
                                             @selectedCustomer.PaymentTermsDays ngày
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="p-2 rounded bg-white border">
-                                        <div class="text-muted" style="font-size: 12px; font-weight: 500;">Tổng Nợ Còn Lại</div>
-                                        <div class="fw-bold @(currentDebt > 0 ? "text-danger" : "text-success")" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                        <div class="text-muted" style="font-size: 15px; font-weight: 600;">Tổng Nợ Còn Lại</div>
+                                        <div class="fw-bold @(currentDebt > 0 ? "text-danger" : "text-success")" style="font-size: 15px; font-variant-numeric: tabular-nums;">
                                             @currentDebt.ToString("N0") đ
                                         </div>
                                     </div>
@@ -118,16 +118,16 @@
                     <!-- 2. SỐ TIỀN THU -->
                     <div class="mb-3.5">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="form-label fw-bold text-dark mb-0" style="font-size: 14px;">
+                            <label class="form-label fw-bold text-dark mb-0" style="font-size: 15px;">
                                 2. Số Tiền Thu (VNĐ) <span class="text-danger">*</span>
                             </label>
                             @if (currentDebt > 0)
                             {
                                 <div class="d-flex gap-1.5">
-                                    <button type="button" class="btn btn-sm btn-outline-primary py-0.5 px-2" style="font-size: 13px;" @onclick="FillHalfDebt">
+                                    <button type="button" class="btn btn-sm btn-outline-primary py-0.5 px-2" style="font-size: 14.5px;" @onclick="FillHalfDebt">
                                         50% Nợ
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-primary py-0.5 px-2" style="font-size: 13px;" @onclick="FillFullDebt">
+                                    <button type="button" class="btn btn-sm btn-primary py-0.5 px-2" style="font-size: 14.5px;" @onclick="FillFullDebt">
                                         Tất Toán Nợ
                                     </button>
                                 </div>
@@ -146,7 +146,7 @@
                         </div>
                         @if (paymentAmount > 0)
                         {
-                            <div class="d-flex justify-content-between align-items-center mt-1 text-muted" style="font-size: 13px;">
+                            <div class="d-flex justify-content-between align-items-center mt-1 text-muted" style="font-size: 14.5px;">
                                 <span>Bằng chữ số:</span>
                                 <span class="fw-bold text-dark">@paymentAmount.ToString("N0") đ</span>
                             </div>
@@ -155,7 +155,7 @@
 
                     <!-- 3. NGÀY THU TIỀN -->
                     <div class="mb-3.5">
-                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 14px;">
+                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 15px;">
                             3. Ngày Thu Tiền <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control" @bind="paymentDate" style="min-height: 44px;" />
@@ -163,7 +163,7 @@
 
                     <!-- 4. GHI CHÚ -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 14px;">
+                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 15px;">
                             4. Ghi Chú / Nội Dung Nộp Tiền
                         </label>
                         <input type="text" class="form-control" placeholder="VD: Khách trả nợ đợt 1 chuyển khoản qua VietQR / ACB..." @bind="note" style="min-height: 44px;" />
@@ -190,7 +190,7 @@
                     </h5>
                     @if (unpaidInvoices != null && unpaidInvoices.Any())
                     {
-                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2.5 py-1.5" style="font-size: 13px; font-weight: 600;">
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2.5 py-1.5" style="font-size: 14.5px; font-weight: 600;">
                             @unpaidInvoices.Count hóa đơn chưa tất toán
                         </span>
                     }
@@ -249,48 +249,48 @@
                                             <td class="text-center">
                                                 @if (priority == 1)
                                                 {
-                                                    <span class="badge bg-danger px-2 py-1" style="font-size: 12px;">#1 Cũ Nhất</span>
+                                                    <span class="badge bg-danger px-2 py-1" style="font-size: 14.5px;">#1 Cũ Nhất</span>
                                                 }
                                                 else if (priority == 2)
                                                 {
-                                                    <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 12px;">#2 Tiếp Theo</span>
+                                                    <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 14.5px;">#2 Tiếp Theo</span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 12px;">#@priority</span>
+                                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 14.5px;">#@priority</span>
                                                 }
                                             </td>
                                             <td>
                                                 <span class="fw-bold text-dark">@inv.InvoiceNumber</span>
                                             </td>
                                             <td>
-                                                <div class="fw-semibold text-dark" style="font-size: 14px;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</div>
-                                                <small class="text-muted" style="font-size: 12px;">Hạn: @inv.DueDate.ToString("dd/MM/yyyy")</small>
+                                                <div class="fw-semibold text-dark" style="font-size: 15px;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</div>
+                                                <small class="text-muted" style="font-size: 14.5px;">Hạn: @inv.DueDate.ToString("dd/MM/yyyy")</small>
                                             </td>
-                                            <td class="text-end text-muted" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                            <td class="text-end text-muted" style="font-size: 15px; font-variant-numeric: tabular-nums;">
                                                 @inv.TotalAmount.ToString("N0") đ
                                             </td>
-                                            <td class="text-end text-danger fw-bold" style="font-size: 14px; font-variant-numeric: tabular-nums;">
+                                            <td class="text-end text-danger fw-bold" style="font-size: 15px; font-variant-numeric: tabular-nums;">
                                                 @inv.Balance.ToString("N0") đ
                                             </td>
                                             <td class="text-end">
                                                 @if (willPay > 0)
                                                 {
-                                                    <span class="badge @(remainingAfterPay == 0 ? "bg-success" : "bg-warning text-dark") px-2.5 py-1" style="font-size: 13px;">
+                                                    <span class="badge @(remainingAfterPay == 0 ? "bg-success" : "bg-warning text-dark") px-2.5 py-1" style="font-size: 14.5px;">
                                                         -@willPay.ToString("N0") đ
                                                     </span>
                                                     @if (remainingAfterPay == 0)
                                                     {
-                                                        <div class="small text-success fw-bold mt-0.5" style="font-size: 11px;">(Tất toán)</div>
+                                                        <div class="small text-success fw-bold mt-0.5" style="font-size: 14.5px; font-weight: 600;">(Tất toán)</div>
                                                     }
                                                     else
                                                     {
-                                                        <div class="small text-muted mt-0.5" style="font-size: 11px;">(Còn: @remainingAfterPay.ToString("N0") đ)</div>
+                                                        <div class="small text-muted mt-0.5" style="font-size: 14.5px; font-weight: 600;">(Còn: @remainingAfterPay.ToString("N0") đ)</div>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted" style="font-size: 13px;">-</span>
+                                                    <span class="text-muted" style="font-size: 14.5px;">-</span>
                                                 }
                                             </td>
                                         </tr>
@@ -304,7 +304,7 @@
                 @if (selectedCustomerId > 0 && unpaidInvoices != null && unpaidInvoices.Any())
                 {
                     <div class="card-footer bg-light py-3 px-4 d-flex justify-content-between align-items-center" style="border-top: 1px solid #e5eaf1;">
-                        <span class="text-muted fw-semibold" style="font-size: 14px;">Tổng công nợ cần thu tất cả hóa đơn:</span>
+                        <span class="text-muted fw-semibold" style="font-size: 15px;">Tổng công nợ cần thu tất cả hóa đơn:</span>
                         <span class="fw-bold text-danger fs-5" style="font-variant-numeric: tabular-nums;">@currentDebt.ToString("N0") đ</span>
                     </div>
                 }

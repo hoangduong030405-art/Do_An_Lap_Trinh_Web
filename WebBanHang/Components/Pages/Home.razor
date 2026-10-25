@@ -1,1293 +1,2562 @@
 @page "/dashboard"
+
 @attribute [Authorize]
+
 @rendermode InteractiveServer
 
+
+
 @using WebBanHang.UseCases.Dashboard
+
 @using WebBanHang.UseCases.DTOs
+
 @using WebBanHang.CoreBusiness.Entities
+
 @using Microsoft.AspNetCore.Components.Authorization
+
 @using WebBanHang.Services
 
+
+
 @inject IGetDashboardDataUseCase GetDashboardDataUseCase
+
 @inject NavigationManager Navigation
+
 @inject AuthenticationStateProvider AuthStateProvider
+
 @inject LayoutStateService LayoutState
+
 @implements IDisposable
+
+
 
 <PageTitle>Tổng Quan - Phân Hệ Bán Hàng & Quản Trị Công Nợ B2B</PageTitle>
 
+
+
 @if (loading)
+
 {
+
     <div class="d-flex flex-column align-items-center justify-content-center py-5 my-5">
+
         <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+
             <span class="visually-hidden">Đang nạp dữ liệu...</span>
+
         </div>
+
         <p class="mt-3 text-muted small fw-semibold">Đang tổng hợp số liệu kế toán & công nợ từ hệ thống...</p>
+
     </div>
+
 }
+
 else if (dashboard != null)
+
 {
+
     <div class="app-page-container">
+
         <!-- =========================================================================
+
              1. UNIFIED PAGE HEADER & EXECUTIVE ACTIONS (STRIPE / LINEAR STYLE)
+
              ========================================================================= -->
+
         <PageHeader Title="Tổng Quan Hoạt Động"
+
                     Subtitle="Phân hệ Bán hàng & Quản trị Công nợ B2B — Bàn làm việc điều hành"
+
                     Icon="bi-grid-fill">
+
             <Actions>
+
                 <!-- Period Selector Dropdown -->
+
                 <div class="d-flex align-items-center gap-2 bg-white rounded-3 px-3 py-1.5 border shadow-sm">
+
                     <i class="bi bi-calendar3 text-muted"></i>
+
                     <select class="form-select border-0 bg-transparent py-0 fw-semibold" @onchange="OnPeriodChanged" value="@selectedPeriod" style="min-height: auto; width: auto;">
+
                         <option value="today">Hôm nay</option>
+
                         <option value="this_week">Tuần này</option>
+
                         <option value="this_month">Tháng này</option>
+
                         <option value="this_quarter">Quý này</option>
+
                         <option value="this_year">Năm nay</option>
+
                     </select>
+
                 </div>
+
+
 
                 <!-- Date Range Indicator -->
-                <span class="badge bg-light text-secondary border fw-normal py-2 px-3 d-none d-lg-inline-block" style="font-size: 13px;">
+
+                <span class="badge bg-light text-secondary border fw-normal py-2 px-3 d-none d-lg-inline-block" style="font-size: 15px;">
+
                     @periodStartDate.ToString("dd/MM/yyyy") - @periodEndDate.ToString("dd/MM/yyyy")
+
                 </span>
 
+
+
                 <!-- Action Toolbar Buttons -->
-                <button class="btn btn-secondary d-flex align-items-center gap-1.5" 
-                        title="Làm mới dữ liệu (F5)" 
-                        @onclick="LoadDashboard">
-                    <i class="bi bi-arrow-clockwise @(isRefreshing ? "spin-animate" : "")"></i>
-                    <span class="d-none d-sm-inline">Làm mới</span>
-                </button>
 
                 <button class="btn btn-secondary d-flex align-items-center gap-1.5" 
-                        title="Tùy chỉnh bàn làm việc" 
-                        @onclick="ToggleCustomizeModal">
-                    <i class="bi bi-sliders2"></i>
-                    <span class="d-none d-md-inline">Tùy chỉnh</span>
+
+                        title="Làm mới dữ liệu (F5)" 
+
+                        @onclick="LoadDashboard">
+
+                    <i class="bi bi-arrow-clockwise @(isRefreshing ? "spin-animate" : "")"></i>
+
+                    <span class="d-none d-sm-inline">Làm mới</span>
+
                 </button>
+
+
+
+                <button class="btn btn-secondary d-flex align-items-center gap-1.5" 
+
+                        title="Tùy chỉnh bàn làm việc" 
+
+                        @onclick="ToggleCustomizeModal">
+
+                    <i class="bi bi-sliders2"></i>
+
+                    <span class="d-none d-md-inline">Tùy chỉnh</span>
+
+                </button>
+
+
 
                 <button class="btn btn-primary d-flex align-items-center gap-1.5" 
+
                         title="In báo cáo tổng quan" 
+
                         @onclick="PrintOverview">
+
                     <i class="bi bi-printer"></i>
+
                     <span class="d-none d-sm-inline">In báo cáo</span>
+
                 </button>
+
             </Actions>
+
         </PageHeader>
 
+
+
         <!-- =========================================================================
+
              2. EXECUTIVE KPI STAT CARDS (4 CHỈ SỐ TRỌNG YẾU CHUẨN STRIPE)
+
              ========================================================================= -->
+
         <div class="row g-4 mb-4">
+
             <!-- KPI 1: TỔNG DOANH THU BÁN HÀNG -->
+
             <div class="col-12 col-sm-6 col-xl-3">
+
                 <StatCard Label="DOANH THU BÁN HÀNG"
+
                           Value="@((dashboard.TotalRevenue / 1000000m).ToString("N2"))"
+
                           Unit="Trđ"
+
                           Trend="@dashboard.PreviousPeriodComparisonText"
+
                           Hint="@($"{dashboard.TotalInvoicesCount} hóa đơn ↗")"
+
                           Tone="primary"
+
                           Icon="bi-cash-coin"
+
                           OnClick="@(() => Navigation.NavigateTo("/invoices"))" />
+
             </div>
+
+
 
             <!-- KPI 2: TIỀN THỰC THU -->
+
             <div class="col-12 col-sm-6 col-xl-3">
+
                 <StatCard Label="TIỀN ĐÃ THU VỀ"
+
                           Value="@((dashboard.TotalCollectedAmount / 1000000m).ToString("N2"))"
+
                           Unit="Trđ"
+
                           Trend="@($"{collectionRate:N1}% thu hồi")"
+
                           Hint="Gạch nợ FIFO ↗"
+
                           Tone="success"
+
                           Icon="bi-wallet2"
+
                           OnClick="@(() => Navigation.NavigateTo("/payments"))" />
+
             </div>
+
+
 
             <!-- KPI 3: TỔNG NỢ PHẢI THU (TK 131) -->
+
             <div class="col-12 col-sm-6 col-xl-3">
+
                 <StatCard Label="NỢ PHẢI THU (TK 131)"
+
                           Value="@((dashboard.TotalOutstandingDebt / 1000000m).ToString("N2"))"
+
                           Unit="Trđ"
+
                           Trend="@($"{dashboard.TotalDebtorsCount}/{dashboard.TotalCustomersCount} KH")"
+
                           Hint="Báo cáo tuổi nợ ↗"
+
                           Tone="warning"
+
                           Icon="bi-clock-history"
+
                           OnClick="@(() => Navigation.NavigateTo("/aging-report"))" />
+
             </div>
+
+
 
             <!-- KPI 4: NỢ QUÁ HẠN (CẢNH BÁO) -->
+
             <div class="col-12 col-sm-6 col-xl-3">
+
                 <StatCard Label="NỢ QUÁ HẠN (CẢNH BÁO)"
+
                           Value="@((overdueDebt / 1000000m).ToString("N2"))"
+
                           Unit="Trđ"
+
                           Trend="@($"{dashboard.OverdueInvoicesCount} HĐ quá hạn")"
+
                           Hint="@($"{overduePercent:N1}% tổng nợ ↗")"
+
                           Tone="danger"
+
                           Icon="bi-exclamation-triangle-fill"
+
                           OnClick="@(() => Navigation.NavigateTo("/aging-report"))" />
+
             </div>
+
         </div>
 
+
+
     <!-- =========================================================================
+
          3. AVA AI EXECUTIVE COPILOT BANNER & 3 INSIGHT CARDS
+
          ========================================================================= -->
+
     <div class="app-announcement-bar d-flex align-items-center justify-content-between p-2 px-3 mb-2 rounded bg-white border shadow-xs">
+
         <div class="d-flex align-items-center gap-2 small">
-            <span class="badge bg-danger text-white px-2 py-0.5 rounded-pill" style="font-size: 13px; font-weight: 700;">MỚI</span>
+
+            <span class="badge bg-danger text-white px-2 py-0.5 rounded-pill" style="font-size: 14px; font-weight: 700;">MỚI</span>
+
             <span class="fw-semibold text-slate-navy">Khám phá Trợ lý AI AVA Kế toán:</span>
+
             <span class="text-muted d-none d-md-inline">Tự động phân tích sức khỏe tài chính, giám sát tuổi nợ 4 xô và cảnh báo hạn mức bán hàng</span>
+
         </div>
+
         <button class="btn btn-link btn-sm p-0 text-decoration-none fw-bold text-success d-flex align-items-center gap-1" 
+
                 @onclick="OpenAvaAnalysisModal">
+
             <span>Bắt đầu sử dụng</span>
+
             <i class="bi bi-arrow-right-short fs-5"></i>
+
         </button>
+
     </div>
+
+
 
     <div class="app-insight-banner mb-3 shadow-xs">
+
         <div class="d-flex align-items-center justify-content-between mb-2.5">
+
             <div class="d-flex align-items-center gap-2">
+
                 <img src="/images/ava-avatar.svg" alt="AVA AI" style="width: 28px; height: 28px; border-radius: 50%;" />
+
                 <div>
+
                     <span class="fw-bold text-slate-navy small">Phân Tích Tài Chính Thông Minh Với AVA</span>
-                    <span class="text-muted ms-2 small d-none d-md-inline" style="font-size: 13px;">• Cập nhật theo thời gian thực</span>
+
+                    <span class="text-muted ms-2 small d-none d-md-inline" style="font-size: 15px;">• Cập nhật theo thời gian thực</span>
+
                 </div>
+
             </div>
+
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-sm btn-white border shadow-xs py-1 px-2.5 small fw-semibold text-purple d-flex align-items-center gap-1.5" 
-                        style="color: #7c3aed; border-color: #ddd6fe !important;"
+
+                <button class="btn btn-sm btn-white border shadow-xs py-1.5 px-3 fw-semibold text-primary d-flex align-items-center gap-1.5" 
+                        style="font-size: 15px; color: #2563eb !important; background-color: #eff6ff !important; border-color: #bfdbfe !important;"
                         @onclick="OpenAvaAnalysisModal">
-                    <i class="bi bi-stars text-purple"></i>
+
+                    <i class="bi bi-stars text-primary"></i>
+
                     <span>Phân tích với AVA</span>
+
                 </button>
+
                 <button class="btn btn-sm btn-white border shadow-xs py-1 px-2.5 small fw-semibold text-muted" 
+
                         @onclick="ToggleCustomizeModal">
+
                     <i class="bi bi-pencil me-1"></i> Tùy chỉnh
+
                 </button>
+
             </div>
+
         </div>
+
+
 
         <!-- 3 Insight Cards -->
+
         <div class="row g-2.5">
+
             <!-- Insight 1: Doanh thu & Lợi nhuận -->
+
             <div class="col-12 col-md-4">
+
                 <div class="app-insight-card">
+
                     <div class="mb-2">
+
                         <div class="d-flex align-items-center gap-1 text-success fw-bold small mb-1">
+
                             <i class="bi bi-graph-up-arrow"></i>
+
                             <span>Biên Lợi Nhuận Doanh Số</span>
+
                         </div>
-                        <p class="text-muted mb-0 small" style="font-size: 14px; line-height: 1.4;">
+
+                        <p class="text-muted mb-0 small" style="font-size: 15px; line-height: 1.5;">
+
                             Tổng doanh thu đạt <strong>@((dashboard.TotalRevenue / 1000000m).ToString("N1")) triệu đồng</strong>. Lợi nhuận gộp thực tế đạt <strong>+@((actualProfit / 1000000m).ToString("N1")) trđ (@profitMargin%)</strong>, duy trì tỷ suất sinh lời an toàn.
+
                         </p>
+
                     </div>
-                    <a href="/invoices" class="small fw-bold text-decoration-none text-purple" style="font-size: 13px; color: #7c3aed;">
+
+                    <a href="/invoices" class="fw-bold text-decoration-none text-primary" style="font-size: 15px;">
+
                         Phân tích chuyên sâu <i class="bi bi-chevron-right ms-0.5"></i>
+
                     </a>
+
                 </div>
+
             </div>
+
+
 
             <!-- Insight 2: Rủi ro tập trung công nợ KH -->
+
             <div class="col-12 col-md-4">
+
                 <div class="app-insight-card">
+
                     <div class="mb-2">
+
                         <div class="d-flex align-items-center gap-1 text-warning fw-bold small mb-1">
+
                             <i class="bi bi-pie-chart-fill"></i>
+
                             <span>Tập Trung Công Nợ Khách Hàng</span>
+
                         </div>
-                        <p class="text-muted mb-0 small" style="font-size: 14px; line-height: 1.4;">
+
+                        <p class="text-muted mb-0 small" style="font-size: 15px; line-height: 1.5;">
+
                             @{
+
                                 var debtorCount = dashboard.TopDebtors.Count;
+
                                 var debtorLabel = debtorCount < 5 ? $"{debtorCount} KH đang nợ" : "Top 5 KH nợ lớn nhất";
+
                             }
+
                             Tổng công nợ @debtorLabel chiếm <strong>@(top5DebtPercentage.ToString("N1"))%</strong> tổng nợ phải thu. Nguồn thu phụ thuộc vào nhóm đại lý trọng điểm, cần giám sát chặt chẽ trần tín dụng.
+
                         </p>
+
                     </div>
-                    <a href="/aging-report" class="small fw-bold text-decoration-none text-purple" style="font-size: 13px; color: #7c3aed;">
+
+                    <a href="/aging-report" class="fw-bold text-decoration-none text-primary" style="font-size: 15px;">
+
                         Phân tích chuyên sâu <i class="bi bi-chevron-right ms-0.5"></i>
+
                     </a>
+
                 </div>
+
             </div>
+
+
 
             <!-- Insight 3: Kiểm soát rủi ro tuổi nợ -->
+
             <div class="col-12 col-md-4">
+
                 <div class="app-insight-card">
+
                     <div class="mb-2">
+
                         <div class="d-flex align-items-center gap-1 text-primary fw-bold small mb-1">
+
                             <i class="bi bi-shield-check"></i>
+
                             <span>Kiểm Soát Tuổi Nợ & Thu Hồi</span>
+
                         </div>
-                        <p class="text-muted mb-0 small" style="font-size: 14px; line-height: 1.4;">
+
+                        <p class="text-muted mb-0 small" style="font-size: 15px; line-height: 1.5;">
+
                             Tổng nợ <strong>@((dashboard.TotalOutstandingDebt / 1000000m).ToString("N1")) trđ</strong>. Tỷ lệ nợ quá hạn ở mức <strong>@(overduePercent.ToString("N1"))%</strong>. Khuyến nghị kế toán ưu tiên cấn trừ thu nợ theo nguyên tắc FIFO.
+
                         </p>
+
                     </div>
-                    <a href="/payments" class="small fw-bold text-decoration-none text-purple" style="font-size: 13px; color: #7c3aed;">
+
+                    <a href="/payments" class="fw-bold text-decoration-none text-primary" style="font-size: 15px;">
+
                         Phân tích chuyên sâu <i class="bi bi-chevron-right ms-0.5"></i>
+
                     </a>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
+
+
     <!-- =========================================================================
+
          4. MAIN DASHBOARD GRID (ROW 1: TÀI CHÍNH, NỢ THEO HẠN, DÒNG TIỀN)
+
          ========================================================================= -->
+
     <div class="row g-3 mb-3">
+
         <!-- CARD 1: TÌNH HÌNH TÀI CHÍNH (DOANH THU - CHI PHÍ - LỢI NHUẬN) -->
+
         <div class="col-12 col-lg-4">
+
             <div class="app-card">
+
                 <div class="app-card-header">
+
                     <h6 class="app-card-title">
+
                         <i class="bi bi-cash-coin text-success"></i> Tình hình tài chính
+
                     </h6>
+
                     <div class="d-flex align-items-center gap-2">
+
                         <span class="badge bg-light text-secondary border small">@selectedPeriodText</span>
-                        <span class="text-muted small" style="font-size: 13px;">Đvt: Trđ</span>
+
+                        <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
+
                     </div>
+
                 </div>
+
+
 
                 <div class="app-card-body d-flex flex-column justify-content-center">
+
                     <div class="app-metric-row">
+
                         <span class="text-slate-navy fw-semibold">Doanh thu thuần</span>
+
                         <span class="app-metric-val-blue">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
+
                     </div>
+
                     <div class="app-metric-row">
+
                         <span class="text-slate-navy fw-semibold">Giá vốn hàng bán (COGS)</span>
+
                         <span class="app-metric-val-dark text-danger">@((actualCost / 1000000m).ToString("N3"))</span>
+
                     </div>
+
                     <div class="app-metric-row">
+
                         <span class="text-slate-navy fw-semibold">Lợi nhuận gộp thực tế</span>
+
                         <span class="app-metric-val-green">@((actualProfit / 1000000m).ToString("N3"))</span>
+
                     </div>
+
                     <div class="app-metric-row">
+
                         <span class="text-slate-navy fw-semibold">Tổng vốn tồn kho đang chôn</span>
+
                         <span class="app-metric-val-blue">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
+
                     </div>
+
+
 
                     <!-- Profitability Ratio Progress Bar -->
+
                     <div class="mt-3 pt-2 border-top">
-                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 13px;">
+
+                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
+
                             <span>Tỷ suất lợi nhuận gộp:</span>
+
                             <span class="fw-bold text-success">@(profitMargin.ToString("N1"))%</span>
+
                         </div>
+
                         <div class="progress" style="height: 6px;">
+
                             <div class="progress-bar bg-success" style="width: @(Math.Min(100, Math.Max(5, profitMargin)))%"></div>
+
                             <div class="progress-bar bg-secondary-subtle" style="width: @(Math.Max(0, 100 - profitMargin))%"></div>
+
                         </div>
+
                     </div>
+
                 </div>
 
+
+
                 <div class="app-card-footer">
+
                     <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
+
                     <a href="javascript:void(0)" @onclick="LoadDashboard" class="text-primary fw-bold text-decoration-none">Tải lại</a>
+
                 </div>
+
             </div>
+
         </div>
+
+
 
         <!-- CARD 2: NỢ PHẢI THU THEO HẠN NỢ (Enterprise AGING SIGNATURE WIDGET) -->
+
         <div class="col-12 col-lg-4">
+
             <div class="app-card">
+
                 <div class="app-card-header">
+
                     <h6 class="app-card-title">
+
                         <i class="bi bi-wallet2 text-warning"></i> Nợ phải thu theo hạn nợ
+
                     </h6>
-                    <span class="text-muted small" style="font-size: 13px;">Đvt: Trđ</span>
+
+                    <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
+
                 </div>
 
+
+
                 <div class="app-card-body d-flex flex-column justify-content-between">
+
                     <div>
+
                         <div class="mb-2">
-                            <div class="text-muted small" style="font-size: 13px;">Tổng nợ phải thu</div>
+
+                            <div class="text-muted small" style="font-size: 15px;">Tổng nợ phải thu</div>
+
                             <div class="fs-4 fw-bold text-slate-navy">
+
                                 @((dashboard.TotalOutstandingDebt / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Triệu đồng</small>
+
                             </div>
+
                         </div>
+
+
 
                         <div class="d-flex justify-content-between align-items-center mb-2 small">
+
                             <div>
-                                <div class="text-muted" style="font-size: 13px;">Quá hạn</div>
+
+                                <div class="text-muted" style="font-size: 15px;">Quá hạn</div>
+
                                 <div class="fw-bold text-orange" style="color: #ff7700;">
+
                                     @((overdueDebt / 1000000m).ToString("N1")) <small class="fw-normal">Trđ</small>
+
                                 </div>
+
                             </div>
+
                             <div class="text-end">
-                                <div class="text-muted" style="font-size: 13px;">Trong Hạn</div>
+
+                                <div class="text-muted" style="font-size: 15px;">Trong Hạn</div>
+
                                 <div class="fw-bold text-secondary">
+
                                     @((withinTermDebt / 1000000m).ToString("N1")) <small class="fw-normal">Trđ</small>
+
                                 </div>
+
                             </div>
+
                         </div>
+
+
 
                         <!-- Dual Tone Progress Bar -->
+
                         <div class="app-debt-bar mb-1.5">
+
                             <div class="app-debt-bar-overdue" style="width: @(overdueBarWidth)%;" title="Quá hạn: @overdueBarWidth.ToString("N1")%"></div>
+
                             <div class="app-debt-bar-current" style="width: @(currentBarWidth)%;" title="Trong hạn: @currentBarWidth.ToString("N1")%"></div>
+
                         </div>
 
-                        <div class="d-flex justify-content-between text-muted mb-3" style="font-size: 13px;">
-                            <span><i class="bi bi-circle-fill me-1" style="color: #ff7700; font-size: 13px;"></i>Quá hạn (@overdueBarWidth.ToString("N0")%)</span>
-                            <span><i class="bi bi-circle-fill me-1 text-secondary" style="font-size: 13px;"></i>Trong hạn (@currentBarWidth.ToString("N0")%)</span>
+
+
+                        <div class="d-flex justify-content-between text-muted mb-3" style="font-size: 15px;">
+
+                            <span><i class="bi bi-circle-fill me-1" style="color: #ff7700; font-size: 14px;"></i>Quá hạn (@overdueBarWidth.ToString("N0")%)</span>
+
+                            <span><i class="bi bi-circle-fill me-1 text-secondary" style="font-size: 15px;"></i>Trong hạn (@currentBarWidth.ToString("N0")%)</span>
+
                         </div>
+
                     </div>
+
+
 
                     <!-- Breakdown Table 5 Buckets (Single Source of Truth) -->
+
                     <div class="border rounded p-2 bg-light-subtle">
-                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 13px;">
+
+                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
+
                             <span><i class="bi bi-shield-check text-success me-1"></i>Chưa đến hạn:</span>
+
                             <span class="fw-bold text-slate-navy">@((dashboard.OverallAging.BucketNotDue / 1000000m).ToString("N1")) Trđ</span>
+
                         </div>
-                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 13px;">
+
+                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
+
                             <span><i class="bi bi-clock-history text-info me-1"></i>Quá hạn 1 - 30 ngày:</span>
+
                             <span class="fw-bold text-info">@((dashboard.OverallAging.Bucket1To30 / 1000000m).ToString("N1")) Trđ</span>
+
                         </div>
-                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 13px;">
+
+                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
+
                             <span><i class="bi bi-exclamation-circle text-warning me-1"></i>Quá hạn 31 - 60 ngày:</span>
+
                             <span class="fw-bold text-warning">@((dashboard.OverallAging.Bucket31To60 / 1000000m).ToString("N1")) Trđ</span>
+
                         </div>
-                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 13px;">
+
+                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
+
                             <span><i class="bi bi-exclamation-triangle text-orange me-1"></i>Quá hạn 61 - 90 ngày:</span>
+
                             <span class="fw-bold text-orange" style="color: #ff7700;">@((dashboard.OverallAging.Bucket61To90 / 1000000m).ToString("N1")) Trđ</span>
+
                         </div>
-                        <div class="d-flex justify-content-between small text-muted" style="font-size: 13px;">
+
+                        <div class="d-flex justify-content-between small text-muted" style="font-size: 15px;">
+
                             <span><i class="bi bi-x-octagon text-danger me-1"></i>Quá hạn > 90 ngày:</span>
+
                             <span class="fw-bold text-danger">@((dashboard.OverallAging.BucketOver90 / 1000000m).ToString("N1")) Trđ</span>
+
                         </div>
+
                         @if (!dashboard.OverallAging.IsIntegrityValid)
+
                         {
-                            <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small text-center" style="font-size: 13px;">
+
+                            <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small text-center" style="font-size: 15px;">
+
                                 <i class="bi bi-exclamation-octagon-fill me-1"></i> Cảnh báo: Lệch số liệu giữa các xô và tổng nợ!
+
                             </div>
+
                         }
+
                     </div>
+
                 </div>
 
+
+
                 <div class="app-card-footer">
+
                     <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
+
                     <a href="/aging-report" class="text-primary fw-bold text-decoration-none">Báo cáo phân tích tuổi nợ ↗</a>
+
                 </div>
+
             </div>
+
         </div>
+
+
 
         <!-- CARD 3: DÒNG TIỀN & THỰC THU VS. DOANH SỐ -->
+
         <div class="col-12 col-lg-4">
+
             <div class="app-card">
+
                 <div class="app-card-header">
+
                     <h6 class="app-card-title">
+
                         <i class="bi bi-arrow-left-right text-primary"></i> Dòng tiền: Bán chịu & Thu tiền
+
                     </h6>
-                    <span class="text-muted small" style="font-size: 13px;">Đvt: Trđ</span>
+
+                    <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
+
                 </div>
+
+
 
                 <div class="app-card-body d-flex flex-column justify-content-between">
+
                     <div>
+
                         <div class="d-flex align-items-center justify-content-between mb-2">
+
                             <div>
-                                <span class="text-muted small" style="font-size: 13px;">Doanh số bán chịu:</span>
+
+                                <span class="text-muted small" style="font-size: 15px;">Doanh số bán chịu:</span>
+
                                 <div class="fs-5 fw-bold text-primary">@((dashboard.TotalRevenue / 1000000m).ToString("N1")) Trđ</div>
+
                             </div>
+
                             <div class="text-end">
-                                <span class="text-muted small" style="font-size: 13px;">Tiền thu về (FIFO):</span>
+
+                                <span class="text-muted small" style="font-size: 15px;">Tiền thu về (FIFO):</span>
+
                                 <div class="fs-5 fw-bold text-success">@((dashboard.TotalCollectedAmount / 1000000m).ToString("N1")) Trđ</div>
+
                             </div>
+
                         </div>
+
+
 
                         <!-- Mini Dual Bar Graphic -->
+
                         <div class="bg-light rounded p-2.5 mb-2 border">
+
                             <div class="d-flex align-items-end justify-content-around" style="height: 105px;">
+
                                 @if (dashboard.MonthlyRevenues.Any())
+
                                 {
+
                                     var maxVal = Math.Max(1m, dashboard.MonthlyRevenues.Max(m => Math.Max(m.Revenue, m.Collected)));
+
                                     @foreach (var m in dashboard.MonthlyRevenues.TakeLast(6))
+
                                     {
+
                                         var revHeight = Math.Max(8, (int)((m.Revenue / maxVal) * 85));
+
                                         var colHeight = Math.Max(8, (int)((m.Collected / maxVal) * 85));
+
                                         <div class="d-flex flex-column align-items-center gap-1">
+
                                             <div class="d-flex align-items-end gap-1" style="height: 85px;">
+
                                                 <div class="bg-primary rounded-top" style="width: 10px; height: @(revHeight)px;" title="Doanh thu: @((m.Revenue / 1000000m).ToString("N1")) Trđ"></div>
+
                                                 <div class="bg-success rounded-top" style="width: 10px; height: @(colHeight)px;" title="Thu tiền: @((m.Collected / 1000000m).ToString("N1")) Trđ"></div>
+
                                             </div>
-                                            <span class="text-muted" style="font-size: 13px;">@m.MonthLabel</span>
+
+                                            <span class="text-muted" style="font-size: 15px;">@m.MonthLabel</span>
+
                                         </div>
+
                                     }
+
                                 }
+
                             </div>
-                            <div class="d-flex justify-content-center gap-3 mt-1.5" style="font-size: 13px;">
+
+                            <div class="d-flex justify-content-center gap-3 mt-1.5" style="font-size: 15px;">
+
                                 <span><span class="app-dot bg-primary"></span> Bán ra</span>
+
                                 <span><span class="app-dot bg-success"></span> Thu tiền về</span>
+
                             </div>
+
                         </div>
+
                     </div>
+
+
 
                     @if (dashboard.TotalCollectedAmount > 0)
+
                     {
+
                         <div class="alert alert-success py-1.5 px-2.5 mb-0 small border-0 bg-success-subtle d-flex align-items-center gap-2">
+
                             <i class="bi bi-shield-check text-success fs-5"></i>
-                            <span style="font-size: 13px;">
+
+                            <span style="font-size: 15px;">
+
                                 Đã thu hồi <strong>@collectionRate.ToString("N1")%</strong> doanh số. Dòng tiền kinh doanh thặng dư dương.
+
                             </span>
+
                         </div>
+
                     }
+
                     else
+
                     {
+
                         <div class="alert alert-warning py-1.5 px-2.5 mb-0 small border-0 bg-warning-subtle d-flex align-items-center gap-2">
+
                             <i class="bi bi-exclamation-triangle text-warning fs-5"></i>
-                            <span style="font-size: 13px;">
+
+                            <span style="font-size: 15px;">
+
                                 Chưa phát sinh thu hồi công nợ trong kỳ (@collectionRate.ToString("N1")%). Cần theo dõi chặt chẽ hạn nợ.
+
                             </span>
+
                         </div>
+
                     }
+
                 </div>
+
+
 
                 <div class="app-card-footer">
+
                     <span>Cấn trừ tự động theo FIFO</span>
+
                     <a href="/payments" class="text-primary fw-bold text-decoration-none">Thu nợ ngay ↗</a>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
+
+
     <!-- =========================================================================
+
          5. ROW 2: DOANH THU/CHI PHÍ/LỢI NHUẬN (INTERACTIVE Enterprise BAR & LINE CHART)
+
          ========================================================================= -->
+
     <div class="row g-3 mb-3">
+
         <!-- CARD 4: DOANH THU, CHI PHÍ, LỢI NHUẬN (INTERACTIVE 12-MONTH Enterprise CHART) -->
+
         <div class="col-12 col-xl-7">
+
             <div class="app-card position-relative">
+
                 <div class="app-card-header">
+
                     <h6 class="app-card-title">
+
                         <i class="bi bi-graph-up text-primary"></i> Doanh thu, chi phí, lợi nhuận
+
                     </h6>
+
                     <div class="d-flex align-items-center gap-2">
+
                         <i class="bi bi-stars text-purple" title="Phân tích AI"></i>
+
                         <i class="bi bi-arrow-clockwise text-muted cursor-pointer" title="Làm mới biểu đồ" @onclick="LoadDashboard"></i>
+
                         <select class="app-dropdown-filter">
+
                             <option>Năm nay</option>
+
                             <option>Năm trước</option>
+
                         </select>
+
                     </div>
+
                 </div>
 
+
+
                 <div class="app-card-body p-3">
+
                     <!-- Top stats summary (Matching Enterprise Screenshot 4 & 5) -->
+
                     <div class="d-flex align-items-center gap-4 mb-3 pb-2 border-bottom">
+
                         <div>
-                            <span class="text-muted small d-block" style="font-size: 13px; letter-spacing: 0.3px;">DOANH THU</span>
+
+                            <span class="text-muted small d-block" style="font-size: 14px; letter-spacing: 0.3px;">DOANH THU</span>
+
                             <span class="fw-bold fs-5" style="color: #00b060;">
-                                @((chartTotalRevenue / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 13px;">Triệu đồng</small>
+
+                                @((chartTotalRevenue / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 15px;">Triệu đồng</small>
+
                             </span>
+
                         </div>
+
                         <div>
-                            <span class="text-muted small d-block" style="font-size: 13px; letter-spacing: 0.3px;">CHI PHÍ</span>
+
+                            <span class="text-muted small d-block" style="font-size: 14px; letter-spacing: 0.3px;">CHI PHÍ</span>
+
                             <span class="fw-bold text-slate-navy fs-5">
-                                @((chartTotalCost / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 13px;">Triệu đồng</small>
+
+                                @((chartTotalCost / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 15px;">Triệu đồng</small>
+
                             </span>
+
                         </div>
+
                         <div>
-                            <span class="small d-block fw-semibold" style="color: #ff7700; font-size: 13px; letter-spacing: 0.3px;">LỢI NHUẬN</span>
+
+                            <span class="small d-block fw-semibold" style="color: #ff7700; font-size: 14px; letter-spacing: 0.3px;">LỢI NHUẬN</span>
+
                             <span class="fw-bold fs-5" style="color: #ff7700;">
-                                @((chartTotalProfit / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 13px;">Triệu đồng</small>
+
+                                @((chartTotalProfit / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 15px;">Triệu đồng</small>
+
                             </span>
+
                         </div>
+
                     </div>
 
+
+
                     <!-- Interactive Enterprise B2B Chart (12 Months Bar & Line) -->
+
                     <div class="position-relative" style="height: 240px; width: 100%;">
+
                         
+
                         <!-- Floating Tooltip on Hover / Select (Matching Screenshot 5) -->
+
                         @if (hoveredMonth.HasValue)
+
                         {
+
                             var hm = hoveredMonth.Value;
+
                             var mData = dashboard.MonthlyRevenues.FirstOrDefault(x => x.MonthNumber == hm);
+
                             var tooltipLeftPercent = Math.Max(8, Math.Min(88, (hm - 1) * 8.33 + 4.16));
+
                             <div class="app-chart-tooltip" style="left: @(tooltipLeftPercent)%; top: 15px; transform: translateX(-50%);">
+
                                 <div class="fw-bold mb-1 border-bottom border-secondary border-opacity-50 pb-1" style="font-size: 14px; color: #10b981;">
+
                                     Tháng @hm
+
                                 </div>
+
                                 @if (showRevenue)
+
                                 {
+
                                     <div class="d-flex align-items-center gap-1.5" style="color: #10b981;">
-                                        <i class="bi bi-square-fill" style="font-size: 13px;"></i>
+
+                                        <i class="bi bi-square-fill" style="font-size: 15px;"></i>
+
                                         <span>Doanh thu: @((mData != null ? mData.Revenue / 1000000m : 0).ToString("N0")) Triệu đồng</span>
+
                                     </div>
+
                                 }
+
                                 @if (showCost)
+
                                 {
+
                                     <div class="d-flex align-items-center gap-1.5" style="color: #f43f5e;">
-                                        <i class="bi bi-square-fill" style="font-size: 13px;"></i>
+
+                                        <i class="bi bi-square-fill" style="font-size: 15px;"></i>
+
                                         <span>Chi phí: @((mData != null ? mData.Cost / 1000000m : 0).ToString("N0")) Triệu đồng</span>
+
                                     </div>
+
                                 }
+
                                 @if (showProfit)
+
                                 {
+
                                     <div class="d-flex align-items-center gap-1.5" style="color: #ff7700;">
-                                        <i class="bi bi-circle-fill" style="font-size: 13px;"></i>
+
+                                        <i class="bi bi-circle-fill" style="font-size: 15px;"></i>
+
                                         <span>Lợi nhuận: @((mData != null ? mData.Profit / 1000000m : 0).ToString("N0")) Triệu đồng</span>
+
                                     </div>
+
                                 }
+
                             </div>
+
                         }
+
+
 
                         @{
+
                             var monthsList = dashboard.MonthlyRevenues;
+
                             decimal maxRevenueOrCost = monthsList.Any() 
+
                                 ? monthsList.Max(x => Math.Max(x.Revenue, x.Cost)) / 1000000m 
+
                                 : 0m;
+
                             decimal maxScale = Math.Max(10m, (decimal)Math.Ceiling((double)maxRevenueOrCost * 1.25));
+
                             int baselineY = 130;
+
                             int chartHeightPositive = 100;
+
                         }
+
                         <svg viewBox="0 0 740 220" style="width: 100%; height: 100%; overflow: visible;">
+
                             <!-- Y-Axis Labels (Dynamic theo maxScale) -->
+
                             <text x="42" y="34" fill="#94a3b8" font-size="10" text-anchor="end">@maxScale.ToString("N0")</text>
+
                             <text x="42" y="84" fill="#94a3b8" font-size="10" text-anchor="end">@((maxScale / 2m).ToString("N0"))</text>
+
                             <text x="42" y="134" fill="#94a3b8" font-size="10" text-anchor="end">0</text>
+
                             <text x="42" y="184" fill="#94a3b8" font-size="10" text-anchor="end">(@((maxScale / 2m).ToString("N0")))</text>
 
+
+
                             <!-- Horizontal Grid Lines -->
+
                             <line x1="48" y1="30" x2="720" y2="30" stroke="#f1f5f9" stroke-dasharray="3 3" />
+
                             <line x1="48" y1="80" x2="720" y2="80" stroke="#f1f5f9" stroke-dasharray="3 3" />
+
                             <line x1="48" y1="130" x2="720" y2="130" stroke="#cbd5e1" stroke-width="1.2" />
+
                             <line x1="48" y1="180" x2="720" y2="180" stroke="#f1f5f9" stroke-dasharray="3 3" />
+
+
 
                             <!-- 12 MONTH COLUMNS -->
 
+
+
                             @for (int i = 1; i <= 12; i++)
+
                             {
+
                                 int m = i;
+
                                 int cx = 55 + (m - 1) * 55;
+
                                 var mDto = monthsList.FirstOrDefault(x => x.MonthNumber == m);
+
                                 decimal revTrd = mDto != null ? mDto.Revenue / 1000000m : 0m;
+
                                 decimal costTrd = mDto != null ? mDto.Cost / 1000000m : 0m;
+
                                 decimal profitTrd = mDto != null ? mDto.Profit / 1000000m : 0m;
 
+
+
                                 int revH = revTrd > 0 ? Math.Max(4, (int)Math.Min(100, (revTrd / maxScale) * chartHeightPositive)) : 0;
+
                                 int costH = costTrd > 0 ? Math.Max(4, (int)Math.Min(100, (costTrd / maxScale) * chartHeightPositive)) : 0;
+
+
 
                                 bool isHovered = hoveredMonth == m;
 
+
+
                                 <!-- Highlight column background and vertical dashed guideline when hovered -->
+
                                 @if (isHovered)
+
                                 {
+
                                     <line x1="@cx" y1="20" x2="@cx" y2="195" stroke="#94a3b8" stroke-dasharray="3 3" />
+
                                     <rect x="@(cx - 24)" y="20" width="48" height="175" fill="rgba(0,176,96,0.04)" rx="4" />
+
                                     <!-- Selected Month Border Box around X-axis label (Matching Screenshot 5) -->
+
                                     <rect x="@(cx - 18)" y="195" width="36" height="20" rx="3" fill="#f8fafc" stroke="#94a3b8" />
+
                                 }
+
+
 
                                 <!-- BARS: DOANH THU & CHI PHÍ -->
+
                                 @if (showRevenue && showCost)
+
                                 {
+
                                     <!-- Revenue Bar (Teal/Green) -->
+
                                     @if (revH > 0)
+
                                     {
+
                                         <rect x="@(cx - 11)" y="@(baselineY - revH)" width="10" height="@revH" fill="#10b981" rx="2" />
+
                                     }
+
                                     <!-- Cost Bar (Red/Pink) -->
+
                                     @if (costH > 0)
+
                                     {
+
                                         <rect x="@(cx + 1)" y="@(baselineY - costH)" width="10" height="@costH" fill="#f43f5e" rx="2" />
+
                                     }
+
                                 }
+
                                 else if (showRevenue)
+
                                 {
+
                                     <!-- Revenue Bar ONLY (Single wide column, matching Screenshot 5) -->
+
                                     @if (revH > 0)
+
                                     {
+
                                         <rect x="@(cx - 8)" y="@(baselineY - revH)" width="16" height="@revH" fill="#10b981" rx="2" />
+
                                     }
+
                                 }
+
                                 else if (showCost)
+
                                 {
+
                                     <!-- Cost Bar ONLY -->
+
                                     @if (costH > 0)
+
                                     {
+
                                         <rect x="@(cx - 8)" y="@(baselineY - costH)" width="16" height="@costH" fill="#f43f5e" rx="2" />
+
                                     }
+
                                 }
+
+
 
                                 <!-- Peak callout labels (as seen in screenshots: 1.035, 650, 253) -->
+
                                 @if (showRevenue && revTrd >= 200m)
+
                                 {
+
                                     <rect x="@(cx - 18)" y="@(baselineY - revH - 17)" width="36" height="15" rx="3" fill="#0f172a" opacity="0.85" />
+
                                     @((MarkupString)$"<text x=\"{cx}\" y=\"{baselineY - revH - 6}\" fill=\"#ffffff\" font-size=\"8.5\" font-weight=\"700\" text-anchor=\"middle\">{revTrd.ToString("N0")}</text>")
+
                                 }
+
+
 
                                 <!-- X-Axis Month Label -->
+
                                 @((MarkupString)$"<text x=\"{cx}\" y=\"209\" fill=\"{(isHovered ? "#0f172a" : "#64748b")}\" font-size=\"10\" font-weight=\"{(isHovered ? "700" : "500")}\" text-anchor=\"middle\">Th {m}</text>")
 
+
+
                                 <!-- Invisible hover trigger rect -->
+
                                 <rect x="@(cx - 24)" y="15" width="48" height="195" fill="transparent" 
+
                                       style="cursor: pointer;"
+
                                       @onmouseover="() => hoveredMonth = m" 
+
                                       @onmouseout="() => hoveredMonth = null"
+
                                       @onclick="() => hoveredMonth = m" />
+
                             }
 
+
+
                             <!-- 3. LỢI NHUẬN LINE & CIRCULAR DATA POINTS (ORANGE) -->
+
                             @if (showProfit)
+
                             {
+
                                 <!-- Build SVG path for profit points -->
+
                                 string pathD = "";
+
                                 for (int i = 1; i <= 12; i++)
+
                                 {
+
                                     int m = i;
+
                                     int cx = 55 + (m - 1) * 55;
+
                                     var mDto = monthsList.FirstOrDefault(x => x.MonthNumber == m);
+
                                     decimal profitTrd = mDto != null ? mDto.Profit / 1000000m : 0m;
+
                                     // Calculate py based on profit (can be negative!)
+
                                     int py = baselineY - (int)((profitTrd / maxScale) * chartHeightPositive);
+
                                     py = Math.Max(25, Math.Min(200, py));
+
                                     pathD += (i == 1 ? $"M {cx} {py}" : $" L {cx} {py}");
+
                                 }
+
+
 
                                 <path d="@pathD" fill="none" stroke="#ff7700" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
 
+
+
                                 @for (int i = 1; i <= 12; i++)
+
                                 {
+
                                     int m = i;
+
                                     int cx = 55 + (m - 1) * 55;
+
                                     var mDto = monthsList.FirstOrDefault(x => x.MonthNumber == m);
+
                                     decimal profitTrd = mDto != null ? mDto.Profit / 1000000m : 0m;
+
                                     int py = baselineY - (int)((profitTrd / maxScale) * chartHeightPositive);
+
                                     py = Math.Max(25, Math.Min(200, py));
+
+
 
                                     <circle cx="@cx" cy="@py" r="4" fill="#ff7700" stroke="#ffffff" stroke-width="1.5" />
 
+
+
                                     <!-- Negative callout badge if loss occurs -->
+
                                     @if (profitTrd < 0 && Math.Abs(profitTrd) >= 100m)
+
                                     {
+
                                         <rect x="@(cx - 22)" y="@(py + 6)" width="44" height="15" rx="3" fill="#0f172a" opacity="0.85" />
+
                                         @((MarkupString)$"<text x=\"{cx}\" y=\"{py + 17}\" fill=\"#ffffff\" font-size=\"8.5\" font-weight=\"700\" text-anchor=\"middle\">({Math.Abs(profitTrd).ToString("N0")})</text>")
+
                                     }
+
                                 }
+
                             }
+
                         </svg>
+
                     </div>
+
+
 
                     <!-- Interactive Enterprise Legend Buttons (Matching Screenshot 4 & 5) -->
+
                     <div class="d-flex align-items-center justify-content-center gap-3 mt-2">
+
                         <button class="app-legend-btn @(showRevenue ? "" : "inactive")" 
+
                                 title="Bấm để ẩn / hiện chuỗi Doanh thu" 
+
                                 @onclick="ToggleRevenue">
+
                             <span class="app-dot" style="background-color: #00b060;"></span>
+
                             <span style="color: @(showRevenue ? "#1e293b" : "#94a3b8");">DOANH THU</span>
+
                         </button>
+
+
 
                         <button class="app-legend-btn @(showCost ? "" : "inactive")" 
+
                                 title="Bấm để ẩn / hiện chuỗi Chi phí" 
+
                                 @onclick="ToggleCost">
+
                             <span class="app-dot" style="background-color: #f43f5e;"></span>
+
                             <span style="color: @(showCost ? "#1e293b" : "#94a3b8");">CHI PHÍ</span>
+
                         </button>
+
+
 
                         <button class="app-legend-btn @(showProfit ? "" : "inactive")" 
+
                                 title="Bấm để ẩn / hiện chuỗi Lợi nhuận" 
+
                                 @onclick="ToggleProfit">
+
                             <span class="app-dot" style="background-color: #ff7700;"></span>
+
                             <span style="color: @(showProfit ? "#1e293b" : "#94a3b8");">LỢI NHUẬN</span>
+
                         </button>
+
                     </div>
+
                 </div>
 
+
+
                 <div class="app-card-footer">
+
                     <span><i class="bi bi-clock me-1"></i>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
+
                     <a href="javascript:void(0)" @onclick="LoadDashboard" class="text-primary fw-bold text-decoration-none">Tải lại</a>
+
                 </div>
+
             </div>
+
         </div>
+
+
 
         <!-- CARD 5: HÀNG HÓA TỒN KHO -->
+
         <div class="col-12 col-xl-5">
+
             <div class="app-card">
+
                 <div class="app-card-header">
+
                     <h6 class="app-card-title">
+
                         <i class="bi bi-box-seam text-primary"></i> Hàng hóa tồn kho
+
                     </h6>
-                    <span class="text-muted small" style="font-size: 13px;">Đvt: Triệu đồng</span>
+
+                    <span class="text-muted small" style="font-size: 15px;">Đvt: Triệu đồng</span>
+
                 </div>
+
+
 
                 <div class="app-card-body p-3">
+
                     <div class="row g-2 mb-3 pb-2 border-bottom">
+
                         <div class="col-6 border-end">
-                            <div class="text-muted small" style="font-size: 13px;">Tổng vốn bỏ ra (Nhập kho)</div>
+
+                            <div class="text-muted small" style="font-size: 15px;">Tổng vốn bỏ ra (Nhập kho)</div>
+
                             <div class="fs-5 fw-bold text-danger">
+
                                 @((dashboard.TotalInventoryCost / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Trđ</small>
+
                             </div>
+
                         </div>
+
                         <div class="col-6 ps-2">
-                            <div class="text-muted small" style="font-size: 13px;">Giá trị bán sỉ tiềm năng</div>
+
+                            <div class="text-muted small" style="font-size: 15px;">Giá trị bán sỉ tiềm năng</div>
+
                             <div class="fs-5 fw-bold text-primary">
+
                                 @((dashboard.TotalInventoryValuation / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Trđ</small>
+
                             </div>
+
                         </div>
+
                         <div class="col-12 mt-1">
+
                             <span class="badge bg-success-subtle text-success border border-success-subtle small w-100 text-start py-1 px-2">
+
                                 <i class="bi bi-piggy-bank me-1"></i> Lợi nhuận gộp kỳ vọng kho: <strong>+@((dashboard.TotalExpectedInventoryProfit / 1000000m).ToString("N1")) Trđ</strong> (@dashboard.ExpectedProfitMargin%)
+
                             </span>
+
                         </div>
+
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle mb-0" style="font-size: 14px;">
-                            <thead class="table-light text-muted" style="font-size: 13px;">
+
+
+                    <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
+
+                        <table class="table table-hover align-middle mb-0" style="font-size: 16px; background-color: #ffffff !important;">
+
+                            <thead class="table-light text-muted" style="font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
+
                                 <tr>
+
                                     <th>Tên hàng</th>
+
                                     <th class="text-end">Tồn kho</th>
+
                                     <th class="text-end text-danger">Vốn (Trđ)</th>
+
                                     <th class="text-end text-primary">Bán (Trđ)</th>
+
                                     <th class="text-end text-success">Lãi gộp</th>
+
                                 </tr>
+
                             </thead>
+
                             <tbody>
+
                                 @if (dashboard.TopInventoryProducts.Any())
+
                                 {
+
                                     var dotColors = new[] { "#0075ff", "#8b5cf6", "#00b060", "#ff7700", "#ef4444" };
+
                                     int colorIdx = 0;
+
                                     @foreach (var prod in dashboard.TopInventoryProducts)
+
                                     {
+
                                         var curColor = dotColors[colorIdx % dotColors.Length];
+
                                         colorIdx++;
+
                                         var costVal = prod.TotalCost / 1000000m;
+
                                         var sellVal = prod.Valuation / 1000000m;
+
                                         var profitVal = prod.ExpectedProfit / 1000000m;
+
                                         <tr>
+
                                             <td>
+
                                                 <span class="app-dot" style="background-color: @curColor;"></span>
+
                                                 <span class="fw-semibold text-slate-navy text-truncate d-inline-block" style="max-width: 130px;" title="@prod.ProductName">
+
                                                     @prod.ProductName
+
                                                 </span>
+
                                             </td>
+
                                             <td class="text-end fw-semibold text-dark">
+
                                                 @prod.StockQuantity.ToString("N0") <span class="text-muted small">@prod.Unit</span>
+
                                             </td>
+
                                             <td class="text-end text-muted">
+
                                                 @costVal.ToString("N1")
+
                                             </td>
+
                                             <td class="text-end fw-semibold text-primary">
+
                                                 @sellVal.ToString("N1")
+
                                             </td>
+
                                             <td class="text-end fw-bold text-success">
+
                                                 +@profitVal.ToString("N1")
+
                                             </td>
+
                                         </tr>
+
                                     }
+
                                 }
+
                                 else
+
                                 {
+
                                     <tr>
+
                                         <td colspan="5" class="text-center text-muted py-3">Chưa có dữ liệu tồn kho</td>
+
                                     </tr>
+
                                 }
+
                             </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
+
+
 
                 <div class="app-card-footer">
+
                     <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
+
                     <a href="/manage-products" class="text-primary fw-bold text-decoration-none">Xem chi tiết kho ↗</a>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
+
+
     <!-- =========================================================================
+
          6. ROW 3: MẶT HÀNG BÁN CHẠY & TOP 5 KHÁCH HÀNG NỢ LỚN NHẤT
+
          ========================================================================= -->
+
     <div class="row g-3 mb-3">
+
         <!-- CARD 6: MẶT HÀNG BÁN CHẠY (VỚI HÌNH ẢNH VECTOR ĐỒNG BỘ) -->
+
         <div class="col-12 col-lg-6">
+
             <div class="app-card">
+
                 <div class="app-card-header">
+
                     <h6 class="app-card-title">
+
                         <i class="bi bi-trophy-fill text-warning"></i> Mặt hàng bán chạy nhất
+
                     </h6>
+
                     <span class="badge bg-light text-secondary border small">Top sản phẩm FMCG</span>
+
                 </div>
+
+
 
                 <div class="app-card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" style="font-size: 0.82rem;">
-                            <thead class="table-light text-muted" style="font-size: 13px;">
+
+                    <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
+
+                        <table class="table table-hover align-middle mb-0" style="font-size: 16px; background-color: #ffffff !important;">
+
+                            <thead class="table-light text-muted" style="font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
+
                                 <tr>
+
                                     <th>Sản Phẩm</th>
+
                                     <th class="text-center">Số Lượng Bán</th>
+
                                     <th class="text-end">Doanh Thu</th>
+
                                 </tr>
+
                             </thead>
+
                             <tbody>
+
                                 @if (dashboard.TopProducts.Any())
+
                                 {
+
                                     @foreach (var prod in dashboard.TopProducts)
+
                                     {
+
                                         <tr>
+
                                             <td>
+
                                                 <div class="d-flex align-items-center gap-2">
+
                                                     <img src="@(string.IsNullOrEmpty(prod.ImageUrl) ? "/images/products/sp001-coca-cola.svg" : prod.ImageUrl)" 
+
                                                          alt="@prod.ProductName" 
+
                                                          style="width: 32px; height: 32px; object-fit: contain;" 
+
                                                          class="rounded border bg-light p-1 shadow-xs" />
+
                                                     <div>
+
                                                         <div class="fw-semibold text-slate-navy">@prod.ProductName</div>
-                                                        <small class="text-muted" style="font-size: 13px;">@prod.ProductCode</small>
+
+                                                        <small class="text-muted" style="font-size: 15px;">@prod.ProductCode</small>
+
                                                     </div>
+
                                                 </div>
+
                                             </td>
+
                                             <td class="text-center">
+
                                                 <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill fw-bold">
+
                                                     @prod.TotalQuantitySold
+
                                                 </span>
+
                                             </td>
+
                                             <td class="text-end fw-bold text-success">
+
                                                 @prod.TotalRevenue.ToString("N0") đ
+
                                             </td>
+
                                         </tr>
+
                                     }
+
                                 }
+
                                 else
+
                                 {
+
                                     <tr>
+
                                         <td colspan="3" class="text-center text-muted py-3">Chưa có giao dịch bán hàng</td>
+
                                     </tr>
+
                                 }
+
                             </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
 
+
+
                 <div class="app-card-footer">
+
                     <span>Tổng số: @dashboard.TopProducts.Count mặt hàng chủ lực</span>
+
                     <a href="/invoices" class="text-primary fw-bold text-decoration-none">Toàn bộ hóa đơn ↗</a>
+
                 </div>
+
             </div>
+
         </div>
+
+
 
         <!-- CARD 7: TOP KHÁCH HÀNG NỢ & GIÁM SÁT HẠN MỨC AI -->
+
         <div class="col-12 col-lg-6">
+
             <div class="app-card">
+
                 <div class="app-card-header">
+
                     <h6 class="app-card-title">
+
                         <i class="bi bi-shield-exclamation text-danger"></i> Giám sát hạn mức & Top 5 khách nợ
+
                     </h6>
-                    <a href="/aging-report" class="btn btn-sm btn-outline-danger py-0.5 px-2" style="font-size: 13px;">
+
+                    <a href="/aging-report" class="btn btn-sm btn-outline-danger py-0.5 px-2" style="font-size: 15px;">
+
                         Báo Cáo 4 Xô
+
                     </a>
+
                 </div>
+
+
 
                 <div class="app-card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" style="font-size: 0.82rem;">
-                            <thead class="table-light text-muted" style="font-size: 13px;">
+
+                    <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
+
+                        <table class="table table-hover align-middle mb-0" style="font-size: 16px; background-color: #ffffff !important;">
+
+                            <thead class="table-light text-muted" style="font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
+
                                 <tr>
+
                                     <th>Khách Hàng</th>
+
                                     <th>Dư Nợ Hiện Tại</th>
+
                                     <th>Tỷ Lệ / Hạn Mức</th>
+
                                     <th class="text-end">Tình Trạng</th>
+
                                 </tr>
+
                             </thead>
+
                             <tbody>
+
                                 @if (dashboard.TopDebtors.Any())
+
                                 {
+
                                     @foreach (var debtor in dashboard.TopDebtors)
+
                                     {
+
                                         <tr>
+
                                             <td>
+
                                                 <div class="fw-semibold text-slate-navy">@debtor.CustomerName</div>
-                                                <small class="text-muted" style="font-size: 13px;">@debtor.CustomerCode</small>
+
+                                                <small class="text-muted" style="font-size: 15px;">@debtor.CustomerCode</small>
+
                                             </td>
+
                                             <td class="text-danger fw-bold">
+
                                                 @debtor.CurrentDebt.ToString("N0") đ
+
                                             </td>
+
                                             <td>
+
                                                 <div class="d-flex align-items-center gap-2">
+
                                                     <div class="progress flex-grow-1" style="height: 5px;">
+
                                                         <div class="progress-bar @(debtor.DebtRatio >= 100 ? "bg-danger" : debtor.DebtRatio >= 80 ? "bg-warning" : "bg-success")"
+
                                                              style="width: @(Math.Min(debtor.DebtRatio, 100))%"></div>
+
                                                     </div>
-                                                    <span class="small fw-bold text-nowrap" style="font-size: 13px;">@debtor.DebtRatio.ToString("N0")%</span>
+
+                                                    <span class="small fw-bold text-nowrap" style="font-size: 15px;">@debtor.DebtRatio.ToString("N0")%</span>
+
                                                 </div>
-                                                <small class="text-muted" style="font-size: 13px;">HM: @debtor.CreditLimit.ToString("N0") đ</small>
+
+                                                <small class="text-muted" style="font-size: 15px;">HM: @debtor.CreditLimit.ToString("N0") đ</small>
+
                                             </td>
+
                                             <td class="text-end">
+
                                                 @if (debtor.OverdueDays > 0)
+
                                                 {
-                                                    <span class="badge bg-danger rounded-pill px-2 py-0.5" style="font-size: 13px;">
+
+                                                    <span class="badge bg-danger rounded-pill px-2 py-0.5" style="font-size: 15px;">
+
                                                         @debtor.OverdueDays ngày quá hạn
+
                                                     </span>
+
                                                 }
+
                                                 else
+
                                                 {
-                                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-0.5" style="font-size: 13px;">
+
+                                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-0.5" style="font-size: 15px;">
+
                                                         Trong hạn
+
                                                     </span>
+
                                                 }
+
                                             </td>
+
                                         </tr>
+
                                     }
+
                                 }
+
                                 else
+
                                 {
+
                                     <tr>
+
                                         <td colspan="4" class="text-center text-muted py-3">Không có khách hàng nào đang nợ đọng</td>
+
                                     </tr>
+
                                 }
+
                             </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
+
+
 
                 <div class="app-card-footer">
+
                     <span>Tổng nợ 5 KH: @((dashboard.TopDebtors.Sum(d => d.CurrentDebt) / 1000000m).ToString("N1")) trđ</span>
+
                     <a href="/customer-ledger" class="text-primary fw-bold text-decoration-none">Sổ chi tiết ↗</a>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
+
 
     <!-- =========================================================================
+
          7. QUICK ACTION RIBBON (Enterprise THAO TÁC NGHIỆP VỤ NHANH)
+
          ========================================================================= -->
+
     <div class="card border-0 shadow-xs p-3 bg-white rounded-3 mb-3">
+
         <div class="d-flex align-items-center justify-content-between mb-2.5">
+
             <span class="fw-bold text-slate-navy small d-flex align-items-center gap-1.5">
+
                 <i class="bi bi-lightning-charge-fill text-warning"></i> Thao Tác Nghiệp Vụ Kế Toán Nhanh (Phân Hệ B2B):
+
             </span>
-            <span class="text-muted small" style="font-size: 13px;">Phím tắt nghiệp vụ kế toán thường dùng</span>
+
+            <span class="text-muted small" style="font-size: 15px;">Phím tắt nghiệp vụ kế toán thường dùng</span>
+
         </div>
+
         
-        <div class="d-flex flex-wrap gap-2">
-            <a href="/create-invoice" class="btn btn-brand btn-sm d-flex align-items-center gap-1.5">
+
+        <div class="d-flex flex-wrap gap-2.5">
+            <a href="/create-invoice" class="btn btn-primary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-cart-plus-fill"></i> Lập Hóa Đơn Bán Hàng
             </a>
-            <a href="/payments" class="btn btn-success btn-sm d-flex align-items-center gap-1.5 text-white" style="background-color: #00b060; border-color: #00b060;">
+            <a href="/payments" class="btn btn-success d-flex align-items-center gap-2 fw-semibold text-white shadow-xs" style="background-color: #059669; border-color: #059669; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-cash-stack"></i> Thu Tiền Phân Bổ (FIFO)
             </a>
-            <a href="/invoices" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1.5">
-                <i class="bi bi-receipt"></i> Quản Lý Hóa Đơn & Đòi Nợ AI
+            <a href="/invoices" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+                <i class="bi bi-receipt text-primary"></i> Quản Lý Hóa Đơn & Đòi Nợ AI
             </a>
-            <a href="/aging-report" class="btn btn-outline-warning text-dark btn-sm d-flex align-items-center gap-1.5">
+            <a href="/aging-report" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-bar-chart-fill text-warning"></i> Báo Cáo Tuổi Nợ 4 Xô
             </a>
-            <a href="/customer-ledger" class="btn btn-outline-info text-dark btn-sm d-flex align-items-center gap-1.5">
+            <a href="/customer-ledger" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-journal-text text-info"></i> Sổ Đối Soát Công Nợ
             </a>
-            <a href="/manage-customers" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1.5">
-                <i class="bi bi-shield-check"></i> Đánh Giá Hạn Mức Tín Dụng
+            <a href="/manage-customers" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+                <i class="bi bi-shield-check text-success"></i> Đánh Giá Hạn Mức Tín Dụng
             </a>
-            <a href="/manage-products" class="btn btn-outline-dark btn-sm d-flex align-items-center gap-1.5">
-                <i class="bi bi-box-seam"></i> Quản Lý Kho & Đơn Giá Sỉ
+            <a href="/manage-products" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+                <i class="bi bi-box-seam text-secondary"></i> Quản Lý Kho & Đơn Giá Sỉ
             </a>
         </div>
+
     </div>
+
     </div>
+
 }
 
+
+
 <!-- =========================================================================
+
      8. MODAL AVA AI FINANCIAL COPILOT ANALYSIS
+
      ========================================================================= -->
+
 @if (showAvaModal && dashboard != null)
+
 {
+
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(15,23,42,0.6); z-index: 1060;" @onclick="CloseAvaModal">
+
         <div class="modal-dialog modal-dialog-centered modal-lg" @onclick:stopPropagation="true">
+
             <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+
                 <div class="modal-header py-3 text-white d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);">
+
                     <div class="d-flex align-items-center gap-2.5">
+
                         <img src="/images/ava-avatar.svg" alt="AVA AI" style="width: 32px; height: 32px; border-radius: 50%;" />
+
                         <div>
+
                             <h6 class="modal-title fw-bold mb-0 text-white d-flex align-items-center gap-1.5">
+
                                 Trợ Lý AVA Kế Toán - Báo Cáo Giám Sát Tài Chính & Dòng Tiền
+
                             </h6>
-                            <small class="text-white-50" style="font-size: 13px;">Phân tích tự động dựa trên CSDL bán hàng & phân bổ công nợ FIFO</small>
+
+                            <small class="text-white-50" style="font-size: 15px;">Phân tích tự động dựa trên CSDL bán hàng & phân bổ công nợ FIFO</small>
+
                         </div>
+
                     </div>
+
                     <button type="button" class="btn-close btn-close-white" @onclick="CloseAvaModal"></button>
+
                 </div>
+
                 <div class="modal-body p-4 bg-light">
+
                     <!-- Overall Health Score Card -->
+
                     <div class="card border-0 shadow-xs p-3 bg-white mb-3 rounded-3">
+
                         <div class="d-flex align-items-center justify-content-between">
+
                             <div>
+
                                 <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill small fw-bold">CHỈ SỐ SỨC KHỎE TÀI CHÍNH</span>
+
                                 <h4 class="fw-bold text-slate-navy mt-1 mb-0">86 / 100 Điểm <span class="fs-6 fw-normal text-muted">(Mức: An Toàn & Tăng Trưởng Ổn Định)</span></h4>
+
                             </div>
+
                             <div class="text-end">
-                                <div class="text-muted small" style="font-size: 13px;">Hạn Mức Đã Cấp: 200.000.000 đ</div>
+
+                                <div class="text-muted small" style="font-size: 15px;">Hạn Mức Đã Cấp: 200.000.000 đ</div>
+
                                 <div class="text-success fw-bold small">Dư Nợ Còn Lại: @((dashboard.TotalOutstandingDebt / 1000000m).ToString("N1")) Trđ</div>
+
                             </div>
+
                         </div>
+
                     </div>
+
+
 
                     <!-- 3 AVA In-depth Recommendations -->
+
                     <div class="row g-3 mb-3">
+
                         <div class="col-12 col-md-4">
+
                             <div class="card h-100 border-0 p-3 shadow-xs bg-white rounded-3">
+
                                 <div class="d-flex align-items-center gap-1.5 text-success fw-bold small mb-2">
+
                                     <i class="bi bi-graph-up-arrow"></i> Khả Năng Sinh Lời
+
                                 </div>
-                                <p class="text-muted small mb-0" style="font-size: 14px; line-height: 1.4;">
+
+                                <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.5;">
+
                                     Biên lợi nhuận gộp đạt <strong>@profitMargin.ToString("N1")%</strong>. Nhóm hàng giải khát (Coca-Cola, Bia Heineken) có vòng quay kho nhanh nhất (dưới 15 ngày).
+
                                 </p>
+
                             </div>
+
                         </div>
 
+
+
                         <div class="col-12 col-md-4">
+
                             <div class="card h-100 border-0 p-3 shadow-xs bg-white rounded-3">
+
                                 <div class="d-flex align-items-center gap-1.5 text-warning fw-bold small mb-2">
+
                                     <i class="bi bi-exclamation-diamond-fill"></i> Rủi Ro Công Nợ
+
                                 </div>
-                                <p class="text-muted small mb-0" style="font-size: 14px; line-height: 1.4;">
+
+                                <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.5;">
+
                                     Có <strong>@dashboard.OverdueInvoicesCount hóa đơn</strong> đã quá hạn thanh toán (@((dashboard.OverdueDebt / 1000000m).ToString("N1")) trđ). Khuyến nghị gửi mẫu email nhắc nợ AI và áp dụng cấn trừ công nợ ngay khi khách thanh toán.
+
                                 </p>
+
                             </div>
+
                         </div>
 
+
+
                         <div class="col-12 col-md-4">
+
                             <div class="card h-100 border-0 p-3 shadow-xs bg-white rounded-3">
+
                                 <div class="d-flex align-items-center gap-1.5 text-primary fw-bold small mb-2">
+
                                     <i class="bi bi-shield-check"></i> Chiến Lược Tín Dụng
+
                                 </div>
-                                <p class="text-muted small mb-0" style="font-size: 14px; line-height: 1.4;">
+
+                                <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.5;">
+
                                     Tập trung mở rộng hạn mức tín dụng cho đại lý có lịch sử thanh toán tốt (loại A) và siết chặt bán chịu đối với nhóm nợ xô 61-90 ngày.
+
                                 </p>
+
                             </div>
+
                         </div>
+
                     </div>
+
+
 
                     <!-- Quick Navigation Actions inside Modal -->
+
                     <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                        <div class="text-muted small" style="font-size: 13px;">
+
+                        <div class="text-muted small" style="font-size: 15px;">
+
                             <i class="bi bi-info-circle me-1"></i> Dữ liệu tự động đồng bộ hóa với CSDL bán hàng & công nợ
+
                         </div>
+
                         <div class="d-flex align-items-center gap-2">
+
                             <button class="btn btn-outline-secondary btn-sm" @onclick="CloseAvaModal">Đóng</button>
+
                             <a href="/aging-report" class="btn btn-brand btn-sm" @onclick="CloseAvaModal">
+
                                 Xem Báo Cáo Tuổi Nợ 4 Xô
+
                             </a>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 }
+
+
 
 <!-- =========================================================================
+
      9. MODAL TÙY CHỈNH BÀN LÀM VIỆC (CUSTOMIZE DASHBOARD)
+
      ========================================================================= -->
+
 @if (showCustomizeModal)
+
 {
+
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(15,23,42,0.6); z-index: 1060;" @onclick="ToggleCustomizeModal">
+
         <div class="modal-dialog modal-dialog-centered" @onclick:stopPropagation="true" style="max-width: 520px;">
+
             <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+
                 <div class="modal-header py-3 bg-white border-bottom d-flex align-items-center justify-content-between">
+
                     <h6 class="modal-title fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+
                         <i class="bi bi-sliders2 text-success"></i> Tùy Chỉnh Bàn Làm Việc (Dashboard Widgets)
+
                     </h6>
+
                     <button type="button" class="btn-close" @onclick="ToggleCustomizeModal"></button>
+
                 </div>
+
                 <div class="modal-body p-4 bg-light">
+
                     <p class="text-muted small mb-3">Chọn các phân hệ & biểu đồ hiển thị trên màn hình Tổng quan Kế toán:</p>
+
                     <div class="list-group shadow-xs">
+
                         <label class="list-group-item d-flex align-items-center gap-2 small">
+
                             <input class="form-check-input flex-shrink-0" type="checkbox" checked disabled>
+
                             <span><strong>Bộ 4 Chỉ số KPI Trọng Yếu</strong> (Doanh thu, Thu tiền, Nợ phải thu, Nợ quá hạn)</span>
+
                         </label>
+
                         <label class="list-group-item d-flex align-items-center gap-2 small">
+
                             <input class="form-check-input flex-shrink-0" type="checkbox" checked disabled>
+
                             <span><strong>Trợ lý Tài chính AVA AI</strong> (Đánh giá sức khỏe & rủi ro công nợ)</span>
+
                         </label>
+
                         <label class="list-group-item d-flex align-items-center gap-2 small">
+
                             <input class="form-check-input flex-shrink-0" type="checkbox" checked disabled>
+
                             <span><strong>Tình hình tài chính & Nợ phải thu theo hạn</strong> (Doanh thu, Chi phí, Tuổi nợ)</span>
+
                         </label>
+
                         <label class="list-group-item d-flex align-items-center gap-2 small">
+
                             <input class="form-check-input flex-shrink-0" type="checkbox" checked disabled>
+
                             <span><strong>Biểu đồ xu hướng Doanh thu/Chi phí</strong> (Interactive SVG Chart)</span>
+
                         </label>
+
                         <label class="list-group-item d-flex align-items-center gap-2 small">
+
                             <input class="form-check-input flex-shrink-0" type="checkbox" checked disabled>
+
                             <span><strong>Bảng Top Sản phẩm bán chạy & Giám sát nợ khách hàng</strong></span>
+
                         </label>
+
                     </div>
+
                 </div>
+
                 <div class="modal-footer py-2 bg-white border-top">
+
                     <button type="button" class="btn btn-brand btn-sm px-3" @onclick="ToggleCustomizeModal">Lưu thiết lập</button>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 }
 
+
+
 <style>
+
     .spin-animate {
+
         animation: spin 0.8s linear infinite;
+
     }
+
     @@keyframes spin {
+
         100% { transform: rotate(360deg); }
+
     }
+
 </style>
 
+
+
 @code {
+
     private DashboardSummaryDto? dashboard;
+
     private bool loading = true;
+
     private bool isRefreshing = false;
+
     private DateTime lastUpdated = DateTime.Now;
 
+
+
     // Filters & Modals state
+
     private string selectedPeriod = "this_month";
+
     private string selectedPeriodText => selectedPeriod switch
+
     {
+
         "today" => "Hôm nay",
+
         "this_week" => "Tuần này",
+
         "this_quarter" => "Quý này",
+
         "this_year" => "Năm nay",
+
         _ => "Tháng này"
+
     };
 
+
+
     private DateTime periodStartDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
     private DateTime periodEndDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
 
+
+
     private bool showAvaModal = false;
+
     private bool showCustomizeModal = false;
 
+
+
     // Chart Interactive Series Toggles (Matching Enterprise Screenshot 4 & 5)
+
     private bool showRevenue = true;
+
     private bool showCost = true;
+
     private bool showProfit = true;
+
     private int? hoveredMonth = null;
 
+
+
     private decimal chartTotalRevenue => dashboard != null ? dashboard.MonthlyRevenues.Sum(m => m.Revenue) : 0;
+
     private decimal chartTotalCost => dashboard != null ? dashboard.MonthlyRevenues.Sum(m => m.Cost) : 0;
+
     private decimal chartTotalProfit => chartTotalRevenue - chartTotalCost;
 
+
+
     private void ToggleRevenue() => showRevenue = !showRevenue;
+
     private void ToggleCost() => showCost = !showCost;
+
     private void ToggleProfit() => showProfit = !showProfit;
 
+
+
     // Calculations: Real COGS & Real Profit directly from DTO
+
     private decimal actualCost => dashboard?.TotalActualCost ?? 0m;
+
     private decimal actualProfit => dashboard?.TotalActualProfit ?? 0m;
+
     private decimal profitMargin => dashboard?.ActualProfitMargin ?? 0m;
+
     
+
     private decimal collectionRate => dashboard?.CollectionRate ?? 0m;
+
+
 
     private decimal overdueDebt => dashboard?.OverdueDebt ?? 0m;
 
+
+
     private decimal withinTermDebt => dashboard?.CurrentDebt ?? 0m;
+
+
 
     private decimal overdueBarWidth => overduePercent;
 
+
+
     private decimal currentBarWidth => 100m - overdueBarWidth;
+
+
 
     private decimal top5DebtPercentage => dashboard?.Top5DebtorsPercentage ?? 0m;
 
+
+
     private decimal overduePercent => dashboard?.OverduePercent ?? 0m;
 
+
+
     protected override async Task OnInitializedAsync()
+
     {
+
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
         if (authState.User.IsInRole("Customer"))
+
         {
+
             Navigation.NavigateTo("/portal/dashboard");
+
             return;
+
         }
+
+
 
         LayoutState.OnChange += OnLayoutStateChanged;
+
         selectedPeriod = LayoutState.SelectedPeriod;
+
         UpdatePeriodDates();
+
         await LoadDashboard();
+
     }
+
+
 
     private async void OnLayoutStateChanged()
+
     {
+
         await InvokeAsync(async () =>
+
         {
+
             if (selectedPeriod != LayoutState.SelectedPeriod)
+
             {
+
                 selectedPeriod = LayoutState.SelectedPeriod;
+
                 UpdatePeriodDates();
+
             }
+
             await LoadDashboard();
+
             StateHasChanged();
+
         });
+
     }
+
+
 
     public void Dispose()
+
     {
+
         LayoutState.OnChange -= OnLayoutStateChanged;
+
     }
+
+
 
     private async Task LoadDashboard()
+
     {
+
         isRefreshing = true;
+
         try
+
         {
+
             dashboard = await GetDashboardDataUseCase.ExecuteAsync(selectedPeriod);
+
             lastUpdated = DateTime.Now;
+
         }
+
         finally
+
         {
+
             loading = false;
+
             isRefreshing = false;
+
         }
+
     }
+
+
 
     private async Task OnPeriodChanged(ChangeEventArgs e)
+
     {
+
         selectedPeriod = e.Value?.ToString() ?? "this_month";
+
         LayoutState.SetSelectedPeriod(selectedPeriod);
+
         UpdatePeriodDates();
+
         await LoadDashboard();
+
     }
+
+
 
     private void UpdatePeriodDates()
+
     {
+
         var now = DateTime.Now;
+
         switch (selectedPeriod)
+
         {
+
             case "today":
+
                 periodStartDate = now.Date;
+
                 periodEndDate = now.Date;
+
                 break;
+
             case "this_week":
+
                 var diff = (7 + (now.DayOfWeek - DayOfWeek.Monday)) % 7;
+
                 periodStartDate = now.AddDays(-1 * diff).Date;
+
                 periodEndDate = periodStartDate.AddDays(6).Date;
+
                 break;
+
             case "this_quarter":
+
                 int quarterNumber = (now.Month - 1) / 3 + 1;
+
                 periodStartDate = new DateTime(now.Year, (quarterNumber - 1) * 3 + 1, 1);
+
                 periodEndDate = periodStartDate.AddMonths(3).AddDays(-1);
+
                 break;
+
             case "this_year":
+
                 periodStartDate = new DateTime(now.Year, 1, 1);
+
                 periodEndDate = new DateTime(now.Year, 12, 31);
+
                 break;
+
             default: // this_month
+
                 periodStartDate = new DateTime(now.Year, now.Month, 1);
+
                 periodEndDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month));
+
                 break;
+
         }
+
     }
+
+
 
     private void OpenAvaAnalysisModal()
+
     {
+
         showAvaModal = true;
+
     }
+
+
 
     private void CloseAvaModal()
+
     {
+
         showAvaModal = false;
+
     }
+
+
 
     private void ToggleCustomizeModal()
+
     {
+
         showCustomizeModal = !showCustomizeModal;
+
     }
 
+
+
     private void PrintOverview()
+
     {
+
         Navigation.NavigateTo("/invoices");
+
     }
+
 }
+
