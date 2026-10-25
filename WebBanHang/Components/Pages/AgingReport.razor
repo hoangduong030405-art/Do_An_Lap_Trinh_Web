@@ -108,15 +108,17 @@ else
             </div>
         }
 
-        <table class="table table-bordered table-hover align-middle shadow-xs rounded-3 overflow-hidden bg-white">
+        <div class="card border shadow-sm overflow-hidden mb-4" style="border-radius: 16px; border-color: #e5eaf1 !important;">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 bg-white">
             <thead>
                 <tr>
                     <th>Mã Hóa Đơn</th>
                     <th>Ngày HĐ</th>
                     <th>Hạn Thu</th>
-                    <th>Tổng Tiền</th>
-                    <th>Đã Trả</th>
-                    <th>Còn Nợ</th>
+                    <th class="text-end">Tổng Tiền</th>
+                    <th class="text-end">Đã Trả</th>
+                    <th class="text-end">Còn Nợ</th>
                     <th>Số Ngày Quá Hạn</th>
                     <th>Phân Loại Tuổi Nợ</th>
                 </tr>
@@ -128,9 +130,9 @@ else
                         <td>@inv.InvoiceNumber</td>
                         <td>@inv.InvoiceDate.ToString("dd/MM/yyyy")</td>
                         <td>@inv.DueDate.ToString("dd/MM/yyyy")</td>
-                        <td>@inv.TotalAmount.ToString("N0")</td>
-                        <td>@inv.PaidAmount.ToString("N0")</td>
-                        <td class="text-danger fw-bold">@inv.Balance.ToString("N0")</td>
+                        <td class="text-end" style="font-variant-numeric: tabular-nums;">@inv.TotalAmount.ToString("N0") đ</td>
+                        <td class="text-end text-success" style="font-variant-numeric: tabular-nums;">@inv.PaidAmount.ToString("N0") đ</td>
+                        <td class="text-end text-danger fw-bold" style="font-variant-numeric: tabular-nums;">@inv.Balance.ToString("N0") đ</td>
                         <td>@inv.OverdueDays</td>
                         <td>
                             @if (inv.AgingCategory == "Chưa đến hạn")
@@ -157,7 +159,9 @@ else
                     </tr>
                 }
             </tbody>
-        </table>
+                </table>
+            </div>
+        </div>
     }
 }
 

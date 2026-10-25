@@ -30,7 +30,7 @@
     </PageHeader>
 
         <!-- 4. BẢNG HÓA ĐƠN -->
-        <div class="card border-0 shadow-sm rounded-3 bg-white overflow-hidden">
+        <div class="card border shadow-sm bg-white overflow-hidden" style="border-radius: 16px; border-color: #e5eaf1 !important;">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
@@ -75,9 +75,9 @@
                                             <small class="text-muted d-block">Còn @inv.RemainingDays ngày</small>
                                         }
                                     </td>
-                                    <td class="text-end fw-semibold">@inv.TotalAmount.ToString("N0") đ</td>
-                                    <td class="text-end text-success">@inv.PaidAmount.ToString("N0") đ</td>
-                                    <td class="text-end fw-bold @(inv.Balance > 0 ? "text-danger" : "text-muted")">
+                                    <td class="text-end fw-semibold" style="font-variant-numeric: tabular-nums;">@inv.TotalAmount.ToString("N0") đ</td>
+                                    <td class="text-end text-success" style="font-variant-numeric: tabular-nums;">@inv.PaidAmount.ToString("N0") đ</td>
+                                    <td class="text-end fw-bold @(inv.Balance > 0 ? "text-danger" : "text-muted")" style="font-variant-numeric: tabular-nums;">
                                         @inv.Balance.ToString("N0") đ
                                     </td>
                                     <td class="text-center">
@@ -151,9 +151,9 @@
                 <div class="modal-header bg-white border-bottom py-3 px-4 text-dark">
                     <div class="d-flex align-items-center gap-2">
                         <i class="bi bi-qr-code-scan fs-4 text-warning"></i>
-                        <h5 class="modal-title fw-bold text-white mb-0">Thanh Toán VietQR Napas 24/7</h5>
+                        <h5 class="modal-title fw-bold text-dark mb-0">Thanh Toán VietQR Napas 24/7</h5>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CloseVietQrModal"></button>
+                    <button type="button" class="btn-close" @onclick="CloseVietQrModal"></button>
                 </div>
 
                 <div class="modal-body p-4 text-center bg-white">
@@ -218,12 +218,12 @@
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-                <div class="modal-header bg-primary text-white py-3 px-4">
+                <div class="modal-header bg-white border-bottom py-3 px-4">
                     <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-file-earmark-text fs-5"></i>
-                        <h5 class="modal-title fw-bold text-white mb-0">Chi Tiết Hóa Đơn #@selectedInvoiceDetail.InvoiceNumber</h5>
+                        <i class="bi bi-file-earmark-text fs-5 text-primary"></i>
+                        <h5 class="modal-title fw-bold text-dark mb-0">Chi Tiết Hóa Đơn #@selectedInvoiceDetail.InvoiceNumber</h5>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" @onclick="CloseDetailModal"></button>
+                    <button type="button" class="btn-close" @onclick="CloseDetailModal"></button>
                 </div>
 
                 <div class="modal-body p-4 bg-white">

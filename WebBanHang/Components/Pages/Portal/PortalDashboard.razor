@@ -46,7 +46,7 @@
         <!-- 3. CÁC NÚT TÁC VỤ NHANH CHUẨN DOANH NGHIỆP -->
         <div class="row g-3 mb-4">
             <div class="col-12 col-md-4">
-                <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift transition-all p-3 bg-white">
+                <div class="card h-100 border shadow-sm hover-lift transition-all p-3 bg-white" style="border-radius: 16px; border-color: #e5eaf1 !important;">
                     <div class="d-flex align-items-center gap-3">
                         <div class="portal-action-icon rounded-3 bg-primary-subtle text-primary p-3 fs-3">
                             <i class="bi bi-shop"></i>
@@ -63,7 +63,7 @@
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift transition-all p-3 bg-white">
+                <div class="card h-100 border shadow-sm hover-lift transition-all p-3 bg-white" style="border-radius: 16px; border-color: #e5eaf1 !important;">
                     <div class="d-flex align-items-center gap-3">
                         <div class="portal-action-icon rounded-3 bg-warning-subtle text-warning p-3 fs-3">
                             <i class="bi bi-receipt-cutoff"></i>
@@ -80,7 +80,7 @@
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift transition-all p-3 bg-white">
+                <div class="card h-100 border shadow-sm hover-lift transition-all p-3 bg-white" style="border-radius: 16px; border-color: #e5eaf1 !important;">
                     <div class="d-flex align-items-center gap-3">
                         <div class="portal-action-icon rounded-3 bg-success-subtle text-success p-3 fs-3">
                             <i class="bi bi-journal-check"></i>
@@ -98,7 +98,7 @@
         </div>
 
         <!-- 4. HÓA ĐƠN CHỜ THANH TOÁN GẦN ĐÂY -->
-        <div class="card border-0 shadow-sm rounded-3 mb-4 bg-white">
+        <div class="card border shadow-sm mb-4 bg-white overflow-hidden" style="border-radius: 16px; border-color: #e5eaf1 !important;">
             <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-2">
                     <i class="bi bi-clock-history text-primary fs-5"></i>
@@ -146,9 +146,9 @@
                                             <span class="badge bg-danger-subtle text-danger ms-1">Trễ @inv.OverdueDays ngày</span>
                                         }
                                     </td>
-                                    <td class="text-end fw-semibold">@inv.TotalAmount.ToString("N0") đ</td>
-                                    <td class="text-end text-success">@inv.PaidAmount.ToString("N0") đ</td>
-                                    <td class="text-end fw-bold @(inv.Balance > 0 ? "text-danger" : "text-muted")">
+                                    <td class="text-end fw-semibold" style="font-variant-numeric: tabular-nums;">@inv.TotalAmount.ToString("N0") đ</td>
+                                    <td class="text-end text-success" style="font-variant-numeric: tabular-nums;">@inv.PaidAmount.ToString("N0") đ</td>
+                                    <td class="text-end fw-bold @(inv.Balance > 0 ? "text-danger" : "text-muted")" style="font-variant-numeric: tabular-nums;">
                                         @inv.Balance.ToString("N0") đ
                                     </td>
                                     <td class="text-center">
@@ -194,7 +194,7 @@
         <!-- 5. CHÍNH SÁCH BÁN BUÔN & HỖ TRỢ ĐẠI LÝ -->
         <div class="row g-3">
             <div class="col-12 col-md-6">
-                <div class="card border-0 shadow-sm rounded-3 p-4 bg-light h-100">
+                <div class="card border shadow-sm p-4 bg-light h-100" style="border-radius: 16px; border-color: #e5eaf1 !important;">
                     <h6 class="fw-bold text-slate-navy mb-3 d-flex align-items-center gap-2">
                         <i class="bi bi-shield-check text-primary fs-5"></i> Chính Sách Hạn Mức Tín Dụng B2B
                     </h6>
@@ -207,7 +207,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-6">
-                <div class="card border-0 shadow-sm rounded-3 p-4 bg-light h-100">
+                <div class="card border shadow-sm p-4 bg-light h-100" style="border-radius: 16px; border-color: #e5eaf1 !important;">
                     <h6 class="fw-bold text-slate-navy mb-3 d-flex align-items-center gap-2">
                         <i class="bi bi-headset text-primary fs-5"></i> Bộ Phận Hỗ Trợ Khách Hàng Đại Lý
                     </h6>
