@@ -362,6 +362,9 @@
 
     // GLOBAL INITIALIZER CALLED ONCE OR AFTER BLAZOR NAVIGATES
     window.initLandingPageJs = function () {
+        if (!document.querySelector('.landing-hero, .landing-navbar, .dong-nav, .lp-section')) {
+            return;
+        }
         initScrollEffects();
         initScrollspy();
         initParallaxEngine();

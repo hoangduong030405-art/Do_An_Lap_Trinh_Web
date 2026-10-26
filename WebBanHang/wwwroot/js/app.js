@@ -54,7 +54,10 @@
             if (pinBtn) {
                 pinBtn.classList.add('active');
                 pinBtn.setAttribute('title', 'Bỏ ghim menu (Ctrl+B)');
-                pinBtn.innerHTML = '<i class="bi bi-pin-fill text-success fs-6"></i>';
+                const icon = pinBtn.querySelector('i');
+                if (icon) {
+                    icon.className = 'bi bi-pin-fill text-success fs-6';
+                }
             }
         } else {
             workspace.classList.remove('is-sidebar-pinned');
@@ -63,7 +66,10 @@
             if (pinBtn) {
                 pinBtn.classList.remove('active');
                 pinBtn.setAttribute('title', 'Ghim menu (Ctrl+B)');
-                pinBtn.innerHTML = '<i class="bi bi-pin fs-6"></i>';
+                const icon = pinBtn.querySelector('i');
+                if (icon) {
+                    icon.className = 'bi bi-pin fs-6';
+                }
             }
             if (!sidebar.classList.contains('is-hover-open') && !sidebar.classList.contains('is-mobile-open')) {
                 sidebar.setAttribute('aria-hidden', 'true');
@@ -277,28 +283,35 @@
         }
     });
 
-    // Global Edge Mouse Tracking for smooth, flawless hover slide-out
+    // Global Edge Mouse Tracking with requestAnimationFrame throttling
+    let mouseMoveTicking = false;
     window.addEventListener('mousemove', function (e) {
-        if (!isDesktop() || isPinned) return;
-        const els = getElements();
-        if (!els.sidebar) return;
+        if (!isDesktop() || isPinned || mouseMoveTicking) return;
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+        mouseMoveTicking = true;
+        requestAnimationFrame(function () {
+            mouseMoveTicking = false;
+            const els = getElements();
+            if (!els.sidebar) return;
 
-        // When mouse cursor reaches the left edge strip (<= 18px from screen edge, below topbar >= 48px)
-        if (e.clientX <= 18 && e.clientY >= 48) {
-            openHover();
-            return;
-        }
-
-        // When sidebar is currently floating open in hover mode:
-        if (els.sidebar.classList.contains('is-hover-open')) {
-            // Keep open while cursor is within sidebar (width 240px + 15px buffer)
-            if (e.clientX <= 255 && e.clientY >= 48) {
-                clearHideTimer();
-            } else {
-                scheduleHide();
+            // When mouse cursor reaches the left edge strip (<= 18px from screen edge, below topbar >= 48px)
+            if (clientX <= 18 && clientY >= 48) {
+                openHover();
+                return;
             }
-        }
-    });
+
+            // When sidebar is currently floating open in hover mode:
+            if (els.sidebar.classList.contains('is-hover-open')) {
+                // Keep open while cursor is within sidebar (width 240px + 15px buffer)
+                if (clientX <= 255 && clientY >= 48) {
+                    clearHideTimer();
+                } else {
+                    scheduleHide();
+                }
+            }
+        });
+    }, { passive: true });
 
     // Window resize handler: handles crossing desktop/mobile breakpoint
     window.addEventListener('resize', function () {
@@ -332,21 +345,7 @@
         init();
     }
 
-    // MutationObserver to auto-init whenever #appSidebar is inserted into DOM
-    if (typeof MutationObserver !== 'undefined') {
-        const observer = new MutationObserver(function () {
-            if (document.getElementById('appSidebar')) {
-                init();
-            }
-        });
-        if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true });
-        } else {
-            document.addEventListener('DOMContentLoaded', function () {
-                observer.observe(document.body, { childList: true, subtree: true });
-            });
-        }
-    }
+
 
     // Blazor enhanced navigation listener
     if (window.Blazor && window.Blazor.addEventListener) {

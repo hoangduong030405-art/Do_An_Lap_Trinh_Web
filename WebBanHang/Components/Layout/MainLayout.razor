@@ -52,11 +52,14 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if (firstRender)
         {
-            await JS.InvokeVoidAsync("window.appSidebar.init");
+            try
+            {
+                await JS.InvokeVoidAsync("window.appSidebar.init");
+            }
+            catch { }
         }
-        catch { }
     }
 
     public void Dispose()
