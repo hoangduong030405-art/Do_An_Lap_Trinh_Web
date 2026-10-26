@@ -322,19 +322,22 @@ a:hover, .btn-link:hover {
 }
 
 .app-debt-bar {
-    height: 20px;
-    border-radius: 8px;
+    height: 22px;
+    border-radius: 11px;
     overflow: hidden;
     display: flex;
-    background-color: #cbd5e1;
+    background-color: #e2e8f0;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .app-debt-bar-overdue {
-    background-color: #ff7700;
+    background: linear-gradient(90deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
     transition: width 0.4s ease;
+    border-radius: 11px 0 0 11px;
 }
 .app-debt-bar-current {
-    background-color: #94a3b8;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
     transition: width 0.4s ease;
+    border-radius: 0 11px 11px 0;
 }
 
 .app-insight-banner {
@@ -1200,10 +1203,18 @@ html:has(.app-root), body:has(.app-root) {
 .app-sidebar .app-nav-link.active-green.active,
 .is-expanded .app-nav-link.active,
 .is-expanded .app-nav-link.active-green.active {
-    background-color: #00b060 !important;
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.22) 0%, rgba(16, 185, 129, 0.08) 100%) !important;
     color: #ffffff !important;
-    font-weight: 600 !important;
-    box-shadow: 0 2px 8px rgba(0, 176, 96, 0.3) !important;
+    font-weight: 700 !important;
+    border-left: 3px solid #10b981 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+}
+.app-sidebar .app-nav-link.active .app-nav-icon,
+.app-sidebar .app-nav-link.active-green.active .app-nav-icon,
+.is-expanded .app-nav-link.active .app-nav-icon,
+.is-expanded .app-nav-link.active-green.active .app-nav-icon {
+    color: #34d399 !important;
+    filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.4));
 }
 
 .app-sidebar .app-nav-link.active .app-nav-icon,

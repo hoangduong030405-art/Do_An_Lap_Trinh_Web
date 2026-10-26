@@ -266,15 +266,15 @@ else if (dashboard != null)
 
          ========================================================================= -->
 
-    <div class="app-announcement-bar d-flex align-items-center justify-content-between p-2 px-3 mb-2 rounded bg-white border shadow-xs">
+    <div class="app-announcement-bar d-flex align-items-center justify-content-between p-2.5 px-3.5 mb-2.5 rounded-3 bg-white border shadow-xs" style="background: linear-gradient(90deg, #ffffff 0%, #f0fdf4 100%) !important; border-color: #bbf7d0 !important;">
 
-        <div class="d-flex align-items-center gap-2 small">
+        <div class="d-flex align-items-center gap-2.5 small">
 
-            <span class="badge bg-danger text-white px-2 py-0.5 rounded-pill" style="font-size: 14px; font-weight: 700;">MỚI</span>
+            <span class="badge text-white px-2.5 py-1 rounded-pill fw-bold" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); font-size: 14px; box-shadow: 0 2px 4px rgba(220, 38, 38, 0.25);">MỚI</span>
 
-            <span class="fw-semibold text-slate-navy">Khám phá Trợ lý AI AVA Kế toán:</span>
+            <span class="fw-bold text-slate-navy" style="font-size: 15.5px;">Khám phá Trợ lý AI AVA Kế toán:</span>
 
-            <span class="text-muted d-none d-md-inline">Tự động phân tích sức khỏe tài chính, giám sát tuổi nợ 4 xô và cảnh báo hạn mức bán hàng</span>
+            <span class="text-secondary d-none d-md-inline" style="font-size: 15px;">Tự động phân tích sức khỏe tài chính, giám sát tuổi nợ 4 xô và cảnh báo hạn mức bán hàng</span>
 
         </div>
 
@@ -292,7 +292,7 @@ else if (dashboard != null)
 
 
 
-    <div class="app-insight-banner mb-3 shadow-xs">
+    <div class="app-insight-banner mb-3.5 shadow-xs" style="background: linear-gradient(135deg, #f8fafc 0%, #f5f3ff 50%, #eff6ff 100%) !important; border: 1px solid #c7d2fe !important; border-radius: 14px !important; padding: 18px 20px !important;">
 
         <div class="d-flex align-items-center justify-content-between mb-2.5">
 
@@ -312,11 +312,11 @@ else if (dashboard != null)
 
             <div class="d-flex align-items-center gap-2">
 
-                <button class="btn btn-sm btn-white border shadow-xs py-1.5 px-3 fw-semibold text-primary d-flex align-items-center gap-1.5" 
-                        style="font-size: 15px; color: #2563eb !important; background-color: #eff6ff !important; border-color: #bfdbfe !important;"
+                <button class="btn btn-sm shadow-sm py-1.5 px-3.5 fw-bold d-flex align-items-center gap-1.5" 
+                        style="font-size: 15px; color: #ffffff !important; background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%) !important; border: none !important; border-radius: 10px !important; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3) !important;"
                         @onclick="OpenAvaAnalysisModal">
 
-                    <i class="bi bi-stars text-primary"></i>
+                    <i class="bi bi-stars"></i>
 
                     <span>Phân tích với AVA</span>
 
@@ -344,7 +344,7 @@ else if (dashboard != null)
 
             <div class="col-12 col-md-4">
 
-                <div class="app-insight-card">
+                <div class="app-insight-card" style="border-top: 3px solid #059669 !important; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 
                     <div class="mb-2">
 
@@ -380,7 +380,7 @@ else if (dashboard != null)
 
             <div class="col-12 col-md-4">
 
-                <div class="app-insight-card">
+                <div class="app-insight-card" style="border-top: 3px solid #d97706 !important; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 
                     <div class="mb-2">
 
@@ -424,7 +424,7 @@ else if (dashboard != null)
 
             <div class="col-12 col-md-4">
 
-                <div class="app-insight-card">
+                <div class="app-insight-card" style="border-top: 3px solid #2563eb !important; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
 
                     <div class="mb-2">
 
@@ -478,7 +478,7 @@ else if (dashboard != null)
 
                     <h6 class="app-card-title">
 
-                        <i class="bi bi-cash-coin text-success"></i> Tình hình tài chính
+                        <span class="p-1 px-1.5 rounded border me-1 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); color: #047857; border-color: #a7f3d0 !important;"><i class="bi bi-cash-coin"></i></span> Tình hình tài chính
 
                     </h6>
 
@@ -580,7 +580,7 @@ else if (dashboard != null)
 
                     <h6 class="app-card-title">
 
-                        <i class="bi bi-wallet2 text-warning"></i> Nợ phải thu theo hạn nợ
+                        <span class="p-1 px-1.5 rounded border me-1 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); color: #b45309; border-color: #fde68a !important;"><i class="bi bi-wallet2"></i></span> Nợ phải thu theo hạn nợ
 
                     </h6>
 
@@ -748,7 +748,7 @@ else if (dashboard != null)
 
                     <h6 class="app-card-title">
 
-                        <i class="bi bi-arrow-left-right text-primary"></i> Dòng tiền: Bán chịu & Thu tiền
+                        <span class="p-1 px-1.5 rounded border me-1 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #1d4ed8; border-color: #bfdbfe !important;"><i class="bi bi-arrow-left-right"></i></span> Dòng tiền: Bán chịu & Thu tiền
 
                     </h6>
 
@@ -808,9 +808,9 @@ else if (dashboard != null)
 
                                             <div class="d-flex align-items-end gap-1.5" style="height: 125px;">
 
-                                                <div class="bg-primary rounded-top shadow-xs" style="width: 18px; height: @(revHeight)px;" title="Doanh thu: @((m.Revenue / 1000000m).ToString("N1")) Trđ"></div>
+                                                <div class="rounded-top shadow-xs" style="width: 18px; height: @(revHeight)px; background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%) !important; border-radius: 6px 6px 0 0;" title="Doanh thu: @((m.Revenue / 1000000m).ToString("N1")) Trđ"></div>
 
-                                                <div class="bg-success rounded-top shadow-xs" style="width: 18px; height: @(colHeight)px;" title="Thu tiền: @((m.Collected / 1000000m).ToString("N1")) Trđ"></div>
+                                                <div class="rounded-top shadow-xs" style="width: 18px; height: @(colHeight)px; background: linear-gradient(180deg, #10b981 0%, #047857 100%) !important; border-radius: 6px 6px 0 0;" title="Thu tiền: @((m.Collected / 1000000m).ToString("N1")) Trđ"></div>
 
                                             </div>
 

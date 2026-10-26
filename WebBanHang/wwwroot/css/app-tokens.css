@@ -421,22 +421,78 @@ small,
   color: var(--text-muted);
 }
 
-/* Tone Variants for Stat Cards (Icon highlights) */
+/* Tone Variants for Stat Cards (Icon highlights, top accent border, elegant hover glow) */
+.tone-primary {
+  border-top: 4px solid #2563eb !important;
+}
+.tone-primary .app-stat-icon {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+}
+.tone-primary:hover {
+  border-color: #93c5fd !important;
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.12), 0 8px 10px -6px rgba(37, 99, 235, 0.08) !important;
+}
+.tone-primary .app-stat-label {
+  color: #1e40af !important;
+}
+
+.tone-success {
+  border-top: 4px solid #059669 !important;
+}
 .tone-success .app-stat-icon {
-  background: var(--success-light);
-  color: var(--success);
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  color: #047857 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+.tone-success:hover {
+  border-color: #6ee7b7 !important;
+  box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.12), 0 8px 10px -6px rgba(5, 150, 105, 0.08) !important;
+}
+.tone-success .app-stat-label {
+  color: #065f46 !important;
+}
+
+.tone-warning {
+  border-top: 4px solid #d97706 !important;
 }
 .tone-warning .app-stat-icon {
-  background: var(--warning-light);
-  color: var(--warning);
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+}
+.tone-warning:hover {
+  border-color: #fcd34d !important;
+  box-shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.12), 0 8px 10px -6px rgba(217, 119, 6, 0.08) !important;
+}
+.tone-warning .app-stat-label {
+  color: #92400e !important;
+}
+
+.tone-danger {
+  border-top: 4px solid #dc2626 !important;
 }
 .tone-danger .app-stat-icon {
-  background: var(--danger-light);
-  color: var(--danger);
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%) !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca !important;
+}
+.tone-danger:hover {
+  border-color: #fca5a5 !important;
+  box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.12), 0 8px 10px -6px rgba(220, 38, 38, 0.08) !important;
+}
+.tone-danger .app-stat-label {
+  color: #991b1b !important;
+}
+
+.tone-info {
+  border-top: 4px solid #0284c7 !important;
 }
 .tone-info .app-stat-icon {
-  background: var(--info-light);
-  color: var(--info);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
 }
 
 /* 8. BUTTONS (MIN HEIGHT 44PX, RADIUS 12PX, 15PX SEMIBOLD, FOCUS RING 3PX) */
@@ -464,17 +520,19 @@ small,
 /* Primary Button */
 .btn-primary,
 .btn-brand {
-  background-color: var(--primary) !important;
-  border: 1px solid var(--primary) !important;
-  color: var(--text-inverse) !important;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  border: 1px solid #1e40af !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25) !important;
 }
 
 .btn-primary:hover,
 .btn-brand:hover {
-  background-color: var(--primary-hover) !important;
-  border-color: var(--primary-hover) !important;
-  color: var(--text-inverse) !important;
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.25) !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important;
+  border-color: #1e3a8a !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35) !important;
+  transform: translateY(-1px);
 }
 
 .btn-primary:active,

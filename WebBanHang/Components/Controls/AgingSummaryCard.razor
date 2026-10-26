@@ -1,21 +1,23 @@
 @using WebBanHang.UseCases.DTOs
 
-<div class="card mb-4 shadow-sm border" style="border-radius: 16px; border-color: #e5eaf1 !important; background-color: #ffffff !important; overflow: hidden;">
-    <div class="card-header bg-white border-bottom py-3.5 px-4 d-flex justify-content-between align-items-center" style="border-color: #e5eaf1 !important;">
+<div class="card mb-4 shadow-sm border" style="border-radius: 16px; border-color: #e2e8f0 !important; background-color: #ffffff !important; overflow: hidden; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03) !important;">
+    <div class="card-header bg-white border-bottom py-3.5 px-4 d-flex justify-content-between align-items-center" style="border-color: #f1f5f9 !important;">
         <div class="d-flex align-items-center gap-2.5">
             <h5 class="mb-0 fw-bold text-dark" style="font-size: 21px; letter-spacing: -0.01em;">@Report.CustomerName</h5>
-            <span class="badge bg-light text-primary border px-2.5 py-1" style="font-size: 15.5px; font-weight: 700;">@Report.CustomerCode</span>
+            <span class="badge border px-2.5 py-1" style="font-size: 15px; font-weight: 700; background-color: #eff6ff; color: #1d4ed8; border-color: #bfdbfe !important;">@Report.CustomerCode</span>
         </div>
-        <button class="btn btn-outline-primary py-1.5 px-3" style="font-size: 15px; font-weight: 600; min-height: 38px;" @onclick="() => OnViewDetails.InvokeAsync(Report.CustomerId)">
-            <i class="bi bi-eye me-1.5"></i> Chi tiết
+        <button class="btn btn-sm shadow-xs py-1.5 px-3.5 d-flex align-items-center gap-1.5" 
+                style="font-size: 15px; font-weight: 600; min-height: 38px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 10px;" 
+                @onclick="() => OnViewDetails.InvokeAsync(Report.CustomerId)">
+            <i class="bi bi-eye"></i> Chi tiết
         </button>
     </div>
     <div class="card-body p-4" style="background-color: #ffffff !important;">
         <div class="row text-center mb-2 g-2.5">
             <!-- Xô 0: Chưa đến hạn -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background-color: #f8fafc; border-color: #e2e8f0 !important; color: #334155;">
-                    <div style="font-size: 15.5px; font-weight: 700; color: #64748b; margin-bottom: 4px;">Chưa Đến Hạn</div>
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-color: #cbd5e1 !important; color: #334155;">
+                    <div style="font-size: 15.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Chưa Đến Hạn</div>
                     <div style="font-size: 20px; font-weight: 800; color: #0f172a; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.BucketNotDue.ToString("N0")
                     </div>
@@ -24,7 +26,7 @@
 
             <!-- Xô 1: 1-30 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background-color: #ecfdf5; border-color: #a7f3d0 !important; color: #065f46;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-color: #a7f3d0 !important; color: #065f46;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #047857; margin-bottom: 4px;">1-30 Ngày</div>
                     <div style="font-size: 20px; font-weight: 800; color: #065f46; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.Bucket1To30.ToString("N0")
@@ -34,7 +36,7 @@
 
             <!-- Xô 2: 31-60 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background-color: #fffbeb; border-color: #fde68a !important; color: #92400e;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-color: #fde68a !important; color: #92400e;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #b45309; margin-bottom: 4px;">31-60 Ngày</div>
                     <div style="font-size: 20px; font-weight: 800; color: #92400e; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.Bucket31To60.ToString("N0")
@@ -44,7 +46,7 @@
 
             <!-- Xô 3: 61-90 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background-color: #fff7ed; border-color: #fed7aa !important; color: #c2410c;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border-color: #fed7aa !important; color: #c2410c;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #ea580c; margin-bottom: 4px;">61-90 Ngày</div>
                     <div style="font-size: 20px; font-weight: 800; color: #c2410c; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.Bucket61To90.ToString("N0")
@@ -54,7 +56,7 @@
 
             <!-- Xô 4: >90 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background-color: #fef2f2; border-color: #fecaca !important; color: #991b1b;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-color: #fecaca !important; color: #991b1b;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #dc2626; margin-bottom: 4px;">>90 Ngày</div>
                     <div style="font-size: 20px; font-weight: 800; color: #991b1b; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.BucketOver90.ToString("N0")
@@ -72,13 +74,15 @@
             </div>
             @if (Report.IsIntegrityValid)
             {
-                <span class="text-success fw-semibold d-inline-flex align-items-center gap-1.5" style="font-size: 15.5px;">
+                <span class="fw-semibold d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill" 
+                      style="font-size: 15px; background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;">
                     <i class="bi bi-check-circle-fill"></i> Đối soát toàn vẹn (Tổng các nhóm khớp 100%)
                 </span>
             }
             else
             {
-                <span class="text-danger fw-bold d-inline-flex align-items-center gap-1.5" style="font-size: 15.5px;">
+                <span class="fw-bold d-inline-flex align-items-center gap-1.5 px-3 py-1 rounded-pill" 
+                      style="font-size: 15px; background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;">
                     <i class="bi bi-exclamation-triangle-fill"></i> CẢNH BÁO: Lệch đối soát dữ liệu!
                 </span>
             }

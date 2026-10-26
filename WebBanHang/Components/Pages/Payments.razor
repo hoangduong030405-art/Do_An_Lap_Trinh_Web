@@ -85,28 +85,28 @@
                     <!-- THẺ THÔNG TIN TÍN DỤNG CỦA KHÁCH -->
                     @if (selectedCustomer != null)
                     {
-                        <div class="p-3 rounded-3 border bg-light mb-3.5" style="border-color: #e5eaf1 !important;">
-                            <div class="row g-2 text-center">
+                        <div class="p-3.5 rounded-3 border mb-3.5" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+                            <div class="row g-2.5 text-center">
                                 <div class="col-4">
-                                    <div class="p-2 rounded bg-white border">
-                                        <div class="text-muted" style="font-size: 15px; font-weight: 600;">Hạn Mức Cấp</div>
-                                        <div class="fw-bold text-dark" style="font-size: 15px; font-variant-numeric: tabular-nums;">
+                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #bfdbfe !important;">
+                                        <div style="color: #1e40af; font-size: 15px; font-weight: 700;">Hạn Mức Cấp</div>
+                                        <div class="fw-bold" style="color: #1d4ed8; font-size: 16.5px; font-variant-numeric: tabular-nums;">
                                             @selectedCustomer.CreditLimit.ToString("N0") đ
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="p-2 rounded bg-white border">
-                                        <div class="text-muted" style="font-size: 15px; font-weight: 600;">Hạn Nợ Chuẩn</div>
-                                        <div class="fw-bold text-dark" style="font-size: 16px;">
+                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-color: #cbd5e1 !important;">
+                                        <div style="color: #475569; font-size: 15px; font-weight: 700;">Hạn Nợ Chuẩn</div>
+                                        <div class="fw-bold text-dark" style="font-size: 16.5px;">
                                             @selectedCustomer.PaymentTermsDays ngày
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="p-2 rounded bg-white border">
-                                        <div class="text-muted" style="font-size: 15px; font-weight: 600;">Tổng Nợ Còn Lại</div>
-                                        <div class="fw-bold @(currentDebt > 0 ? "text-danger" : "text-success")" style="font-size: 15px; font-variant-numeric: tabular-nums;">
+                                    <div class="p-2.5 rounded-3 border" style="background: @(currentDebt > 0 ? "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)" : "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)"); border-color: @(currentDebt > 0 ? "#fecaca" : "#a7f3d0") !important;">
+                                        <div style="color: @(currentDebt > 0 ? "#991b1b" : "#065f46"); font-size: 15px; font-weight: 700;">Tổng Nợ Còn Lại</div>
+                                        <div class="fw-bold" style="color: @(currentDebt > 0 ? "#b91c1c" : "#047857"); font-size: 16.5px; font-variant-numeric: tabular-nums;">
                                             @currentDebt.ToString("N0") đ
                                         </div>
                                     </div>
@@ -214,7 +214,7 @@
                     }
                     else
                     {
-                        <div class="alert alert-primary rounded-0 border-start-0 border-end-0 mb-0 py-2.5 px-4 small" style="background: #f0f7ff; border-color: #dbeafe;">
+                        <div class="alert alert-primary rounded-0 border-start-0 border-end-0 mb-0 py-3 px-4" style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-color: #bfdbfe; color: #1e3a8a; font-size: 15.5px;">
                             <i class="bi bi-info-circle-fill me-1 text-primary"></i> 
                             <strong>Luật FIFO:</strong> Tiền thu được ưu tiên trừ dứt điểm từ hóa đơn <strong>cũ nhất (#1)</strong> trước, phần tiền dư tiếp tục gạch cho các hóa đơn tiếp theo.
                         </div>
