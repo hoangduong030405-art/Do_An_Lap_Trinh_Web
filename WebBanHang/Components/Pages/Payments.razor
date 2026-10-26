@@ -85,28 +85,28 @@
                     <!-- THẺ THÔNG TIN TÍN DỤNG CỦA KHÁCH -->
                     @if (selectedCustomer != null)
                     {
-                        <div class="p-3.5 rounded-3 border mb-3.5" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+                        <div class="p-3.5 rounded-3 border mb-3.5" style="background: #ffffff; border-color: #cbd5e1 !important; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
                             <div class="row g-2.5 text-center">
                                 <div class="col-4">
-                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #bfdbfe !important;">
+                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(180deg, #eff6ff 0%, #ffffff 70%); border-color: #bfdbfe !important; border-top: 4px solid #2563eb !important;">
                                         <div style="color: #1e40af; font-size: 15px; font-weight: 700;">Hạn Mức Cấp</div>
-                                        <div class="fw-bold" style="color: #1d4ed8; font-size: 16.5px; font-variant-numeric: tabular-nums;">
+                                        <div class="fw-bold" style="color: #1d4ed8; font-size: 18px; font-variant-numeric: tabular-nums;">
                                             @selectedCustomer.CreditLimit.ToString("N0") đ
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-color: #cbd5e1 !important;">
+                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 70%); border-color: #cbd5e1 !important; border-top: 4px solid #64748b !important;">
                                         <div style="color: #475569; font-size: 15px; font-weight: 700;">Hạn Nợ Chuẩn</div>
-                                        <div class="fw-bold text-dark" style="font-size: 16.5px;">
+                                        <div class="fw-bold text-dark" style="font-size: 18px;">
                                             @selectedCustomer.PaymentTermsDays ngày
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="p-2.5 rounded-3 border" style="background: @(currentDebt > 0 ? "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)" : "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)"); border-color: @(currentDebt > 0 ? "#fecaca" : "#a7f3d0") !important;">
+                                    <div class="p-2.5 rounded-3 border" style="background: @(currentDebt > 0 ? "linear-gradient(180deg, #fef2f2 0%, #ffffff 70%)" : "linear-gradient(180deg, #ecfdf5 0%, #ffffff 70%)"); border-color: @(currentDebt > 0 ? "#fecaca" : "#a7f3d0") !important; border-top: 4px solid @(currentDebt > 0 ? "#dc2626" : "#059669") !important;">
                                         <div style="color: @(currentDebt > 0 ? "#991b1b" : "#065f46"); font-size: 15px; font-weight: 700;">Tổng Nợ Còn Lại</div>
-                                        <div class="fw-bold" style="color: @(currentDebt > 0 ? "#b91c1c" : "#047857"); font-size: 16.5px; font-variant-numeric: tabular-nums;">
+                                        <div class="fw-bold" style="color: @(currentDebt > 0 ? "#dc2626" : "#047857"); font-size: 18px; font-variant-numeric: tabular-nums;">
                                             @currentDebt.ToString("N0") đ
                                         </div>
                                     </div>
@@ -123,11 +123,11 @@
                             </label>
                             @if (currentDebt > 0)
                             {
-                                <div class="d-flex gap-1.5">
-                                    <button type="button" class="btn btn-sm btn-outline-primary py-0.5 px-2" style="font-size: 14.5px;" @onclick="FillHalfDebt">
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary py-1 px-2.5 fw-bold" style="font-size: 14.5px; border-radius: 8px;" @onclick="FillHalfDebt">
                                         50% Nợ
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-primary py-0.5 px-2" style="font-size: 14.5px;" @onclick="FillFullDebt">
+                                    <button type="button" class="btn btn-sm py-1 px-2.5 fw-bold text-white shadow-xs" style="font-size: 14.5px; border-radius: 8px; background: linear-gradient(135deg, #059669 0%, #047857 100%); border: none;" @onclick="FillFullDebt">
                                         Tất Toán Nợ
                                     </button>
                                 </div>
@@ -173,7 +173,7 @@
                     <button class="btn btn-primary btn-lg w-100 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2" 
                             @onclick="RecordPayment" 
                             disabled="@(selectedCustomerId <= 0 || paymentAmount <= 0)"
-                            style="min-height: 48px; border-radius: 12px;">
+                            style="min-height: 52px; font-size: 17.5px; border-radius: 12px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; color: #ffffff !important; border: none !important; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4) !important;">
                         <i class="bi bi-check2-circle fs-5"></i> 
                         <span>Xác Nhận Thu Tiền & Gạch Nợ FIFO</span>
                     </button>
