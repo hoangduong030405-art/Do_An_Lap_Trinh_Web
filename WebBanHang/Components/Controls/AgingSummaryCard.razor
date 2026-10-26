@@ -16,7 +16,7 @@
         <div class="row text-center mb-2 g-2.5">
             <!-- Xô 0: Chưa đến hạn -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 70%); border-color: #cbd5e1 !important; border-top: 4px solid #64748b !important;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 40%, #ffffff 85%); border-color: #cbd5e1 !important; border-top: 4px solid #64748b !important;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #475569; margin-bottom: 4px;">Chưa Đến Hạn</div>
                     <div style="font-size: 22px; font-weight: 800; color: #0f172a; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.BucketNotDue.ToString("N0")
@@ -26,7 +26,7 @@
 
             <!-- Xô 1: 1-30 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 70%); border-color: #a7f3d0 !important; border-top: 4px solid #059669 !important;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #d1fae5 0%, #ecfdf5 40%, #ffffff 85%); border-color: #a7f3d0 !important; border-top: 4px solid #059669 !important;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #047857; margin-bottom: 4px;">1-30 Ngày</div>
                     <div style="font-size: 22px; font-weight: 800; color: #047857; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.Bucket1To30.ToString("N0")
@@ -36,7 +36,7 @@
 
             <!-- Xô 2: 31-60 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #fffbeb 0%, #ffffff 70%); border-color: #fde68a !important; border-top: 4px solid #d97706 !important;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #fef3c7 0%, #fffbeb 40%, #ffffff 85%); border-color: #fde68a !important; border-top: 4px solid #d97706 !important;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #b45309; margin-bottom: 4px;">31-60 Ngày</div>
                     <div style="font-size: 22px; font-weight: 800; color: #b45309; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.Bucket31To60.ToString("N0")
@@ -46,7 +46,7 @@
 
             <!-- Xô 3: 61-90 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #fff7ed 0%, #ffffff 70%); border-color: #fed7aa !important; border-top: 4px solid #ea580c !important;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #fed7aa 0%, #fff7ed 40%, #ffffff 85%); border-color: #fed7aa !important; border-top: 4px solid #ea580c !important;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #ea580c; margin-bottom: 4px;">61-90 Ngày</div>
                     <div style="font-size: 22px; font-weight: 800; color: #c2410c; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.Bucket61To90.ToString("N0")
@@ -56,7 +56,7 @@
 
             <!-- Xô 4: >90 Ngày -->
             <div class="col">
-                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #fef2f2 0%, #ffffff 70%); border-color: #fecaca !important; border-top: 4px solid #dc2626 !important;">
+                <div class="p-3 rounded-3 border" style="background: linear-gradient(180deg, #fee2e2 0%, #fef2f2 40%, #ffffff 85%); border-color: #fecaca !important; border-top: 4px solid #dc2626 !important;">
                     <div style="font-size: 15.5px; font-weight: 700; color: #dc2626; margin-bottom: 4px;">>90 Ngày</div>
                     <div style="font-size: 22px; font-weight: 800; color: #dc2626; font-feature-settings: 'tnum' 1; font-variant-numeric: tabular-nums;">
                         @Report.BucketOver90.ToString("N0")

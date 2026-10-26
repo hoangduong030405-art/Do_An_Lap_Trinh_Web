@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --app-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --bs-font-sans-serif: var(--app-font);
     
@@ -730,7 +730,8 @@ html:has(.app-root), body:has(.app-root) {
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    background-color: #f4f5f8;
+    background-color: var(--bg-page, #dce5f0) !important;
+    background: var(--bg-page, #dce5f0) !important;
 }
 
 /* 1. Enterprise Topbar (100% full width at top) */
@@ -1012,7 +1013,8 @@ html:has(.app-root), body:has(.app-root) {
 /* 2.2 Content Canvas (Full width by default, smoothly shifts right when pinned) */
 .app-content-canvas {
     flex: 1;
-    background-color: #f4f5f8;
+    background-color: var(--bg-page, #dce5f0) !important;
+    background: var(--bg-page, #dce5f0) !important;
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;

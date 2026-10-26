@@ -41,7 +41,7 @@
   --text-kpi: 44px;        /* Số liệu KPI 42-46px */
 
   /* Neutral Background & Card */
-  --bg-page: #f1f5f9;
+  --bg-page: #dce5f0;
   --bg-card: #ffffff;
   --bg-subtle: #f8fafc;
   --bg-muted: #f1f5f9;
@@ -145,7 +145,9 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-page);
+  background-color: var(--bg-page) !important;
+  background: var(--bg-page) !important;
+  background: var(--bg-page) !important;
   color: var(--text-main);
   font-size: var(--text-body);
   line-height: 1.6;
@@ -177,6 +179,7 @@ small,
 /* 4. WORKSPACE & PAGE CONTAINER (FLUID 100% WIDESCREEN RESPONSIVE) */
 .app-content-canvas {
   background-color: var(--bg-page) !important;
+  background: var(--bg-page) !important;
   padding: var(--page-padding) !important;
   color: var(--text-main);
   transition: background-color var(--transition-base);
@@ -428,7 +431,7 @@ small,
 
 /* Tone Variants for Stat Cards (Icon highlights, top accent border, elegant hover glow) */
 .tone-primary {
-  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 45%) !important;
+  background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 40%, #ffffff 85%) !important;
   border: 1px solid #bfdbfe !important;
   border-top: 5px solid #2563eb !important;
   box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.1), 0 2px 4px rgba(15, 23, 42, 0.04) !important;
@@ -455,7 +458,7 @@ small,
 }
 
 .tone-success {
-  background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 45%) !important;
+  background: linear-gradient(180deg, #d1fae5 0%, #ecfdf5 40%, #ffffff 85%) !important;
   border: 1px solid #a7f3d0 !important;
   border-top: 5px solid #059669 !important;
   box-shadow: 0 4px 12px -2px rgba(5, 150, 105, 0.1), 0 2px 4px rgba(15, 23, 42, 0.04) !important;
@@ -482,7 +485,7 @@ small,
 }
 
 .tone-warning {
-  background: linear-gradient(180deg, #fffbeb 0%, #ffffff 45%) !important;
+  background: linear-gradient(180deg, #fef3c7 0%, #fffbeb 40%, #ffffff 85%) !important;
   border: 1px solid #fde68a !important;
   border-top: 5px solid #d97706 !important;
   box-shadow: 0 4px 12px -2px rgba(217, 119, 6, 0.1), 0 2px 4px rgba(15, 23, 42, 0.04) !important;
@@ -509,7 +512,7 @@ small,
 }
 
 .tone-danger {
-  background: linear-gradient(180deg, #fef2f2 0%, #ffffff 45%) !important;
+  background: linear-gradient(180deg, #fee2e2 0%, #fef2f2 40%, #ffffff 85%) !important;
   border: 1px solid #fecaca !important;
   border-top: 5px solid #dc2626 !important;
   box-shadow: 0 4px 12px -2px rgba(220, 38, 38, 0.1), 0 2px 4px rgba(15, 23, 42, 0.04) !important;

@@ -88,7 +88,7 @@
                         <div class="p-3.5 rounded-3 border mb-3.5" style="background: #ffffff; border-color: #cbd5e1 !important; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
                             <div class="row g-2.5 text-center">
                                 <div class="col-4">
-                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(180deg, #eff6ff 0%, #ffffff 70%); border-color: #bfdbfe !important; border-top: 4px solid #2563eb !important;">
+                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 40%, #ffffff 80%); border-color: #bfdbfe !important; border-top: 4px solid #2563eb !important;">
                                         <div style="color: #1e40af; font-size: 15px; font-weight: 700;">Hạn Mức Cấp</div>
                                         <div class="fw-bold" style="color: #1d4ed8; font-size: 18px; font-variant-numeric: tabular-nums;">
                                             @selectedCustomer.CreditLimit.ToString("N0") đ
@@ -96,7 +96,7 @@
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 70%); border-color: #cbd5e1 !important; border-top: 4px solid #64748b !important;">
+                                    <div class="p-2.5 rounded-3 border" style="background: linear-gradient(180deg, #e2e8f0 0%, #f8fafc 40%, #ffffff 80%); border-color: #cbd5e1 !important; border-top: 4px solid #64748b !important;">
                                         <div style="color: #475569; font-size: 15px; font-weight: 700;">Hạn Nợ Chuẩn</div>
                                         <div class="fw-bold text-dark" style="font-size: 18px;">
                                             @selectedCustomer.PaymentTermsDays ngày
@@ -104,7 +104,7 @@
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="p-2.5 rounded-3 border" style="background: @(currentDebt > 0 ? "linear-gradient(180deg, #fef2f2 0%, #ffffff 70%)" : "linear-gradient(180deg, #ecfdf5 0%, #ffffff 70%)"); border-color: @(currentDebt > 0 ? "#fecaca" : "#a7f3d0") !important; border-top: 4px solid @(currentDebt > 0 ? "#dc2626" : "#059669") !important;">
+                                    <div class="p-2.5 rounded-3 border" style="background: @(currentDebt > 0 ? "linear-gradient(180deg, #fee2e2 0%, #fef2f2 40%, #ffffff 80%)" : "linear-gradient(180deg, #d1fae5 0%, #ecfdf5 40%, #ffffff 80%)"); border-color: @(currentDebt > 0 ? "#fecaca" : "#a7f3d0") !important; border-top: 4px solid @(currentDebt > 0 ? "#dc2626" : "#059669") !important;">
                                         <div style="color: @(currentDebt > 0 ? "#991b1b" : "#065f46"); font-size: 15px; font-weight: 700;">Tổng Nợ Còn Lại</div>
                                         <div class="fw-bold" style="color: @(currentDebt > 0 ? "#dc2626" : "#047857"); font-size: 18px; font-variant-numeric: tabular-nums;">
                                             @currentDebt.ToString("N0") đ
