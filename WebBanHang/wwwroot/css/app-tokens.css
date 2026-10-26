@@ -29,16 +29,16 @@
   --app-font: var(--font-sans);
   --bs-font-sans-serif: var(--font-sans);
 
-  /* Typography Scale - Minimum 13px anywhere in logged-in area */
-  --text-xs: 14.5px;       /* Nhãn nhỏ tối thiểu 14px */
-  --text-sm: 15.5px;       /* Nhãn form, hint, phụ đề nhỏ */
-  --text-base: 16.5px;     /* Nội dung bảng, input, nút bấm */
-  --text-body: 17px;     /* Nội dung thường, chữ chuẩn */
-  --text-lg: 19.5px;       /* Tiêu đề thẻ (card title) */
-  --text-xl: 22px;       /* Tiêu đề phân nhóm */
-  --text-2xl: 26px;      /* Tiêu đề trung */
-  --text-title: 32px;    /* Tiêu đề trang 28-32px */
-  --text-kpi: 38px;      /* Số liệu KPI 32-40px */
+  /* Typography Scale - High legibility, large & clear */
+  --text-xs: 15px;         /* Nhãn nhỏ, pill, hint tối thiểu 15px */
+  --text-sm: 16px;         /* Nhãn form, hint, phụ đề */
+  --text-base: 17px;       /* Nội dung bảng, input, nút bấm */
+  --text-body: 17.5px;     /* Nội dung thường, chữ chuẩn */
+  --text-lg: 21px;         /* Tiêu đề thẻ (card title) */
+  --text-xl: 24px;         /* Tiêu đề phân nhóm */
+  --text-2xl: 28px;        /* Tiêu đề trung */
+  --text-title: 34px;      /* Tiêu đề trang 32-36px */
+  --text-kpi: 44px;        /* Số liệu KPI 42-46px */
 
   /* Neutral Background & Card */
   --bg-page: #f6f8fb;
@@ -103,10 +103,10 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* Container & Layout */
-  --content-max-width: 1440px;
-  --page-padding: 32px;
-  --page-padding-mobile: 16px;
+  /* Container & Layout - Fluid 100% Widescreen Responsive */
+  --content-max-width: 100%;
+  --page-padding: 24px 32px;
+  --page-padding-mobile: 16px 14px;
   --card-gap: 24px;
   --card-padding: 24px;
 
@@ -174,12 +174,20 @@ small,
   font-size: var(--text-xs) !important;
 }
 
-/* 4. WORKSPACE & PAGE CONTAINER (MAX-WIDTH 1440PX, PADDING 32PX) */
+/* 4. WORKSPACE & PAGE CONTAINER (FLUID 100% WIDESCREEN RESPONSIVE) */
 .app-content-canvas {
   background-color: var(--bg-page) !important;
   padding: var(--page-padding) !important;
   color: var(--text-main);
   transition: background-color var(--transition-base);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1600px) {
+  .app-content-canvas {
+    padding: 24px 36px !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -189,9 +197,17 @@ small,
 }
 
 .app-page-container {
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-  width: 100%;
+  max-width: 100% !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+.portal-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 /* 5. PAGE HEADER COMPONENT (UNIFIED 30PX BOLD, 48PX ICON BOX) */
@@ -273,7 +289,7 @@ small,
 
 .app-card-title,
 .card-title {
-  font-size: 19px !important;
+  font-size: 21px !important;
   font-weight: 700 !important;
   color: #0f172a !important;
   margin: 0 !important;
@@ -330,28 +346,28 @@ small,
 }
 
 .app-stat-label {
-  font-size: 15px !important;
-  font-weight: 600 !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
   color: #475569 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.04em !important;
 }
 
 .app-stat-icon {
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 12px !important;
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 14px !important;
   background: var(--primary-light) !important;
   color: var(--primary) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 20px !important;
+  font-size: 24px !important;
   flex-shrink: 0 !important;
 }
 
 .app-stat-value {
-  font-size: 36px !important;
+  font-size: 44px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
   line-height: 1.15 !important;
@@ -362,8 +378,8 @@ small,
 }
 
 .app-stat-unit {
-  font-size: 15px !important;
-  font-weight: 600 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
   color: #64748b !important;
   margin-left: 4px !important;
 }

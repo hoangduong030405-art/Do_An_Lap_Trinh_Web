@@ -65,10 +65,10 @@
                 <div class="card-body p-4">
                     <!-- 1. CHỌN KHÁCH HÀNG -->
                     <div class="mb-3.5">
-                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 15px;">
+                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 16px;">
                             1. Chọn Khách Hàng Nộp Tiền <span class="text-danger">*</span>
                         </label>
-                        <select class="form-select" @onchange="OnCustomerSelected" style="min-height: 44px; font-size: 15px;">
+                        <select class="form-select" @onchange="OnCustomerSelected" style="min-height: 48px; font-size: 16px;">
                             <option value="0">-- Bấm để chọn đại lý nộp tiền --</option>
                             @if (customers != null)
                             {
@@ -98,7 +98,7 @@
                                 <div class="col-4">
                                     <div class="p-2 rounded bg-white border">
                                         <div class="text-muted" style="font-size: 15px; font-weight: 600;">Hạn Nợ Chuẩn</div>
-                                        <div class="fw-bold text-dark" style="font-size: 15px;">
+                                        <div class="fw-bold text-dark" style="font-size: 16px;">
                                             @selectedCustomer.PaymentTermsDays ngày
                                         </div>
                                     </div>
@@ -118,7 +118,7 @@
                     <!-- 2. SỐ TIỀN THU -->
                     <div class="mb-3.5">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="form-label fw-bold text-dark mb-0" style="font-size: 15px;">
+                            <label class="form-label fw-bold text-dark mb-0" style="font-size: 16px;">
                                 2. Số Tiền Thu (VNĐ) <span class="text-danger">*</span>
                             </label>
                             @if (currentDebt > 0)
@@ -136,7 +136,7 @@
                         <div class="input-group">
                             <input type="number" 
                                    class="form-control text-end fw-bold text-primary" 
-                                   style="min-height: 46px; font-size: 18px; font-variant-numeric: tabular-nums;"
+                                   style="min-height: 52px; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums;"
                                    step="1000" 
                                    min="1" 
                                    @bind="paymentAmount" 
@@ -155,7 +155,7 @@
 
                     <!-- 3. NGÀY THU TIỀN -->
                     <div class="mb-3.5">
-                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 15px;">
+                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 16px;">
                             3. Ngày Thu Tiền <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control" @bind="paymentDate" style="min-height: 44px;" />
@@ -163,7 +163,7 @@
 
                     <!-- 4. GHI CHÚ -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 15px;">
+                        <label class="form-label fw-bold text-dark mb-1" style="font-size: 16px;">
                             4. Ghi Chú / Nội Dung Nộp Tiền
                         </label>
                         <input type="text" class="form-control" placeholder="VD: Khách trả nợ đợt 1 chuyển khoản qua VietQR / ACB..." @bind="note" style="min-height: 44px;" />
@@ -264,7 +264,7 @@
                                                 <span class="fw-bold text-dark">@inv.InvoiceNumber</span>
                                             </td>
                                             <td>
-                                                <div class="fw-semibold text-dark" style="font-size: 15px;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</div>
+                                                <div class="fw-semibold text-dark" style="font-size: 16px;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</div>
                                                 <small class="text-muted" style="font-size: 14.5px;">Hạn: @inv.DueDate.ToString("dd/MM/yyyy")</small>
                                             </td>
                                             <td class="text-end text-muted" style="font-size: 15px; font-variant-numeric: tabular-nums;">
@@ -304,7 +304,7 @@
                 @if (selectedCustomerId > 0 && unpaidInvoices != null && unpaidInvoices.Any())
                 {
                     <div class="card-footer bg-light py-3 px-4 d-flex justify-content-between align-items-center" style="border-top: 1px solid #e5eaf1;">
-                        <span class="text-muted fw-semibold" style="font-size: 15px;">Tổng công nợ cần thu tất cả hóa đơn:</span>
+                        <span class="text-muted fw-semibold" style="font-size: 16px;">Tổng công nợ cần thu tất cả hóa đơn:</span>
                         <span class="fw-bold text-danger fs-5" style="font-variant-numeric: tabular-nums;">@currentDebt.ToString("N0") đ</span>
                     </div>
                 }

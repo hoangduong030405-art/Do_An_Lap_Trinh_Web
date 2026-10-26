@@ -282,9 +282,9 @@ a:hover, .btn-link:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 9px 0;
+    padding: 13px 0;
     border-bottom: 1px dashed #e2e8f0;
-    font-size: 15px;
+    font-size: 16.5px;
 }
 .app-metric-row:last-child {
     border-bottom: none;
@@ -292,33 +292,38 @@ a:hover, .btn-link:hover {
 
 .app-metric-val-blue {
     color: #0075ff;
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 800;
+    font-size: 19px;
+    font-variant-numeric: tabular-nums;
 }
 .app-metric-val-green {
     color: #00b060;
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 800;
+    font-size: 19px;
+    font-variant-numeric: tabular-nums;
 }
 .app-metric-val-dark {
     color: #0f172a !important;
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 800;
+    font-size: 19px;
+    font-variant-numeric: tabular-nums;
 }
 .app-metric-val-orange {
     color: #ff7700;
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 800;
+    font-size: 19px;
+    font-variant-numeric: tabular-nums;
 }
 .app-metric-val-red {
     color: #ef4444;
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 800;
+    font-size: 19px;
+    font-variant-numeric: tabular-nums;
 }
 
 .app-debt-bar {
-    height: 14px;
-    border-radius: 4px;
+    height: 20px;
+    border-radius: 8px;
     overflow: hidden;
     display: flex;
     background-color: #cbd5e1;

@@ -542,11 +542,11 @@ else if (dashboard != null)
 
                         </div>
 
-                        <div class="progress" style="height: 6px;">
+                        <div class="progress" style="height: 10px; border-radius: 6px;">
 
-                            <div class="progress-bar bg-success" style="width: @(Math.Min(100, Math.Max(5, profitMargin)))%"></div>
+                            <div class="progress-bar bg-success rounded-pill" style="width: @(Math.Min(100, Math.Max(5, profitMargin)))%"></div>
 
-                            <div class="progress-bar bg-secondary-subtle" style="width: @(Math.Max(0, 100 - profitMargin))%"></div>
+                            <div class="progress-bar bg-secondary-subtle rounded-pill" style="width: @(Math.Max(0, 100 - profitMargin))%"></div>
 
                         </div>
 
@@ -594,11 +594,11 @@ else if (dashboard != null)
 
                     <div>
 
-                        <div class="mb-2">
+                        <div class="mb-2.5">
 
-                            <div class="text-muted small" style="font-size: 15px;">Tổng nợ phải thu</div>
+                            <div class="text-muted" style="font-size: 16px;">Tổng nợ phải thu</div>
 
-                            <div class="fs-4 fw-bold text-slate-navy">
+                            <div class="fw-bold text-slate-navy" style="font-size: 32px; line-height: 1.2; font-variant-numeric: tabular-nums;">
 
                                 @((dashboard.TotalOutstandingDebt / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Triệu đồng</small>
 
@@ -608,15 +608,15 @@ else if (dashboard != null)
 
 
 
-                        <div class="d-flex justify-content-between align-items-center mb-2 small">
+                        <div class="d-flex justify-content-between align-items-center mb-2.5">
 
                             <div>
 
-                                <div class="text-muted" style="font-size: 15px;">Quá hạn</div>
+                                <div class="text-muted" style="font-size: 16px;">Quá hạn</div>
 
-                                <div class="fw-bold text-orange" style="color: #ff7700;">
+                                <div class="fw-bold text-orange" style="color: #ff7700; font-size: 22px; font-variant-numeric: tabular-nums;">
 
-                                    @((overdueDebt / 1000000m).ToString("N1")) <small class="fw-normal">Trđ</small>
+                                    @((overdueDebt / 1000000m).ToString("N1")) <small class="fw-normal fs-6">Trđ</small>
 
                                 </div>
 
@@ -624,11 +624,11 @@ else if (dashboard != null)
 
                             <div class="text-end">
 
-                                <div class="text-muted" style="font-size: 15px;">Trong Hạn</div>
+                                <div class="text-muted" style="font-size: 16px;">Trong Hạn</div>
 
-                                <div class="fw-bold text-secondary">
+                                <div class="fw-bold text-secondary" style="font-size: 22px; font-variant-numeric: tabular-nums;">
 
-                                    @((withinTermDebt / 1000000m).ToString("N1")) <small class="fw-normal">Trđ</small>
+                                    @((withinTermDebt / 1000000m).ToString("N1")) <small class="fw-normal fs-6">Trđ</small>
 
                                 </div>
 
@@ -762,21 +762,21 @@ else if (dashboard != null)
 
                     <div>
 
-                        <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="d-flex align-items-center justify-content-between mb-2.5">
 
                             <div>
 
-                                <span class="text-muted small" style="font-size: 15px;">Doanh số bán chịu:</span>
+                                <span class="text-muted" style="font-size: 16px;">Doanh số bán chịu:</span>
 
-                                <div class="fs-5 fw-bold text-primary">@((dashboard.TotalRevenue / 1000000m).ToString("N1")) Trđ</div>
+                                <div class="fw-bold text-primary" style="font-size: 26px; font-variant-numeric: tabular-nums;">@((dashboard.TotalRevenue / 1000000m).ToString("N1")) <small class="fs-6 fw-normal">Trđ</small></div>
 
                             </div>
 
                             <div class="text-end">
 
-                                <span class="text-muted small" style="font-size: 15px;">Tiền thu về (FIFO):</span>
+                                <span class="text-muted" style="font-size: 16px;">Tiền thu về (FIFO):</span>
 
-                                <div class="fs-5 fw-bold text-success">@((dashboard.TotalCollectedAmount / 1000000m).ToString("N1")) Trđ</div>
+                                <div class="fw-bold text-success" style="font-size: 26px; font-variant-numeric: tabular-nums;">@((dashboard.TotalCollectedAmount / 1000000m).ToString("N1")) <small class="fs-6 fw-normal">Trđ</small></div>
 
                             </div>
 
@@ -784,11 +784,11 @@ else if (dashboard != null)
 
 
 
-                        <!-- Mini Dual Bar Graphic -->
+                        <!-- Mini Dual Bar Graphic (Upgraded Size) -->
 
-                        <div class="bg-light rounded p-2.5 mb-2 border">
+                        <div class="bg-light rounded-3 p-3 mb-2.5 border">
 
-                            <div class="d-flex align-items-end justify-content-around" style="height: 105px;">
+                            <div class="d-flex align-items-end justify-content-around" style="height: 160px;">
 
                                 @if (dashboard.MonthlyRevenues.Any())
 
@@ -800,21 +800,21 @@ else if (dashboard != null)
 
                                     {
 
-                                        var revHeight = Math.Max(8, (int)((m.Revenue / maxVal) * 85));
+                                        var revHeight = Math.Max(12, (int)((m.Revenue / maxVal) * 125));
 
-                                        var colHeight = Math.Max(8, (int)((m.Collected / maxVal) * 85));
+                                        var colHeight = Math.Max(12, (int)((m.Collected / maxVal) * 125));
 
-                                        <div class="d-flex flex-column align-items-center gap-1">
+                                        <div class="d-flex flex-column align-items-center gap-1.5">
 
-                                            <div class="d-flex align-items-end gap-1" style="height: 85px;">
+                                            <div class="d-flex align-items-end gap-1.5" style="height: 125px;">
 
-                                                <div class="bg-primary rounded-top" style="width: 10px; height: @(revHeight)px;" title="Doanh thu: @((m.Revenue / 1000000m).ToString("N1")) Trđ"></div>
+                                                <div class="bg-primary rounded-top shadow-xs" style="width: 18px; height: @(revHeight)px;" title="Doanh thu: @((m.Revenue / 1000000m).ToString("N1")) Trđ"></div>
 
-                                                <div class="bg-success rounded-top" style="width: 10px; height: @(colHeight)px;" title="Thu tiền: @((m.Collected / 1000000m).ToString("N1")) Trđ"></div>
+                                                <div class="bg-success rounded-top shadow-xs" style="width: 18px; height: @(colHeight)px;" title="Thu tiền: @((m.Collected / 1000000m).ToString("N1")) Trđ"></div>
 
                                             </div>
 
-                                            <span class="text-muted" style="font-size: 15px;">@m.MonthLabel</span>
+                                            <span class="text-secondary fw-bold" style="font-size: 15px;">@m.MonthLabel</span>
 
                                         </div>
 
@@ -824,7 +824,7 @@ else if (dashboard != null)
 
                             </div>
 
-                            <div class="d-flex justify-content-center gap-3 mt-1.5" style="font-size: 15px;">
+                            <div class="d-flex justify-content-center gap-4 mt-2" style="font-size: 15px; font-weight: 600;">
 
                                 <span><span class="app-dot bg-primary"></span> Bán ra</span>
 
@@ -944,23 +944,11 @@ else if (dashboard != null)
 
                         <div>
 
-                            <span class="text-muted small d-block" style="font-size: 14px; letter-spacing: 0.3px;">DOANH THU</span>
+                            <span class="text-muted d-block fw-bold" style="font-size: 14.5px; letter-spacing: 0.5px;">DOANH THU</span>
 
-                            <span class="fw-bold fs-5" style="color: #00b060;">
+                            <span class="fw-bold" style="color: #00b060; font-size: 26px; font-variant-numeric: tabular-nums;">
 
-                                @((chartTotalRevenue / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 15px;">Triệu đồng</small>
-
-                            </span>
-
-                        </div>
-
-                        <div>
-
-                            <span class="text-muted small d-block" style="font-size: 14px; letter-spacing: 0.3px;">CHI PHÍ</span>
-
-                            <span class="fw-bold text-slate-navy fs-5">
-
-                                @((chartTotalCost / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 15px;">Triệu đồng</small>
+                                @((chartTotalRevenue / 1000000m).ToString("N3")) <small class="fw-normal text-muted fs-6">Triệu đồng</small>
 
                             </span>
 
@@ -968,11 +956,23 @@ else if (dashboard != null)
 
                         <div>
 
-                            <span class="small d-block fw-semibold" style="color: #ff7700; font-size: 14px; letter-spacing: 0.3px;">LỢI NHUẬN</span>
+                            <span class="text-muted d-block fw-bold" style="font-size: 14.5px; letter-spacing: 0.5px;">CHI PHÍ</span>
 
-                            <span class="fw-bold fs-5" style="color: #ff7700;">
+                            <span class="fw-bold text-slate-navy" style="font-size: 26px; font-variant-numeric: tabular-nums;">
 
-                                @((chartTotalProfit / 1000000m).ToString("N3")) <small class="fw-normal text-muted" style="font-size: 15px;">Triệu đồng</small>
+                                @((chartTotalCost / 1000000m).ToString("N3")) <small class="fw-normal text-muted fs-6">Triệu đồng</small>
+
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <span class="d-block fw-bold" style="color: #ff7700; font-size: 14.5px; letter-spacing: 0.5px;">LỢI NHUẬN</span>
+
+                            <span class="fw-bold" style="color: #ff7700; font-size: 26px; font-variant-numeric: tabular-nums;">
+
+                                @((chartTotalProfit / 1000000m).ToString("N3")) <small class="fw-normal text-muted fs-6">Triệu đồng</small>
 
                             </span>
 
@@ -984,7 +984,7 @@ else if (dashboard != null)
 
                     <!-- Interactive Enterprise B2B Chart (12 Months Bar & Line) -->
 
-                    <div class="position-relative" style="height: 240px; width: 100%;">
+                    <div class="position-relative" style="height: 290px; width: 100%;">
 
                         
 
