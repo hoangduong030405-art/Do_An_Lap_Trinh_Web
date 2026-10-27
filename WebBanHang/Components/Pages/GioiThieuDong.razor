@@ -10,10 +10,10 @@
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 
-<PageTitle>WebBanHang B2B - Nền Tảng Phân Phối Sỉ & Quản Trị Công Nợ Doanh Nghiệp</PageTitle>
+<PageTitle>HUEGO B2B - Nền Tảng Phân Phối Sỉ & Quản Trị Tín Dụng Doanh Nghiệp</PageTitle>
 
 <div class="dong-layout">
-    <!-- Nền chuyển động động học Cyber Mesh & Constellation Nodes xuyên suốt toàn bộ trang -->
+    <!-- Nền chuyển động động học Cyber Mesh & Three.js 3D Particle Galaxy xuyên suốt toàn bộ trang -->
     <div class="dong-animated-bg" aria-hidden="true">
         <canvas id="dong-ambient-canvas"></canvas>
         <div class="dong-ambient-grid"></div>
@@ -28,7 +28,7 @@
     <nav class="dong-nav" aria-label="Main Navigation">
         <div class="nav-inner">
             <button type="button" class="nav-brand" @onclick='async () => await SmoothScrollTo("#hero")'>
-                Web<span class="brand-accent">BanHang</span> <span class="b2b-pill">B2B</span>
+                HUEGO<span class="brand-accent"> B2B</span>
             </button>
             <div class="nav-menu">
                 <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#stats")'>Chỉ số</button>
@@ -39,9 +39,9 @@
                 <button type="button" class="nav-menu-link" @onclick='async () => await SmoothScrollTo("#cta")'>Đăng ký</button>
             </div>
             <div class="nav-actions">
-                <a href="/login" class="nav-login-btn">
+                <button type="button" class="nav-login-btn" @onclick="OpenRoleModal" title="Chọn vai trò đăng nhập demo nhanh">
                     <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
-                </a>
+                </button>
                 @if (_isAuthenticated)
                 {
                     <a href="@_dashboardUrl" class="nav-btn nav-btn-primary">
@@ -65,9 +65,9 @@
             <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#steps"); _mobileOpen = false; }'>Quy trình 3 bước</button>
             <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#products"); _mobileOpen = false; }'>Danh mục hàng sỉ</button>
             <button type="button" class="mobile-menu-link" @onclick='async () => { await SmoothScrollTo("#credit"); _mobileOpen = false; }'>Hạn mức công nợ</button>
-            <a href="/login" class="mobile-login-link">
-                <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập cổng đại lý
-            </a>
+            <button type="button" class="mobile-login-link text-start" @onclick='() => { _mobileOpen = false; OpenRoleModal(); }'>
+                <i class="bi bi-box-arrow-in-right me-1"></i>Chọn vai trò Demo
+            </button>
             @if (_isAuthenticated)
             {
                 <a href="@_dashboardUrl" class="mobile-login-link text-center fw-bold text-white bg-blue-600 rounded py-2">
@@ -81,12 +81,12 @@
         </div>
     </nav>
 
-    <!-- 1. Hero với 3D Tech HUD + Floating holographic pills + Trust Strip -->
+    <!-- 1. Hero với 3D Interactive Three.js Holographic Supply Chain Globe & Floating FMCG Cubes -->
     <section id="hero" class="dong-hero">
         <div class="hero-container">
             <div class="hero-content hero-entrance">
                 <div class="hero-live-badge">
-                    <span class="live-dot"></span> B2B PLATFORM V2.4 • HẠN MỨC TÍN DỤNG QUÝ 2 ĐANG MỞ
+                    <span class="live-dot"></span> HUEGO B2B V4.0 • HỆ SINH THÁI PHÂN PHỐI SỈ & TÍN DỤNG TỰ ĐỘNG
                 </div>
                 <h1 class="hero-title">
                     Bán sỉ lớn,<br>
@@ -116,11 +116,14 @@
                 </div>
             </div>
 
-            <div class="hero-visual hero-entrance">
-                <div class="hero-visual-frame">
-                    <img src="images/gioi-thieu/hero-tech-hud.png" alt="B2B E-commerce Tech Warehouse" class="hero-visual-img" />
+            <!-- Khung 3D Three.js Tương tác Thay thế ảnh tĩnh iStock -->
+            <div class="hero-visual hero-entrance" id="hero-3d-container">
+                <div class="hero-visual-frame" title="Kéo chuột để xoay mô hình 3D Mạng Lưới Cung Ứng HUEGO B2B">
+                    <!-- Three.js Canvas -->
+                    <canvas id="hero-3d-scene"></canvas>
                     <div class="hero-visual-overlay"></div>
                     
+                    <!-- 3 Floating HUD Badges với Parallax 3D theo chuột -->
                     <div class="hero-float-pill pill-1">
                         <div class="pill-value"><i class="bi bi-box-seam text-amber"></i> 10,000+</div>
                         <div class="pill-label">Đơn hàng lô hoàn tất</div>
@@ -131,34 +134,34 @@
                     </div>
                     <div class="hero-float-pill pill-3">
                         <div class="pill-value"><i class="bi bi-credit-card text-blue"></i> 50 Tỷ+</div>
-                        <div class="pill-label">Hạn mức tín dụng kích hoạt</div>
-                    </div>
-
-                    <!-- Watermark Blocker & Cloud Verified Badge -->
-                    <div class="hero-watermark-blocker">
-                        <i class="bi bi-shield-fill-check text-cyan"></i> B2B Cloud Verified
+                        <div class="pill-label">Hạn mức tín dụng linh hoạt</div>
+                        <div class="pill-sub-badge"><i class="bi bi-shield-fill-check text-cyan"></i> B2B Cloud Verified</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 2. Ticker đối tác (Dạng icon 3D claymorphic) -->
+    <!-- 2. Ticker đối tác - Chuẩn hóa Ngành FMCG & Kế toán B2B -->
     <section class="dong-ticker" aria-label="Ticker đối tác">
         <div class="ticker-track">
-            <span class="ticker-badge"><i class="bi bi-shop text-amber"></i> Cửa hàng bán lẻ</span>
-            <span class="ticker-badge"><i class="bi bi-buildings text-blue"></i> Tổng kho phân phối</span>
-            <span class="ticker-badge"><i class="bi bi-truck text-emerald"></i> Vận tải Pallet & Container</span>
-            <span class="ticker-badge"><i class="bi bi-bank text-amber"></i> Bảo lãnh tín dụng</span>
-            <span class="ticker-badge"><i class="bi bi-phone text-blue"></i> Thiết bị di động sỉ</span>
-            <span class="ticker-badge"><i class="bi bi-laptop text-emerald"></i> Laptop văn phòng theo lô</span>
-            <span class="ticker-badge"><i class="bi bi-headphones text-purple"></i> Phụ kiện chính hãng</span>
-            <span class="ticker-badge"><i class="bi bi-smartwatch text-amber"></i> Thiết bị IoT thông minh</span>
+            <span class="ticker-badge"><i class="bi bi-shop text-amber"></i> 🏪 Tạp hóa & Siêu thị mini</span>
+            <span class="ticker-badge"><i class="bi bi-buildings text-blue"></i> 🏭 Tổng kho phân phối FMCG</span>
+            <span class="ticker-badge"><i class="bi bi-cup-straw text-emerald"></i> 🍺 Bia & Nước giải khát theo Pallet</span>
+            <span class="ticker-badge"><i class="bi bi-cpu text-purple"></i> 💳 Cấp hạn mức tín dụng AI</span>
+            <span class="ticker-badge"><i class="bi bi-lightning-charge-fill text-amber"></i> ⚡ Gạch nợ tự động chuẩn FIFO</span>
+            <span class="ticker-badge"><i class="bi bi-qr-code-scan text-cyan"></i> 📲 Đối soát công nợ VietQR 24/7</span>
+            <span class="ticker-badge"><i class="bi bi-receipt text-emerald"></i> 🧾 Biên bản đối soát điện tử</span>
+            <span class="ticker-badge"><i class="bi bi-box-seam text-blue"></i> 🍜 Thực phẩm & Hàng tiêu dùng nhanh</span>
             <!-- Lặp lại để chạy vô tận -->
-            <span class="ticker-badge"><i class="bi bi-shop text-amber"></i> Cửa hàng bán lẻ</span>
-            <span class="ticker-badge"><i class="bi bi-buildings text-blue"></i> Tổng kho phân phối</span>
-            <span class="ticker-badge"><i class="bi bi-truck text-emerald"></i> Vận tải Pallet & Container</span>
-            <span class="ticker-badge"><i class="bi bi-bank text-amber"></i> Bảo lãnh tín dụng</span>
+            <span class="ticker-badge"><i class="bi bi-shop text-amber"></i> 🏪 Tạp hóa & Siêu thị mini</span>
+            <span class="ticker-badge"><i class="bi bi-buildings text-blue"></i> 🏭 Tổng kho phân phối FMCG</span>
+            <span class="ticker-badge"><i class="bi bi-cup-straw text-emerald"></i> 🍺 Bia & Nước giải khát theo Pallet</span>
+            <span class="ticker-badge"><i class="bi bi-cpu text-purple"></i> 💳 Cấp hạn mức tín dụng AI</span>
+            <span class="ticker-badge"><i class="bi bi-lightning-charge-fill text-amber"></i> ⚡ Gạch nợ tự động chuẩn FIFO</span>
+            <span class="ticker-badge"><i class="bi bi-qr-code-scan text-cyan"></i> 📲 Đối soát công nợ VietQR 24/7</span>
+            <span class="ticker-badge"><i class="bi bi-receipt text-emerald"></i> 🧾 Biên bản đối soát điện tử</span>
+            <span class="ticker-badge"><i class="bi bi-box-seam text-blue"></i> 🍜 Thực phẩm & Hàng tiêu dùng nhanh</span>
         </div>
     </section>
 
@@ -209,7 +212,7 @@
     <section id="values" class="dong-values">
         <div class="section-head reveal">
             <div class="section-tag">Giá trị cốt lõi</div>
-            <h2 class="section-title">Tại sao chọn WebBanHang B2B</h2>
+            <h2 class="section-title">Tại sao chọn HUEGO B2B</h2>
             <p class="section-desc">Giải pháp tối ưu hóa dòng tiền và năng lực cung ứng cho nhà bán sỉ & đại lý.</p>
         </div>
         <div class="values-grid">
@@ -300,7 +303,7 @@
         </div>
     </section>
 
-    <!-- 6. Products / Danh mục sản phẩm sỉ với ảnh sản phẩm thật nổi bật & không bị đè ô -->
+    <!-- 6. Products / Danh mục sản phẩm sỉ với 3D Perspective Card Tilt & Antigravity Levitation -->
     <section id="products" class="dong-products">
         <div class="section-head reveal">
             <div class="section-tag">
@@ -313,8 +316,8 @@
         <div class="products-grid">
             @foreach (var p in _products)
             {
-                <div class="product-card reveal">
-                    <!-- Top Meta Bar: Category và MOQ trên một hàng Flex riêng biệt, KHÔNG BỊ ĐÈ NHAU -->
+                <div class="product-card reveal" title="Di chuột để xem hiệu ứng 3D Card Tilt">
+                    <!-- Top Meta Bar: Category và MOQ -->
                     <div class="product-card-top">
                         <span class="product-cat-pill">
                             <i class="bi bi-tag-fill me-1"></i>@p.Category
@@ -324,10 +327,11 @@
                         </span>
                     </div>
 
-                    <!-- Visual Stage: Hiển thị sản phẩm 3D nổi bật kèm hiệu ứng ánh hào quang cực quang -->
+                    <!-- Visual Stage: Hiển thị sản phẩm 3D với hiệu ứng Antigravity Levitation -->
                     <div class="product-stage">
                         <div class="product-ambient-halo" style="background: radial-gradient(circle, @p.GlowColor 0%, rgba(15, 28, 63, 0) 70%);"></div>
                         <img src="@p.ImgUrl" alt="@p.Name" class="product-showcase-img" loading="lazy" />
+                        <div class="product-ambient-shadow"></div>
                         <span class="product-spec-chip">@p.PackSpec</span>
                     </div>
 
@@ -352,7 +356,7 @@
                                     @p.Price.ToString("#,##") <span class="price-currency">₫ / @p.Unit</span>
                                 </div>
                             </div>
-                            <button type="button" class="btn-product-order" @onclick='() => SelectProduct(p.Id)' title="Xem chiết khấu bậc thang">
+                            <button type="button" class="btn-product-order" @onclick='() => SelectProduct(p.Id)' title="Xem chiết khấu bậc thang và đặt hàng">
                                 <span>Báo giá sỉ</span>
                                 <i class="bi bi-arrow-right"></i>
                             </button>
@@ -362,25 +366,39 @@
             }
         </div>
 
-        <!-- Banner Mạng lưới cung ứng thông minh -->
+        <!-- Banner Mạng lưới cung ứng thông minh 3D Three.js Isometric Nodes & Automated FIFO Data Flow -->
         <div class="supply-network-banner reveal">
             <div class="supply-banner-content">
                 <span class="hero-badge mb-2 d-inline-block">Mạng Lưới Vận Hành 4.0</span>
                 <h3 class="fs-4 fw-bold text-white mb-2">Hệ sinh thái phân phối số kết nối đa kênh</h3>
                 <p class="text-secondary small mb-3">
-                    Đồng bộ kho thời gian thực, tự động xuất hóa đơn VAT và tích hợp quản trị hạn mức công nợ thông minh cho từng đối tác nhượng quyền &amp; chuỗi bán lẻ.
+                    Đồng bộ kho hàng thời gian thực, quét VietQR thanh toán 24/7 và tự động cấn trừ công nợ theo chuẩn FIFO trên sổ cái kế toán doanh nghiệp.
                 </p>
-                <button type="button" class="btn btn-sm btn-primary" @onclick='async () => await SmoothScrollTo("#cta")'>
-                    Hợp tác phân phối ngay
-                </button>
+                <div class="d-flex gap-2.5 flex-wrap">
+                    <button type="button" class="btn btn-sm btn-primary" @onclick='async () => await SmoothScrollTo("#cta")'>
+                        Hợp tác phân phối ngay
+                    </button>
+                    <a href="/portal/store" class="btn btn-sm btn-outline">
+                        <i class="bi bi-shop me-1"></i>Cổng Đặt Hàng Đại Lý
+                    </a>
+                </div>
             </div>
-            <div>
-                <img src="images/gioi-thieu/ecommerce-network.png" alt="E-Commerce B2B Supply Chain Network" class="supply-banner-img" />
+            
+            <!-- Three.js 3D Isometric Nodes Canvas thay thế ảnh tĩnh 2D -->
+            <div class="supply-banner-visual" id="supply-3d-container" title="Dòng dữ liệu tự động giữa 3 điểm nút: Kho Hàng Sỉ ➔ Cổng Đại Lý ➔ Sổ Cái FIFO">
+                <canvas id="supply-3d-scene"></canvas>
+                <div class="supply-3d-legend">
+                    <span class="legend-node node-warehouse"><i class="bi bi-building"></i> Kho Hàng Sỉ</span>
+                    <span class="legend-arrow">➔</span>
+                    <span class="legend-node node-portal"><i class="bi bi-qr-code"></i> Cổng Đại Lý (VietQR)</span>
+                    <span class="legend-arrow">➔</span>
+                    <span class="legend-node node-fifo"><i class="bi bi-journal-check"></i> Sổ Cái FIFO</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Modal Xem Chi Tiết Sản Phẩm -->
+    <!-- Modal Xem Chi Tiết Báo Giá Sản Phẩm & Điều Hướng Trực Tiếp -->
     @if (_selectedProduct != null)
     {
         <div class="modal-backdrop-custom" @onclick="CloseProductModal">
@@ -420,55 +438,63 @@
                 </div>
                 <div class="modal-footer-custom">
                     <button type="button" class="btn btn-outline" @onclick="CloseProductModal">Đóng</button>
-                    <button type="button" class="btn btn-primary" @onclick='async () => { CloseProductModal(); await SmoothScrollTo("#cta"); }'>
-                        Tạo đơn đặt sỉ ngay
-                    </button>
+                    <a href="/portal/store" class="btn btn-primary">
+                        <i class="bi bi-cart3 me-1"></i>Đặt Hàng Tại Cổng Đại Lý
+                    </a>
                 </div>
             </div>
         </div>
     }
 
-    <!-- 7. Credit / Giải pháp công nợ B2B với 3 Gói Hạn Mức & Aging Buckets -->
+    <!-- 7. Credit / Giải pháp công nợ B2B với 3 Gói Tín Dụng Đồng Bộ Hệ Thống AI & FIFO -->
     <section id="credit" class="dong-credit">
         <div class="credit-glass reveal">
             <div class="credit-head">
                 <span class="credit-tag">Tài chính chuỗi cung ứng</span>
                 <h2 class="section-title">Giải pháp công nợ doanh nghiệp B2B</h2>
                 <p class="section-desc">
-                    Tối ưu vốn lưu động. Nhập hàng trước, bán hàng thu tiền, sau đó thanh toán nợ theo chu kỳ thỏa thuận với 0% lãi suất trong hạn.
+                    Tối ưu vốn lưu động. Nhập hàng trước, bán hàng thu tiền, sau đó thanh toán nợ theo chu kỳ thỏa thuận với 0% lãi suất trong hạn và cấn trừ nợ chuẩn FIFO.
                 </p>
             </div>
 
-            <!-- 3 Hạng Hạn Mức Tín Dụng -->
+            <!-- 3 Hạng Hạn Mức Tín Dụng Khớp Nghiệp Vụ Thực Tế -->
             <div class="credit-tiers-grid">
+                <!-- Gói 1: Hạng Tiêu Chuẩn (Hạng B) -->
                 <div class="credit-tier-card">
-                    <div class="tier-name text-blue"><i class="bi bi-award me-1"></i>Hạng Bạc (Silver)</div>
-                    <div class="tier-limit">500 Triệu</div>
+                    <div class="tier-name text-blue"><i class="bi bi-shield-check me-1"></i>🛡️ HẠNG TIÊU CHUẨN (HẠNG B - ỔN ĐỊNH)</div>
+                    <div class="tier-limit">25 - 50 Triệu</div>
                     <div class="tier-cycle">Chu kỳ trả chậm T+30 ngày</div>
                     <ul class="tier-points">
-                        <li><i class="bi bi-check2 text-emerald"></i> Doanh nghiệp mới gia nhập</li>
-                        <li><i class="bi bi-check2 text-emerald"></i> Duyệt hồ sơ trong 4 giờ</li>
-                        <li><i class="bi bi-check2 text-emerald"></i> Miễn phí thẩm định ban đầu</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Mở khóa đặt sỉ trực tuyến tại Cổng Đại Lý</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Tự động cấn trừ nợ theo chuẩn FIFO</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Thẩm định & kích hoạt hạn mức trong 4 giờ</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Miễn phí duy trì & tra cứu công nợ 24/7</li>
                     </ul>
                 </div>
+
+                <!-- Gói 2: Hạng Ưu Tiên (Hạng A) - Phổ biến -->
                 <div class="credit-tier-card featured">
-                    <div class="tier-name text-amber"><i class="bi bi-stars me-1"></i>Hạng Vàng (Gold) • Phổ biến</div>
-                    <div class="tier-limit">1.2 Tỷ VNĐ</div>
+                    <div class="tier-name text-amber"><i class="bi bi-trophy-fill me-1"></i>🏆 HẠNG ƯU TIÊN (HẠNG A - AN TOÀN - PHỔ BIẾN)</div>
+                    <div class="tier-limit">80 - 500 Triệu</div>
                     <div class="tier-cycle">Chu kỳ trả chậm T+45 ngày</div>
                     <ul class="tier-points">
-                        <li><i class="bi bi-check2 text-emerald"></i> Doanh số sỉ &gt; 1 tỷ/tháng</li>
-                        <li><i class="bi bi-check2 text-emerald"></i> Tự động nâng hạn mức</li>
-                        <li><i class="bi bi-check2 text-emerald"></i> Chuyên viên đối soát riêng 1-1</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> AI thẩm định nâng hạn mức tự động</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> 0% lãi suất trong thời hạn cam kết</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Hỗ trợ phê duyệt đơn vượt trần tạm thời</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Chuyên viên kế toán đối soát riêng 1-1</li>
                     </ul>
                 </div>
+
+                <!-- Gói 3: Hạng Đại Lý Chiến Lược (VIP B2B) -->
                 <div class="credit-tier-card">
-                    <div class="tier-name text-purple"><i class="bi bi-gem me-1"></i>Hạng Kim Cương</div>
-                    <div class="tier-limit">2.0 Tỷ VNĐ</div>
+                    <div class="tier-name text-purple"><i class="bi bi-gem me-1"></i>💎 HẠNG ĐẠI LÝ CHIẾN LƯỢC (VIP B2B)</div>
+                    <div class="tier-limit">Trên 1.2 Tỷ VNĐ</div>
                     <div class="tier-cycle">Chu kỳ trả chậm T+60 ngày</div>
                     <ul class="tier-points">
-                        <li><i class="bi bi-check2 text-emerald"></i> Chuỗi bán lẻ trên 5 cửa hàng</li>
-                        <li><i class="bi bi-check2 text-emerald"></i> Ưu tiên xuất kho hỏa tốc 24h</li>
-                        <li><i class="bi bi-check2 text-emerald"></i> Hỗ trợ bảo lãnh ngân hàng</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Chiết khấu bậc thang theo Pallet & Container</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Ưu tiên xuất kho hỏa tốc trong 24 giờ</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Kế toán viên đối soát riêng 1-1 qua VietQR</li>
+                        <li><i class="bi bi-check2 text-emerald"></i> Hỗ trợ bảo lãnh tín dụng ngân hàng (BIDV/VCB)</li>
                     </ul>
                 </div>
             </div>
@@ -508,7 +534,7 @@
         </div>
     </section>
 
-    <!-- 8. CTA / Đăng ký doanh nghiệp -->
+    <!-- 8. CTA / Đăng ký doanh nghiệp với Trải Nghiệm Điều Hướng Trực Tiếp -->
     <section id="cta" class="dong-cta">
         <div class="cta-card reveal">
             <h2>Sẵn sàng mở rộng kinh doanh sỉ?</h2>
@@ -516,16 +542,22 @@
             
             @if (_formSubmitted)
             {
-                <div class="cta-success-box">
-                    <div class="success-icon-wrap">
-                        <svg class="svg-icon text-emerald" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
+                <div class="cta-success-box text-center p-4">
+                    <div class="success-icon-wrap mb-3">
+                        <i class="bi bi-check-circle-fill text-emerald" style="font-size: 3rem;"></i>
                     </div>
-                    <h3 class="fs-5 fw-bold text-white mb-1">Đăng ký thành công!</h3>
-                    <p class="text-slate-300 small mb-0">
-                        Chuyên viên giải pháp B2B của chúng tôi sẽ liên hệ trong 4 giờ làm việc để kích hoạt hạn mức ban đầu.
+                    <h3 class="fs-4 fw-bold text-white mb-2">Thẩm Định Hồ Sơ Thành Công Bằng AI (AVA Copilot)!</h3>
+                    <p class="text-slate-300 small mb-4 mx-auto" style="max-width: 520px;">
+                        Hệ thống vừa thẩm định sơ bộ: Doanh nghiệp đạt điều kiện cấp <strong>Hạn mức Tiêu Chuẩn 50.000.000 đ</strong> (Chu kỳ T+30 ngày, gạch nợ tự động FIFO).
                     </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="/portal/dashboard" class="btn btn-primary btn-magnetic px-4 py-2.5">
+                            <i class="bi bi-speedometer2 me-1"></i> Trải Nghiệm Cổng Đại Lý Ngay
+                        </a>
+                        <button type="button" class="btn btn-outline px-4 py-2.5" @onclick="() => _formSubmitted = false">
+                            Đăng ký hồ sơ khác
+                        </button>
+                    </div>
                 </div>
             }
             else
@@ -560,7 +592,7 @@
     <footer class="dong-footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <div class="nav-brand">Web<span class="brand-accent">BanHang</span> <span class="b2b-pill">B2B</span></div>
+                <div class="nav-brand">HUEGO<span class="brand-accent"> B2B</span></div>
                 <p class="footer-desc">
                     Hệ thống phân phối sỉ và quản trị tín dụng thương mại B2B hiện đại, phục vụ hơn 500 chuỗi bán lẻ và đại lý toàn quốc.
                 </p>
@@ -576,18 +608,18 @@
                     <strong>Hỗ trợ đối tác</strong>
                     <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#steps")'>Quy trình giao nhận</button>
                     <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#values")'>Chính sách bảo hành</button>
-                    <a href="/login" class="footer-link-btn">Đăng nhập tài khoản</a>
+                    <button type="button" class="footer-link-btn text-start p-0" @onclick="OpenRoleModal">Đăng nhập tài khoản</button>
                 </div>
                 <div>
                     <strong>Công ty</strong>
-                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#hero")'>Về WebBanHang</button>
+                    <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#hero")'>Về HUEGO B2B</button>
                     <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#stats")'>Chỉ số tăng trưởng</button>
                     <button type="button" class="footer-link-btn" @onclick='async () => await SmoothScrollTo("#cta")'>Hợp tác phân phối</button>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            &copy; 2026 WebBanHang B2B. Nền tảng bán sỉ & quản lý công nợ doanh nghiệp. Bảo mật &amp; bản quyền.
+            &copy; 2026 HUEGO B2B. Nền tảng bán sỉ & quản trị công nợ doanh nghiệp chuẩn FIFO. Bảo mật &amp; bản quyền.
         </div>
     </footer>
 
@@ -597,11 +629,102 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7" />
         </svg>
     </button>
+
+    <!-- Modal Chọn Vai Trò Demo Nhanh -->
+    @if (_showRoleModal)
+    {
+        <div class="modal-backdrop-custom" @onclick="CloseRoleModal">
+            <div class="modal-card-custom" @onclick:stopPropagation style="max-width: 580px;">
+                <div class="modal-header-custom">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-icon-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+                            <i class="bi bi-person-badge-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h3 class="m-0 fs-5 fw-bold text-white">Chọn Vai Trò Trải Nghiệm Demo</h3>
+                            <div class="small text-slate-300">Hệ sinh thái HUEGO B2B • Phân hệ Bán Hàng & Quản Trị Công Nợ</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close-custom" @onclick="CloseRoleModal" aria-label="Đóng">&times;</button>
+                </div>
+                <div class="modal-body-custom">
+                    <p class="text-slate-300 small mb-3">
+                        Bấm vào bất kỳ vai trò nào bên dưới để hệ thống đăng nhập tức thì vào đúng phân hệ chức năng tương ứng:
+                    </p>
+                    <div class="role-demo-list">
+                        <!-- Role 1: Kế toán -->
+                        <div class="role-demo-card" @onclick='() => LoginRole("accountant", "123456", "/dashboard")'>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="role-demo-icon icon-accountant">
+                                    <i class="bi bi-calculator"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-white fs-6 d-flex align-items-center gap-2">
+                                        Kế Toán Trưởng & Quản Trị Công Nợ
+                                        <span class="role-demo-badge bg-emerald-950 text-emerald-300 border border-emerald-700">accountant</span>
+                                    </div>
+                                    <div class="small text-slate-300 mt-1">
+                                        Theo dõi 4 xô tuổi nợ, cấn trừ công nợ chuẩn FIFO, duyệt hạn mức tín dụng
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-right-circle-fill text-emerald fs-4"></i>
+                        </div>
+
+                        <!-- Role 2: Bán hàng -->
+                        <div class="role-demo-card" @onclick='() => LoginRole("sales", "123456", "/dashboard")'>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="role-demo-icon icon-sales">
+                                    <i class="bi bi-bag-check"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-white fs-6 d-flex align-items-center gap-2">
+                                        Nhân Viên Bán Hàng (Sales)
+                                        <span class="role-demo-badge bg-blue-950 text-blue-300 border border-blue-700">sales</span>
+                                    </div>
+                                    <div class="small text-slate-300 mt-1">
+                                        Lập hóa đơn xuất buôn, kiểm tra trần tín dụng khách hàng, giám sát kho
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-right-circle-fill text-blue fs-4"></i>
+                        </div>
+
+                        <!-- Role 3: Cổng đại lý -->
+                        <div class="role-demo-card" @onclick='() => LoginRole("customer", "123456", "/portal/dashboard")'>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="role-demo-icon icon-customer">
+                                    <i class="bi bi-shop"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-white fs-6 d-flex align-items-center gap-2">
+                                        Cổng Đại Lý - Tạp Hóa Bà Ba
+                                        <span class="role-demo-badge bg-amber-950 text-amber-300 border border-amber-700">customer</span>
+                                    </div>
+                                    <div class="small text-slate-300 mt-1">
+                                        Đặt hàng sỉ trực tuyến, xem hạn mức 100Tr, đối soát & quét VietQR thanh toán
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-right-circle-fill text-amber fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-custom justify-content-between">
+                    <a href="/login" class="text-slate-300 small text-decoration-none">
+                        <i class="bi bi-shield-lock me-1"></i>Đăng nhập tài khoản tùy chỉnh
+                    </a>
+                    <button type="button" class="btn btn-outline" @onclick="CloseRoleModal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
     private bool _mobileOpen = false;
     private bool _formSubmitted = false;
+    private bool _showRoleModal = false;
     private string _contactName = "";
     private string _contactEmail = "";
     private string _contactPhone = "";
@@ -742,12 +865,28 @@
             }
             catch (JSException)
             {
-                // Fallback nếu GSAP tải chậm
+                // Fallback nếu Three.js/GSAP tải chậm
             }
         }
     }
 
     private void ToggleMenu() => _mobileOpen = !_mobileOpen;
+
+    private void OpenRoleModal() => _showRoleModal = true;
+    private void CloseRoleModal() => _showRoleModal = false;
+
+    private async Task LoginRole(string username, string password, string returnUrl)
+    {
+        _showRoleModal = false;
+        try
+        {
+            await JS.InvokeVoidAsync("loginDemoRole", username, password, returnUrl);
+        }
+        catch
+        {
+            Navigation.NavigateTo($"/login?role={username}");
+        }
+    }
 
     private async Task SmoothScrollTo(string selector)
     {

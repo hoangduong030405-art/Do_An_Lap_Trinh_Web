@@ -1792,3 +1792,206 @@
 .dong-layout .hero-actions .btn { width: 100%; }
 .dong-layout .stat-card { width: 100%; text-align: center; }
 }
+
+/* ==========================================================================
+   THREE.JS 3D SCENES & ANTIGRAVITY ENHANCEMENTS
+   ========================================================================== */
+.dong-layout .hero-visual-frame {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid rgba(56, 189, 248, 0.45) !important;
+    background: radial-gradient(circle at 50% 50%, #0d1e45 0%, #050b1c 100%) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 50px rgba(59, 130, 246, 0.35);
+    height: 440px;
+    cursor: grab;
+}
+.dong-layout .hero-visual-frame:active {
+    cursor: grabbing;
+}
+.dong-layout #hero-3d-scene {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    z-index: 1;
+    outline: none;
+}
+.dong-layout .hero-float-pill {
+    z-index: 10;
+    pointer-events: auto;
+    transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+}
+.dong-layout .pill-sub-badge {
+    font-size: 0.72rem;
+    color: #38bdf8 !important;
+    margin-top: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.28);
+    padding: 0.15rem 0.55rem;
+    border-radius: 9999px;
+    font-weight: 700;
+}
+
+/* Supply Network Banner 3D Scene */
+.dong-layout .supply-banner-visual {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    background: radial-gradient(circle at center, #0a1738 0%, #040817 100%);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.dong-layout #supply-3d-scene {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    outline: none;
+}
+.dong-layout .supply-3d-legend {
+    position: absolute;
+    bottom: 0.85rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: rgba(10, 20, 45, 0.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 9999px;
+    padding: 0.35rem 0.95rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    white-space: nowrap;
+    z-index: 5;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+.dong-layout .legend-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.dong-layout .node-warehouse { color: #60a5fa; }
+.dong-layout .node-portal { color: #34d399; }
+.dong-layout .node-fifo { color: #fbbf24; }
+.dong-layout .legend-arrow { color: #94a3b8; font-size: 0.7rem; }
+
+/* 3D Product Perspective Tilt & Antigravity Levitation */
+.dong-layout .product-card {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    will-change: transform;
+    position: relative;
+}
+.dong-layout .product-card-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.12) 0%, transparent 60%);
+    border-radius: 18px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 5;
+}
+.dong-layout .product-card:hover .product-card-glare {
+    opacity: 1;
+}
+.dong-layout .product-stage {
+    transform-style: preserve-3d;
+}
+.dong-layout .product-showcase-img {
+    animation: antigravityFloat 3.8s ease-in-out infinite alternate;
+    will-change: transform;
+    transform-origin: center bottom;
+}
+.dong-layout .product-ambient-shadow {
+    width: 65%;
+    height: 12px;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    margin-top: 4px;
+    animation: antigravityShadow 3.8s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes antigravityFloat {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-7px) rotate(-1deg); }
+    100% { transform: translateY(5px) rotate(1deg); }
+}
+@keyframes antigravityShadow {
+    0% { transform: scale(1); opacity: 0.55; }
+    50% { transform: scale(0.8); opacity: 0.3; }
+    100% { transform: scale(1.15); opacity: 0.7; }
+}
+.dong-layout .product-card:hover .product-showcase-img {
+    transform: translateZ(38px) scale(1.1) !important;
+}
+
+/* Quick Role Demo Modal */
+.dong-layout .role-demo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+.dong-layout .role-demo-card {
+    background: rgba(18, 32, 68, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+    width: 100%;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.dong-layout .role-demo-card:hover {
+    background: rgba(28, 48, 98, 0.95);
+    border-color: rgba(56, 189, 248, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.2);
+}
+.dong-layout .role-demo-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+.dong-layout .icon-accountant {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+.dong-layout .icon-sales {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+.dong-layout .icon-customer {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+.dong-layout .role-demo-badge {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    font-weight: 700;
+}
