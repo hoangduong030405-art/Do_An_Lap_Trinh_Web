@@ -143,20 +143,17 @@
                                         }
                                         else
                                         {
-                                            <div class="d-flex align-items-center gap-2">
-                                                <div class="input-group input-group-sm quantity-spinner" style="max-width: 120px;">
-                                                    <button class="btn btn-outline-secondary" type="button" @onclick="() => DecrementQty(prod.Id)">-</button>
-                                                    <input type="number"
-                                                           class="form-control text-center fw-bold"
-                                                           value="@qty"
-                                                           min="1"
-                                                           max="@prod.StockQuantity"
-                                                           @onchange="(e) => OnQtyChanged(prod.Id, e.Value, prod.StockQuantity)" />
-                                                    <button class="btn btn-outline-secondary" type="button" @onclick="() => IncrementQty(prod.Id, prod.StockQuantity)">+</button>
+                                            <div class="d-flex align-items-center gap-2 mt-auto pt-2">
+                                                <div class="btn-group btn-group-sm border rounded-pill overflow-hidden shadow-xs flex-nowrap flex-shrink-0" style="background: #f8fafc; min-width: 96px;">
+                                                    <button type="button" class="btn btn-light px-2.5 fw-bold text-secondary border-0" @onclick="() => DecrementQty(prod.Id)" title="Giảm 1">-</button>
+                                                    <span class="btn btn-white disabled px-2 fw-bold text-dark border-start border-end text-center d-flex align-items-center justify-content-center" style="min-width: 36px; opacity: 1; font-size: 14.5px;">@qty</span>
+                                                    <button type="button" class="btn btn-light px-2.5 fw-bold text-secondary border-0" @onclick="() => IncrementQty(prod.Id, prod.StockQuantity)" title="Tăng 1">+</button>
                                                 </div>
-                                                <button class="btn btn-outline-primary btn-sm flex-grow-1 rounded-pill fw-semibold shadow-xs"
+                                                <button type="button" class="btn btn-primary btn-sm flex-grow-1 rounded-pill fw-semibold shadow-xs d-flex align-items-center justify-content-center gap-1.5 py-1.5 text-nowrap"
+                                                        style="min-height: 34px;"
                                                         @onclick="() => AddToCart(prod)">
-                                                    <i class="bi bi-cart-plus me-1"></i> Thêm vào đơn
+                                                    <i class="bi bi-cart-plus"></i>
+                                                    <span>Thêm vào đơn</span>
                                                 </button>
                                             </div>
                                         }

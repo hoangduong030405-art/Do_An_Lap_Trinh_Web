@@ -745,9 +745,9 @@ else if (dashboard != null)
 
                             var mData = dashboard.MonthlyRevenues.FirstOrDefault(x => x.MonthNumber == hm);
 
-                            var tooltipLeftPercent = Math.Max(8, Math.Min(88, (hm - 1) * 8.33 + 4.16));
+                            int tooltipLeftPercent = (int)Math.Round(Math.Clamp((double)(hm - 1) * 8.33 + 4.16, 14.0, 84.0));
 
-                            <div class="app-chart-tooltip" style="left: @(tooltipLeftPercent)%; top: 15px; transform: translateX(-50%);">
+                            <div class="app-chart-tooltip" style="left: @(tooltipLeftPercent)%; top: 15px; transform: translateX(-50%); z-index: 100;">
 
                                 <div class="fw-bold mb-1 border-bottom border-secondary border-opacity-50 pb-1" style="font-size: 14px; color: #10b981;">
 
