@@ -99,7 +99,7 @@ else if (dashboard != null)
 
                 <!-- Date Range Indicator -->
 
-                <span class="badge bg-light text-secondary border fw-normal py-2 px-3 d-none d-lg-inline-block" style="font-size: 15px;">
+                <span class="badge bg-light text-secondary border fw-normal py-2 px-3 d-none d-lg-inline-block" style="font-size: 17.5px;">
 
                     @periodStartDate.ToString("dd/MM/yyyy") - @periodEndDate.ToString("dd/MM/yyyy")
 
@@ -269,20 +269,20 @@ else if (dashboard != null)
 
     <div class="app-announcement-bar d-flex align-items-center justify-content-between p-2.5 px-3.5 mb-3 rounded-3 shadow-xs" style="background: linear-gradient(90deg, #eff6ff 0%, #ede9fe 50%, #ecfdf5 100%) !important; border: 1.5px solid #c7d2fe !important;">
         <div class="d-flex align-items-center gap-2.5 small">
-            <span class="badge text-white px-2.5 py-1 rounded-pill fw-bold" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); font-size: 14px; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);">MỚI</span>
+            <span class="badge text-white px-2.5 py-1 rounded-pill fw-bold" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); font-size: 19px; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);">MỚI</span>
             @if (isSales)
             {
-                <span class="fw-bold text-slate-navy" style="font-size: 16px;">Trợ lý AI Bán Hàng:</span>
-                <span class="text-secondary d-none d-md-inline" style="font-size: 15.5px;">Gợi ý đại lý còn nhiều hạn mức tín dụng để chào đơn mới</span>
+                <span class="fw-bold text-slate-navy" style="font-size: 18.5px;">Trợ lý AI Bán Hàng:</span>
+                <span class="text-secondary d-none d-md-inline" style="font-size: 21px;">Gợi ý đại lý còn nhiều hạn mức tín dụng để chào đơn mới</span>
             }
             else
             {
-                <span class="fw-bold text-slate-navy" style="font-size: 16px;">Khám phá Trợ lý AI AVA Kế toán:</span>
-                <span class="text-secondary d-none d-md-inline" style="font-size: 15.5px;">Tự động phân tích sức khỏe tài chính, giám sát tuổi nợ 4 xô và cảnh báo hạn mức bán hàng</span>
+                <span class="fw-bold text-slate-navy" style="font-size: 18.5px;">Khám phá Trợ lý AI AVA Kế toán:</span>
+                <span class="text-secondary d-none d-md-inline" style="font-size: 21px;">Tự động phân tích sức khỏe tài chính, giám sát tuổi nợ 4 xô và cảnh báo hạn mức bán hàng</span>
             }
         </div>
         <button class="btn btn-sm text-decoration-none fw-bold text-white d-flex align-items-center gap-1 shadow-xs px-3 py-1 rounded-3" 
-                style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border: none; font-size: 15px;"
+                style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border: none; font-size: 17.5px;"
                 @onclick="OpenAvaAnalysisModal">
             <span>Bắt đầu sử dụng</span>
             <i class="bi bi-arrow-right-short fs-5"></i>
@@ -296,19 +296,19 @@ else if (dashboard != null)
             <div class="d-flex align-items-center gap-2.5">
                 <img src="/images/ava-avatar.svg" alt="AVA AI" style="width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);" />
                 <div>
-                    <span class="fw-bold text-slate-navy" style="font-size: 17px;">Phân Tích Tài Chính Thông Minh Với AVA</span>
-                    <span class="badge bg-white text-primary border border-primary-subtle ms-2 px-2.5 py-1 rounded-pill small d-none d-md-inline" style="font-size: 14px; font-weight: 700;">• Cập nhật theo thời gian thực</span>
+                    <span class="fw-bold text-slate-navy" style="font-size: 19.5px;">Phân Tích Tài Chính Thông Minh Với AVA</span>
+                    <span class="badge bg-white text-primary border border-primary-subtle ms-2 px-2.5 py-1 rounded-pill small d-none d-md-inline" style="font-size: 19px; font-weight: 700;">• Cập nhật theo thời gian thực</span>
                 </div>
             </div>
             <div class="d-flex align-items-center gap-2">
                 <button class="btn btn-sm shadow-sm py-2 px-4 fw-bold d-flex align-items-center gap-1.5" 
-                        style="font-size: 15.5px; color: #ffffff !important; background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%) !important; border: none !important; border-radius: 12px !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important;"
+                        style="font-size: 21px; color: #ffffff !important; background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%) !important; border: none !important; border-radius: 12px !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35) !important;"
                         @onclick="OpenAvaAnalysisModal">
                     <i class="bi bi-stars"></i>
                     <span>Phân tích với AVA</span>
                 </button>
                 <button class="btn btn-sm btn-white border shadow-xs py-2 px-3 fw-bold d-flex align-items-center gap-1" 
-                        style="font-size: 15px; border-radius: 12px; background: #ffffff !important;"
+                        style="font-size: 17.5px; border-radius: 12px; background: #ffffff !important;"
                         @onclick="ToggleCustomizeModal">
                     <i class="bi bi-sliders2"></i>
                     <span class="d-none d-sm-inline">Tùy chỉnh</span>
@@ -324,15 +324,15 @@ else if (dashboard != null)
             <div class="col-12 col-md-4">
                 <div class="app-insight-card bg-white p-3 rounded-3 border" style="border: 1.5px solid #86efac !important; border-top: 4px solid #059669 !important; border-radius: 14px !important; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.08) !important;">
                     <div class="mb-2">
-                        <div class="d-flex align-items-center gap-1.5 fw-bold mb-1.5" style="color: #065f46; font-size: 16px;">
+                        <div class="d-flex align-items-center gap-1.5 fw-bold mb-1.5" style="color: #065f46; font-size: 18.5px;">
                             <i class="bi bi-graph-up-arrow fs-5"></i>
                             <span>Biên Lợi Nhuận Doanh Số</span>
                         </div>
-                        <p class="text-secondary mb-0" style="font-size: 15.5px; line-height: 1.55;">
+                        <p class="text-secondary mb-0" style="font-size: 21px; line-height: 1.55;">
                             Tổng doanh thu đạt <strong class="text-dark">@((dashboard.TotalRevenue / 1000000m).ToString("N1")) triệu đồng</strong>. Lợi nhuận gộp thực tế đạt <strong style="color: #059669;">+@((actualProfit / 1000000m).ToString("N1")) trđ (@profitMargin%)</strong>, duy trì tỷ suất sinh lời an toàn.
                         </p>
                     </div>
-                    <a href="/invoices" class="fw-bold text-decoration-none d-inline-flex align-items-center gap-1 mt-1" style="color: #2563eb; font-size: 15px;">
+                    <a href="/invoices" class="fw-bold text-decoration-none d-inline-flex align-items-center gap-1 mt-1" style="color: #2563eb; font-size: 17.5px;">
                         Phân tích chuyên sâu <i class="bi bi-chevron-right"></i>
                     </a>
                 </div>
@@ -342,11 +342,11 @@ else if (dashboard != null)
             <div class="col-12 col-md-4">
                 <div class="app-insight-card bg-white p-3 rounded-3 border" style="border: 1.5px solid #fde68a !important; border-top: 4px solid #d97706 !important; border-radius: 14px !important; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.08) !important;">
                     <div class="mb-2">
-                        <div class="d-flex align-items-center gap-1.5 fw-bold mb-1.5" style="color: #92400e; font-size: 16px;">
+                        <div class="d-flex align-items-center gap-1.5 fw-bold mb-1.5" style="color: #92400e; font-size: 18.5px;">
                             <i class="bi bi-pie-chart-fill fs-5"></i>
                             <span>Tập Trung Công Nợ Khách Hàng</span>
                         </div>
-                        <p class="text-secondary mb-0" style="font-size: 15.5px; line-height: 1.55;">
+                        <p class="text-secondary mb-0" style="font-size: 21px; line-height: 1.55;">
                             @{
                                 var debtorCount = dashboard.TopDebtors.Count;
                                 var debtorLabel = debtorCount < 5 ? $"{debtorCount} KH đang nợ" : "Top 5 KH nợ lớn nhất";
@@ -354,7 +354,7 @@ else if (dashboard != null)
                             Tổng công nợ @debtorLabel chiếm <strong class="text-dark">@(top5DebtPercentage.ToString("N1"))%</strong> tổng nợ phải thu. Nguồn thu phụ thuộc vào nhóm đại lý trọng điểm, cần giám sát chặt chẽ trần tín dụng.
                         </p>
                     </div>
-                    <a href="/aging-report" class="fw-bold text-decoration-none d-inline-flex align-items-center gap-1 mt-1" style="color: #d97706; font-size: 15px;">
+                    <a href="/aging-report" class="fw-bold text-decoration-none d-inline-flex align-items-center gap-1 mt-1" style="color: #d97706; font-size: 17.5px;">
                         Phân tích chuyên sâu <i class="bi bi-chevron-right"></i>
                     </a>
                 </div>
@@ -364,15 +364,15 @@ else if (dashboard != null)
             <div class="col-12 col-md-4">
                 <div class="app-insight-card bg-white p-3 rounded-3 border" style="border: 1.5px solid #bfdbfe !important; border-top: 4px solid #2563eb !important; border-radius: 14px !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08) !important;">
                     <div class="mb-2">
-                        <div class="d-flex align-items-center gap-1.5 fw-bold mb-1.5" style="color: #1e40af; font-size: 16px;">
+                        <div class="d-flex align-items-center gap-1.5 fw-bold mb-1.5" style="color: #1e40af; font-size: 18.5px;">
                             <i class="bi bi-shield-check fs-5"></i>
                             <span>Kiểm Soát Tuổi Nợ & Thu Hồi</span>
                         </div>
-                        <p class="text-secondary mb-0" style="font-size: 15.5px; line-height: 1.55;">
+                        <p class="text-secondary mb-0" style="font-size: 21px; line-height: 1.55;">
                             Tổng nợ <strong class="text-dark">@((dashboard.TotalOutstandingDebt / 1000000m).ToString("N1")) trđ</strong>. Tỷ lệ nợ quá hạn ở mức <strong style="color: #dc2626;">@(overduePercent.ToString("N1"))%</strong>. Khuyến nghị kế toán ưu tiên cấn trừ thu nợ theo nguyên tắc FIFO.
                         </p>
                     </div>
-                    <a href="/payments" class="fw-bold text-decoration-none d-inline-flex align-items-center gap-1 mt-1" style="color: #2563eb; font-size: 15px;">
+                    <a href="/payments" class="fw-bold text-decoration-none d-inline-flex align-items-center gap-1 mt-1" style="color: #2563eb; font-size: 17.5px;">
                         Phân tích chuyên sâu <i class="bi bi-chevron-right"></i>
                     </a>
                 </div>
@@ -424,13 +424,13 @@ else if (dashboard != null)
                                                 </div>
                                             </td>
                                             <td class="text-end">
-                                                <div class="fw-bold @(c.UtilizationRate >= 90 ? "text-danger" : "text-dark")" style="font-size: 13.5px;">
+                                                <div class="fw-bold @(c.UtilizationRate >= 90 ? "text-danger" : "text-dark")" style="font-size: 18.5px;">
                                                     @c.UtilizationRate%
                                                 </div>
-                                                <small class="text-muted" style="font-size: 12px;">@((c.CurrentDebt / 1000000m).ToString("N1"))/@((c.CreditLimit / 1000000m).ToString("N0")) Tr</small>
+                                                <small class="text-muted" style="font-size: 17.5px;">@((c.CurrentDebt / 1000000m).ToString("N1"))/@((c.CreditLimit / 1000000m).ToString("N0")) Tr</small>
                                             </td>
                                             <td class="text-center">
-                                                <a href="/create-invoice?customerId=@c.Id" class="btn btn-primary btn-sm py-0 px-2 fw-semibold" style="font-size: 12px;">
+                                                <a href="/create-invoice?customerId=@c.Id" class="btn btn-primary btn-sm py-0 px-2 fw-semibold" style="font-size: 17.5px;">
                                                     Lập đơn
                                                 </a>
                                             </td>
@@ -459,18 +459,18 @@ else if (dashboard != null)
                         </h6>
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-light text-secondary border small">@selectedPeriodText</span>
-                            <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
+                            <span class="text-muted small" style="font-size: 17.5px;">Đvt: Trđ</span>
                         </div>
                     </div>
 
                     <div class="app-card-body d-flex flex-column justify-content-center">
                         <div class="app-metric-row">
                             <span class="text-slate-navy fw-semibold">Doanh thu thuần</span>
-                            <span class="fw-bold" style="color: #1d4ed8; font-size: 20px; font-variant-numeric: tabular-nums;">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
+                            <span class="fw-bold" style="color: #1d4ed8; font-size: 24px; font-variant-numeric: tabular-nums;">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
                         </div>
                         <div class="app-metric-row">
                             <span class="text-slate-navy fw-semibold">Giá vốn hàng bán (COGS)</span>
-                            <span class="fw-bold text-danger" style="color: #dc2626 !important; font-size: 20px; font-variant-numeric: tabular-nums;">@((actualCost / 1000000m).ToString("N3"))</span>
+                            <span class="fw-bold text-danger" style="color: #dc2626 !important; font-size: 24px; font-variant-numeric: tabular-nums;">@((actualCost / 1000000m).ToString("N3"))</span>
                         </div>
                         <div class="app-metric-row p-2 rounded-2 my-1" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
                             <span class="fw-bold" style="color: #065f46;">Lợi nhuận gộp thực tế</span>
@@ -478,14 +478,14 @@ else if (dashboard != null)
                         </div>
                         <div class="app-metric-row">
                             <span class="text-slate-navy fw-semibold">Tổng vốn tồn kho đang chôn</span>
-                            <span class="fw-bold" style="color: #2563eb; font-size: 20px; font-variant-numeric: tabular-nums;">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
+                            <span class="fw-bold" style="color: #2563eb; font-size: 24px; font-variant-numeric: tabular-nums;">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
                         </div>
 
                         <!-- Profitability Ratio Progress Bar -->
                         <div class="mt-3 pt-2 border-top">
-                            <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
+                            <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 17.5px;">
                                 <span class="fw-semibold">Tỷ suất lợi nhuận gộp:</span>
-                                <span class="fw-bold" style="color: #059669; font-size: 16px;">@(profitMargin.ToString("N1"))%</span>
+                                <span class="fw-bold" style="color: #059669; font-size: 18.5px;">@(profitMargin.ToString("N1"))%</span>
                             </div>
                             <div class="progress" style="height: 12px; border-radius: 8px; background: #e2e8f0;">
                                 <div class="progress-bar rounded-pill shadow-xs" style="width: @(Math.Min(100, Math.Max(5, profitMargin)))%; background: linear-gradient(90deg, #10b981 0%, #059669 100%);"></div>
@@ -511,13 +511,13 @@ else if (dashboard != null)
                     <h6 class="app-card-title">
                         <span class="p-1 px-1.5 rounded-3 text-white me-1.5 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35);"><i class="bi bi-wallet2"></i></span> Nợ phải thu theo hạn nợ
                     </h6>
-                    <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
+                    <span class="text-muted small" style="font-size: 17.5px;">Đvt: Trđ</span>
                 </div>
 
                 <div class="app-card-body d-flex flex-column justify-content-between">
                     <div>
                         <div class="mb-2.5">
-                            <div class="text-secondary fw-semibold" style="font-size: 16px;">Tổng nợ phải thu</div>
+                            <div class="text-secondary fw-semibold" style="font-size: 18.5px;">Tổng nợ phải thu</div>
                             <div class="fw-bold text-slate-navy" style="font-size: 34px; line-height: 1.2; font-variant-numeric: tabular-nums;">
                                 @((dashboard.TotalOutstandingDebt / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Triệu đồng</small>
                             </div>
@@ -525,13 +525,13 @@ else if (dashboard != null)
 
                         <div class="d-flex justify-content-between align-items-center mb-2.5">
                             <div>
-                                <div class="text-secondary fw-semibold" style="font-size: 15.5px;">Quá hạn</div>
+                                <div class="text-secondary fw-semibold" style="font-size: 21px;">Quá hạn</div>
                                 <div class="fw-bold" style="color: #dc2626; font-size: 24px; font-variant-numeric: tabular-nums;">
                                     @((overdueDebt / 1000000m).ToString("N1")) <small class="fw-normal fs-6">Trđ</small>
                                 </div>
                             </div>
                             <div class="text-end">
-                                <div class="text-secondary fw-semibold" style="font-size: 15.5px;">Trong Hạn</div>
+                                <div class="text-secondary fw-semibold" style="font-size: 21px;">Trong Hạn</div>
                                 <div class="fw-bold" style="color: #059669; font-size: 24px; font-variant-numeric: tabular-nums;">
                                     @((withinTermDebt / 1000000m).ToString("N1")) <small class="fw-normal fs-6">Trđ</small>
                                 </div>
@@ -544,37 +544,37 @@ else if (dashboard != null)
                             <div style="width: @(currentBarWidth)%; background: linear-gradient(90deg, #10b981 0%, #059669 100%); transition: width 0.3s ease;" title="Trong hạn: @currentBarWidth.ToString("N1")%"></div>
                         </div>
 
-                        <div class="d-flex justify-content-between text-muted mb-3" style="font-size: 15px; font-weight: 700;">
-                            <span style="color: #dc2626;"><i class="bi bi-circle-fill me-1" style="font-size: 13px;"></i>Quá hạn (@overdueBarWidth.ToString("N0")%)</span>
-                            <span style="color: #059669;"><i class="bi bi-circle-fill me-1" style="font-size: 13px;"></i>Trong hạn (@currentBarWidth.ToString("N0")%)</span>
+                        <div class="d-flex justify-content-between text-muted mb-3" style="font-size: 17.5px; font-weight: 700;">
+                            <span style="color: #dc2626;"><i class="bi bi-circle-fill me-1" style="font-size: 18.5px;"></i>Quá hạn (@overdueBarWidth.ToString("N0")%)</span>
+                            <span style="color: #059669;"><i class="bi bi-circle-fill me-1" style="font-size: 18.5px;"></i>Trong hạn (@currentBarWidth.ToString("N0")%)</span>
                         </div>
                     </div>
 
                     <!-- Breakdown Table 5 Buckets (Single Source of Truth) -->
                     <div class="border rounded-3 p-2.5" style="background: #ffffff; border-color: #e2e8f0 !important;">
                         <div class="d-flex justify-content-between align-items-center py-1.5 px-2 rounded-2 mb-1" style="background: #f8fafc; border: 1px solid #f1f5f9;">
-                            <span class="fw-semibold" style="color: #475569; font-size: 15.5px;"><i class="bi bi-shield-check text-success me-1.5"></i>Chưa đến hạn:</span>
-                            <span class="fw-bold" style="color: #0f172a; font-size: 16.5px;">@((dashboard.OverallAging.BucketNotDue / 1000000m).ToString("N1")) Trđ</span>
+                            <span class="fw-semibold" style="color: #475569; font-size: 21px;"><i class="bi bi-shield-check text-success me-1.5"></i>Chưa đến hạn:</span>
+                            <span class="fw-bold" style="color: #0f172a; font-size: 19px;">@((dashboard.OverallAging.BucketNotDue / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center py-1.5 px-2 rounded-2 mb-1" style="background: #eff6ff; border: 1px solid #dbeafe;">
-                            <span class="fw-semibold" style="color: #1e40af; font-size: 15.5px;"><i class="bi bi-clock-history me-1.5"></i>Quá hạn 1 - 30 ngày:</span>
-                            <span class="fw-bold" style="color: #1d4ed8; font-size: 16.5px;">@((dashboard.OverallAging.Bucket1To30 / 1000000m).ToString("N1")) Trđ</span>
+                            <span class="fw-semibold" style="color: #1e40af; font-size: 21px;"><i class="bi bi-clock-history me-1.5"></i>Quá hạn 1 - 30 ngày:</span>
+                            <span class="fw-bold" style="color: #1d4ed8; font-size: 19px;">@((dashboard.OverallAging.Bucket1To30 / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center py-1.5 px-2 rounded-2 mb-1" style="background: #fffbeb; border: 1px solid #fef3c7;">
-                            <span class="fw-semibold" style="color: #92400e; font-size: 15.5px;"><i class="bi bi-exclamation-circle me-1.5"></i>Quá hạn 31 - 60 ngày:</span>
-                            <span class="fw-bold" style="color: #b45309; font-size: 16.5px;">@((dashboard.OverallAging.Bucket31To60 / 1000000m).ToString("N1")) Trđ</span>
+                            <span class="fw-semibold" style="color: #92400e; font-size: 21px;"><i class="bi bi-exclamation-circle me-1.5"></i>Quá hạn 31 - 60 ngày:</span>
+                            <span class="fw-bold" style="color: #b45309; font-size: 19px;">@((dashboard.OverallAging.Bucket31To60 / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center py-1.5 px-2 rounded-2 mb-1" style="background: #fff7ed; border: 1px solid #ffedd5;">
-                            <span class="fw-semibold" style="color: #9a3412; font-size: 15.5px;"><i class="bi bi-exclamation-triangle me-1.5"></i>Quá hạn 61 - 90 ngày:</span>
-                            <span class="fw-bold" style="color: #ea580c; font-size: 16.5px;">@((dashboard.OverallAging.Bucket61To90 / 1000000m).ToString("N1")) Trđ</span>
+                            <span class="fw-semibold" style="color: #9a3412; font-size: 21px;"><i class="bi bi-exclamation-triangle me-1.5"></i>Quá hạn 61 - 90 ngày:</span>
+                            <span class="fw-bold" style="color: #ea580c; font-size: 19px;">@((dashboard.OverallAging.Bucket61To90 / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center py-1.5 px-2 rounded-2" style="background: #fef2f2; border: 1px solid #fee2e2;">
-                            <span class="fw-semibold" style="color: #991b1b; font-size: 15.5px;"><i class="bi bi-x-octagon-fill me-1.5 text-danger"></i>Quá hạn > 90 ngày:</span>
-                            <span class="fw-bold" style="color: #dc2626; font-size: 16.5px;">@((dashboard.OverallAging.BucketOver90 / 1000000m).ToString("N1")) Trđ</span>
+                            <span class="fw-semibold" style="color: #991b1b; font-size: 21px;"><i class="bi bi-x-octagon-fill me-1.5 text-danger"></i>Quá hạn > 90 ngày:</span>
+                            <span class="fw-bold" style="color: #dc2626; font-size: 19px;">@((dashboard.OverallAging.BucketOver90 / 1000000m).ToString("N1")) Trđ</span>
                         </div>
                         @if (!dashboard.OverallAging.IsIntegrityValid)
                         {
-                            <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small text-center" style="font-size: 15px;">
+                            <div class="alert alert-danger py-1 px-2 mt-2 mb-0 small text-center" style="font-size: 17.5px;">
                                 <i class="bi bi-exclamation-octagon-fill me-1"></i> Cảnh báo: Lệch số liệu giữa các xô và tổng nợ!
                             </div>
                         }
@@ -598,18 +598,18 @@ else if (dashboard != null)
                     <h6 class="app-card-title">
                         <span class="p-1 px-1.5 rounded-3 text-white me-1.5 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);"><i class="bi bi-arrow-left-right"></i></span> Dòng tiền: Bán chịu & Thu tiền
                     </h6>
-                    <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
+                    <span class="text-muted small" style="font-size: 17.5px;">Đvt: Trđ</span>
                 </div>
 
                 <div class="app-card-body d-flex flex-column justify-content-between">
                     <div>
                         <div class="d-flex align-items-center justify-content-between mb-2.5">
                             <div>
-                                <span class="text-secondary fw-semibold" style="font-size: 16px;">Doanh số bán chịu:</span>
+                                <span class="text-secondary fw-semibold" style="font-size: 18.5px;">Doanh số bán chịu:</span>
                                 <div class="fw-bold" style="color: #1d4ed8; font-size: 28px; font-variant-numeric: tabular-nums;">@((dashboard.TotalRevenue / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Trđ</small></div>
                             </div>
                             <div class="text-end">
-                                <span class="text-secondary fw-semibold" style="font-size: 16px;">Tiền thu về (FIFO):</span>
+                                <span class="text-secondary fw-semibold" style="font-size: 18.5px;">Tiền thu về (FIFO):</span>
                                 <div class="fw-bold" style="color: #047857; font-size: 28px; font-variant-numeric: tabular-nums;">@((dashboard.TotalCollectedAmount / 1000000m).ToString("N1")) <small class="fs-6 fw-normal text-muted">Trđ</small></div>
                             </div>
                         </div>
@@ -629,12 +629,12 @@ else if (dashboard != null)
                                                 <div class="rounded-top shadow-xs" style="width: 18px; height: @(revHeight)px; background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%) !important; border-radius: 6px 6px 0 0; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);" title="Doanh thu: @((m.Revenue / 1000000m).ToString("N1")) Trđ"></div>
                                                 <div class="rounded-top shadow-xs" style="width: 18px; height: @(colHeight)px; background: linear-gradient(180deg, #10b981 0%, #047857 100%) !important; border-radius: 6px 6px 0 0; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);" title="Thu tiền: @((m.Collected / 1000000m).ToString("N1")) Trđ"></div>
                                             </div>
-                                            <span class="text-secondary fw-bold" style="font-size: 15px;">@m.MonthLabel</span>
+                                            <span class="text-secondary fw-bold" style="font-size: 17.5px;">@m.MonthLabel</span>
                                         </div>
                                     }
                                 }
                             </div>
-                            <div class="d-flex justify-content-center gap-4 mt-2" style="font-size: 15px; font-weight: 700;">
+                            <div class="d-flex justify-content-center gap-4 mt-2" style="font-size: 17.5px; font-weight: 700;">
                                 <span style="color: #1d4ed8;"><span class="app-dot bg-primary me-1"></span> Bán ra</span>
                                 <span style="color: #047857;"><span class="app-dot bg-success me-1"></span> Thu tiền về</span>
                             </div>
@@ -645,7 +645,7 @@ else if (dashboard != null)
                     {
                         <div class="alert alert-success py-2 px-3 mb-0 small border d-flex align-items-center gap-2" style="background: #ecfdf5; border-color: #a7f3d0 !important;">
                             <i class="bi bi-shield-check text-success fs-5"></i>
-                            <span style="font-size: 15px; color: #065f46;">
+                            <span style="font-size: 17.5px; color: #065f46;">
                                 Đã thu hồi <strong>@collectionRate.ToString("N1")%</strong> doanh số. Dòng tiền kinh doanh thặng dư dương.
                             </span>
                         </div>
@@ -654,7 +654,7 @@ else if (dashboard != null)
                     {
                         <div class="alert alert-warning py-2 px-3 mb-0 small border d-flex align-items-center gap-2" style="background: #fffbeb; border-color: #fde68a !important;">
                             <i class="bi bi-exclamation-triangle text-warning fs-5"></i>
-                            <span style="font-size: 15px; color: #92400e;">
+                            <span style="font-size: 17.5px; color: #92400e;">
                                 Chưa phát sinh thu hồi công nợ trong kỳ (@collectionRate.ToString("N1")%). Cần theo dõi chặt chẽ hạn nợ.
                             </span>
                         </div>
@@ -708,20 +708,20 @@ else if (dashboard != null)
                     <!-- Top stats summary -->
                     <div class="d-flex align-items-center gap-3 mb-3 pb-2 border-bottom flex-wrap">
                         <div class="p-2 px-3 rounded-2" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
-                            <span class="d-block fw-bold" style="color: #047857; font-size: 14.5px; letter-spacing: 0.5px;">DOANH THU</span>
-                            <span class="fw-bold" style="color: #047857; font-size: 26px; font-variant-numeric: tabular-nums;">
+                            <span class="d-block fw-bold" style="color: #047857; font-size: 19.5px; letter-spacing: 0.5px;">DOANH THU</span>
+                            <span class="fw-bold" style="color: #047857; font-size: 30px; font-variant-numeric: tabular-nums;">
                                 @((chartTotalRevenue / 1000000m).ToString("N3")) <small class="fw-normal text-muted fs-6">Triệu đồng</small>
                             </span>
                         </div>
                         <div class="p-2 px-3 rounded-2" style="background: #fef2f2; border: 1px solid #fecaca;">
-                            <span class="d-block fw-bold text-danger" style="font-size: 14.5px; letter-spacing: 0.5px;">CHI PHÍ</span>
-                            <span class="fw-bold text-danger" style="font-size: 26px; font-variant-numeric: tabular-nums;">
+                            <span class="d-block fw-bold text-danger" style="font-size: 19.5px; letter-spacing: 0.5px;">CHI PHÍ</span>
+                            <span class="fw-bold text-danger" style="font-size: 30px; font-variant-numeric: tabular-nums;">
                                 @((chartTotalCost / 1000000m).ToString("N3")) <small class="fw-normal text-muted fs-6">Triệu đồng</small>
                             </span>
                         </div>
                         <div class="p-2 px-3 rounded-2" style="background: #eff6ff; border: 1px solid #bfdbfe;">
-                            <span class="d-block fw-bold text-primary" style="font-size: 14.5px; letter-spacing: 0.5px;">LỢI NHUẬN</span>
-                            <span class="fw-bold text-primary" style="font-size: 26px; font-variant-numeric: tabular-nums;">
+                            <span class="d-block fw-bold text-primary" style="font-size: 19.5px; letter-spacing: 0.5px;">LỢI NHUẬN</span>
+                            <span class="fw-bold text-primary" style="font-size: 30px; font-variant-numeric: tabular-nums;">
                                 @((chartTotalProfit / 1000000m).ToString("N3")) <small class="fw-normal text-muted fs-6">Triệu đồng</small>
                             </span>
                         </div>
@@ -749,7 +749,7 @@ else if (dashboard != null)
 
                             <div class="app-chart-tooltip" style="left: @(tooltipLeftPercent)%; top: 15px; transform: translateX(-50%); z-index: 100;">
 
-                                <div class="fw-bold mb-1 border-bottom border-secondary border-opacity-50 pb-1" style="font-size: 14px; color: #10b981;">
+                                <div class="fw-bold mb-1 border-bottom border-secondary border-opacity-50 pb-1" style="font-size: 19px; color: #10b981;">
 
                                     Tháng @hm
 
@@ -761,7 +761,7 @@ else if (dashboard != null)
 
                                     <div class="d-flex align-items-center gap-1.5" style="color: #10b981;">
 
-                                        <i class="bi bi-square-fill" style="font-size: 15px;"></i>
+                                        <i class="bi bi-square-fill" style="font-size: 17.5px;"></i>
 
                                         <span>Doanh thu: @((mData != null ? mData.Revenue / 1000000m : 0).ToString("N0")) Triệu đồng</span>
 
@@ -775,7 +775,7 @@ else if (dashboard != null)
 
                                     <div class="d-flex align-items-center gap-1.5" style="color: #f43f5e;">
 
-                                        <i class="bi bi-square-fill" style="font-size: 15px;"></i>
+                                        <i class="bi bi-square-fill" style="font-size: 17.5px;"></i>
 
                                         <span>Chi phí: @((mData != null ? mData.Cost / 1000000m : 0).ToString("N0")) Triệu đồng</span>
 
@@ -789,7 +789,7 @@ else if (dashboard != null)
 
                                     <div class="d-flex align-items-center gap-1.5" style="color: #ff7700;">
 
-                                        <i class="bi bi-circle-fill" style="font-size: 15px;"></i>
+                                        <i class="bi bi-circle-fill" style="font-size: 17.5px;"></i>
 
                                         <span>Lợi nhuận: @((mData != null ? mData.Profit / 1000000m : 0).ToString("N0")) Triệu đồng</span>
 
@@ -1148,7 +1148,7 @@ else if (dashboard != null)
                     <h6 class="app-card-title">
                         <span class="p-1 px-1.5 rounded-3 text-white me-1.5 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); box-shadow: 0 2px 6px rgba(8, 145, 178, 0.35);"><i class="bi bi-box-seam"></i></span> Hàng hóa tồn kho
                     </h6>
-                    <span class="text-muted small" style="font-size: 15px;">Đvt: Triệu đồng</span>
+                    <span class="text-muted small" style="font-size: 17.5px;">Đvt: Triệu đồng</span>
                 </div>
 
 
@@ -1159,7 +1159,7 @@ else if (dashboard != null)
 
                         <div class="col-6 border-end">
 
-                            <div class="text-muted small" style="font-size: 15px;">Tổng vốn bỏ ra (Nhập kho)</div>
+                            <div class="text-muted small" style="font-size: 17.5px;">Tổng vốn bỏ ra (Nhập kho)</div>
 
                             <div class="fs-5 fw-bold text-danger">
 
@@ -1171,7 +1171,7 @@ else if (dashboard != null)
 
                         <div class="col-6 ps-2">
 
-                            <div class="text-muted small" style="font-size: 15px;">Giá trị bán sỉ tiềm năng</div>
+                            <div class="text-muted small" style="font-size: 17.5px;">Giá trị bán sỉ tiềm năng</div>
 
                             <div class="fs-5 fw-bold text-primary">
 
@@ -1197,9 +1197,9 @@ else if (dashboard != null)
 
                     <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
 
-                        <table class="table table-hover align-middle mb-0" style="font-size: 16px; background-color: #ffffff !important;">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 18.5px; background-color: #ffffff !important;">
 
-                            <thead class="table-light text-muted" style="font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
+                            <thead class="table-light text-muted" style="font-size: 19.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
 
                                 <tr>
 
@@ -1347,9 +1347,9 @@ else if (dashboard != null)
 
                     <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
 
-                        <table class="table table-hover align-middle mb-0" style="font-size: 16px; background-color: #ffffff !important;">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 18.5px; background-color: #ffffff !important;">
 
-                            <thead class="table-light text-muted" style="font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
+                            <thead class="table-light text-muted" style="font-size: 19.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
 
                                 <tr>
 
@@ -1391,7 +1391,7 @@ else if (dashboard != null)
 
                                                         <div class="fw-semibold text-slate-navy">@prod.ProductName</div>
 
-                                                        <small class="text-muted" style="font-size: 15px;">@prod.ProductCode</small>
+                                                        <small class="text-muted" style="font-size: 17.5px;">@prod.ProductCode</small>
 
                                                     </div>
 
@@ -1464,7 +1464,7 @@ else if (dashboard != null)
                     <h6 class="app-card-title">
                         <span class="p-1 px-1.5 rounded-3 text-white me-1.5 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);"><i class="bi bi-shield-exclamation"></i></span> Giám sát hạn mức & Top 5 khách nợ
                     </h6>
-                    <a href="/aging-report" class="btn btn-sm py-1 px-2.5 fw-bold text-white shadow-xs" style="font-size: 15px; border-radius: 8px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none;">
+                    <a href="/aging-report" class="btn btn-sm py-1 px-2.5 fw-bold text-white shadow-xs" style="font-size: 17.5px; border-radius: 8px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border: none;">
                         Báo Cáo 4 Xô
                     </a>
                 </div>
@@ -1475,9 +1475,9 @@ else if (dashboard != null)
 
                     <div class="table-responsive bg-white" style="background-color: #ffffff !important;">
 
-                        <table class="table table-hover align-middle mb-0" style="font-size: 16px; background-color: #ffffff !important;">
+                        <table class="table table-hover align-middle mb-0" style="font-size: 18.5px; background-color: #ffffff !important;">
 
-                            <thead class="table-light text-muted" style="font-size: 14.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
+                            <thead class="table-light text-muted" style="font-size: 19.5px; font-weight: 700; color: #334155; background-color: #f1f5f9 !important;">
 
                                 <tr>
 
@@ -1509,7 +1509,7 @@ else if (dashboard != null)
 
                                                 <div class="fw-semibold text-slate-navy">@debtor.CustomerName</div>
 
-                                                <small class="text-muted" style="font-size: 15px;">@debtor.CustomerCode</small>
+                                                <small class="text-muted" style="font-size: 17.5px;">@debtor.CustomerCode</small>
 
                                             </td>
 
@@ -1531,11 +1531,11 @@ else if (dashboard != null)
 
                                                     </div>
 
-                                                    <span class="small fw-bold text-nowrap" style="font-size: 15px;">@debtor.DebtRatio.ToString("N0")%</span>
+                                                    <span class="small fw-bold text-nowrap" style="font-size: 17.5px;">@debtor.DebtRatio.ToString("N0")%</span>
 
                                                 </div>
 
-                                                <small class="text-muted" style="font-size: 15px;">HM: @debtor.CreditLimit.ToString("N0") đ</small>
+                                                <small class="text-muted" style="font-size: 17.5px;">HM: @debtor.CreditLimit.ToString("N0") đ</small>
 
                                             </td>
 
@@ -1545,7 +1545,7 @@ else if (dashboard != null)
 
                                                 {
 
-                                                    <span class="badge bg-danger rounded-pill px-2 py-0.5" style="font-size: 15px;">
+                                                    <span class="badge bg-danger rounded-pill px-2 py-0.5" style="font-size: 17.5px;">
 
                                                         @debtor.OverdueDays ngày quá hạn
 
@@ -1557,7 +1557,7 @@ else if (dashboard != null)
 
                                                 {
 
-                                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-0.5" style="font-size: 15px;">
+                                                    <span class="badge bg-success-subtle text-success rounded-pill px-2 py-0.5" style="font-size: 17.5px;">
 
                                                         Trong hạn
 
@@ -1627,32 +1627,32 @@ else if (dashboard != null)
 
             </span>
 
-            <span class="text-muted small" style="font-size: 15px;">Phím tắt nghiệp vụ kế toán thường dùng</span>
+            <span class="text-muted small" style="font-size: 17.5px;">Phím tắt nghiệp vụ kế toán thường dùng</span>
 
         </div>
 
         
 
         <div class="d-flex flex-wrap gap-2.5">
-            <a href="/create-invoice" class="btn btn-primary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+            <a href="/create-invoice" class="btn btn-primary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="font-size: 17.5px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-cart-plus-fill"></i> Lập Hóa Đơn Bán Hàng
             </a>
-            <a href="/payments" class="btn btn-success d-flex align-items-center gap-2 fw-semibold text-white shadow-xs" style="background-color: #059669; border-color: #059669; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+            <a href="/payments" class="btn btn-success d-flex align-items-center gap-2 fw-semibold text-white shadow-xs" style="background-color: #059669; border-color: #059669; font-size: 17.5px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-cash-stack"></i> Thu Tiền Phân Bổ (FIFO)
             </a>
-            <a href="/invoices" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+            <a href="/invoices" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 17.5px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-receipt text-primary"></i> Quản Lý Hóa Đơn & Đòi Nợ AI
             </a>
-            <a href="/aging-report" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+            <a href="/aging-report" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 17.5px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-bar-chart-fill text-warning"></i> Báo Cáo Tuổi Nợ 4 Xô
             </a>
-            <a href="/customer-ledger" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+            <a href="/customer-ledger" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 17.5px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-journal-text text-info"></i> Sổ Đối Soát Công Nợ
             </a>
-            <a href="/manage-customers" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+            <a href="/manage-customers" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 17.5px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-shield-check text-success"></i> Đánh Giá Hạn Mức Tín Dụng
             </a>
-            <a href="/manage-products" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 15px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
+            <a href="/manage-products" class="btn btn-outline-secondary d-flex align-items-center gap-2 fw-semibold shadow-xs" style="color: #0f172a; background-color: #ffffff; border-color: #cbd5e1; font-size: 17.5px; min-height: 42px; padding: 8px 16px; border-radius: 10px;">
                 <i class="bi bi-box-seam text-secondary"></i> Quản Lý Kho & Đơn Giá Sỉ
             </a>
         </div>
@@ -1695,7 +1695,7 @@ else if (dashboard != null)
 
                             </h6>
 
-                            <small class="text-white-50" style="font-size: 15px;">Phân tích tự động dựa trên CSDL bán hàng & phân bổ công nợ FIFO</small>
+                            <small class="text-white-50" style="font-size: 17.5px;">Phân tích tự động dựa trên CSDL bán hàng & phân bổ công nợ FIFO</small>
 
                         </div>
 
@@ -1723,7 +1723,7 @@ else if (dashboard != null)
 
                             <div class="text-end">
 
-                                <div class="text-muted small" style="font-size: 15px;">Hạn Mức Đã Cấp: 200.000.000 đ</div>
+                                <div class="text-muted small" style="font-size: 17.5px;">Hạn Mức Đã Cấp: 200.000.000 đ</div>
 
                                 <div class="text-success fw-bold small">Dư Nợ Còn Lại: @((dashboard.TotalOutstandingDebt / 1000000m).ToString("N1")) Trđ</div>
 
@@ -1749,7 +1749,7 @@ else if (dashboard != null)
 
                                 </div>
 
-                                <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.5;">
+                                <p class="text-muted small mb-0" style="font-size: 17.5px; line-height: 1.5;">
 
                                     Biên lợi nhuận gộp đạt <strong>@profitMargin.ToString("N1")%</strong>. Nhóm hàng giải khát (Coca-Cola, Bia Heineken) có vòng quay kho nhanh nhất (dưới 15 ngày).
 
@@ -1771,7 +1771,7 @@ else if (dashboard != null)
 
                                 </div>
 
-                                <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.5;">
+                                <p class="text-muted small mb-0" style="font-size: 17.5px; line-height: 1.5;">
 
                                     Có <strong>@dashboard.OverdueInvoicesCount hóa đơn</strong> đã quá hạn thanh toán (@((dashboard.OverdueDebt / 1000000m).ToString("N1")) trđ). Khuyến nghị gửi mẫu email nhắc nợ AI và áp dụng cấn trừ công nợ ngay khi khách thanh toán.
 
@@ -1793,7 +1793,7 @@ else if (dashboard != null)
 
                                 </div>
 
-                                <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.5;">
+                                <p class="text-muted small mb-0" style="font-size: 17.5px; line-height: 1.5;">
 
                                     Tập trung mở rộng hạn mức tín dụng cho đại lý có lịch sử thanh toán tốt (loại A) và siết chặt bán chịu đối với nhóm nợ xô 61-90 ngày.
 
@@ -1811,7 +1811,7 @@ else if (dashboard != null)
 
                     <div class="d-flex align-items-center justify-content-between pt-2 border-top">
 
-                        <div class="text-muted small" style="font-size: 15px;">
+                        <div class="text-muted small" style="font-size: 17.5px;">
 
                             <i class="bi bi-info-circle me-1"></i> Dữ liệu tự động đồng bộ hóa với CSDL bán hàng & công nợ
 

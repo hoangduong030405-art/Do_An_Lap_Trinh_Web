@@ -30,15 +30,15 @@
   --bs-font-sans-serif: var(--font-sans);
 
   /* Typography Scale - High legibility, large & clear */
-  --text-xs: 15px;         /* Nhãn nhỏ, pill, hint tối thiểu 15px */
-  --text-sm: 16px;         /* Nhãn form, hint, phụ đề */
-  --text-base: 17px;       /* Nội dung bảng, input, nút bấm */
-  --text-body: 17.5px;     /* Nội dung thường, chữ chuẩn */
-  --text-lg: 21px;         /* Tiêu đề thẻ (card title) */
-  --text-xl: 24px;         /* Tiêu đề phân nhóm */
-  --text-2xl: 28px;        /* Tiêu đề trung */
-  --text-title: 34px;      /* Tiêu đề trang 32-36px */
-  --text-kpi: 44px;        /* Số liệu KPI 42-46px */
+  --text-xs: 16.5px;       /* Nhãn nhỏ, pill, hint tối thiểu 16.5px */
+  --text-sm: 18px;         /* Nhãn form, hint, phụ đề */
+  --text-base: 19px;       /* Nội dung bảng, input, nút bấm */
+  --text-body: 19px;       /* Nội dung thường, chữ chuẩn */
+  --text-lg: 23px;         /* Tiêu đề thẻ (card title) */
+  --text-xl: 26px;         /* Tiêu đề phân nhóm */
+  --text-2xl: 30px;        /* Tiêu đề trung */
+  --text-title: 36px;      /* Tiêu đề trang 34-38px */
+  --text-kpi: 48px;        /* Số liệu KPI 46-50px */
 
   /* Neutral Background & Card */
   --bg-page: #dce5f0;
@@ -133,7 +133,7 @@
 
 /* 2. BASE HTML & BODY STYLES FOR LOGGED-IN AREA */
 html {
-  font-size: 100%; /* 16px */
+  font-size: 106.25%; /* 17px base - High legibility scale */
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -350,7 +350,7 @@ small,
 }
 
 .app-stat-label {
-  font-size: 15.5px !important;
+  font-size: 17px !important;
   font-weight: 700 !important;
   color: #475569 !important;
   text-transform: uppercase !important;
@@ -371,7 +371,7 @@ small,
 }
 
 .app-stat-value {
-  font-size: 44px !important;
+  font-size: 48px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
   line-height: 1.15 !important;
@@ -382,7 +382,7 @@ small,
 }
 
 .app-stat-unit {
-  font-size: 18px !important;
+  font-size: 21px !important;
   font-weight: 700 !important;
   color: #64748b !important;
   margin-left: 4px !important;
@@ -392,7 +392,7 @@ small,
   border-top: 1px solid #edf2f7 !important;
   padding-top: 10px !important;
   margin-top: 10px !important;
-  font-size: 14px !important;
+  font-size: 16px !important;
   color: #64748b !important;
 }
 
@@ -400,7 +400,7 @@ small,
   display: inline-flex;
   align-items: center;
   font-weight: 700 !important;
-  font-size: 14.5px !important;
+  font-size: 16px !important;
   padding: 3px 10px !important;
   border-radius: var(--radius-full);
 }

@@ -28,14 +28,18 @@
                 Subtitle="Đặt hàng nhanh theo kiện và pallet, tự động ghi nợ tín dụng theo hạn mức được phê duyệt"
                 Icon="bi-cart3">
         <Actions>
-            <a href="/portal/invoices" class="btn btn-secondary">
+            @if (customerInfo != null)
+            {
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fw-bold d-inline-flex align-items-center gap-1.5 shadow-xs" style="font-size: 16px;">
+                    <i class="bi bi-shield-check fs-6"></i>
+                    <span>Hạn mức khả dụng: @customerInfo.AvailableCredit.ToString("N0") đ</span>
+                </span>
+            }
+            <a href="/portal/invoices" class="btn btn-secondary fw-semibold">
                 <i class="bi bi-receipt me-1"></i> Hóa Đơn Của Tôi
             </a>
         </Actions>
     </PageHeader>
-
-    <!-- 2. CREDIT STATUS BAR -->
-    <CreditStatusBar CustomerInfo="@customerInfo" />
 
     @if (loading)
     {

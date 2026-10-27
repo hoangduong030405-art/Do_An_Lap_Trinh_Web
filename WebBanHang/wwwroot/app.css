@@ -776,7 +776,8 @@ html:has(.app-root), body:has(.app-root) {
 }
 
 .brand-text {
-    font-size: 15px;
+    font-size: 17.5px;
+    font-weight: 700;
     color: #1e293b;
     letter-spacing: normal;
 }
@@ -1189,8 +1190,8 @@ html:has(.app-root), body:has(.app-root) {
     gap: 10px !important;
     color: #e2e8f0 !important;
     text-decoration: none !important;
-    font-size: 15px !important;
-    font-weight: 500 !important;
+    font-size: 16.5px !important;
+    font-weight: 600 !important;
     transition: background-color 0.15s ease, color 0.15s ease;
     white-space: nowrap !important;
 }
@@ -1227,7 +1228,7 @@ html:has(.app-root), body:has(.app-root) {
 }
 
 .app-nav-icon {
-    font-size: 16px;
+    font-size: 18.5px;
     width: 20px;
     text-align: center;
     color: #8a96a8;
