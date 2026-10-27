@@ -10,11 +10,17 @@
                     <th style="min-width: 90px; font-size: 14.5px; font-weight: 700; color: #334155;">Mã SP</th>
                     <th style="min-width: 200px; font-size: 14.5px; font-weight: 700; color: #334155;">Tên Hàng Hóa</th>
                     <th class="text-center" style="min-width: 70px; font-size: 14.5px; font-weight: 700; color: #334155;">ĐVT</th>
-                    <th class="text-end" style="min-width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Nhập (Vốn)</th>
+                    @if (!IsSales)
+                    {
+                        <th class="text-end" style="min-width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Nhập (Vốn)</th>
+                    }
                     <th class="text-end" style="min-width: 130px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Bán Sỉ</th>
                     <th class="text-center" style="min-width: 130px; font-size: 14.5px; font-weight: 700; color: #334155;">Số Lượng</th>
                     <th class="text-end" style="min-width: 140px; font-size: 14.5px; font-weight: 700; color: #334155;">Thành Tiền Bán</th>
-                    <th class="text-end" style="min-width: 140px; font-size: 14.5px; font-weight: 700; color: #334155;">Lãi Gộp Dòng</th>
+                    @if (!IsSales)
+                    {
+                        <th class="text-end" style="min-width: 140px; font-size: 14.5px; font-weight: 700; color: #334155;">Lãi Gộp Dòng</th>
+                    }
                     <th class="text-center" style="width: 60px; font-size: 14.5px; font-weight: 700; color: #334155;">Xóa</th>
                 </tr>
             </thead>
@@ -29,9 +35,12 @@
                             <div class="fw-bold text-dark">@item.ProductName</div>
                         </td>
                         <td class="text-center text-secondary" style="font-size: 16px;">@item.Unit</td>
-                        <td class="text-end text-muted" style="font-size: 16px; font-variant-numeric: tabular-nums;">
-                            @item.CostPrice.ToString("N0") đ
-                        </td>
+                        @if (!IsSales)
+                        {
+                            <td class="text-end text-muted" style="font-size: 16px; font-variant-numeric: tabular-nums;">
+                                @item.CostPrice.ToString("N0") đ
+                            </td>
+                        }
                         <td class="text-end fw-bold text-primary" style="font-size: 16px; font-variant-numeric: tabular-nums;">
                             @item.UnitPrice.ToString("N0") đ
                         </td>
@@ -45,11 +54,14 @@
                         <td class="text-end fw-bold text-dark" style="font-size: 16px; font-variant-numeric: tabular-nums;">
                             @item.LineTotal.ToString("N0") đ
                         </td>
-                        <td class="text-end">
-                            <span class="badge @(item.LineProfit >= 0 ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle") px-2 py-1" style="font-size: 16px;">
-                                +@item.LineProfit.ToString("N0") đ (@item.ProfitMargin%)
-                            </span>
-                        </td>
+                        @if (!IsSales)
+                        {
+                            <td class="text-end">
+                                <span class="badge @(item.LineProfit >= 0 ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle") px-2 py-1" style="font-size: 16px;">
+                                    +@item.LineProfit.ToString("N0") đ (@item.ProfitMargin%)
+                                </span>
+                            </td>
+                        }
                         <td class="text-center">
                             <button type="button" class="btn btn-sm btn-outline-danger border-0 rounded-circle" @onclick="() => OnRemove.InvokeAsync(item.ProductId)" title="Xóa dòng mặt hàng">
                                 <i class="bi bi-trash fs-6"></i>
@@ -75,6 +87,9 @@ else
 @code {
     [Parameter]
     public List<DraftInvoiceItem> Items { get; set; } = new();
+
+    [Parameter]
+    public bool IsSales { get; set; } = false;
 
     [Parameter]
     public EventCallback<int> OnIncrement { get; set; }

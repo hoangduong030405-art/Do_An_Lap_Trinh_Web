@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Accountant")]
+@implements IDisposable
 
 @using WebBanHang.UseCases.Customers
 @using WebBanHang.UseCases.DTOs
@@ -273,6 +274,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        ConfirmationState.OnChange += OnConfirmationStateChanged;
         customers = await ViewCustomerListUseCase.ExecuteAsync();
         if (CustomerIdParam.HasValue && CustomerIdParam.Value > 0)
         {
@@ -334,5 +336,20 @@
     private async Task PrintLedger()
     {
         await JSRuntime.InvokeVoidAsync("window.print");
+    }
+
+    private async void OnConfirmationStateChanged()
+    {
+        if (selectedCustomerId > 0)
+        {
+            customerConfirmation = ConfirmationState.GetConfirmation(selectedCustomerId);
+            customerDisputes = ConfirmationState.GetDisputes(selectedCustomerId);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        ConfirmationState.OnChange -= OnConfirmationStateChanged;
     }
 }

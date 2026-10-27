@@ -207,6 +207,7 @@
         <div class="card-body p-4">
             <InvoiceLineEditor 
                 Items="@State.Items" 
+                IsSales="@isSales"
                 OnIncrement="HandleIncrement" 
                 OnDecrement="HandleDecrement" 
                 OnRemove="HandleRemove" />
@@ -215,31 +216,51 @@
             {
                 <div class="card p-3.5 mt-3 border bg-light" style="border-radius: 12px; border-color: #e5eaf1 !important;">
                     <div class="row align-items-center text-center text-md-start g-3">
-                        <div class="col-6 col-md-3">
-                            <span class="text-muted d-block" style="font-size: 16px;">Tổng Giá Vốn (COGS):</span>
-                            <span class="fs-5 fw-bold text-secondary" style="font-variant-numeric: tabular-nums;">@State.TotalCost.ToString("N0") đ</span>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <span class="text-muted d-block" style="font-size: 16px;">Lợi Nhuận Gộp Kỳ Vọng:</span>
-                            <span class="fs-5 fw-bold text-success" style="font-variant-numeric: tabular-nums;">
-                                +@State.TotalProfit.ToString("N0") đ
-                            </span>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" style="font-size: 16px;">@State.ProfitMargin%</span>
-                        </div>
-                        <div class="col-12 col-md-3">
-                            <span class="text-muted d-block" style="font-size: 16px;">Tổng Tiền Bán Sỉ (Chưa thanh toán):</span>
-                            <span class="fs-4 fw-extrabold text-primary" style="font-variant-numeric: tabular-nums;">@State.TotalAmount.ToString("N0") đ</span>
-                        </div>
-                        <div class="col-12 col-md-3 text-md-end">
-                            <button type="button" 
-                                    class="btn btn-primary btn-lg w-100 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2"
-                                    disabled="@(!State.SelectedCustomerId.HasValue)"
-                                    @onclick="SubmitInvoice"
-                                    style="min-height: 48px; border-radius: 12px;">
-                                <i class="bi bi-check-circle-fill"></i>
-                                <span>Xác Nhận Lập Hóa Đơn</span>
-                            </button>
-                        </div>
+                        @if (!isSales)
+                        {
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted d-block" style="font-size: 16px;">Tổng Giá Vốn (COGS):</span>
+                                <span class="fs-5 fw-bold text-secondary" style="font-variant-numeric: tabular-nums;">@State.TotalCost.ToString("N0") đ</span>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <span class="text-muted d-block" style="font-size: 16px;">Lợi Nhuận Gộp Kỳ Vọng:</span>
+                                <span class="fs-5 fw-bold text-success" style="font-variant-numeric: tabular-nums;">
+                                    +@State.TotalProfit.ToString("N0") đ
+                                </span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle ms-1" style="font-size: 16px;">@State.ProfitMargin%</span>
+                            </div>
+                            <div class="col-12 col-md-3">
+                                <span class="text-muted d-block" style="font-size: 16px;">Tổng Tiền Bán Sỉ (Chưa thanh toán):</span>
+                                <span class="fs-4 fw-extrabold text-primary" style="font-variant-numeric: tabular-nums;">@State.TotalAmount.ToString("N0") đ</span>
+                            </div>
+                            <div class="col-12 col-md-3 text-md-end">
+                                <button type="button" 
+                                        class="btn btn-primary btn-lg w-100 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2"
+                                        disabled="@(!State.SelectedCustomerId.HasValue)"
+                                        @onclick="SubmitInvoice"
+                                        style="min-height: 48px; border-radius: 12px;">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Xác Nhận Lập Hóa Đơn</span>
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-12 col-md-6">
+                                <span class="text-muted d-block" style="font-size: 16px;">Tổng Tiền Bán Sỉ (Chưa thanh toán):</span>
+                                <span class="fs-4 fw-extrabold text-primary" style="font-variant-numeric: tabular-nums;">@State.TotalAmount.ToString("N0") đ</span>
+                            </div>
+                            <div class="col-12 col-md-6 text-md-end">
+                                <button type="button" 
+                                        class="btn btn-primary btn-lg w-100 shadow-sm fw-bold d-flex align-items-center justify-content-center gap-2"
+                                        disabled="@(!State.SelectedCustomerId.HasValue)"
+                                        @onclick="SubmitInvoice"
+                                        style="min-height: 48px; border-radius: 12px;">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Xác Nhận Lập Hóa Đơn</span>
+                                </button>
+                            </div>
+                        }
                     </div>
                 </div>
             }

@@ -6,11 +6,13 @@
 @using WebBanHang.UseCases.Payments
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.CoreBusiness.Entities
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IViewInvoiceListUseCase ViewInvoiceListUseCase
 @inject IViewInvoiceDetailUseCase ViewInvoiceDetailUseCase
 @inject IRecordPaymentAndAllocateUseCase RecordPaymentUseCase
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Quản Lý Hóa Đơn & In Ấn</PageTitle>
 
@@ -188,26 +190,29 @@ else
                         </div>
 
                         <!-- KHỐI ĐỐI SOÁT TÀI CHÍNH NỘI BỘ (GIÁ VỐN VS GIÁ BÁN) -->
-                        <div class="card bg-light border-0 p-3 mb-3 d-print-none rounded-3">
-                            <div class="row align-items-center text-center text-md-start">
-                                <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 14.5px;">Doanh thu xuất sỉ</small>
-                                    <span class="fs-5 fw-bold text-primary">@selectedInvoiceDetail.TotalAmount.ToString("N0") đ</span>
-                                </div>
-                                <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 14.5px;">Tiền vốn nhập kho (COGS)</small>
-                                    <span class="fs-5 fw-bold text-danger">@selectedInvoiceDetail.TotalCost.ToString("N0") đ</span>
-                                </div>
-                                <div class="col-md-3 border-end">
-                                    <small class="text-muted d-block" style="font-size: 14.5px;">Lợi nhuận gộp đơn hàng</small>
-                                    <span class="fs-5 fw-bold text-success">+@selectedInvoiceDetail.TotalProfit.ToString("N0") đ</span>
-                                </div>
-                                <div class="col-md-3">
-                                    <small class="text-muted d-block" style="font-size: 14.5px;">Biên lợi nhuận gộp</small>
-                                    <span class="fs-5 fw-bold text-dark">@selectedInvoiceDetail.ProfitMargin%</span>
+                        @if (!isSales)
+                        {
+                            <div class="card bg-light border-0 p-3 mb-3 d-print-none rounded-3">
+                                <div class="row align-items-center text-center text-md-start">
+                                    <div class="col-md-3 border-end">
+                                        <small class="text-muted d-block" style="font-size: 14.5px;">Doanh thu xuất sỉ</small>
+                                        <span class="fs-5 fw-bold text-primary">@selectedInvoiceDetail.TotalAmount.ToString("N0") đ</span>
+                                    </div>
+                                    <div class="col-md-3 border-end">
+                                        <small class="text-muted d-block" style="font-size: 14.5px;">Tiền vốn nhập kho (COGS)</small>
+                                        <span class="fs-5 fw-bold text-danger">@selectedInvoiceDetail.TotalCost.ToString("N0") đ</span>
+                                    </div>
+                                    <div class="col-md-3 border-end">
+                                        <small class="text-muted d-block" style="font-size: 14.5px;">Lợi nhuận gộp đơn hàng</small>
+                                        <span class="fs-5 fw-bold text-success">+@selectedInvoiceDetail.TotalProfit.ToString("N0") đ</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small class="text-muted d-block" style="font-size: 14.5px;">Biên lợi nhuận gộp</small>
+                                        <span class="fs-5 fw-bold text-dark">@selectedInvoiceDetail.ProfitMargin%</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
 
                         <!-- BẢNG CHI TIẾT SẢN PHẨM -->
                         <table class="table table-bordered align-middle mb-3">
@@ -218,10 +223,16 @@ else
                                     <th>Tên Hàng Hóa / Dịch Vụ</th>
                                     <th>ĐVT</th>
                                     <th style="width: 65px;">SL</th>
-                                    <th class="d-print-none text-end text-muted" style="width: 105px;">Giá Vốn</th>
+                                    @if (!isSales)
+                                    {
+                                        <th class="d-print-none text-end text-muted" style="width: 105px;">Giá Vốn</th>
+                                    }
                                     <th style="width: 115px;" class="text-end">Đơn Giá Bán</th>
                                     <th style="width: 125px;" class="text-end">Thành Tiền</th>
-                                    <th class="d-print-none text-end text-success" style="width: 115px;">Lãi Gộp</th>
+                                    @if (!isSales)
+                                    {
+                                        <th class="d-print-none text-end text-success" style="width: 115px;">Lãi Gộp</th>
+                                    }
                                 </tr>
                             </thead>
                             <tbody>
@@ -234,29 +245,47 @@ else
                                         <td class="fw-bold">@line.ProductName</td>
                                         <td class="text-center">@line.Unit</td>
                                         <td class="text-center">@line.Quantity</td>
-                                        <td class="d-print-none text-end text-muted small">@line.CostPrice.ToString("N0") đ</td>
+                                        @if (!isSales)
+                                        {
+                                            <td class="d-print-none text-end text-muted small">@line.CostPrice.ToString("N0") đ</td>
+                                        }
                                         <td class="text-end">@line.UnitPrice.ToString("N0") đ</td>
                                         <td class="text-end fw-bold">@line.LineTotal.ToString("N0") đ</td>
-                                        <td class="d-print-none text-end">
-                                            <span class="badge bg-success-subtle text-success border border-success-subtle">
-                                                +@line.LineProfit.ToString("N0") đ
-                                            </span>
-                                        </td>
+                                        @if (!isSales)
+                                        {
+                                            <td class="d-print-none text-end">
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                                    +@line.LineProfit.ToString("N0") đ
+                                                </span>
+                                            </td>
+                                        }
                                     </tr>
                                 }
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="6" class="text-end fw-bold">TỔNG CỘNG TIỀN HÀNG:</td>
+                                    <td colspan="@(isSales ? 5 : 6)" class="text-end fw-bold">TỔNG CỘNG TIỀN HÀNG:</td>
                                     <td class="text-end fw-bold text-primary fs-6">@selectedInvoiceDetail.TotalAmount.ToString("N0") đ</td>
+                                    @if (!isSales)
+                                    {
+                                        <td class="d-print-none"></td>
+                                    }
                                 </tr>
                                 <tr>
-                                    <td colspan="6" class="text-end">Đã thanh toán:</td>
+                                    <td colspan="@(isSales ? 5 : 6)" class="text-end">Đã thanh toán:</td>
                                     <td class="text-end text-success">@selectedInvoiceDetail.PaidAmount.ToString("N0") đ</td>
+                                    @if (!isSales)
+                                    {
+                                        <td class="d-print-none"></td>
+                                    }
                                 </tr>
                                 <tr class="table-warning">
-                                    <td colspan="6" class="text-end fw-bold text-danger">CÒN PHẢI THANH TOÁN:</td>
+                                    <td colspan="@(isSales ? 5 : 6)" class="text-end fw-bold text-danger">CÒN PHẢI THANH TOÁN:</td>
                                     <td class="text-end fw-bold text-danger fs-5">@selectedInvoiceDetail.Balance.ToString("N0") đ</td>
+                                    @if (!isSales)
+                                    {
+                                        <td class="d-print-none"></td>
+                                    }
                                 </tr>
                             </tfoot>
                         </table>
@@ -361,6 +390,7 @@ else
 </div><!-- /app-page-container -->
 
 @code {
+    private bool isSales = false;
     private IEnumerable<InvoiceListDto>? allInvoices;
     private IEnumerable<InvoiceListDto>? invoices;
     private InvoiceDetailDto? selectedInvoiceDetail;
@@ -374,6 +404,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        isSales = authState.User.IsInRole("Sales");
         await LoadInvoices();
     }
 
