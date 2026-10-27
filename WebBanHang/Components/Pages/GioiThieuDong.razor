@@ -82,7 +82,76 @@
     </nav>
 
     <!-- 1. Hero với 3D Interactive Three.js Holographic Supply Chain Globe & Floating FMCG Cubes -->
-    <section id="hero" class="dong-hero">
+        <section id="hero" class="dong-hero">
+        <!-- CỤM MOCKUP SƯỜN TRÁI: Webhook Báo Có VietQR & Gạch Nợ FIFO (Desktop min-width: 1280px) -->
+        <div class="hero-margin-widget hero-margin-left" aria-hidden="true">
+            <div class="margin-card-inner">
+                <div class="margin-card-header">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="bank-pill-acb">ACB</span>
+                        <span class="margin-card-title">Webhook Báo Có</span>
+                    </div>
+                    <span class="badge-realtime">
+                        <span class="pulse-dot"></span> Real-time
+                    </span>
+                </div>
+                <div class="margin-card-body">
+                    <div class="payer-line">
+                        <i class="bi bi-check-circle-fill text-emerald me-1"></i>
+                        <span>Tạp Hóa Bà Ba</span> vừa thanh toán
+                    </div>
+                    <div class="amount-line">
+                        +1.025.000 <span class="currency">₫</span>
+                    </div>
+                    <div class="fifo-subline">
+                        <i class="bi bi-arrow-repeat text-cyan me-1"></i>
+                        Hệ thống tự động gạch nợ <strong>HD-2026-002</strong> (FIFO)
+                    </div>
+                </div>
+                <div class="margin-waveform-wrap">
+                    <svg class="margin-waveform-svg" viewBox="0 0 200 28" fill="none">
+                        <path d="M0 14 Q 25 14, 38 6 T 65 22 T 95 8 T 125 18 T 155 12 T 175 14 L 200 14" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="175" cy="14" r="3.5" fill="#34d399">
+                            <animate attributeName="r" values="3.5;5.5;3.5" dur="1.6s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="1;0.6;1" dur="1.6s" repeatCount="indefinite"/>
+                        </circle>
+                    </svg>
+                    <div class="waveform-meta">
+                        <span><i class="bi bi-qr-code text-cyan me-1"></i>VietQR 24/7</span>
+                        <span class="text-emerald fw-bold">Khớp lệnh 100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỤM MOCKUP SƯỜN PHẢI: Mockup Sản Phẩm FMCG & Hóa Đơn Điện Tử VAT (Desktop min-width: 1280px) -->
+        <div class="hero-margin-widget hero-margin-right" aria-hidden="true">
+            <div class="margin-product-stage">
+                <div class="product-mockup-glow"></div>
+                <img src="images/products/sp002-heineken.svg" alt="Heineken Silver FMCG Pallet" class="product-mockup-img" />
+                <div class="product-mockup-shadow"></div>
+                <span class="product-mockup-badge">
+                    <i class="bi bi-box-seam me-1 text-amber"></i>Thùng 24 lon 330ml
+                </span>
+            </div>
+            <div class="margin-invoice-card">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="invoice-code">
+                        <i class="bi bi-receipt text-cyan me-1"></i>Hóa đơn sỉ <strong>#INV-2026-041</strong>
+                    </span>
+                    <span class="vat-signed-pill">
+                        <i class="bi bi-patch-check-fill text-emerald me-1"></i>Đã ký số VAT
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between align-items-baseline">
+                    <span class="invoice-label">Tổng tiền hàng:</span>
+                    <span class="invoice-val">4.200.000 ₫</span>
+                </div>
+                <div class="invoice-terms-line">
+                    <i class="bi bi-calendar-check text-blue me-1"></i>Chu kỳ T+30 ngày • Miễn lãi trong hạn
+                </div>
+            </div>
+        </div>
         <div class="hero-container">
             <div class="hero-content hero-entrance">
                 <div class="hero-live-badge">
