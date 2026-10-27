@@ -1,4 +1,4 @@
--- ==========================================================
+﻿-- ==========================================================
 -- CƠ SỞ DỮ LIỆU ĐỒ ÁN CAPSTONE ECO2415
 -- ĐỀ TÀI 18: BÁN HÀNG & CÔNG NỢ KHÁCH HÀNG B2B (SALES & AR)
 -- CHUẨN HÓA: MỘT NGUỒN CHÂN LÝ DUY NHẤT VỀ TUỔI NỢ & FIFO
@@ -121,7 +121,17 @@ VALUES
 (N'SP015', N'Trà Xanh C2 Hương Chanh (Thùng 24 chai 455ml)', N'Thùng', 170000, 142000, 140, '/images/products/sp015-c2-lemon.svg', N'Trà xanh đóng chai 455ml thanh nhiệt giải độc'),
 (N'SP016', N'Hạt nêm Knorr Thịt Thăn Xương Ống (Gói 900g)', N'Gói', 78000, 64000, 125, '/images/products/sp016-knorr.svg', N'Hạt nêm đậm đà vị ngọt từ thịt thăn và tủy xương'),
 (N'SP017', N'Nước tương Chinsu Tỏi Ớt (Chai 330ml)', N'Chai', 22000, 17500, 210, '/images/products/sp017-chinsu.svg', N'Nước tương đậu nành lên men tự nhiên cay nồng tỏi ớt'),
-(N'SP018', N'Bánh quy Cosy Marie Kinh Đô (Hộp 336g)', N'Hộp', 45000, 36000, 175, '/images/products/sp018-cosy.svg', N'Bánh quy sữa giòn xốp dinh dưỡng phù hợp mọi lứa tuổi');
+(N'SP018', N'Bánh quy Cosy Marie Kinh Đô (Hộp 336g)', N'Hộp', 45000, 36000, 175, '/images/products/sp018-cosy.svg', N'Bánh quy sữa giòn xốp dinh dưỡng phù hợp mọi lứa tuổi'),
+(N'SP019', N'Nước khoáng thiên nhiên La Vie (Thùng 24 chai 500ml)', N'Thùng', 105000, 85000, 190, '/images/products/sp019-lavie.svg', N'Nước khoáng tự nhiên đóng chai 500ml tinh khiết từ thiên nhiên'),
+(N'SP020', N'Nước tăng lực Monster Energy Green (Thùng 24 lon 355ml)', N'Thùng', 580000, 510000, 85, '/images/products/sp020-monster.svg', N'Nước tăng lực nhập khẩu cao cấp thùng 24 lon chính hãng'),
+(N'SP021', N'Bia Larue Export đậm đà (Thùng 24 lon 330ml)', N'Thùng', 260000, 230000, 140, '/images/products/sp021-larue.svg', N'Bia con cọp Larue thơm nồng đậm đà truyền thống miền Trung'),
+(N'SP022', N'Mì Kokomi Đại 90g Tôm Chua Cay (Thùng 30 gói)', N'Thùng', 135000, 115000, 175, '/images/products/sp022-kokomi.svg', N'Mì gói to 90g sợi dai giòn thơm ngon đậm vị tôm chua cay'),
+(N'SP023', N'Dầu hào Maggi Đậm Đặc nguyên chất (Chai 820g)', N'Chai', 42000, 33000, 160, '/images/products/sp023-maggi.svg', N'Dầu hào tự nhiên tạo màu nâu cánh gián và hương vị đậm đà món xào'),
+(N'SP024', N'Tương ớt Chinsu đượm vị cay bùng nổ (Chai 250g)', N'Chai', 16500, 12800, 280, '/images/products/sp024-tuong-ot-chinsu.svg', N'Tương ớt đỏ tươi lên men cay nồng chấm mọi món ăn'),
+(N'SP025', N'Sữa đặc có đường Ông Thọ nhãn đỏ (Lon 380g)', N'Lon', 26000, 21500, 250, '/images/products/sp025-ong-tho.svg', N'Sữa đặc Vinamilk béo ngọt sánh mịn chuyên pha cà phê và làm bánh'),
+(N'SP026', N'Trà Ô Long TEA+ Plus Suntory (Thùng 24 chai 450ml)', N'Thùng', 215000, 185000, 130, '/images/products/sp026-oolong-tea.svg', N'Trà ô long chứa OTPP hỗ trợ hạn chế hấp thu chất béo thanh mát'),
+(N'SP027', N'Bánh gạo giòn One One Bò Nướng Ngô (Gói 150g)', N'Gói', 28000, 22000, 220, '/images/products/sp027-one-one.svg', N'Bánh gạo nướng không chiên qua dầu giòn tan thơm lừng vị bò nướng ngô'),
+(N'SP028', N'Nước xả vải Comfort Đậm Đặc Hương Ban Mai (Túi 3.8 lít)', N'Túi', 235000, 198000, 95, '/images/products/sp028-comfort.svg', N'Nước xả vải gia đình túi lớn 3.8L lưu hương thơm ngát suốt ngày dài');
 
 -- 5. SEED DỮ LIỆU HÓA ĐƠN BÁN HÀNG VỚI NGÀY TƯƠNG ĐỐI (DATEADD TỪ GETDATE())
 -- Đầy đủ tất cả các ca kiểm thử tuổi nợ & thanh toán:

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="comfortBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="40%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#0369a1"/>
+    </linearGradient>
+    <filter id="shadowComfort" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="200" cy="350" rx="90" ry="16" fill="#000000" opacity="0.2"/>
+
+  <!-- TÚI NƯỚC XẢ COMFORT 3.8L CÓ VÒI VÀ TAY CẦM -->
+  <g filter="url(#shadowComfort)">
+    <!-- Vòi rót có nắp vặn màu trắng góc trên bên phải -->
+    <g transform="translate(255, 68) rotate(35)">
+      <rect x="-10" y="-18" width="20" height="20" rx="3" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+      <line x1="-10" y1="-10" x2="10" y2="-10" stroke="#94a3b8" stroke-width="1.5"/>
+    </g>
+
+    <!-- Thân túi nilon đứng kiểu Doypack phình rộng ở đáy -->
+    <path d="M 130 90 Q 200 85 270 90 L 285 300 Q 285 335 200 335 Q 115 335 115 300 Z" fill="url(#comfortBg)"/>
+
+    <!-- Lỗ tay cầm khoét phía trên bên trái -->
+    <rect x="145" y="100" width="45" height="16" rx="8" fill="#ffffff" opacity="0.85"/>
+
+    <!-- LOGO COMFORT MÀU HỒNG VÀ TRẮNG TRUYỀN THỐNG -->
+    <g transform="translate(200, 160)">
+      <path d="M -65 0 Q 0 -15 65 0 L 55 45 Q 0 35 -55 45 Z" fill="#ffffff" opacity="0.95"/>
+      <text x="0" y="28" font-family="'Brush Script MT', 'Arial Black', cursive, sans-serif" font-size="28" font-weight="900" fill="#db2777" text-anchor="middle" font-style="italic">Comfort</text>
+    </g>
+
+    <!-- TÊN DÒNG HƯƠNG: ĐẬM ĐẶC HƯƠNG BAN MAI -->
+    <rect x="135" y="215" width="130" height="20" rx="4" fill="#f43f5e"/>
+    <text x="200" y="229" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle">HƯƠNG BAN MAI</text>
+
+    <!-- BÔNG HOA HỒNG & CÁNH HOA TỎA HƯƠNG XUNG QUANH -->
+    <g transform="translate(200, 268)">
+      <circle cx="0" cy="0" r="14" fill="#fb7185"/>
+      <circle cx="0" cy="0" r="10" fill="#f43f5e"/>
+      <circle cx="0" cy="0" r="6" fill="#fef08a"/>
+      <!-- Cánh hoa bung nở -->
+      <circle cx="-14" cy="-5" r="7" fill="#fda4af" opacity="0.85"/>
+      <circle cx="14" cy="-5" r="7" fill="#fda4af" opacity="0.85"/>
+      <circle cx="-8" cy="12" r="7" fill="#fda4af" opacity="0.85"/>
+      <circle cx="8" cy="12" r="7" fill="#fda4af" opacity="0.85"/>
+    </g>
+
+    <!-- DUNG TÍCH TIẾT KIỆM 3.8 LÍT -->
+    <text x="200" y="315" font-family="'Impact', Arial Black, sans-serif" font-size="13" font-weight="900" fill="#fef08a" text-anchor="middle" letter-spacing="1">TÚI LỚN TIẾT KIỆM 3.8L</text>
+  </g>
+</svg>

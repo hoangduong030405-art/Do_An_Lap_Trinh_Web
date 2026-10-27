@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="teaLiquid" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="35%" stop-color="#b45309"/>
+      <stop offset="70%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="teaLabel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="shadowTea" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="200" cy="350" rx="68" ry="12" fill="#000000" opacity="0.2"/>
+
+  <!-- CHAI TRÀ Ô LONG TEA+ PLUS 450ML SUNTORY -->
+  <g filter="url(#shadowTea)">
+    <!-- Nắp chai vàng kim -->
+    <rect x="188" y="55" width="24" height="24" rx="3" fill="#ca8a04"/>
+    <ellipse cx="200" cy="55" rx="12" ry="4" fill="#facc15"/>
+
+    <!-- Thân chai nhựa hình khối đặc trưng trà Nhật Bản -->
+    <path d="M 190 79 L 180 120 Q 155 145 155 180 L 155 315 Q 155 338 175 338 L 225 338 Q 245 338 245 315 L 245 180 Q 245 145 220 120 L 210 79 Z" fill="url(#teaLiquid)"/>
+
+    <!-- Ánh sáng qua nước trà hổ phách trong suốt -->
+    <path d="M 164 140 L 164 315" stroke="#fef08a" stroke-width="3" opacity="0.5" stroke-linecap="round"/>
+
+    <!-- NHÃN CHAI ĐEN HUYỀN BÍ & CHỮ VÀNG KIM -->
+    <rect x="155" y="185" width="90" height="95" fill="url(#teaLabel)"/>
+    <rect x="155" y="185" width="90" height="6" fill="#ca8a04"/>
+    <rect x="155" y="274" width="90" height="6" fill="#ca8a04"/>
+
+    <!-- LOGO TEA+ -->
+    <g transform="translate(200, 218)">
+      <text x="-6" y="5" font-family="'Impact', Arial Black, sans-serif" font-size="24" font-weight="900" fill="#ffffff">TEA</text>
+      <text x="24" y="-3" font-family="'Impact', Arial Black, sans-serif" font-size="20" font-weight="900" fill="#ef4444">+</text>
+    </g>
+
+    <!-- CHỮ Ô LONG & OTPP -->
+    <text x="200" y="242" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="900" fill="#facc15" text-anchor="middle" letter-spacing="1">Ô LONG</text>
+    <rect x="175" y="248" width="50" height="13" rx="2" fill="#15803d"/>
+    <text x="200" y="258" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="800" fill="#ffffff" text-anchor="middle">CHỨA OTPP</text>
+    <text x="200" y="268" font-family="'Segoe UI', sans-serif" font-size="6.5" font-weight="600" fill="#94a3b8" text-anchor="middle">SUNTORY • 450ml</text>
+  </g>
+</svg>

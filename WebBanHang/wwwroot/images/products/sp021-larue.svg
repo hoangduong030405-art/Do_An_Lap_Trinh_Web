@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="larueBody" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="30%" stop-color="#2563eb"/>
+      <stop offset="60%" stop-color="#3b82f6"/>
+      <stop offset="85%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#172554"/>
+    </linearGradient>
+    <linearGradient id="goldLarue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="40%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#a16207"/>
+    </linearGradient>
+    <filter id="shadowLarue" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="200" cy="340" rx="75" ry="14" fill="#000000" opacity="0.2"/>
+
+  <g filter="url(#shadowLarue)">
+    <ellipse cx="200" cy="72" rx="48" ry="10" fill="#cbd5e1"/>
+    <ellipse cx="200" cy="70" rx="42" ry="7" fill="#e2e8f0"/>
+
+    <path d="M 152 72 L 150 310 Q 150 324 168 324 L 232 324 Q 250 324 250 310 L 248 72 Z" fill="url(#larueBody)"/>
+    <path d="M 160 322 Q 200 330 240 322 L 236 332 Q 200 338 164 332 Z" fill="#94a3b8"/>
+
+    <!-- DẢI VÀNG VƯƠNG MIỆNG LARUE -->
+    <rect x="150" y="85" width="100" height="12" fill="url(#goldLarue)"/>
+    <rect x="150" y="305" width="100" height="10" fill="url(#goldLarue)"/>
+
+    <!-- BIỂU TƯỢNG ĐẦU CỌP LARUE -->
+    <g transform="translate(200, 165)">
+      <circle cx="0" cy="0" r="38" fill="url(#goldLarue)"/>
+      <circle cx="0" cy="0" r="34" fill="#1e3a8a"/>
+      <!-- Đầu cọp vàng cách điệu -->
+      <path d="M -18 -15 Q 0 -30 18 -15 L 14 5 Q 0 25 -14 5 Z" fill="url(#goldLarue)"/>
+      <circle cx="-6" cy="-2" r="3" fill="#1e3a8a"/>
+      <circle cx="6" cy="-2" r="3" fill="#1e3a8a"/>
+      <!-- Sọc vằn cọp -->
+      <path d="M -2 5 L 0 12 L 2 5 Z" fill="#1e3a8a"/>
+    </g>
+
+    <!-- CHỮ LARUE BIỂU TƯỢNG -->
+    <text x="200" y="240" font-family="'Arial Black', Impact, sans-serif" font-size="28" font-weight="900" fill="url(#goldLarue)" text-anchor="middle" letter-spacing="2">LARUE</text>
+    <rect x="170" y="248" width="60" height="14" rx="3" fill="#dc2626"/>
+    <text x="200" y="259" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">EXPORT</text>
+    <text x="200" y="285" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="600" fill="#e2e8f0" text-anchor="middle">BIÈRE DEPUIS 1909</text>
+  </g>
+</svg>

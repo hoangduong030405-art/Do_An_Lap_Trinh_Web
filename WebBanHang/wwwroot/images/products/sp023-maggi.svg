@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="maggiSauce" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#261005"/>
+      <stop offset="35%" stop-color="#451a03"/>
+      <stop offset="70%" stop-color="#582106"/>
+      <stop offset="100%" stop-color="#1c0b02"/>
+    </linearGradient>
+    <filter id="shadowMaggi" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <ellipse cx="200" cy="350" rx="65" ry="12" fill="#000000" opacity="0.2"/>
+
+  <!-- CHAI DẦU HÀO MAGGI 820G THỦY TINH NÂU ĐẬM -->
+  <g filter="url(#shadowMaggi)">
+    <!-- Nắp bật đỏ đặc trưng của Maggi -->
+    <rect x="188" y="55" width="24" height="26" rx="4" fill="#dc2626"/>
+    <ellipse cx="200" cy="55" rx="12" ry="4" fill="#ef4444"/>
+
+    <!-- Thân chai cao cổ thon -->
+    <path d="M 190 81 L 182 135 Q 160 160 160 190 L 160 320 Q 160 338 178 338 L 222 338 Q 240 338 240 320 L 240 190 Q 240 160 218 135 L 210 81 Z" fill="url(#maggiSauce)"/>
+
+    <!-- Ánh bóng sáng trên thủy tinh -->
+    <path d="M 166 170 L 166 320" stroke="#a16207" stroke-width="3" opacity="0.4" stroke-linecap="round"/>
+
+    <!-- NHÃN CHAI VÀNG ĐỎ MAGGI -->
+    <g transform="translate(160, 185)">
+      <rect x="0" y="0" width="80" height="110" fill="#facc15" rx="4"/>
+      <!-- Nửa trên đỏ tươi -->
+      <path d="M 0 0 L 80 0 L 80 40 L 0 50 Z" fill="#dc2626"/>
+      
+      <!-- LOGO MAGGI CHỮ NGHIÊNG ĐẶC TRƯNG -->
+      <g transform="translate(40, 26)">
+        <ellipse cx="0" cy="0" rx="30" ry="14" fill="#eab308"/>
+        <text x="0" y="5" font-family="'Brush Script MT', 'Arial Black', cursive, sans-serif" font-size="16" font-weight="900" fill="#dc2626" text-anchor="middle" font-style="italic">Maggi</text>
+      </g>
+
+      <!-- TÊN SẢN PHẨM: DẦU HÀO ĐẬM ĐẶC -->
+      <text x="40" y="65" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="900" fill="#1e293b" text-anchor="middle">DẦU HÀO</text>
+      <rect x="10" y="70" width="60" height="14" fill="#451a03" rx="2"/>
+      <text x="40" y="81" font-family="'Segoe UI', Arial, sans-serif" font-size="8" font-weight="800" fill="#facc15" text-anchor="middle">ĐẬM ĐẶC</text>
+      <text x="40" y="98" font-family="'Segoe UI', sans-serif" font-size="7.5" font-weight="700" fill="#0f172a" text-anchor="middle">820g • TỰ NHIÊN</text>
+    </g>
+  </g>
+</svg>
