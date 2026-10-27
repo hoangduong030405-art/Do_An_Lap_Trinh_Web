@@ -3,10 +3,12 @@
 @rendermode InteractiveServer
 
 @using WebBanHang.UseCases.Invoices
+@using WebBanHang.UseCases.Payments
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.CoreBusiness.Entities
 @inject IViewInvoiceListUseCase ViewInvoiceListUseCase
 @inject IViewInvoiceDetailUseCase ViewInvoiceDetailUseCase
+@inject IRecordPaymentAndAllocateUseCase RecordPaymentUseCase
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 
@@ -260,20 +262,57 @@ else
                         </table>
 
                         <!-- MÃ QR THANH TOÁN VIETQR & CHỮ KÝ -->
+                        @if (!string.IsNullOrEmpty(webhookSuccessMessage))
+                        {
+                            <div class="alert alert-success alert-dismissible fade show rounded-3 mt-3 d-print-none shadow-sm" role="alert">
+                                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                                <span>@webhookSuccessMessage</span>
+                                <button type="button" class="btn-close" @onclick="() => webhookSuccessMessage = null"></button>
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(webhookErrorMessage))
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show rounded-3 mt-3 d-print-none shadow-sm" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                                <span>@webhookErrorMessage</span>
+                                <button type="button" class="btn-close" @onclick="() => webhookErrorMessage = null"></button>
+                            </div>
+                        }
+
                         <div class="row align-items-center mt-3 pt-3 border-top">
                             <div class="col-md-6 text-center text-md-start">
                                 @if (selectedInvoiceDetail.Balance > 0)
                                 {
-                                    <div class="d-inline-flex align-items-center border p-2 rounded bg-light">
-                                        <img src="https://img.vietqr.io/image/acb-35782747-compact2.png?amount=@Convert.ToInt64(selectedInvoiceDetail.Balance)&addInfo=HD%20@selectedInvoiceDetail.InvoiceNumber"
-                                             alt="Mã VietQR Chuyển Khoản"
-                                             style="width: 130px; height: 130px; object-fit: contain;" />
-                                        <div class="ms-3 text-start small">
-                                            <div class="fw-bold text-primary"><i class="bi bi-qr-code-scan"></i> QUÉT MÃ VIETQR</div>
-                                            <div class="text-muted">Ngân hàng: Á Châu (ACB)</div>
-                                            <div class="text-muted">STK: <strong>35782747</strong></div>
-                                            <div class="text-muted">Số tiền: <strong>@selectedInvoiceDetail.Balance.ToString("N0") đ</strong></div>
-                                            <div class="text-muted">Nội dung: <strong>HD @selectedInvoiceDetail.InvoiceNumber</strong></div>
+                                    var transferNote = $"HUEGO {selectedInvoiceDetail.CustomerCode} {selectedInvoiceDetail.InvoiceNumber}";
+                                    var qrUrl = $"https://img.vietqr.io/image/acb-35782747-compact2.png?amount={Convert.ToInt64(selectedInvoiceDetail.Balance)}&addInfo={Uri.EscapeDataString(transferNote)}";
+
+                                    <div class="border p-2 rounded bg-light">
+                                        <div class="d-flex align-items-center">
+                                            <img src="@qrUrl"
+                                                 alt="Mã VietQR Chuyển Khoản"
+                                                 style="width: 125px; height: 125px; object-fit: contain;" />
+                                            <div class="ms-3 text-start small">
+                                                <div class="fw-bold text-primary"><i class="bi bi-qr-code-scan"></i> QUÉT MÃ VIETQR</div>
+                                                <div class="text-muted">Ngân hàng: Á Châu (ACB)</div>
+                                                <div class="text-muted">STK: <strong>35782747</strong></div>
+                                                <div class="text-muted">Số tiền: <strong>@selectedInvoiceDetail.Balance.ToString("N0") đ</strong></div>
+                                                <div class="text-muted">Nội dung: <strong class="text-primary font-monospace">@transferNote</strong></div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2 pt-2 border-top d-print-none">
+                                            <button type="button" class="btn btn-warning btn-sm rounded-pill fw-bold shadow-xs w-100"
+                                                    disabled="@isProcessingWebhook"
+                                                    @onclick="SimulateWebhookForInvoice">
+                                                @if (isProcessingWebhook)
+                                                {
+                                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                                    <span>Đang gạch nợ...</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>⚡ Mô phỏng Ngân hàng báo Có (Auto Webhook)</span>
+                                                }
+                                            </button>
                                         </div>
                                     </div>
                                 }
@@ -328,6 +367,10 @@ else
     private bool loading = true;
     private string searchKeyword = "";
     private string selectedStatus = "";
+
+    private bool isProcessingWebhook = false;
+    private string? webhookSuccessMessage;
+    private string? webhookErrorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -398,10 +441,43 @@ else
     private void CloseModal()
     {
         selectedInvoiceDetail = null;
+        webhookSuccessMessage = null;
+        webhookErrorMessage = null;
     }
 
     private async Task PrintInvoice()
     {
         await JSRuntime.InvokeVoidAsync("window.print");
+    }
+
+    private async Task SimulateWebhookForInvoice()
+    {
+        if (selectedInvoiceDetail == null || selectedInvoiceDetail.Balance <= 0) return;
+        isProcessingWebhook = true;
+        webhookErrorMessage = null;
+        webhookSuccessMessage = null;
+
+        try
+        {
+            var payAmount = selectedInvoiceDetail.Balance;
+            var invNumber = selectedInvoiceDetail.InvoiceNumber;
+            var note = $"VietQR Webhook ACB: HUEGO {selectedInvoiceDetail.CustomerCode} {invNumber}";
+
+            await RecordPaymentUseCase.ExecuteAsync(selectedInvoiceDetail.CustomerId, payAmount, DateTime.Now, note);
+
+            webhookSuccessMessage = $"⚡ Ngân hàng ACB vừa báo Có: Đã nhận thành công {payAmount:N0} đ từ {selectedInvoiceDetail.CustomerName} cho hóa đơn #{invNumber}. Hệ thống đã tự động gạch nợ FIFO!";
+
+            // Refresh current invoice detail & full invoice list
+            selectedInvoiceDetail = await ViewInvoiceDetailUseCase.ExecuteAsync(selectedInvoiceDetail.Id);
+            await LoadInvoices();
+        }
+        catch (Exception ex)
+        {
+            webhookErrorMessage = "Lỗi khi xử lý gạch nợ tự động: " + ex.Message;
+        }
+        finally
+        {
+            isProcessingWebhook = false;
+        }
     }
 }

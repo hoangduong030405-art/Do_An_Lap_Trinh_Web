@@ -10,11 +10,13 @@
 @using WebBanHang.UseCases.Invoices
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.Components.Controls
+@using WebBanHang.Services
 
 @attribute [Authorize(Roles = "Customer")]
 @inject IGetCustomerPortalInfoUseCase GetCustomerPortalInfoUseCase
 @inject IViewProductCatalogUseCase ViewProductCatalogUseCase
 @inject ICreateCustomerPortalOrderUseCase CreateCustomerPortalOrderUseCase
+@inject LedgerConfirmationStateService LedgerState
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 
@@ -226,30 +228,70 @@
                                 </div>
                             </div>
 
-                            <!-- KIỂM TRA HẠN MỨC REAL-TIME (REAL-TIME CREDIT LIMIT CHECK) -->
+                            <!-- BỘ ĐO HẠN MỨC TRỰC TIẾP (LIVE CREDIT METER) -->
+                            <div class="p-3 rounded-3 mb-3 border @(isExceeded ? "border-danger bg-danger-subtle bg-opacity-25" : "border-success-subtle bg-light")">
+                                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                                    <span class="text-muted">Hạn mức khả dụng hiện tại:</span>
+                                    <strong class="text-slate-navy">@availableCredit.ToString("N0") đ</strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-1 small">
+                                    <span class="text-muted">Tổng tiền đơn đang chọn:</span>
+                                    <strong class="text-primary">@cartTotal.ToString("N0") đ</strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center pt-1.5 border-top small">
+                                    <span class="fw-bold @(isExceeded ? "text-danger" : "text-success")">Hạn mức còn lại sau đơn này:</span>
+                                    <strong class="fs-6 @(isExceeded ? "text-danger" : "text-success")">
+                                        @(isExceeded ? $"-{exceededAmount:N0} đ" : $"{remainingCreditAfterOrder:N0} đ")
+                                    </strong>
+                                </div>
+                                @{
+                                    var creditUsedPercent = availableCredit > 0 ? Math.Min(100, Math.Max(0, (cartTotal / availableCredit) * 100)) : 100;
+                                }
+                                <div class="progress mt-2" style="height: 8px;">
+                                    <div class="progress-bar @(isExceeded ? "bg-danger" : "bg-success")" 
+                                         role="progressbar" 
+                                         style="width: @(isExceeded ? 100 : creditUsedPercent)%;"></div>
+                                </div>
+                            </div>
+
                             @if (isExceeded)
                             {
+                                <!-- TRƯỜNG HỢP 2: VƯỢT TRẦN -->
                                 <div class="alert alert-danger p-3 rounded-3 mb-3 border-danger shadow-xs">
                                     <div class="d-flex gap-2">
                                         <i class="bi bi-exclamation-octagon-fill fs-4 text-danger flex-shrink-0"></i>
                                         <div class="small">
-                                            <div class="fw-bold text-danger mb-1">VƯỢT HẠN MỨC TÍN DỤNG!</div>
-                                            <div>Đơn hàng vượt hạn mức nợ còn lại (vượt <strong>@exceededAmount.ToString("N0") đ</strong>).</div>
-                                            <div class="mt-1 text-muted">
-                                                Hạn mức khả dụng hiện tại: <strong>@availableCredit.ToString("N0") đ</strong>. Vui lòng thanh toán bớt nợ cũ hoặc giảm bớt số lượng hàng.
-                                            </div>
+                                            <div class="fw-bold text-danger mb-1">CẢNH BÁO VƯỢT TRẦN HẠN MỨC!</div>
+                                            <div>Vượt hạn mức tín dụng khả dụng <strong>@exceededAmount.ToString("N0") đ</strong>! Hệ thống tự động chặn xuất hóa đơn ghi nợ theo quy định.</div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- 2 NÚT GIẢI PHÁP -->
+                                <div class="d-flex flex-column gap-2 mb-3">
+                                    <a href="/portal/invoices" class="btn btn-warning text-dark fw-bold py-2 rounded-pill d-flex align-items-center justify-content-center gap-2 shadow-xs" style="background-color: #f59e0b; border-color: #f59e0b;">
+                                        <i class="bi bi-qr-code"></i> Thanh toán bớt nợ cũ qua VietQR
+                                    </a>
+                                    <button type="button" class="btn btn-outline-primary fw-bold py-2 rounded-pill d-flex align-items-center justify-content-center gap-2" @onclick="SendCreditLimitRequest">
+                                        <i class="bi bi-send"></i> Gửi yêu cầu Kế toán duyệt vượt hạn mức tạm thời
+                                    </button>
+                                </div>
+                                @if (sentCreditRequest)
+                                {
+                                    <div class="alert alert-info py-2 px-3 small rounded-3 mb-3">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Đã gửi yêu cầu nới hạn mức tạm thời tới Kế toán thành công!
+                                    </div>
+                                }
                             }
                             else
                             {
+                                <!-- TRƯỜNG HỢP 1: HỢP LỆ -->
                                 <div class="alert alert-success p-3 rounded-3 mb-3 border-success shadow-xs">
                                     <div class="d-flex gap-2">
                                         <i class="bi bi-check-circle-fill fs-5 text-success flex-shrink-0"></i>
                                         <div class="small">
-                                            <div class="fw-bold text-success mb-1">ĐỦ ĐIỀU KIỆN GHI NỢ TÍN DỤNG</div>
-                                            <div>Hạn mức khả dụng sau đơn này: <strong>@remainingCreditAfterOrder.ToString("N0") đ</strong>.</div>
+                                            <div class="fw-bold text-success mb-1">ĐỦ ĐIỀU KIỆN XUẤT KHO GHI NỢ</div>
+                                            <div>Đơn hàng hợp lệ trong trần tín dụng. Hạn mức còn lại sau đơn này: <strong>@remainingCreditAfterOrder.ToString("N0") đ</strong>.</div>
                                             <div class="text-muted">Thời hạn thanh toán: <strong>@(customerInfo?.PaymentTermsDays ?? 30) ngày</strong>.</div>
                                         </div>
                                     </div>
@@ -258,7 +300,7 @@
 
                             <!-- Nút Xác Nhận Đặt Hàng & Ghi Nợ -->
                             <button class="btn btn-primary w-100 py-2.5 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
-                                    disabled="@(isExceeded || submitting)"
+                                    disabled="@(isExceeded || submitting || !cart.Any())"
                                     @onclick="SubmitOrderAsync">
                                 @if (submitting)
                                 {
@@ -268,7 +310,7 @@
                                 else
                                 {
                                     <i class="bi bi-shield-lock-fill"></i>
-                                    <span>Xác Nhận Đặt Hàng & Ghi Nợ</span>
+                                    <span>Xác Nhận Đặt Hàng Ghi Nợ (Hạn @(customerInfo?.PaymentTermsDays ?? 30) ngày)</span>
                                 }
                             </button>
                             <small class="text-center d-block text-muted mt-2">
@@ -364,12 +406,19 @@
     private List<CartItem> cart = new();
     private Dictionary<int, int> selectedQtys = new();
     private CustomerPortalOrderResultDto? orderSuccessResult;
+    private bool sentCreditRequest = false;
 
     private decimal cartTotal => cart.Sum(x => x.Quantity * x.UnitPrice);
     private decimal availableCredit => customerInfo?.AvailableCredit ?? 0;
     private bool isExceeded => cartTotal > availableCredit;
     private decimal exceededAmount => Math.Max(0, cartTotal - availableCredit);
     private decimal remainingCreditAfterOrder => Math.Max(0, availableCredit - cartTotal);
+
+    private void SendCreditLimitRequest()
+    {
+        LedgerState.AddLimitOverrideRequest(customerId, customerInfo?.FullName ?? "Tạp Hóa Bà Ba", cartTotal, availableCredit);
+        sentCreditRequest = true;
+    }
 
     protected override async Task OnInitializedAsync()
     {

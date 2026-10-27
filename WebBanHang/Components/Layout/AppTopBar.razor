@@ -1,7 +1,11 @@
+@rendermode InteractiveServer
 @using WebBanHang.Services
 @using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components.Authorization
 @inject LayoutStateService LayoutState
 @inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
 
 <header class="app-topbar px-3 d-flex align-items-center justify-content-between flex-shrink-0">
     <!-- LEFT: SIDEBAR TOGGLE + BRAND + REPORTING PERIOD -->
@@ -15,26 +19,29 @@
         </button>
 
         <!-- Brand Logo & Name -->
-        <a href="/dashboard" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0 ms-1">
+        <a href="@(IsPortalRoute ? "/portal/dashboard" : "/dashboard")" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0 ms-1">
             <img src="/images/brand-logo.svg" alt="B2B Logo" class="brand-logo-img" />
             <span class="brand-text fw-bold">HUEGO B2B</span>
         </a>
 
-        <span class="app-header-divider d-none d-md-inline ms-1"></span>
+        @if (!IsPortalRoute)
+        {
+            <span class="app-header-divider d-none d-md-inline ms-1"></span>
 
-        <!-- Functional Reporting Period Selector (Replaces static 2024 badge) -->
-        <div class="d-none d-lg-flex align-items-center gap-1.5 bg-light rounded-pill px-2.5 py-1 border small">
-            <i class="bi bi-calendar3 text-success"></i>
-            <span class="text-muted fw-semibold" style="font-size: 15px;">Kỳ báo cáo:</span>
-            <select class="form-select form-select-sm border-0 bg-transparent py-0 ps-1 pe-4 text-slate-navy fw-bold" 
-                    style="font-size: 15px; cursor: pointer; width: auto;"
-                    value="@LayoutState.SelectedPeriod"
-                    @onchange="OnPeriodChanged">
-                <option value="this_month">Tháng này (@DateTime.Now.ToString("MM/yyyy"))</option>
-                <option value="this_quarter">Quý này (Q@(((DateTime.Now.Month - 1) / 3) + 1)/@DateTime.Now.Year)</option>
-                <option value="this_year">Năm nay (@DateTime.Now.Year)</option>
-            </select>
-        </div>
+            <!-- Functional Reporting Period Selector (Replaces static 2024 badge) -->
+            <div class="d-none d-lg-flex align-items-center gap-1.5 bg-light rounded-pill px-2.5 py-1 border small">
+                <i class="bi bi-calendar3 text-success"></i>
+                <span class="text-muted fw-semibold" style="font-size: 15px;">Kỳ báo cáo:</span>
+                <select class="form-select form-select-sm border-0 bg-transparent py-0 ps-1 pe-4 text-slate-navy fw-bold" 
+                        style="font-size: 15px; cursor: pointer; width: auto;"
+                        value="@LayoutState.SelectedPeriod"
+                        @onchange="OnPeriodChanged">
+                    <option value="this_month">Tháng này (@DateTime.Now.ToString("MM/yyyy"))</option>
+                    <option value="this_quarter">Quý này (Q@(((DateTime.Now.Month - 1) / 3) + 1)/@DateTime.Now.Year)</option>
+                    <option value="this_year">Năm nay (@DateTime.Now.Year)</option>
+                </select>
+            </div>
+        }
     </div>
 
     <!-- CENTER: GLOBAL REAL-TIME SEARCH BOX -->
@@ -47,25 +54,15 @@
         <!-- 1. QUICK ADD (+) MENU -->
         <QuickAddMenu />
 
-        <!-- 2. AVA AI CHAT ASSISTANT BUTTON WITH SMART REMINDER BADGE -->
-        <button class="app-tool-btn position-relative" 
-                title="Trợ lý AVA Kế toán (@avaBadgeCount nhắc nhở)"
-                @onclick="ToggleAvaPanel">
-            <i class="bi bi-chat-dots-fill fs-6 text-primary"></i>
-            @if (avaBadgeCount > 0)
-            {
-                <span class="app-counter-badge bg-danger">
-                    @(avaBadgeCount > 9 ? "9+" : avaBadgeCount.ToString())
-                </span>
-            }
-        </button>
+        <!-- 2. HỘP THƯ CÔNG NỢ & PHÊ DUYỆT (💬) -->
+        <DebtInboxMenu OnOpenAva="ToggleAvaPanel" />
 
         <!-- 3. REAL-TIME SQL NOTIFICATION BELL -->
         <NotificationBell />
 
         <!-- 4. HELP (?) BUTTON -->
         <button class="app-tool-btn" 
-                title="Trung tâm trợ giúp & 2 Luật nghiệp vụ"
+                title="Cẩm nang quy tắc nghiệp vụ (❓)"
                 @onclick="ToggleHelpModal">
             <i class="bi bi-question-circle fs-6"></i>
         </button>
@@ -95,6 +92,16 @@
     private bool isAvaOpen = false;
     private bool isHelpOpen = false;
     private int avaBadgeCount = 3;
+    private bool isCustomer = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        isCustomer = authState.User.IsInRole("Customer");
+        Navigation.LocationChanged += (_, __) => StateHasChanged();
+    }
+
+    private bool IsPortalRoute => isCustomer || (Navigation.Uri?.Contains("/portal") ?? false);
 
     private void OnPeriodChanged(ChangeEventArgs e)
     {

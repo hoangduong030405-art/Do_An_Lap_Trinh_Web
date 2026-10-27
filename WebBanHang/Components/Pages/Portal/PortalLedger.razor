@@ -6,11 +6,13 @@
 @using WebBanHang.UseCases.Customers
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.Components.Controls
+@using WebBanHang.Services
 
 @attribute [Authorize(Roles = "Customer")]
 @inject IGetCustomerPortalInfoUseCase GetCustomerPortalInfoUseCase
 @inject IViewCustomerLedgerUseCase ViewCustomerLedgerUseCase
 @inject AuthenticationStateProvider AuthStateProvider
+@inject LedgerConfirmationStateService ConfirmationState
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Sổ Đối Soát Công Nợ Đại Lý</PageTitle>
@@ -25,9 +27,18 @@
                 <button class="btn btn-outline-primary me-2" @onclick="LoadLedgerAsync">
                     <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
                 </button>
-                <button class="btn btn-primary" @onclick="PrintLedger">
+                <button class="btn btn-primary me-2" @onclick="PrintLedger">
                     <i class="bi bi-printer me-1"></i> In Biên Bản
                 </button>
+                @if (ledger != null)
+                {
+                    <button class="btn btn-success me-2 fw-semibold" @onclick="ConfirmBalance">
+                        <i class="bi bi-check2-circle me-1"></i> ✔ Xác nhận Khớp số dư (@ledger.EndingBalance.ToString("N0") đ)
+                    </button>
+                    <button class="btn btn-outline-warning text-dark fw-semibold" @onclick="() => showDisputeModal = true">
+                        <i class="bi bi-exclamation-triangle me-1"></i> ⚠ Báo lệch số liệu
+                    </button>
+                }
             </Actions>
         </PageHeader>
     </div>
@@ -196,7 +207,24 @@
                 <div class="col-6">
                     <div class="fw-bold small text-uppercase">ĐẠI DIỆN BÊN MUA (BÊN B)</div>
                     <div class="text-muted fst-italic">(Ký, ghi rõ họ tên, đóng dấu nếu có)</div>
-                    <div style="height: 80px;"></div>
+                    <div style="min-height: 80px;" class="d-flex align-items-center justify-content-center py-2">
+                        @if (isConfirmed || confirmedInfo != null)
+                        {
+                            var conf = confirmedInfo ?? new CustomerLedgerConfirmation { ConfirmedAt = DateTime.Now, EndingBalance = ledger.EndingBalance };
+                            <div class="border border-2 border-danger rounded-3 p-2 text-danger text-center shadow-xs" 
+                                 style="border-style: double !important; transform: rotate(-3deg); background: rgba(239, 68, 68, 0.05); min-width: 220px;">
+                                <div class="fw-bold text-uppercase" style="font-size: 13.5px; letter-spacing: 0.5px;">
+                                    <i class="bi bi-patch-check-fill me-1"></i> ĐẠI LÝ ĐÃ XÁC NHẬN SỐ DƯ
+                                </div>
+                                <div class="small fw-semibold mt-0.5" style="font-size: 11.5px;">
+                                    Khớp số dư: @ledger.EndingBalance.ToString("N0") đ
+                                </div>
+                                <div class="small text-muted" style="font-size: 11px;">
+                                    Thời điểm: @conf.ConfirmedAt.ToString("HH:mm - dd/MM/yyyy")
+                                </div>
+                            </div>
+                        }
+                    </div>
                     <div class="fw-bold text-dark">@ledger.CustomerName</div>
                 </div>
                 <div class="col-6">
@@ -210,11 +238,72 @@
     }
 </div>
 
+<!-- MODAL BÁO LỆCH SỐ LIỆU -->
+@if (showDisputeModal && ledger != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header bg-white border-bottom py-3 px-4">
+                    <h5 class="modal-title fw-bold text-dark">
+                        <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i> Báo Lệch Số Liệu Công Nợ
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="() => showDisputeModal = false"></button>
+                </div>
+                <div class="modal-body p-4 bg-white">
+                    <p class="text-muted small mb-3">
+                        Quý khách vui lòng chọn chứng từ có chênh lệch và nhập chi tiết phản ánh để bộ phận Kế toán công nợ kiểm tra, đối chiếu lại.
+                    </p>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">Hóa đơn / Giao dịch cần thắc mắc <span class="text-danger">*</span></label>
+                        <select class="form-select" @bind="disputeInvoiceNumber">
+                            <option value="">-- Chọn hóa đơn hoặc chứng từ phát sinh --</option>
+                            @foreach (var entry in ledger.Entries.Where(e => !string.IsNullOrEmpty(e.DocumentNumber)))
+                            {
+                                <option value="@entry.DocumentNumber">@entry.DocumentNumber (@entry.TransactionDate.ToString("dd/MM/yyyy")) - @entry.Description</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">Nội dung giải trình / Số tiền sai lệch <span class="text-danger">*</span></label>
+                        <textarea class="form-control" rows="3" placeholder="VD: Hóa đơn này đại lý đã chuyển khoản 5.000.000đ ngày 15/10 nhưng chưa thấy cấn trừ..." @bind="disputeNote"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-dark">Đính kèm ảnh biên lai / sao kê chuyển khoản</label>
+                        <input type="file" class="form-control form-control-sm" />
+                        <small class="text-muted">Hỗ trợ file JPG, PNG, PDF (tối đa 5MB)</small>
+                    </div>
+                    @if (!string.IsNullOrEmpty(disputeMessage))
+                    {
+                        <div class="alert alert-success py-2 px-3 small">
+                            <i class="bi bi-check-circle-fill me-1"></i> @disputeMessage
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer bg-light py-2 px-4 justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3" @onclick="() => showDisputeModal = false">
+                        Đóng
+                    </button>
+                    <button type="button" class="btn btn-warning rounded-pill btn-sm px-4 fw-bold" @onclick="SubmitDispute">
+                        <i class="bi bi-send me-1"></i> Gửi Phản Ánh Tới Kế Toán
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private bool loading = true;
     private CustomerPortalInfoDto? customerInfo;
     private CustomerLedgerDto? ledger;
     private int customerId = 1;
+    private bool isConfirmed = false;
+    private CustomerLedgerConfirmation? confirmedInfo;
+    private bool showDisputeModal = false;
+    private string disputeInvoiceNumber = "";
+    private string disputeNote = "";
+    private string? disputeMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -226,6 +315,9 @@
             customerId = id;
         }
 
+        confirmedInfo = ConfirmationState.GetConfirmation(customerId);
+        isConfirmed = confirmedInfo != null;
+
         await LoadLedgerAsync();
     }
 
@@ -236,11 +328,34 @@
         {
             customerInfo = await GetCustomerPortalInfoUseCase.ExecuteAsync(customerId);
             ledger = await ViewCustomerLedgerUseCase.ExecuteAsync(customerId, "Customer", customerId);
+            confirmedInfo = ConfirmationState.GetConfirmation(customerId);
+            isConfirmed = confirmedInfo != null;
         }
         finally
         {
             loading = false;
         }
+    }
+
+    private void ConfirmBalance()
+    {
+        if (ledger != null)
+        {
+            ConfirmationState.ConfirmBalance(customerId, ledger.CustomerName, ledger.EndingBalance);
+            confirmedInfo = ConfirmationState.GetConfirmation(customerId);
+            isConfirmed = true;
+        }
+    }
+
+    private void SubmitDispute()
+    {
+        if (string.IsNullOrWhiteSpace(disputeNote) && string.IsNullOrWhiteSpace(disputeInvoiceNumber))
+        {
+            return;
+        }
+
+        ConfirmationState.AddDispute(customerId, ledger?.CustomerName ?? "Đại lý", disputeInvoiceNumber, disputeNote);
+        disputeMessage = "Đã gửi phản ánh tới bộ phận Kế toán thành công!";
     }
 
     private async Task PrintLedger()

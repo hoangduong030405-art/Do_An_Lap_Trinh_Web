@@ -30,8 +30,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
                 SELECT TOP 5 
                     Id, 
                     Name AS Title, 
-                    CONCAT(ProductCode, ' • ĐVT: ', Unit, ' • Giá: ', FORMAT(UnitPrice, 'N0'), ' đ') AS Subtitle,
-                    'Sản phẩm' AS Category,
+                    CONCAT(ProductCode, N' • ĐVT: ', Unit, N' • Giá: ', FORMAT(UnitPrice, 'N0'), N' đ') AS Subtitle,
+                    N'Sản phẩm' AS Category,
                     CASE WHEN @Role = 'Customer' THEN '/portal/store' ELSE '/manage-products' END AS Url,
                     CONCAT(StockQuantity, ' ', Unit) AS BadgeText,
                     'info' AS BadgeColor
@@ -54,11 +54,11 @@ namespace WebBanHang.Plugins.DataStore.SQL
                 invoiceQuery = @"
                     SELECT TOP 5 
                         i.Id, 
-                        CONCAT('Hóa đơn #', i.InvoiceNumber) AS Title, 
-                        CONCAT('Tổng tiền: ', FORMAT(i.TotalAmount, 'N0'), ' đ • Còn nợ: ', FORMAT(i.Balance, 'N0'), ' đ') AS Subtitle,
-                        'Hóa đơn' AS Category,
+                        CONCAT(N'Hóa đơn #', i.InvoiceNumber) AS Title, 
+                        CONCAT(N'Tổng tiền: ', FORMAT(i.TotalAmount, 'N0'), N' đ • Còn nợ: ', FORMAT(i.Balance, 'N0'), N' đ') AS Subtitle,
+                        N'Hóa đơn' AS Category,
                         '/portal/invoices' AS Url,
-                        CASE WHEN i.Balance <= 0 THEN 'Đã trả' ELSE 'Còn nợ' END AS BadgeText,
+                        CASE WHEN i.Balance <= 0 THEN N'Đã trả' ELSE N'Còn nợ' END AS BadgeText,
                         CASE WHEN i.Balance <= 0 THEN 'success' ELSE 'warning' END AS BadgeColor
                     FROM Invoices i
                     WHERE i.CustomerId = @CustomerId AND i.InvoiceNumber LIKE @Keyword
@@ -70,11 +70,11 @@ namespace WebBanHang.Plugins.DataStore.SQL
                 invoiceQuery = @"
                     SELECT TOP 5 
                         i.Id, 
-                        CONCAT('Hóa đơn #', i.InvoiceNumber) AS Title, 
-                        CONCAT(c.FullName, ' • Nợ: ', FORMAT(i.Balance, 'N0'), ' đ / ', FORMAT(i.TotalAmount, 'N0'), ' đ') AS Subtitle,
-                        'Hóa đơn' AS Category,
+                        CONCAT(N'Hóa đơn #', i.InvoiceNumber) AS Title, 
+                        CONCAT(c.FullName, N' • Nợ: ', FORMAT(i.Balance, 'N0'), N' đ / ', FORMAT(i.TotalAmount, 'N0'), N' đ') AS Subtitle,
+                        N'Hóa đơn' AS Category,
                         '/invoices' AS Url,
-                        CASE WHEN i.Balance <= 0 THEN 'Đã trả' ELSE 'Còn nợ' END AS BadgeText,
+                        CASE WHEN i.Balance <= 0 THEN N'Đã trả' ELSE N'Còn nợ' END AS BadgeText,
                         CASE WHEN i.Balance <= 0 THEN 'success' ELSE 'warning' END AS BadgeColor
                     FROM Invoices i
                     INNER JOIN Customers c ON i.CustomerId = c.Id
@@ -97,9 +97,9 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     SELECT TOP 5 
                         Id, 
                         FullName AS Title, 
-                        CONCAT('Mã: ', CustomerCode, ' • SĐT: ', PhoneNumber, ' • Hạn mức: ', FORMAT(CreditLimit, 'N0'), ' đ') AS Subtitle,
-                        'Khách hàng' AS Category,
-                        '/manage-customers' AS Url,
+                        CONCAT(N'Mã: ', CustomerCode, N' • SĐT: ', PhoneNumber, N' • Hạn mức: ', FORMAT(CreditLimit, 'N0'), N' đ') AS Subtitle,
+                        N'Khách hàng' AS Category,
+                        CASE WHEN @Role = 'Accountant' THEN '/customer-ledger' ELSE '/manage-customers' END AS Url,
                         CustomerCode AS BadgeText,
                         'primary' AS BadgeColor
                     FROM Customers
@@ -109,7 +109,8 @@ namespace WebBanHang.Plugins.DataStore.SQL
 
                 var customers = await connection.QueryAsync<GlobalSearchResultDto>(customerQuery, new
                 {
-                    Keyword = searchParam
+                    Keyword = searchParam,
+                    Role = role
                 });
                 results.AddRange(customers);
             }

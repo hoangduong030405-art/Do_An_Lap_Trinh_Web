@@ -1,15 +1,15 @@
 <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(15,23,42,0.65); z-index: 1070;" @onclick="OnClose">
-    <div class="modal-dialog modal-dialog-centered modal-lg" @onclick:stopPropagation="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" @onclick:stopPropagation="true">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
             <!-- MODAL HEADER -->
             <div class="modal-header py-3 text-white d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);">
                 <div class="d-flex align-items-center gap-2">
                     <span class="p-2 rounded-3 bg-primary text-white">
-                        <i class="bi bi-question-circle-fill fs-5"></i>
+                        <i class="bi bi-journal-bookmark-fill fs-5"></i>
                     </span>
                     <div>
-                        <h6 class="modal-title fw-bold text-white mb-0">Trung Tâm Trợ Giúp & Hướng Dẫn Nghiệp Vụ</h6>
-                        <small class="text-white-50" style="font-size: 15px;">Đồ án Capstone ECO2415 — Đề tài 18: Bán hàng & Công nợ B2B</small>
+                        <h5 class="modal-title fw-bold text-white mb-0">Cẩm Nang Quy Tắc Nghiệp Vụ HUEGO B2B (Capstone 18)</h5>
+                        <small class="text-white-50" style="font-size: 13px;">Hệ thống Quản lý Bán hàng & Phân bổ Công nợ Đại lý Tự động</small>
                     </div>
                 </div>
                 <button type="button" class="btn-close btn-close-white" @onclick="OnClose"></button>
@@ -17,62 +17,117 @@
 
             <!-- MODAL BODY -->
             <div class="modal-body p-4 bg-light">
-                <!-- 2 CORE BUSINESS RULES -->
-                <h6 class="fw-bold text-slate-navy mb-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-shield-check text-success"></i> 2 Luật Nghiệp Vụ Cốt Lõi Của Đồ Án
-                </h6>
-
-                <div class="row g-3 mb-4">
-                    <!-- RULE 1 -->
+                <div class="row g-3">
+                    <!-- QUY TẮC 1 -->
                     <div class="col-12 col-md-6">
-                        <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-primary">
-                            <span class="badge bg-primary-subtle text-primary small mb-1.5 align-self-start">LUẬT 1: HẠN MỨC TÍN DỤNG</span>
-                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 15px;">Kiểm Soát Khi Lập Hóa Đơn</h6>
-                            <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.6;">
-                                Khi nhân viên kinh doanh lập đơn bán buôn, hệ thống bắt buộc kiểm tra: <code>(Nợ Hiện Tại + Đơn Mới) &le; Hạn Mức Tín Dụng</code>. Nếu vượt trần, hệ thống từ chối ghi nhận và ném ngoại lệ <code>CreditLimitExceededException</code>.
+                        <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-danger">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-danger-subtle text-danger fw-bold small">QUY TẮC 1</span>
+                                <i class="bi bi-shield-lock-fill text-danger fs-5"></i>
+                            </div>
+                            <h6 class="fw-bold text-slate-navy mb-1.5">Kiểm Soát Trần Tín Dụng</h6>
+                            <p class="text-muted small mb-2" style="line-height: 1.5;">
+                                Hệ thống tự động chặn lập hóa đơn xuất kho nếu tổng nợ vượt quá hạn mức được duyệt:
                             </p>
+                            <div class="p-2 bg-danger-subtle rounded border border-danger-subtle font-monospace small text-danger fw-bold text-center">
+                                Dư nợ hiện tại (TK 131) + Đơn nháp &gt; Hạn mức cấp
+                            </div>
+                            <small class="text-muted mt-2 d-block" style="font-size: 12px;">
+                                <i class="bi bi-info-circle me-1"></i>Đơn hàng sẽ bị khóa nút xuất và yêu cầu thanh toán bớt nợ cũ hoặc Kế toán duyệt tạm thời.
+                            </small>
                         </div>
                     </div>
 
-                    <!-- RULE 2 -->
+                    <!-- QUY TẮC 2 -->
                     <div class="col-12 col-md-6">
                         <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-success">
-                            <span class="badge bg-success-subtle text-success small mb-1.5 align-self-start">LUẬT 2: THU NỢ FIFO</span>
-                            <h6 class="fw-bold text-slate-navy mb-1.5" style="font-size: 15px;">Cấn Trừ Nợ Cũ Nhất Trước</h6>
-                            <p class="text-muted small mb-0" style="font-size: 15px; line-height: 1.6;">
-                                Khi đại lý thanh toán, tiền thu tự động cấn trừ ưu tiên vào hóa đơn có <code>InvoiceDate ASC</code> (cũ nhất / quá hạn lâu nhất trước). Đồng thời đối soát bảng tuổi nợ 4 xô với cờ <code>IsIntegrityValid</code> khớp 100%.
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-success-subtle text-success fw-bold small">QUY TẮC 2</span>
+                                <i class="bi bi-cash-stack text-success fs-5"></i>
+                            </div>
+                            <h6 class="fw-bold text-slate-navy mb-1.5">Thuật Toán Gạch Nợ FIFO</h6>
+                            <p class="text-muted small mb-2" style="line-height: 1.5;">
+                                Mọi khoản tiền thu (Tiền mặt hoặc VietQR Webhook) luôn được phân bổ tự động dứt điểm:
                             </p>
+                            <div class="p-2 bg-success-subtle rounded border border-success-subtle font-monospace small text-success fw-bold text-center">
+                                Ưu tiên: Hóa đơn cũ nhất (#1 InvoiceDate ASC, Id ASC)
+                            </div>
+                            <small class="text-muted mt-2 d-block" style="font-size: 12px;">
+                                <i class="bi bi-info-circle me-1"></i>Gạch dứt điểm từng hóa đơn cũ rồi mới chuyển sang hóa đơn tiếp theo. Tiền dư ghi nhận Dư Có TK 131.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- QUY TẮC 3 -->
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-primary">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-primary-subtle text-primary fw-bold small">QUY TẮC 3</span>
+                                <i class="bi bi-bar-chart-steps text-primary fs-5"></i>
+                            </div>
+                            <h6 class="fw-bold text-slate-navy mb-1.5">Báo Cáo Tuổi Nợ 4 Xô</h6>
+                            <p class="text-muted small mb-2" style="line-height: 1.5;">
+                                Phân loại tự động rủi ro công nợ theo thời gian quá hạn thực tế:
+                            </p>
+                            <div class="d-flex flex-wrap gap-1 justify-content-center mb-2">
+                                <span class="badge bg-light text-dark border">0 - 30 ngày (Trong hạn)</span>
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle">31 - 60 ngày</span>
+                                <span class="badge bg-orange-subtle text-orange border">61 - 90 ngày</span>
+                                <span class="badge bg-danger text-white">&gt; 90 ngày (Nợ xấu)</span>
+                            </div>
+                            <small class="text-muted d-block" style="font-size: 12px;">
+                                <i class="bi bi-check2-circle text-success me-1"></i>Tính toàn vẹn (IsIntegrityValid): Tổng 4 xô luôn khớp 100% tổng dư nợ sổ cái.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- QUY TẮC 4 -->
+                    <div class="col-12 col-md-6">
+                        <div class="card h-100 border-0 shadow-xs p-3 bg-white rounded-3 border-start border-4 border-warning">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-warning-subtle text-dark fw-bold small">CỔNG VIETQR</span>
+                                <i class="bi bi-qr-code-scan text-warning fs-5"></i>
+                            </div>
+                            <h6 class="fw-bold text-slate-navy mb-1.5">Cổng Thanh Toán VietQR 24/7</h6>
+                            <div class="bg-light p-2 rounded border small mb-2">
+                                <div class="d-flex justify-content-between py-0.5">
+                                    <span class="text-muted">Ngân hàng:</span>
+                                    <strong class="text-dark">TMCP Á Châu (ACB)</strong>
+                                </div>
+                                <div class="d-flex justify-content-between py-0.5">
+                                    <span class="text-muted">Số tài khoản:</span>
+                                    <strong class="text-primary font-monospace">35782747</strong>
+                                </div>
+                                <div class="d-flex justify-content-between py-0.5">
+                                    <span class="text-muted">Cú pháp tự động:</span>
+                                    <strong class="text-danger font-monospace">HUEGO [Mã KH] [Mã HĐ]</strong>
+                                </div>
+                            </div>
+                            <small class="text-muted d-block" style="font-size: 12px;">
+                                <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Tự động gạch nợ tức thì thông qua Webhook mô phỏng không cần kế toán nhập tay.
+                            </small>
                         </div>
                     </div>
                 </div>
 
-                <!-- KEYBOARD SHORTCUTS -->
-                <h6 class="fw-bold text-slate-navy mb-2.5 d-flex align-items-center gap-2">
-                    <i class="bi bi-keyboard text-primary"></i> Phím Tắt Thao Tác Nhanh
-                </h6>
-
-                <div class="table-responsive bg-white rounded-3 shadow-xs border">
-                    <table class="table table-sm table-hover mb-0 small">
-                        <tbody>
-                            <tr>
-                                <td class="ps-3"><kbd class="bg-dark text-white">Ctrl + K</kbd></td>
-                                <td class="fw-semibold">Tìm kiếm toàn cục</td>
-                                <td class="text-muted">Tìm kiếm nhanh khách hàng, hóa đơn, sản phẩm</td>
-                            </tr>
-                            <tr>
-                                <td class="ps-3"><kbd class="bg-dark text-white">Esc</kbd></td>
-                                <td class="fw-semibold">Đóng hộp thoại</td>
-                                <td class="text-muted">Đóng thanh tìm kiếm, bảng chat AVA hoặc modal trợ giúp</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- PHÍM TẮT -->
+                <div class="mt-3 p-3 bg-white rounded-3 border shadow-xs">
+                    <div class="fw-bold text-slate-navy small mb-2 d-flex align-items-center gap-1">
+                        <i class="bi bi-keyboard text-primary"></i> Phím Tắt Hệ Thống:
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 small text-muted">
+                        <div><kbd class="bg-light text-dark border">Ctrl + K</kbd> Mở bảng tìm kiếm toàn cục & Lối tắt</div>
+                        <div><kbd class="bg-light text-dark border">Esc</kbd> Đóng cửa sổ đang mở</div>
+                    </div>
                 </div>
             </div>
 
             <!-- MODAL FOOTER -->
             <div class="modal-footer py-2.5 bg-white border-top d-flex justify-content-between">
-                <small class="text-muted">Kiến trúc: Clean Architecture 4 tầng • Blazor Server</small>
-                <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3" @onclick="OnClose">Đã hiểu</button>
+                <small class="text-muted">Đồ án Tốt nghiệp Capstone 18 • Clean Architecture 4 tầng</small>
+                <button type="button" class="btn btn-primary btn-sm rounded-pill px-4 fw-semibold" @onclick="OnClose">
+                    Đã Hiểu & Đóng
+                </button>
             </div>
         </div>
     </div>

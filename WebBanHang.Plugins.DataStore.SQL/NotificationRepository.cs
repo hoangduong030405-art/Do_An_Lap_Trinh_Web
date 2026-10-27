@@ -23,20 +23,61 @@ namespace WebBanHang.Plugins.DataStore.SQL
         {
             using var connection = new SqlConnection(_connectionString);
             var notifications = new List<NotificationItemDto>();
-
-            // 1. Invoices Overdue or Due within 3 days (sử dụng chuẩn tham số @AsOfDate đồng bộ với CoreBusiness)
             var asOfDate = DateTime.Now;
+
+            // 1. BIẾN ĐỘNG VIETQR WEBHOOK (Dữ liệu thanh toán thực tế)
+            string paymentQuery;
+            if (role == "Customer" && customerId.HasValue)
+            {
+                paymentQuery = @"
+                    SELECT TOP 3
+                        p.Id,
+                        N'Thanh toán VietQR thành công' AS Title,
+                        CONCAT(N'Đã nhận chuyển khoản +', FORMAT(p.Amount, 'N0'), N' đ qua ACB — Tự động gạch nợ FIFO vào hóa đơn cũ nhất.') AS Message,
+                        'success' AS Type,
+                        '/portal/invoices' AS Url,
+                        p.PaymentDate AS CreatedAt,
+                        'bi-lightning-charge-fill' AS Icon
+                    FROM Payments p
+                    WHERE p.CustomerId = @CustomerId
+                    ORDER BY p.PaymentDate DESC, p.Id DESC;
+                ";
+            }
+            else
+            {
+                paymentQuery = @"
+                    SELECT TOP 3
+                        p.Id,
+                        N'Biến động VietQR Webhook (ACB)' AS Title,
+                        CONCAT(N'Ngân hàng ACB báo Có +', FORMAT(p.Amount, 'N0'), N' đ từ ', c.FullName, N' — Đã tự động gạch nợ FIFO vào HĐ cũ nhất.') AS Message,
+                        'success' AS Type,
+                        '/payment-history' AS Url,
+                        p.PaymentDate AS CreatedAt,
+                        'bi-lightning-charge-fill' AS Icon
+                    FROM Payments p
+                    INNER JOIN Customers c ON p.CustomerId = c.Id
+                    ORDER BY p.PaymentDate DESC, p.Id DESC;
+                ";
+            }
+
+            var payments = await connection.QueryAsync<NotificationItemDto>(paymentQuery, new
+            {
+                CustomerId = customerId ?? 0
+            });
+            notifications.AddRange(payments);
+
+            // 2. CẢNH BÁO NỢ QUÁ HẠN (>90 ngày & 31-60 ngày)
             string invoiceQuery;
             if (role == "Customer" && customerId.HasValue)
             {
                 invoiceQuery = @"
-                    SELECT TOP 8
+                    SELECT TOP 5
                         i.Id,
                         CASE 
-                            WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN CONCAT('Hóa đơn #', i.InvoiceNumber, ' đã quá hạn!')
-                            ELSE CONCAT('Hóa đơn #', i.InvoiceNumber, ' sắp đến hạn thanh toán')
+                            WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN CONCAT(N'Hóa đơn #', i.InvoiceNumber, N' đã quá hạn!')
+                            ELSE CONCAT(N'Hóa đơn #', i.InvoiceNumber, N' sắp đến hạn')
                         END AS Title,
-                        CONCAT('Số dư nợ còn lại: ', FORMAT(i.Balance, 'N0'), ' đ (Hạn chót: ', FORMAT(i.DueDate, 'dd/MM/yyyy'), ')') AS Message,
+                        CONCAT(N'Số dư nợ còn lại: ', FORMAT(i.Balance, 'N0'), N' đ (Hạn chót: ', FORMAT(i.DueDate, 'dd/MM/yyyy'), N')') AS Message,
                         CASE WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN 'danger' ELSE 'warning' END AS Type,
                         '/portal/invoices' AS Url,
                         i.DueDate AS CreatedAt,
@@ -44,24 +85,37 @@ namespace WebBanHang.Plugins.DataStore.SQL
                     FROM Invoices i
                     WHERE i.CustomerId = @CustomerId 
                       AND i.Balance > 0 
-                      AND CAST(i.DueDate AS DATE) <= DATEADD(DAY, 3, CAST(@AsOfDate AS DATE))
+                      AND CAST(i.DueDate AS DATE) <= DATEADD(DAY, 7, CAST(@AsOfDate AS DATE))
                     ORDER BY i.DueDate ASC;
                 ";
             }
             else
             {
                 invoiceQuery = @"
-                    SELECT TOP 8
+                    SELECT TOP 5
                         i.Id,
                         CASE 
-                            WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN CONCAT('Nợ quá hạn: HĐ #', i.InvoiceNumber, ' - ', c.FullName)
-                            ELSE CONCAT('HĐ #', i.InvoiceNumber, ' sắp đến hạn - ', c.FullName)
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) > 90 THEN CONCAT(N'Cảnh báo Nợ xấu (>90 ngày): ', c.FullName)
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) >= 31 THEN CONCAT(N'Cảnh báo Quá hạn 31-60 ngày: ', c.FullName)
+                            ELSE CONCAT(N'HĐ #', i.InvoiceNumber, N' sắp đến hạn - ', c.FullName)
                         END AS Title,
-                        CONCAT('Còn nợ: ', FORMAT(i.Balance, 'N0'), ' đ / Tổng ', FORMAT(i.TotalAmount, 'N0'), ' đ (Hạn: ', FORMAT(i.DueDate, 'dd/MM/yyyy'), ')') AS Message,
-                        CASE WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN 'danger' ELSE 'warning' END AS Type,
-                        '/invoices' AS Url,
+                        CASE 
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) > 90 THEN CONCAT(c.FullName, N' đang có ', FORMAT(i.Balance, 'N0'), N' đ nợ quá hạn trên 90 ngày (Hạng C - Cảnh báo).')
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) >= 31 THEN CONCAT(c.FullName, N' có hóa đơn #', i.InvoiceNumber, N' quá hạn ', DATEDIFF(DAY, i.DueDate, @AsOfDate), N' ngày (Tổng ', FORMAT(i.Balance, 'N0'), N' đ) cần đôn đốc.')
+                            ELSE CONCAT(N'Còn nợ: ', FORMAT(i.Balance, 'N0'), N' đ / Tổng ', FORMAT(i.TotalAmount, 'N0'), N' đ (Hạn: ', FORMAT(i.DueDate, 'dd/MM/yyyy'), N')')
+                        END AS Message,
+                        CASE 
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) > 90 THEN 'danger' 
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) >= 31 THEN 'warning'
+                            ELSE 'info'
+                        END AS Type,
+                        '/aging-report' AS Url,
                         i.DueDate AS CreatedAt,
-                        CASE WHEN CAST(i.DueDate AS DATE) < CAST(@AsOfDate AS DATE) THEN 'bi-exclamation-octagon-fill' ELSE 'bi-hourglass-split' END AS Icon
+                        CASE 
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) > 90 THEN 'bi-exclamation-octagon-fill'
+                            WHEN DATEDIFF(DAY, i.DueDate, @AsOfDate) >= 31 THEN 'bi-exclamation-triangle-fill'
+                            ELSE 'bi-clock-history'
+                        END AS Icon
                     FROM Invoices i
                     INNER JOIN Customers c ON i.CustomerId = c.Id
                     WHERE i.Balance > 0 
@@ -77,7 +131,7 @@ namespace WebBanHang.Plugins.DataStore.SQL
             });
             notifications.AddRange(invoices);
 
-            // 2. Customers Near / Exceeding Credit Limit (Accountant & Sales only)
+            // 3. TRẠNG THÁI HẠN MỨC TÍN DỤNG & TỒN KHO (Sales & Accountant)
             if (role != "Customer")
             {
                 const string creditLimitQuery = @"
@@ -87,40 +141,22 @@ namespace WebBanHang.Plugins.DataStore.SQL
                         WHERE Balance > 0
                         GROUP BY CustomerId
                     )
-                    SELECT TOP 5
+                    SELECT TOP 3
                         c.Id,
-                        CONCAT('Cảnh báo hạn mức: ', c.FullName) AS Title,
-                        CONCAT('Đang nợ ', FORMAT(cd.TotalDebt, 'N0'), ' đ trên trần hạn mức ', FORMAT(c.CreditLimit, 'N0'), ' đ (', FORMAT(cd.TotalDebt / NULLIF(c.CreditLimit, 0) * 100, 'N1'), '%)') AS Message,
-                        'warning' AS Type,
+                        CONCAT(N'Trạng thái Hạn mức: ', c.FullName) AS Title,
+                        CONCAT(c.FullName, N' đang sử dụng ', FORMAT(ISNULL(cd.TotalDebt, 0) / NULLIF(c.CreditLimit, 0) * 100, 'N1'), N'% hạn mức tín dụng (Khả dụng ', FORMAT(c.CreditLimit - ISNULL(cd.TotalDebt, 0), 'N0'), N' đ).') AS Message,
+                        'info' AS Type,
                         '/manage-customers' AS Url,
                         GETDATE() AS CreatedAt,
-                        'bi-shield-exclamation' AS Icon
+                        'bi-shield-check' AS Icon
                     FROM Customers c
-                    INNER JOIN CustomerDebt cd ON c.Id = cd.CustomerId
-                    WHERE c.CreditLimit > 0 AND cd.TotalDebt >= (c.CreditLimit * 0.8)
-                    ORDER BY (cd.TotalDebt / c.CreditLimit) DESC;
+                    LEFT JOIN CustomerDebt cd ON c.Id = cd.CustomerId
+                    WHERE c.CreditLimit > 0
+                    ORDER BY (ISNULL(cd.TotalDebt, 0) / c.CreditLimit) DESC;
                 ";
 
                 var creditWarnings = await connection.QueryAsync<NotificationItemDto>(creditLimitQuery);
                 notifications.AddRange(creditWarnings);
-
-                // 3. Low Stock Items (Accountant & Sales only)
-                const string stockQuery = @"
-                    SELECT TOP 5
-                        Id,
-                        CONCAT('Hàng sắp hết: ', Name) AS Title,
-                        CONCAT('Tồn kho chỉ còn ', StockQuantity, ' ', Unit, ' (Dưới ngưỡng an toàn 15)') AS Message,
-                        'info' AS Type,
-                        '/manage-products' AS Url,
-                        GETDATE() AS CreatedAt,
-                        'bi-box-seam' AS Icon
-                    FROM Products
-                    WHERE StockQuantity <= 15
-                    ORDER BY StockQuantity ASC;
-                ";
-
-                var stockWarnings = await connection.QueryAsync<NotificationItemDto>(stockQuery);
-                notifications.AddRange(stockWarnings);
             }
 
             return notifications;

@@ -25,20 +25,26 @@
 
         <!-- NOTIFICATION DROPDOWN POPUP -->
         <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 overflow-hidden" 
-             style="top: 100%; right: 0; width: 340px; max-height: 460px; z-index: 1050;"
+             style="top: 100%; right: 0; width: 420px; max-width: 95vw; max-height: 490px; z-index: 1050; border-color: #cbd5e1 !important;"
              @onclick:stopPropagation="true">
             <!-- HEADER -->
-            <div class="p-3 bg-light border-bottom d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-1.5" style="font-size: 15px;">
-                        <i class="bi bi-bell-fill text-primary"></i> Thông Báo Nghiệp Vụ
-                    </h6>
-                    <small class="text-muted" style="font-size: 15px;">@unreadCount thông báo chưa đọc</small>
+            <div class="p-3 bg-light border-bottom d-flex align-items-center justify-content-between gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="p-1.5 bg-warning bg-opacity-10 text-warning rounded-circle">
+                        <i class="bi bi-bell-fill fs-5"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-0 text-nowrap" style="font-size: 15px;">Cảnh Báo Dòng Tiền</h6>
+                        <small class="text-muted text-nowrap" style="font-size: 12px;">@unreadCount thông báo chưa đọc</small>
+                    </div>
                 </div>
                 @if (unreadCount > 0)
                 {
-                    <button class="btn btn-link btn-sm text-decoration-none p-0 text-primary small" style="font-size: 15px;" @onclick="MarkAllAsRead">
-                        Đánh dấu đã đọc
+                    <button class="btn btn-link btn-sm text-decoration-none p-0 text-primary small fw-bold text-nowrap d-flex align-items-center gap-1" 
+                            style="font-size: 12.5px;" 
+                            @onclick="MarkAllAsRead">
+                        <i class="bi bi-check2-all fs-6"></i>
+                        <span>Đã xem hết</span>
                     </button>
                 }
             </div>

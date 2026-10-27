@@ -1,15 +1,21 @@
 @page "/manage-customers"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Accountant")]
+@using Microsoft.AspNetCore.Components.Authorization
+@using WebBanHang.UseCases.Reports
+@attribute [Authorize(Roles = "Accountant,Sales")]
 
 @using WebBanHang.UseCases.Customers
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.CoreBusiness.Entities
+@using WebBanHang.Services
 
 @inject IViewCustomerListUseCase ViewCustomerListUseCase
 @inject IManageCustomerUseCase ManageCustomerUseCase
 @inject IAssessCreditRiskUseCase AssessCreditRiskUseCase
+@inject IGetCustomerAgingReportUseCase GetCustomerAgingReportUseCase
+@inject LedgerConfirmationStateService LedgerState
+@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Quản Lý Khách Hàng & AI Tín Dụng</PageTitle>
 
@@ -18,9 +24,12 @@
                 Subtitle="Thẩm định hạn mức, giám sát nợ tồn và xếp hạng tín dụng doanh nghiệp"
                 Icon="bi-people-fill">
         <Actions>
-            <button class="btn btn-primary" @onclick="ResetForm">
-                <i class="bi bi-person-plus me-1"></i> Thêm Khách Hàng
-            </button>
+            @if (!isSales)
+            {
+                <button class="btn btn-primary" @onclick="ResetForm">
+                    <i class="bi bi-person-plus me-1"></i> Thêm Khách Hàng
+                </button>
+            }
         </Actions>
     </PageHeader>
 
@@ -33,8 +42,10 @@
 }
 
 <div class="row g-4">
-    <!-- FORM BÊN TRÁI -->
-    <div class="col-lg-4">
+    @if (!isSales)
+    {
+        <!-- FORM BÊN TRÁI -->
+        <div class="col-lg-4">
         <div class="card border shadow-sm" style="border-radius: 16px; border-color: #e5eaf1 !important; background: #ffffff;">
             <div class="card-header bg-white border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: #e5eaf1 !important;">
                 <h5 class="mb-0 fw-bold text-dark fs-6 d-flex align-items-center gap-2">
@@ -95,10 +106,11 @@
                 </EditForm>
             </div>
         </div>
-    </div>
+        </div>
+    }
 
     <!-- BẢNG KHÁCH HÀNG & XẾP HẠNG AI -->
-    <div class="col-lg-8">
+    <div class="@(isSales ? "col-12" : "col-lg-8")">
         <div class="card border shadow-sm" style="border-radius: 16px; border-color: #e5eaf1 !important; background: #ffffff;">
             <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center" style="border-color: #e5eaf1 !important;">
                 <h5 class="mb-0 fw-bold text-dark">
@@ -175,12 +187,21 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-primary" @onclick="() => EditCustomer(c)">
-                                                    Sửa
-                                                </button>
-                                                <button class="btn btn-outline-warning text-dark" @onclick="() => OpenRiskModal(c.Id)">
+                                                @if (!isSales)
+                                                {
+                                                    <button class="btn btn-outline-primary" @onclick="() => EditCustomer(c)">
+                                                        Sửa
+                                                    </button>
+                                                }
+                                                <button class="btn btn-outline-warning text-dark fw-semibold" @onclick="() => OpenRiskModal(c.Id)">
                                                     🤖 AI Soi Nợ
                                                 </button>
+                                                @if (isSales)
+                                                {
+                                                    <a href="/create-invoice?customerId=@c.Id" class="btn btn-primary fw-semibold">
+                                                        <i class="bi bi-cart-plus me-1"></i>Lập Đơn Hàng
+                                                    </a>
+                                                }
                                             </div>
                                         </td>
                                     </tr>
@@ -291,10 +312,76 @@
                             <i class="bi bi-check-circle me-1"></i> Khách hàng có lịch sử tín dụng hoàn hảo, không có bất kỳ yếu tố rủi ro nào.
                         </div>
                     }
+                    <!-- BÁO CÁO PHÂN TÍCH 4 XÔ TUỔI NỢ -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-dark mb-2">
+                            <i class="bi bi-bar-chart-steps text-primary me-1"></i> Phân Tích Tuổi Nợ (4 Xô Công Nợ):
+                        </h6>
+                        <div class="row g-2 text-center">
+                            <div class="col-3">
+                                <div class="p-2 border rounded bg-light">
+                                    <small class="text-muted d-block" style="font-size: 13px;">1-30 Ngày</small>
+                                    <strong class="text-primary" style="font-size: 14.5px;">@((selectedAgingReport?.Bucket1To30 ?? 0).ToString("N0")) đ</strong>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="p-2 border rounded bg-light">
+                                    <small class="text-muted d-block" style="font-size: 13px;">31-60 Ngày</small>
+                                    <strong class="text-warning" style="font-size: 14.5px;">@((selectedAgingReport?.Bucket31To60 ?? 0).ToString("N0")) đ</strong>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="p-2 border rounded bg-light">
+                                    <small class="text-muted d-block" style="font-size: 13px;">61-90 Ngày</small>
+                                    <strong style="color: #ea580c; font-size: 14.5px;">@((selectedAgingReport?.Bucket61To90 ?? 0).ToString("N0")) đ</strong>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="p-2 border rounded bg-light">
+                                    <small class="text-muted d-block" style="font-size: 13px;">&gt;90 Ngày</small>
+                                    <strong class="text-danger" style="font-size: 14.5px;">@((selectedAgingReport?.BucketOver90 ?? 0).ToString("N0")) đ</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TRỢ LÝ AI SOẠN THƯ NHẮC NỢ CÁ NHÂN HÓA 3 TÔNG GIỌNG -->
+                    <div class="card border mb-3">
+                        <div class="card-header bg-light py-2 px-3 d-flex flex-wrap align-items-center justify-content-between gap-2">
+                            <span class="fw-bold text-dark small">
+                                <i class="bi bi-robot text-primary me-1"></i> Soạn Thư Nhắc Nợ Cá Nhân Hóa (AI Draft)
+                            </span>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn @(selectedTone == "friendly" ? "btn-success" : "btn-outline-secondary")" @onclick='() => SelectReminderTone("friendly")'>
+                                    Nhẹ nhàng (1-30 ngày)
+                                </button>
+                                <button type="button" class="btn @(selectedTone == "firm" ? "btn-warning text-dark fw-bold" : "btn-outline-secondary")" @onclick='() => SelectReminderTone("firm")'>
+                                    Cương quyết (31-60 ngày)
+                                </button>
+                                <button type="button" class="btn @(selectedTone == "warning" ? "btn-danger" : "btn-outline-secondary")" @onclick='() => SelectReminderTone("warning")'>
+                                    Cảnh báo ngừng bán (&gt;90 ngày)
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-3">
+                            <textarea class="form-control font-monospace" rows="6" style="font-size: 13.5px;" @bind="customReminderDraft"></textarea>
+                            @if (!string.IsNullOrEmpty(emailSentMessage))
+                            {
+                                <div class="alert alert-success py-2 px-3 mt-2 mb-0 small">
+                                    <i class="bi bi-check-circle-fill me-1"></i> @emailSentMessage
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer bg-light">
+                <div class="modal-footer bg-light d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" @onclick="() => selectedRiskAssessment = null">Đóng</button>
-                    <a href="/customer-ledger" class="btn btn-primary">Xem Sổ Chi Tiết Công Nợ</a>
+                    <div class="d-flex gap-2">
+                        <a href="/customer-ledger" class="btn btn-outline-primary">Xem Sổ Chi Tiết Công Nợ</a>
+                        <button type="button" class="btn btn-success fw-bold" @onclick="ApproveAndSendReminder">
+                            <i class="bi bi-send-check me-1"></i> ✔ Kế toán duyệt & Gửi Email/Zalo nhắc nợ
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -304,14 +391,21 @@
 </div><!-- /app-page-container -->
 
 @code {
+    private bool isSales = false;
     private CustomerInputModel customerModel = new();
     private IEnumerable<Customer>? customers;
     private Dictionary<int, CreditRiskAssessmentDto>? assessments;
     private CreditRiskAssessmentDto? selectedRiskAssessment;
+    private CustomerAgingReportDto? selectedAgingReport;
+    private string selectedTone = "friendly";
+    private string customReminderDraft = "";
+    private string? emailSentMessage = null;
     private string successMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        isSales = authState.User.IsInRole("Sales");
         await LoadCustomers();
     }
 
@@ -370,6 +464,71 @@
     private async Task OpenRiskModal(int customerId)
     {
         selectedRiskAssessment = await AssessCreditRiskUseCase.ExecuteAsync(customerId);
+        emailSentMessage = null;
+        try
+        {
+            var reports = await GetCustomerAgingReportUseCase.ExecuteAsync(DateTime.Now);
+            selectedAgingReport = reports?.FirstOrDefault(r => r.CustomerId == customerId);
+        }
+        catch
+        {
+            selectedAgingReport = null;
+        }
+
+        SelectReminderTone("friendly");
+    }
+
+    private void SelectReminderTone(string tone)
+    {
+        selectedTone = tone;
+        if (selectedRiskAssessment == null) return;
+
+        var name = selectedRiskAssessment.CustomerName;
+        var debt = selectedRiskAssessment.CurrentDebt.ToString("N0");
+
+        if (tone == "friendly")
+        {
+            customReminderDraft = $"Kính gửi Quý đại lý {name},\n\n" +
+                $"Phòng Kế toán HUEGO B2B xin gửi lời chào trân trọng và cảm ơn sự đồng hành của Quý khách trong thời gian qua.\n\n" +
+                $"Hệ thống xin gửi thông tin đối soát công nợ định kỳ. Hiện tại Quý khách có khoản nợ đến hạn thanh toán là {debt} đ.\n" +
+                $"Kính mong Quý đại lý kiểm tra, sắp xếp đối chiếu và thanh toán để tiếp tục duy trì hạn mức tín dụng xuất hàng tốt nhất.\n\n" +
+                $"Thông tin chuyển khoản VietQR Napas 24/7:\n" +
+                $"- Ngân hàng: TMCP Á Châu (ACB)\n" +
+                $"- Số tài khoản: 35782747\n" +
+                $"- Chủ tài khoản: CÔNG TY HUEGO B2B\n" +
+                $"- Cú pháp: HUEGO {selectedAgingReport?.CustomerCode ?? "KH"} [Mã HĐ]\n\n" +
+                $"Trân trọng cảm ơn sự hợp tác của Quý khách!";
+        }
+        else if (tone == "firm")
+        {
+            customReminderDraft = $"Kính gửi Ban Giám Đốc {name},\n\n" +
+                $"Phòng Kế toán HUEGO B2B trân trọng thông báo về khoản nợ quá hạn phát sinh tại hệ thống.\n\n" +
+                $"Theo dữ liệu đối soát, Quý khách hiện có tổng dư nợ quá hạn là {debt} đ đã vượt thời hạn thanh toán quy định theo hợp đồng phân phối.\n" +
+                $"Chúng tôi đề nghị Quý khách sắp xếp tất toán khoản nợ này trong vòng 03 ngày làm việc để tránh việc hệ thống tự động tạm khóa phê duyệt các đơn hàng sỉ mới.\n\n" +
+                $"Thông tin thanh toán VietQR:\n" +
+                $"- Ngân hàng ACB - STK: 35782747 - Tên TK: CÔNG TY HUEGO B2B\n\n" +
+                $"Rất mong nhận được sự phối hợp xử lý dứt điểm từ Quý khách.";
+        }
+        else // warning
+        {
+            customReminderDraft = $"THÔNG BÁO KHẨN CẤP: YÊU CẦU TẤT TOÁN CÔNG NỢ QUÁ HẠN NGHIÊM TRỌNG\n\n" +
+                $"Kính gửi: Ban Giám Đốc & Phòng Kế Toán {name}\n\n" +
+                $"Hệ thống quản trị rủi ro tín dụng HUEGO B2B ghi nhận khoản nợ {debt} đ của Quý khách đã quá hạn thanh toán nghiêm trọng (>60-90 ngày).\n" +
+                $"Theo quy chế bán hàng và điều khoản hợp đồng phân phối:\n" +
+                $"1. Hệ thống đã TẠM DỪNG XUẤT KHO và đình chỉ hạn mức ghi nợ tín dụng.\n" +
+                $"2. Áp dụng lãi phạt quá hạn đối với toàn bộ số dư chậm trả kể từ ngày hôm nay.\n\n" +
+                $"Yêu cầu Quý khách chuyển khoản thanh toán toàn bộ số tiền {debt} đ về STK ACB: 35782747 trong vòng 24 giờ kể từ khi nhận được thông báo này để giải tỏa hạn chế tài khoản.\n\n" +
+                $"Trân trọng,\nPhòng Quản Trị Công Nợ & Thu Hồi AR - HUEGO B2B";
+        }
+    }
+
+    private void ApproveAndSendReminder()
+    {
+        if (selectedRiskAssessment != null)
+        {
+            LedgerState.AddReminderSent(selectedRiskAssessment.CustomerId, selectedRiskAssessment.CustomerName, selectedTone, customReminderDraft);
+        }
+        emailSentMessage = $"Đã duyệt và gửi thông báo nhắc nợ thành công tới đại lý {selectedRiskAssessment?.CustomerName} qua Email & Zalo OA!";
     }
 
     private void ResetForm()

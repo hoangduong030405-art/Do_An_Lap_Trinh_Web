@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="boxCosy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="50%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+    <linearGradient id="biscuitGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="60%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="shadowCosy" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- BÓNG ĐỔ HỘP BÁNH -->
+  <ellipse cx="200" cy="340" rx="115" ry="16" fill="#000000" opacity="0.2"/>
+
+  <!-- HỘP BÁNH QUY COSY MARIE KINH ĐÔ 336G -->
+  <g filter="url(#shadowCosy)">
+    <!-- Hộp chữ nhật đứng góc bo tròn -->
+    <rect x="90" y="80" width="220" height="245" rx="14" fill="url(#boxCosy)"/>
+
+    <!-- Viền vàng sang trọng trên và dưới hộp -->
+    <rect x="90" y="80" width="220" height="12" rx="4" fill="#fbbf24"/>
+    <rect x="90" y="313" width="220" height="12" rx="4" fill="#fbbf24"/>
+
+    <!-- VƯƠNG MIỆN KINH ĐÔ NHỎ ĐỈNH HỘP -->
+    <g transform="translate(200, 108)">
+      <circle cx="0" cy="0" r="14" fill="#dc2626" stroke="#fbbf24" stroke-width="1.5"/>
+      <path d="M -8 3 L -5 -6 L 0 0 L 5 -6 L 8 3 Z" fill="#fbbf24"/>
+      <text x="0" y="8" font-family="'Segoe UI', sans-serif" font-size="5" font-weight="900" fill="#ffffff" text-anchor="middle">KINH ĐÔ</text>
+    </g>
+
+    <!-- LOGO CHỮ COSY MÀU VÀNG VIỀN TRẮNG RỰC RỠ -->
+    <g transform="translate(200, 155)">
+      <ellipse cx="0" cy="0" rx="75" ry="26" fill="#ffffff" opacity="0.95"/>
+      <text x="0" y="9" font-family="'Arial Black', Impact, sans-serif" font-size="32" font-weight="900" fill="#dc2626" text-anchor="middle" letter-spacing="1">COSY</text>
+    </g>
+
+    <!-- BANNER DÒNG BÁNH "MARIE" -->
+    <rect x="130" y="188" width="140" height="22" rx="11" fill="#fbbf24"/>
+    <text x="200" y="203" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="900" fill="#78350f" text-anchor="middle" letter-spacing="2">MARIE SỮA</text>
+
+    <!-- MINH HỌA BÁNH QUY TRÒN RĂNG CƯA GIÒN XỐP -->
+    <g transform="translate(200, 260)">
+      <!-- Bánh quy tròn viền răng cưa vàng óng -->
+      <circle cx="0" cy="0" r="34" fill="url(#biscuitGold)" stroke="#b45309" stroke-width="2"/>
+      <!-- Các lỗ chấm thông khí trên bánh quy Marie -->
+      <circle cx="-16" cy="-14" r="2" fill="#78350f"/>
+      <circle cx="0" cy="-18" r="2" fill="#78350f"/>
+      <circle cx="16" cy="-14" r="2" fill="#78350f"/>
+      <circle cx="-20" cy="0" r="2" fill="#78350f"/>
+      <circle cx="-8" cy="-5" r="2" fill="#78350f"/>
+      <circle cx="8" cy="-5" r="2" fill="#78350f"/>
+      <circle cx="20" cy="0" r="2" fill="#78350f"/>
+      <circle cx="-16" cy="14" r="2" fill="#78350f"/>
+      <circle cx="0" cy="18" r="2" fill="#78350f"/>
+      <circle cx="16" cy="14" r="2" fill="#78350f"/>
+      <!-- Chữ MARIE nhỏ dập giữa bánh -->
+      <text x="0" y="3" font-family="'Segoe UI', sans-serif" font-size="8" font-weight="bold" fill="#78350f" text-anchor="middle">MARIE</text>
+    </g>
+
+    <!-- TRỌNG LƯỢNG 336G -->
+    <rect x="235" y="285" width="55" height="20" rx="4" fill="#ffffff" opacity="0.9"/>
+    <text x="262" y="299" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="bold" fill="#dc2626" text-anchor="middle">336 g</text>
+  </g>
+</svg>

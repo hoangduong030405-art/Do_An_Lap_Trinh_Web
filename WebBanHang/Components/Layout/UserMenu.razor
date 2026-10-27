@@ -2,8 +2,8 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="dropdown">
-            <div class="app-user-btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button">
+        <div class="position-relative">
+            <div class="app-user-btn d-flex align-items-center gap-2" role="button" style="cursor: pointer;" @onclick="ToggleDropdown">
                 <div class="app-user-avatar d-flex align-items-center justify-content-center text-white fw-bold shadow-xs">
                     @(context.User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "U")
                 </div>
@@ -18,46 +18,99 @@
                 <i class="bi bi-chevron-down text-muted small ms-0.5"></i>
             </div>
 
-            <ul class="dropdown-menu dropdown-menu-end shadow-lg border mt-1" style="min-width: 220px;">
-                <li class="px-3 py-2 border-bottom">
-                    <div class="fw-bold text-dark" style="font-size: 15px;">@context.User.Identity?.Name</div>
-                    <div class="badge @(context.User.IsInRole("Customer") ? "bg-success text-white" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary text-white") mt-1" style="font-size: 14px;">
-                        @context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+            @if (isOpen)
+            {
+                <!-- BACKDROP -->
+                <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="CloseDropdown"></div>
+
+                <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 overflow-hidden" 
+                     style="min-width: 280px; right: 0; top: 100%; z-index: 1050;"
+                     @onclick:stopPropagation="true">
+                    <div class="px-3 py-2 border-bottom">
+                        <div class="fw-bold text-dark" style="font-size: 15px;">@context.User.Identity?.Name</div>
+                        <div class="text-muted" style="font-size: 12px;">@(context.User.IsInRole("Customer") ? "khachhang@eco2415.vn" : context.User.IsInRole("Accountant") ? "ketoan@eco2415.vn" : "sales@eco2415.vn")</div>
+                        <div class="badge @(context.User.IsInRole("Customer") ? "bg-success text-white" : context.User.IsInRole("Accountant") ? "bg-warning text-dark" : "bg-primary text-white") mt-1" style="font-size: 13px;">
+                            @(context.User.IsInRole("Customer") ? "Customer (Cổng Đại lý B2B)" : context.User.IsInRole("Accountant") ? "Accountant (Kế toán trưởng)" : "Sales (Nhân viên kinh doanh)")
+                        </div>
                     </div>
-                </li>
-                @if (context.User.IsInRole("Customer"))
-                {
-                    <li>
-                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/portal/dashboard">
-                            <i class="bi bi-person-workspace text-muted"></i> Bàn làm việc đại lý
+
+                    <!-- DEMO SWITCHER - 1 CHẠM ĐỔI VAI TRÒ -->
+                    <div class="px-3 pt-2 pb-1 bg-light border-top border-bottom">
+                        <small class="fw-bold text-uppercase text-secondary" style="font-size: 11px; letter-spacing: 0.5px;">
+                            <i class="bi bi-lightning-charge-fill text-warning me-1"></i>⚡ Chuyển đổi vai trò (Demo Switcher)
+                        </small>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a class="list-group-item list-group-item-action py-2 px-3 border-0 d-flex align-items-center justify-content-between @(context.User.IsInRole("Accountant") ? "active bg-primary-subtle text-primary fw-bold" : "")" 
+                           href="/api/auth/switch-role?role=accountant">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-6">👩‍💼</span>
+                                <div>
+                                    <div class="small fw-semibold">Kế Toán Nguyễn Văn A</div>
+                                    <div class="text-muted" style="font-size: 11px;">Accountant (Toàn quyền hệ thống)</div>
+                                </div>
+                            </div>
+                            @if (context.User.IsInRole("Accountant"))
+                            {
+                                <i class="bi bi-check-circle-fill text-primary"></i>
+                            }
                         </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/portal/invoices">
-                            <i class="bi bi-receipt text-muted"></i> Hóa đơn của tôi
+                        <a class="list-group-item list-group-item-action py-2 px-3 border-0 d-flex align-items-center justify-content-between @(context.User.IsInRole("Sales") ? "active bg-primary-subtle text-primary fw-bold" : "")" 
+                           href="/api/auth/switch-role?role=sales">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-6">👨‍💼</span>
+                                <div>
+                                    <div class="small fw-semibold">Nhân Viên Trần Văn B</div>
+                                    <div class="text-muted" style="font-size: 11px;">Sales (Theo dõi đơn & Hạn mức)</div>
+                                </div>
+                            </div>
+                            @if (context.User.IsInRole("Sales"))
+                            {
+                                <i class="bi bi-check-circle-fill text-primary"></i>
+                            }
                         </a>
-                    </li>
-                }
-                else
-                {
-                    <li>
-                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/dashboard">
-                            <i class="bi bi-grid-fill text-muted"></i> Tổng quan kế toán
+                        <a class="list-group-item list-group-item-action py-2 px-3 border-0 d-flex align-items-center justify-content-between @(context.User.IsInRole("Customer") ? "active bg-success-subtle text-success fw-bold" : "")" 
+                           href="/api/auth/switch-role?role=customer">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-6">🏪</span>
+                                <div>
+                                    <div class="small fw-semibold">Tạp Hóa Bà Ba (KH001)</div>
+                                    <div class="text-muted" style="font-size: 11px;">Customer (Cổng Đại lý B2B)</div>
+                                </div>
+                            </div>
+                            @if (context.User.IsInRole("Customer"))
+                            {
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                            }
                         </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item small py-2 d-flex align-items-center gap-2" href="/invoices">
-                            <i class="bi bi-receipt text-muted"></i> Danh sách hóa đơn
+                    </div>
+
+                    <div class="border-top p-1 bg-light">
+                        @if (context.User.IsInRole("Customer"))
+                        {
+                            <a class="dropdown-item small py-1.5 px-3 rounded d-flex align-items-center gap-2" href="/portal/dashboard">
+                                <i class="bi bi-person-workspace text-muted"></i> Bàn làm việc đại lý
+                            </a>
+                            <a class="dropdown-item small py-1.5 px-3 rounded d-flex align-items-center gap-2" href="/portal/invoices">
+                                <i class="bi bi-receipt text-muted"></i> Hóa đơn của tôi
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="dropdown-item small py-1.5 px-3 rounded d-flex align-items-center gap-2" href="/dashboard">
+                                <i class="bi bi-grid-fill text-muted"></i> Tổng quan kế toán
+                            </a>
+                            <a class="dropdown-item small py-1.5 px-3 rounded d-flex align-items-center gap-2" href="/invoices">
+                                <i class="bi bi-receipt text-muted"></i> Danh sách hóa đơn
+                            </a>
+                        }
+                        <hr class="my-1">
+                        <a class="dropdown-item small py-1.5 px-3 rounded text-danger d-flex align-items-center gap-2 fw-semibold" href="/api/auth/logout">
+                            <i class="bi bi-box-arrow-right"></i> Đăng xuất hệ thống
                         </a>
-                    </li>
-                }
-                <li><hr class="dropdown-divider my-1"></li>
-                <li>
-                    <a class="dropdown-item small py-2 text-danger d-flex align-items-center gap-2 fw-semibold" href="/api/auth/logout">
-                        <i class="bi bi-box-arrow-right"></i> Đăng xuất hệ thống
-                    </a>
-                </li>
-            </ul>
+                    </div>
+                </div>
+            }
         </div>
     </Authorized>
     <NotAuthorized>
@@ -67,3 +120,9 @@
         </a>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    private bool isOpen = false;
+    private void ToggleDropdown() => isOpen = !isOpen;
+    private void CloseDropdown() => isOpen = false;
+}

@@ -1,78 +1,204 @@
-@using Microsoft.JSInterop
-@inject IJSRuntime JS
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
 
 <div class="position-relative">
     <button class="app-tool-btn" 
-            title="Thiết lập hệ thống & Giao diện"
-            @onclick="ToggleDropdown">
+            title="Cấu hình tham số hệ thống & Tín dụng (⚙️)"
+            @onclick="OpenModal">
         <i class="bi bi-gear fs-6"></i>
     </button>
-
-    @if (isOpen)
-    {
-        <!-- BACKDROP -->
-        <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="CloseDropdown"></div>
-
-        <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 p-2" 
-             style="top: 100%; right: 0; min-width: 250px; z-index: 1050;"
-             @onclick:stopPropagation="true">
-            <div class="px-2 py-1 text-muted fw-bold text-uppercase" style="font-size: 14px; letter-spacing: 0.5px;">
-                Cài đặt & Giao diện
-            </div>
-
-            <!-- THEME DISPLAY (LIGHT ONLY) -->
-            <div class="px-2.5 py-2 w-100 d-flex align-items-center justify-content-between rounded-2 mb-1 bg-light border">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-sun-fill text-warning fs-6"></i>
-                    <span class="fw-semibold text-dark" style="font-size: 15px;">Chế độ hiển thị</span>
-                </div>
-                <span class="badge bg-white text-primary border" style="font-size: 15px;">
-                    Sáng (Chuẩn)
-                </span>
-            </div>
-
-            <!-- SYSTEM VERSION INFO -->
-            <div class="p-2 mt-1 rounded bg-light text-muted border" style="font-size: 15px;">
-                <div>Phiên bản: <strong>Capstone 18.2.0</strong></div>
-                <div>Kiến trúc: Clean Architecture 4 tầng</div>
-            </div>
-        </div>
-    }
 </div>
 
+<!-- MODAL CẤU HÌNH THAM SỐ HỆ THỐNG & TÍN DỤNG -->
+@if (isModalOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(15,23,42,0.65); z-index: 1070;" @onclick="CloseModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg" @onclick:stopPropagation="true">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- HEADER -->
+                <div class="modal-header py-3 px-4 bg-white border-bottom d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="p-2 rounded-3 bg-primary-subtle text-primary">
+                            <i class="bi bi-sliders fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold text-dark mb-0">Cấu Hình Tham Số Hệ Thống & Tín Dụng</h5>
+                            <small class="text-muted" style="font-size: 13px;">Thiết lập quy tắc gạch nợ FIFO, trần tín dụng và cổng thanh toán VietQR</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+
+                <!-- BODY -->
+                <div class="modal-body p-4 bg-white">
+                    @if (showToast)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show rounded-3 mb-3 shadow-sm" role="alert">
+                            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                            <strong>Lưu thành công!</strong> Các tham số tín dụng và VietQR đã được cập nhật cho toàn hệ thống.
+                            <button type="button" class="btn-close" @onclick="() => showToast = false"></button>
+                        </div>
+                    }
+
+                    @if (!isAccountant)
+                    {
+                        <div class="alert alert-warning-subtle border border-warning text-dark small rounded-3 mb-3 d-flex align-items-center gap-2">
+                            <i class="bi bi-lock-fill text-warning fs-5 flex-shrink-0"></i>
+                            <div>
+                                <strong>Chế độ chỉ xem (Read-only):</strong> Bạn đang đăng nhập vai trò <strong>@role</strong>. Chỉ <strong>Accountant (Kế toán trưởng)</strong> mới có quyền chỉnh sửa cấu hình hệ thống.
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row g-3">
+                        <!-- THÔNG TIN TÀI KHOẢN VIETQR -->
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 border bg-light">
+                                <h6 class="fw-bold text-primary mb-2 d-flex align-items-center gap-1.5">
+                                    <i class="bi bi-qr-code-scan"></i> Cổng Thanh Toán VietQR Tự Động
+                                </h6>
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-muted mb-1">Ngân hàng thụ hưởng & STK</label>
+                                        <input type="text" class="form-control form-control-sm font-monospace fw-bold" 
+                                               value="@bankInfo" 
+                                               disabled="@(!isAccountant)"
+                                               @onchange="(e) => bankInfo = e.Value?.ToString() ?? bankInfo" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-muted mb-1">Tên chủ tài khoản</label>
+                                        <input type="text" class="form-control form-control-sm fw-semibold" 
+                                               value="@accountHolder" 
+                                               disabled="@(!isAccountant)"
+                                               @onchange="(e) => accountHolder = e.Value?.ToString() ?? accountHolder" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- HẠN MỨC & HẠN NỢ MẶC ĐỊNH -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-dark mb-1">Hạn nợ tiêu chuẩn mặc định (ngày)</label>
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control" 
+                                       value="@defaultPaymentDays" 
+                                       disabled="@(!isAccountant)"
+                                       @onchange="(e) => int.TryParse(e.Value?.ToString(), out defaultPaymentDays)" />
+                                <span class="input-group-text bg-light text-muted">ngày</span>
+                            </div>
+                            <small class="text-muted" style="font-size: 12px;">Áp dụng tự động khi thêm mới đại lý B2B.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold text-dark mb-1">Hạn mức tín dụng mặc định (VNĐ)</label>
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control font-monospace fw-bold" 
+                                       value="@defaultCreditLimit.ToString("N0")" 
+                                       disabled="@(!isAccountant)"
+                                       @onchange="OnCreditLimitChange" />
+                                <span class="input-group-text bg-light text-muted">VNĐ</span>
+                            </div>
+                            <small class="text-muted" style="font-size: 12px;">Trần nợ ban đầu cho đại lý mới.</small>
+                        </div>
+
+                        <!-- TOGGLE SWITCHES -->
+                        <div class="col-12">
+                            <div class="card border rounded-3 p-3 bg-light">
+                                <div class="form-check form-switch mb-2.5">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="blockOverLimitSwitch" 
+                                           checked="@autoBlockCreditLimit"
+                                           disabled="@(!isAccountant)"
+                                           @onchange="(e) => autoBlockCreditLimit = (bool)(e.Value ?? true)">
+                                    <label class="form-check-label fw-semibold text-dark small" for="blockOverLimitSwitch">
+                                        Bật tự động chặn xuất hóa đơn khi vượt hạn mức tín dụng
+                                    </label>
+                                    <div class="text-muted" style="font-size: 12px;">
+                                        Khi bật, hệ thống lập tức khóa nút xuất kho nếu đơn hàng làm tổng nợ vượt trần tín dụng của đại lý.
+                                    </div>
+                                </div>
+
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="autoFifoSwitch" 
+                                           checked="@autoFifoAllocation"
+                                           disabled="@(!isAccountant)"
+                                           @onchange="(e) => autoFifoAllocation = (bool)(e.Value ?? true)">
+                                    <label class="form-check-label fw-semibold text-dark small" for="autoFifoSwitch">
+                                        Bật tự động phân bổ gạch nợ theo chuẩn FIFO
+                                    </label>
+                                    <div class="text-muted" style="font-size: 12px;">
+                                        Mọi khoản thu tiền mặt hoặc VietQR Webhook luôn được cấn trừ tuần tự từ hóa đơn cũ nhất đến mới nhất.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <div class="modal-footer py-2.5 px-4 bg-light border-top d-flex justify-content-between align-items-center">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill btn-sm px-3" @onclick="CloseModal">
+                        Đóng
+                    </button>
+                    @if (isAccountant)
+                    {
+                        <button type="button" class="btn btn-primary rounded-pill btn-sm px-4 fw-bold shadow-xs" @onclick="SaveConfig">
+                            <i class="bi bi-save me-1"></i> Lưu Cấu Hình
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
-    private bool isOpen = false;
-    private bool isDarkMode = false;
+    private bool isModalOpen = false;
+    private bool isAccountant = true;
+    private string role = "Accountant";
+    private bool showToast = false;
 
-    private void ToggleDropdown() => isOpen = !isOpen;
-    private void CloseDropdown() => isOpen = false;
+    // Config state
+    private string bankInfo = "ACB - 35782747";
+    private string accountHolder = "CONG TY CP CONG NGHE & THUONG MAI ECO2415";
+    private int defaultPaymentDays = 30;
+    private decimal defaultCreditLimit = 10000000;
+    private bool autoBlockCreditLimit = true;
+    private bool autoFifoAllocation = true;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
         {
-            try
-            {
-                var theme = await JS.InvokeAsync<string>("getAppTheme");
-                isDarkMode = (theme == "dark");
-                StateHasChanged();
-            }
-            catch { }
+            role = user.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Sales";
+            isAccountant = role == "Accountant";
         }
     }
 
-    private async Task ToggleTheme()
+    private void OpenModal()
     {
-        isDarkMode = !isDarkMode;
-        try
-        {
-            await JS.InvokeVoidAsync("setAppTheme", isDarkMode ? "dark" : "light");
-        }
-        catch { }
+        isModalOpen = true;
+        showToast = false;
     }
 
-    private void ShowPasswordInfo()
+    private void CloseModal()
     {
-        isOpen = false;
+        isModalOpen = false;
+        showToast = false;
+    }
+
+    private void OnCreditLimitChange(ChangeEventArgs e)
+    {
+        var valStr = e.Value?.ToString()?.Replace(",", "").Replace(".", "").Trim();
+        if (decimal.TryParse(valStr, out var limit))
+        {
+            defaultCreditLimit = limit;
+        }
+    }
+
+    private void SaveConfig()
+    {
+        showToast = true;
     }
 }

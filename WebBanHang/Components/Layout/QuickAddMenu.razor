@@ -2,89 +2,98 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
 
-<div class="position-relative">
-    <button class="btn btn-sm btn-success rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-xs fw-bold"
-            style="background-color: #00b060; border-color: #00b060; font-size: 14px;"
-            @onclick="ToggleDropdown"
-            title="Thêm nhanh chứng từ">
-        <i class="bi bi-plus-lg"></i>
-        <span class="d-none d-md-inline">Thêm nhanh</span>
-    </button>
+@if (role == "Customer")
+{
+    <a href="/portal/store" class="btn btn-sm btn-success rounded-pill px-3 py-1 d-flex align-items-center gap-1 shadow-xs fw-bold"
+       style="background-color: #00b060; border-color: #00b060; font-size: 14px;"
+       title="Đặt hàng sỉ ngay">
+        <i class="bi bi-cart-plus-fill"></i>
+        <span class="d-none d-md-inline">Đặt hàng sỉ ngay</span>
+    </a>
+}
+else
+{
+    <div class="position-relative">
+        <button class="btn btn-sm btn-success rounded-pill px-2.5 py-1 d-flex align-items-center gap-1 shadow-xs fw-bold"
+                style="background-color: #00b060; border-color: #00b060; font-size: 14px;"
+                @onclick="ToggleDropdown"
+                title="Thêm nhanh chứng từ">
+            <i class="bi bi-plus-lg"></i>
+            <span class="d-none d-md-inline">Thêm nhanh</span>
+        </button>
 
-    @if (isOpen)
-    {
-        <!-- BACKDROP -->
-        <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="CloseDropdown"></div>
+        @if (isOpen)
+        {
+            <!-- BACKDROP -->
+            <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1040; background: transparent;" @onclick="CloseDropdown"></div>
 
-        <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 p-2" 
-             style="top: 100%; left: 0; min-width: 240px; z-index: 1050;"
-             @onclick:stopPropagation="true">
-            <div class="px-2 py-1 small text-muted fw-bold text-uppercase" style="font-size: 14px; letter-spacing: 0.5px;">
-                Thêm nhanh chứng từ
+            <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 p-2" 
+                 style="top: 100%; left: 0; min-width: 240px; z-index: 1050;"
+                 @onclick:stopPropagation="true">
+                <div class="px-2 py-1 small text-muted fw-bold text-uppercase" style="font-size: 14px; letter-spacing: 0.5px;">
+                    Thêm nhanh chứng từ
+                </div>
+
+                <div class="d-flex flex-column gap-1">
+                    @if (role == "Accountant")
+                    {
+                        <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
+                                @onclick='() => NavigateTo("/payments")'>
+                            <span class="fs-6">💸</span>
+                            <div>
+                                <div class="fw-semibold text-dark small">Thu tiền & Gạch nợ FIFO</div>
+                                <small class="text-muted" style="font-size: 13px;">Ghi nhận phiếu thu & cấn trừ nợ</small>
+                            </div>
+                        </button>
+                        <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
+                                @onclick='() => NavigateTo("/create-invoice")'>
+                            <span class="fs-6">🛒</span>
+                            <div>
+                                <div class="fw-semibold text-dark small">Lập hóa đơn bán sỉ</div>
+                                <small class="text-muted" style="font-size: 13px;">Xuất kho sỉ & tính công nợ đại lý</small>
+                            </div>
+                        </button>
+                        <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
+                                @onclick='() => NavigateTo("/manage-customers")'>
+                            <span class="fs-6">👤</span>
+                            <div>
+                                <div class="fw-semibold text-dark small">Thêm hồ sơ đại lý mới</div>
+                                <small class="text-muted" style="font-size: 13px;">Thiết lập hạn mức & AI chấm điểm tín dụng</small>
+                            </div>
+                        </button>
+                        <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
+                                @onclick='() => NavigateTo("/manage-products")'>
+                            <span class="fs-6">📦</span>
+                            <div>
+                                <div class="fw-semibold text-dark small">Nhập thêm sản phẩm mới</div>
+                                <small class="text-muted" style="font-size: 13px;">Cập nhật danh mục, giá vốn & tồn kho</small>
+                            </div>
+                        </button>
+                    }
+                    else // Sales
+                    {
+                        <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
+                                @onclick='() => NavigateTo("/create-invoice")'>
+                            <span class="fs-6">🛒</span>
+                            <div>
+                                <div class="fw-semibold text-dark small">Lập hóa đơn bán sỉ mới</div>
+                                <small class="text-muted" style="font-size: 13px;">Lên đơn xuất sỉ cho đại lý phụ trách</small>
+                            </div>
+                        </button>
+                        <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
+                                @onclick='() => NavigateTo("/manage-customers")'>
+                            <span class="fs-6">🔍</span>
+                            <div>
+                                <div class="fw-semibold text-dark small">Tra cứu hạn mức tín dụng đại lý</div>
+                                <small class="text-muted" style="font-size: 13px;">Xem trần nợ & tỷ lệ sử dụng nợ</small>
+                            </div>
+                        </button>
+                    }
+                </div>
             </div>
-
-            <div class="d-flex flex-column gap-1">
-                @if (role == "Accountant")
-                {
-                    <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
-                            @onclick='() => NavigateTo("/payments")'>
-                        <i class="bi bi-cash-coin text-success fs-6"></i>
-                        <div>
-                            <div class="fw-semibold text-dark small">Thu tiền khách hàng (FIFO)</div>
-                            <small class="text-muted" style="font-size: 15px;">Ghi nhận phiếu thu & cấn trừ nợ</small>
-                        </div>
-                    </button>
-                    <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
-                            @onclick='() => NavigateTo("/create-invoice")'>
-                        <i class="bi bi-cart-plus-fill text-primary fs-6"></i>
-                        <div>
-                            <div class="fw-semibold text-dark small">Lập hóa đơn bán buôn</div>
-                            <small class="text-muted" style="font-size: 15px;">Xuất kho sỉ & tính công nợ</small>
-                        </div>
-                    </button>
-                    <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
-                            @onclick='() => NavigateTo("/manage-customers")'>
-                        <i class="bi bi-person-plus-fill text-warning fs-6"></i>
-                        <div>
-                            <div class="fw-semibold text-dark small">Thêm mới đại lý B2B</div>
-                            <small class="text-muted" style="font-size: 15px;">Thiết lập hạn mức tín dụng</small>
-                        </div>
-                    </button>
-                }
-                else if (role == "Customer")
-                {
-                    <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
-                            @onclick='() => NavigateTo("/portal/store")'>
-                        <i class="bi bi-shop text-success fs-6"></i>
-                        <div>
-                            <div class="fw-semibold text-dark small">Đặt hàng sỉ trực tuyến</div>
-                            <small class="text-muted" style="font-size: 15px;">Chọn sản phẩm và đặt hàng</small>
-                        </div>
-                    </button>
-                }
-                else // Sales
-                {
-                    <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
-                            @onclick='() => NavigateTo("/create-invoice")'>
-                        <i class="bi bi-cart-plus-fill text-primary fs-6"></i>
-                        <div>
-                            <div class="fw-semibold text-dark small">Lập hóa đơn bán buôn</div>
-                            <small class="text-muted" style="font-size: 15px;">Lên đơn xuất sỉ cho đại lý</small>
-                        </div>
-                    </button>
-                    <button class="btn btn-light btn-sm text-start py-2 px-2.5 d-flex align-items-center gap-2 rounded-2"
-                            @onclick='() => NavigateTo("/manage-products")'>
-                        <i class="bi bi-box-seam-fill text-info fs-6"></i>
-                        <div>
-                            <div class="fw-semibold text-dark small">Quản lý kho hàng sỉ</div>
-                            <small class="text-muted" style="font-size: 15px;">Kiểm tra số lượng tồn kho</small>
-                        </div>
-                    </button>
-                }
-            </div>
-        </div>
-    }
-</div>
+        }
+    </div>
+}
 
 @code {
     private bool isOpen = false;

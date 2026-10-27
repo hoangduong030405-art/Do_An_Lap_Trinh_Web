@@ -6,12 +6,14 @@
 @using WebBanHang.UseCases.Customers
 @using WebBanHang.UseCases.Invoices
 @using WebBanHang.UseCases.DTOs
+@using WebBanHang.UseCases.Payments
 @using WebBanHang.Components.Controls
 
 @attribute [Authorize(Roles = "Customer")]
 @inject IGetCustomerPortalInfoUseCase GetCustomerPortalInfoUseCase
 @inject IGetCustomerMyInvoicesUseCase GetCustomerMyInvoicesUseCase
 @inject IViewInvoiceDetailUseCase ViewInvoiceDetailUseCase
+@inject IRecordPaymentAndAllocateUseCase RecordPaymentUseCase
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime JSRuntime
 
@@ -28,6 +30,33 @@
             </a>
         </Actions>
     </PageHeader>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 mb-3 border border-success-subtle shadow-sm p-3" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
+                <div>
+                    <strong class="d-block text-success">Thanh Toán & Gạch Nợ Thành Công!</strong>
+                    <span>@successMessage</span>
+                </div>
+            </div>
+            <button type="button" class="btn-close" @onclick="() => successMessage = null"></button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 mb-3 border border-danger-subtle shadow-sm p-3" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill fs-4 text-danger me-3"></i>
+                <div>
+                    <strong class="d-block text-danger">Có lỗi xảy ra:</strong>
+                    <span>@errorMessage</span>
+                </div>
+            </div>
+            <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+        </div>
+    }
 
         <!-- 4. BẢNG HÓA ĐƠN -->
         <div class="card border shadow-sm bg-white overflow-hidden" style="border-radius: 16px; border-color: #e5eaf1 !important; background-color: #ffffff !important;">
@@ -151,7 +180,7 @@
 @if (selectedInvoiceForQr != null)
 {
     var transferAmount = Convert.ToInt64(selectedInvoiceForQr.Balance);
-    var transferNote = $"HD {selectedInvoiceForQr.InvoiceNumber}";
+    var transferNote = $"HUEGO {customerInfo?.CustomerCode ?? "KH"} {selectedInvoiceForQr.InvoiceNumber}";
     var qrUrl = $"https://img.vietqr.io/image/acb-35782747-compact2.png?amount={transferAmount}&addInfo={Uri.EscapeDataString(transferNote)}";
 
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.65);" role="dialog">
@@ -194,6 +223,29 @@
                         <div class="d-flex justify-content-between align-items-center py-1">
                             <span class="text-muted">Nội dung chuyển khoản:</span>
                             <span class="badge bg-warning text-dark font-monospace fw-bold fs-6">@transferNote</span>
+                        </div>
+                    </div>
+
+                    <!-- Mô phỏng Webhook Ngân Hàng Tự Động (Demo Thuyết Trình) -->
+                    <div class="alert alert-warning-subtle border border-warning text-start p-3 rounded-3 mb-3">
+                        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+                            <div>
+                                <div class="fw-bold text-dark"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Demo Webhook Báo Có Tự Động</div>
+                                <div class="text-muted" style="font-size: 12px;">Mô phỏng ACB nhận tiền & kích hoạt Webhook tự động gạch nợ FIFO ngay lập tức.</div>
+                            </div>
+                            <button type="button" class="btn btn-warning rounded-pill btn-sm px-3 fw-bold shadow-xs text-nowrap"
+                                    disabled="@isProcessingWebhook"
+                                    @onclick="SimulateWebhookAsync">
+                                @if (isProcessingWebhook)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                    <span>Đang gạch nợ...</span>
+                                }
+                                else
+                                {
+                                    <span>⚡ Mô phỏng Ngân hàng báo Có (Auto Webhook)</span>
+                                }
+                            </button>
                         </div>
                     </div>
 
@@ -295,9 +347,18 @@
                     <a href="/invoices/print/@selectedInvoiceDetail.Id" target="_blank" class="btn btn-outline-primary rounded-pill btn-sm px-3">
                         <i class="bi bi-printer me-1"></i> In Hóa Đơn A4
                     </a>
-                    <button type="button" class="btn btn-secondary rounded-pill btn-sm px-4" @onclick="CloseDetailModal">
-                        Đóng
-                    </button>
+                    <div class="d-flex gap-2">
+                        @if (selectedInvoiceDetail.Balance > 0)
+                        {
+                            <button type="button" class="btn btn-danger rounded-pill btn-sm px-3 fw-semibold shadow-xs"
+                                    @onclick="() => PayInvoiceFromDetail(selectedInvoiceDetail.Id)">
+                                <i class="bi bi-qr-code me-1"></i> Trả VietQR Ngay
+                            </button>
+                        }
+                        <button type="button" class="btn btn-secondary rounded-pill btn-sm px-4" @onclick="CloseDetailModal">
+                            Đóng
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -316,6 +377,10 @@
 
     private CustomerPortalInvoiceDto? selectedInvoiceForQr;
     private InvoiceDetailDto? selectedInvoiceDetail;
+
+    private bool isProcessingWebhook = false;
+    private string? successMessage;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -390,5 +455,40 @@
     private void CloseDetailModal()
     {
         selectedInvoiceDetail = null;
+    }
+
+    private void PayInvoiceFromDetail(int invoiceId)
+    {
+        selectedInvoiceForQr = allInvoices.FirstOrDefault(x => x.Id == invoiceId);
+        CloseDetailModal();
+    }
+
+    private async Task SimulateWebhookAsync()
+    {
+        if (selectedInvoiceForQr == null) return;
+        isProcessingWebhook = true;
+        errorMessage = null;
+        successMessage = null;
+
+        try
+        {
+            var payAmount = selectedInvoiceForQr.Balance;
+            var invNumber = selectedInvoiceForQr.InvoiceNumber;
+            var note = $"VietQR Webhook ACB: HUEGO {customerInfo?.CustomerCode ?? "KH"} {invNumber}";
+
+            await RecordPaymentUseCase.ExecuteAsync(customerId, payAmount, DateTime.Now, note);
+
+            successMessage = $"⚡ Ngân hàng ACB vừa báo Có: Đã nhận thành công {payAmount:N0} đ cho hóa đơn #{invNumber}. Hệ thống đã tự động gạch nợ FIFO và cập nhật số dư!";
+            CloseVietQrModal();
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Lỗi khi xử lý gạch nợ tự động: " + ex.Message;
+        }
+        finally
+        {
+            isProcessingWebhook = false;
+        }
     }
 }

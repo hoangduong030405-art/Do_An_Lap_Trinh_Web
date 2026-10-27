@@ -11,6 +11,7 @@
 @using WebBanHang.Services
 @using WebBanHang.Components.Controls
 @using WebBanHang.UseCases.DTOs
+@using Microsoft.AspNetCore.Components.Authorization
 
 @inject ICreateInvoiceUseCase CreateInvoiceUseCase
 @inject IViewCustomerListUseCase ViewCustomerListUseCase
@@ -18,6 +19,7 @@
 @inject IAssessCreditRiskUseCase AssessCreditRiskUseCase
 @inject IGetCustomerDebtUseCase GetCustomerDebtUseCase
 @inject DraftInvoiceStateService State
+@inject AuthenticationStateProvider AuthStateProvider
 
 <div class="app-page-container">
     <PageHeader Title="Lập Hóa Đơn Bán Hàng"
@@ -281,9 +283,15 @@
                                 <th style="min-width: 100px; font-size: 14.5px; font-weight: 700; color: #334155;">Mã SP</th>
                                 <th style="min-width: 200px; font-size: 14.5px; font-weight: 700; color: #334155;">Tên Hàng Hóa</th>
                                 <th class="text-center" style="min-width: 70px; font-size: 14.5px; font-weight: 700; color: #334155;">ĐVT</th>
-                                <th class="text-end" style="min-width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Nhập (Vốn)</th>
+                                @if (!isSales)
+                                {
+                                    <th class="text-end" style="min-width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Nhập (Vốn)</th>
+                                }
                                 <th class="text-end" style="min-width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Giá Bán Sỉ</th>
-                                <th class="text-end" style="min-width: 130px; font-size: 14.5px; font-weight: 700; color: #334155;">Lãi Gộp / SP</th>
+                                @if (!isSales)
+                                {
+                                    <th class="text-end" style="min-width: 130px; font-size: 14.5px; font-weight: 700; color: #334155;">Lãi Gộp / SP</th>
+                                }
                                 <th class="text-center" style="min-width: 90px; font-size: 14.5px; font-weight: 700; color: #334155;">Tồn Kho</th>
                                 <th class="text-center" style="width: 120px; font-size: 14.5px; font-weight: 700; color: #334155;">Thao Tác</th>
                             </tr>
@@ -303,17 +311,23 @@
                                     </td>
                                     <td class="fw-semibold text-dark">@p.Name</td>
                                     <td class="text-center text-secondary" style="font-size: 16px;">@p.Unit</td>
-                                    <td class="text-end text-muted" style="font-size: 16px; font-variant-numeric: tabular-nums;">
-                                        @p.CostPrice.ToString("N0") đ
-                                    </td>
+                                    @if (!isSales)
+                                    {
+                                        <td class="text-end text-muted" style="font-size: 16px; font-variant-numeric: tabular-nums;">
+                                            @p.CostPrice.ToString("N0") đ
+                                        </td>
+                                    }
                                     <td class="text-end fw-bold text-primary" style="font-size: 16px; font-variant-numeric: tabular-nums;">
                                         @p.UnitPrice.ToString("N0") đ
                                     </td>
-                                    <td class="text-end">
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size: 16px;">
-                                            +@p.UnitProfit.ToString("N0") đ (@p.ProfitMargin%)
-                                        </span>
-                                    </td>
+                                    @if (!isSales)
+                                    {
+                                        <td class="text-end">
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size: 16px;">
+                                                +@p.UnitProfit.ToString("N0") đ (@p.ProfitMargin%)
+                                            </span>
+                                        </td>
+                                    }
                                     <td class="text-center">
                                         <span class="badge @(p.StockQuantity <= 10 ? "bg-warning text-dark" : "bg-success") px-2.5 py-1" style="font-size: 14.5px; font-weight: 600;">
                                             @p.StockQuantity
@@ -345,6 +359,10 @@
 </div>
 
 @code {
+    [SupplyParameterFromQuery(Name = "customerId")]
+    public int? CustomerIdParam { get; set; }
+
+    private bool isSales = false;
     private IEnumerable<Customer>? customers;
     private IEnumerable<Product>? products;
     private decimal currentDebt;
@@ -363,8 +381,29 @@
     protected override async Task OnInitializedAsync()
     {
         State.OnChange += StateHasChanged;
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        isSales = authState.User.IsInRole("Sales");
+
         customers = await ViewCustomerListUseCase.ExecuteAsync();
         products = await ViewProductCatalogUseCase.ExecuteAsync();
+
+        if (CustomerIdParam.HasValue && CustomerIdParam.Value > 0)
+        {
+            var customer = customers?.FirstOrDefault(c => c.Id == CustomerIdParam.Value);
+            if (customer != null)
+            {
+                State.SetCustomer(customer);
+                currentDebt = await GetCustomerDebtUseCase.ExecuteAsync(customer.Id);
+                try
+                {
+                    customerRisk = await AssessCreditRiskUseCase.ExecuteAsync(customer.Id);
+                }
+                catch
+                {
+                    customerRisk = null;
+                }
+            }
+        }
     }
 
     public void Dispose()

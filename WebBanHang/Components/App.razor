@@ -14,11 +14,11 @@
     <link rel="stylesheet" href="app.css?v=5.1" />
     <link rel="stylesheet" href="WebBanHang.styles.css?v=5.1" />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
+    <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode="InteractiveServer" />
     <script src="_framework/blazor.web.js"></script>
     <script src="js/gsap.min.js"></script>
     <script src="js/ScrollTrigger.min.js"></script>

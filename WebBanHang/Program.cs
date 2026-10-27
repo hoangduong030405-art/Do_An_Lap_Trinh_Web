@@ -24,6 +24,7 @@ builder.Services.AddRazorComponents()
 // State Service
 builder.Services.AddScoped<DraftInvoiceStateService>();
 builder.Services.AddScoped<LayoutStateService>();
+builder.Services.AddSingleton<LedgerConfirmationStateService>();
 
 // Repositories
 builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
@@ -183,6 +184,50 @@ app.MapGet("/api/auth/logout", async (HttpContext httpContext) => {
     httpContext.Response.Headers["Pragma"] = "no-cache";
     httpContext.Response.Headers["Expires"] = "0";
     return Results.Redirect("/login");
+});
+
+app.MapGet("/api/auth/switch-role", async (HttpContext httpContext, string role) => {
+    string target = role?.ToLowerInvariant() ?? "accountant";
+    string newRole = "Accountant";
+    string fullName = "Kế Toán Nguyễn Văn A";
+    string nameId = "accountant";
+    string redirectUrl = "/dashboard";
+
+    if (target == "sales")
+    {
+        newRole = "Sales";
+        fullName = "Nhân Viên Trần Văn B";
+        nameId = "sales";
+        redirectUrl = "/dashboard";
+    }
+    else if (target == "customer" || target == "baba")
+    {
+        newRole = "Customer";
+        fullName = "Tạp Hóa Bà Ba - Chợ Đông Ba";
+        nameId = "customer";
+        redirectUrl = "/portal/dashboard";
+    }
+
+    var claims = new List<Claim>
+    {
+        new(ClaimTypes.Name, fullName),
+        new(ClaimTypes.NameIdentifier, nameId),
+        new(ClaimTypes.Role, newRole)
+    };
+
+    if (newRole == "Customer")
+    {
+        claims.Add(new Claim("CustomerId", "1"));
+    }
+
+    await httpContext.SignOutAsync("Cookies");
+    var identity = new ClaimsIdentity(claims, "Cookies");
+    await httpContext.SignInAsync("Cookies", new ClaimsPrincipal(identity));
+
+    httpContext.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0";
+    httpContext.Response.Headers["Pragma"] = "no-cache";
+    httpContext.Response.Headers["Expires"] = "0";
+    return Results.Redirect(redirectUrl);
 });
 
 app.Run();

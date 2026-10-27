@@ -9,7 +9,7 @@
 @implements IDisposable
 
 <div class="position-relative app-search-container" id="globalSearchContainer">
-    <div class="input-group input-group-sm rounded-pill overflow-hidden border shadow-xs bg-white border-secondary-subtle" style="max-width: 380px;">
+    <div class="input-group input-group-sm rounded-pill overflow-hidden border shadow-xs bg-white border-secondary-subtle" style="max-width: 420px;">
         <span class="input-group-text bg-transparent border-0 text-muted ps-3">
             @if (isSearching)
             {
@@ -22,65 +22,153 @@
         </span>
         <input id="globalSearchInput"
                type="text"
-               class="form-control bg-transparent border-0 ps-1 text-dark" style="font-size: 15px;"
-               placeholder="Tìm khách hàng, hóa đơn, sản phẩm... (Ctrl+K)"
+               class="form-control bg-transparent border-0 ps-1 text-dark" style="font-size: 14.5px;"
+               placeholder="@(currentUserRole == "Customer" ? "Tìm sản phẩm sỉ, mã hóa đơn của đại lý... [Ctrl+K]" : "Tìm khách hàng, hóa đơn, sản phẩm... (Ctrl+K)")"
                @bind="searchKeyword"
                @bind:event="oninput"
                @onkeyup="HandleKeyUp"
-               @onfocus="ShowResultsIfAny" />
+               @onkeydown="HandleKeyDown"
+               @onfocus="OnFocus" />
         @if (!string.IsNullOrEmpty(searchKeyword))
         {
             <button class="btn btn-link text-muted border-0 pe-2 text-decoration-none" type="button" @onclick="ClearSearch">
                 <i class="bi bi-x-circle-fill"></i>
             </button>
         }
-        <span class="input-group-text bg-transparent border-0 text-muted pe-3 d-none d-md-inline small font-monospace" style="font-size: 14px;">
-            <kbd class="bg-light text-secondary border px-1.5 py-0.5 rounded" style="font-size: 14px;">Ctrl+K</kbd>
+        <span class="input-group-text bg-transparent border-0 text-muted pe-3 d-none d-md-inline small font-monospace" style="font-size: 13px;">
+            <kbd class="bg-light text-secondary border px-1.5 py-0.5 rounded" style="font-size: 12px;">Ctrl+K</kbd>
         </span>
     </div>
 
-    @if (isOpen && searchResults != null)
+    @if (isOpen)
     {
         <!-- BACKDROP TO CLOSE DROPDOWN WHEN CLICKING OUTSIDE -->
         <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: 1050; background: transparent;" @onclick="CloseDropdown"></div>
 
         <div class="position-absolute bg-white rounded-3 shadow-lg border mt-1 overflow-hidden" 
-             style="top: 100%; left: 0; min-width: 380px; max-width: 480px; max-height: 440px; overflow-y: auto; z-index: 1060;"
+             style="top: 100%; left: 0; min-width: 440px; max-width: 520px; max-height: 480px; overflow-y: auto; z-index: 1060;"
              @onclick:stopPropagation="true">
-            @if (!searchResults.Any())
+            
+            @if (string.IsNullOrWhiteSpace(searchKeyword))
             {
-                <div class="p-3 text-center text-muted small">
-                    <i class="bi bi-inbox fs-4 d-block mb-1 text-secondary opacity-50"></i>
-                    Không tìm thấy kết quả nào phù hợp với "<strong>@searchKeyword</strong>".
+                <!-- LỐI TẮT THAO TÁC NHANH KHI CHƯA GÕ TỪ KHÓA -->
+                <div class="px-3 py-2 bg-light border-bottom small fw-bold text-uppercase text-muted d-flex align-items-center justify-content-between" style="font-size: 12px; letter-spacing: 0.5px;">
+                    <span><i class="bi bi-lightning-charge-fill text-warning me-1"></i>Lối tắt thao tác nhanh</span>
+                    <span class="badge bg-secondary-subtle text-secondary rounded-pill">Phím tắt</span>
+                </div>
+
+                <div class="list-group list-group-flush">
+                    @if (currentUserRole == "Accountant")
+                    {
+                        <button type="button" class="list-group-item list-group-item-action px-3 py-2.5 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
+                                @onclick='() => NavigateToItem("/payments")'>
+                            <div class="d-flex align-items-center gap-2.5">
+                                <span class="fs-5">💸</span>
+                                <div class="text-start">
+                                    <div class="fw-semibold text-slate-navy small">Gạch nợ FIFO & Thu tiền đại lý</div>
+                                    <div class="text-muted" style="font-size: 12px;">Tự động phân bổ dòng tiền vào hóa đơn cũ nhất</div>
+                                </div>
+                            </div>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle small font-monospace">/payments</span>
+                        </button>
+                    }
+
+                    <button type="button" class="list-group-item list-group-item-action px-3 py-2.5 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
+                            @onclick='() => NavigateToItem(currentUserRole == "Customer" ? "/portal/store" : "/create-invoice")'>
+                        <div class="d-flex align-items-center gap-2.5">
+                            <span class="fs-5">🛒</span>
+                            <div class="text-start">
+                                <div class="fw-semibold text-slate-navy small">@(currentUserRole == "Customer" ? "Đặt hàng sỉ trực tuyến" : "Lập hóa đơn xuất sỉ mới")</div>
+                                <div class="text-muted" style="font-size: 12px;">Kiểm tra trần tín dụng và hạn mức khả dụng</div>
+                            </div>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle small font-monospace">@(currentUserRole == "Customer" ? "/portal/store" : "/create-invoice")</span>
+                    </button>
+
+                    @if (currentUserRole != "Customer")
+                    {
+                        <button type="button" class="list-group-item list-group-item-action px-3 py-2.5 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
+                                @onclick='() => NavigateToItem("/aging-report")'>
+                            <div class="d-flex align-items-center gap-2.5">
+                                <span class="fs-5">📊</span>
+                                <div class="text-start">
+                                    <div class="fw-semibold text-slate-navy small">Xem báo cáo tuổi nợ 4 xô</div>
+                                    <div class="text-muted" style="font-size: 12px;">Phân nhóm nợ 0-30, 31-60, 61-90, >90 ngày</div>
+                                </div>
+                            </div>
+                            <span class="badge bg-warning-subtle text-dark border border-warning-subtle small font-monospace">/aging-report</span>
+                        </button>
+                        <button type="button" class="list-group-item list-group-item-action px-3 py-2.5 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
+                                @onclick='() => NavigateToItem("/manage-customers")'>
+                            <div class="d-flex align-items-center gap-2.5">
+                                <span class="fs-5">👥</span>
+                                <div class="text-start">
+                                    <div class="fw-semibold text-slate-navy small">Tra cứu hạn mức & Hồ sơ đại lý</div>
+                                    <div class="text-muted" style="font-size: 12px;">Đánh giá rủi ro tín dụng & xếp hạng AI</div>
+                                </div>
+                            </div>
+                            <span class="badge bg-info-subtle text-info border border-info-subtle small font-monospace">/manage-customers</span>
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="list-group-item list-group-item-action px-3 py-2.5 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
+                                @onclick='() => NavigateToItem("/portal/ledger")'>
+                            <div class="d-flex align-items-center gap-2.5">
+                                <span class="fs-5">📑</span>
+                                <div class="text-start">
+                                    <div class="fw-semibold text-slate-navy small">Sổ đối soát công nợ tự phục vụ</div>
+                                    <div class="text-muted" style="font-size: 12px;">Ký xác nhận khớp số dư hoặc báo lệch số liệu</div>
+                                </div>
+                            </div>
+                            <span class="badge bg-info-subtle text-info border border-info-subtle small font-monospace">/portal/ledger</span>
+                        </button>
+                    }
                 </div>
             }
-            else
+            else if (searchResults != null)
             {
-                @foreach (var group in searchResults.GroupBy(r => r.Category))
+                @if (!searchResults.Any())
                 {
-                    <div class="px-3 py-1.5 bg-light border-bottom small fw-bold text-uppercase text-muted d-flex align-items-center justify-content-between" style="font-size: 14px; letter-spacing: 0.5px;">
-                        <span>@group.Key</span>
-                        <span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill">@group.Count()</span>
-                    </div>
-
-                    <div class="list-group list-group-flush">
-                        @foreach (var item in group)
-                        {
-                            <button type="button" 
-                                    class="list-group-item list-group-item-action px-3 py-2 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
-                                    @onclick="() => NavigateToItem(item.Url)">
-                                <div class="overflow-hidden">
-                                    <div class="fw-semibold text-slate-navy small text-truncate">@item.Title</div>
-                                    <div class="text-muted text-truncate" style="font-size: 14px;">@item.Subtitle</div>
-                                </div>
-                                <span class="badge bg-@item.BadgeColor-subtle text-@item.BadgeColor border border-@item.BadgeColor border-opacity-25 small flex-shrink-0" style="font-size: 14px;">
-                                    @item.BadgeText
-                                </span>
-                            </button>
-                        }
+                    <div class="p-4 text-center text-muted small">
+                        <i class="bi bi-inbox fs-3 d-block mb-1 text-secondary opacity-50"></i>
+                        Không tìm thấy kết quả nào phù hợp với "<strong>@searchKeyword</strong>".
                     </div>
                 }
+                else
+                {
+                    @foreach (var group in searchResults.GroupBy(r => r.Category))
+                    {
+                        <div class="px-3 py-1.5 bg-light border-bottom small fw-bold text-uppercase text-muted d-flex align-items-center justify-content-between" style="font-size: 12px; letter-spacing: 0.5px;">
+                            <span>@group.Key</span>
+                            <span class="badge bg-secondary bg-opacity-25 text-dark rounded-pill">@group.Count()</span>
+                        </div>
+
+                        <div class="list-group list-group-flush">
+                            @foreach (var item in group)
+                            {
+                                <button type="button" 
+                                        class="list-group-item list-group-item-action px-3 py-2 border-0 border-bottom d-flex align-items-center justify-content-between gap-2"
+                                        @onclick="() => NavigateToItem(item.Url)">
+                                    <div class="overflow-hidden text-start">
+                                        <div class="fw-semibold text-slate-navy small text-truncate">@item.Title</div>
+                                        <div class="text-muted text-truncate" style="font-size: 12px;">@item.Subtitle</div>
+                                    </div>
+                                    <span class="badge bg-@item.BadgeColor-subtle text-@item.BadgeColor border border-@item.BadgeColor border-opacity-25 small flex-shrink-0" style="font-size: 11px;">
+                                        @item.BadgeText
+                                    </span>
+                                </button>
+                            }
+                        </div>
+                    }
+                }
             }
+
+            <!-- FOOTER HƯỚNG DẪN PHÍM TẮT -->
+            <div class="p-2 bg-light border-top text-muted d-flex justify-content-between px-3 align-items-center" style="font-size: 11.5px;">
+                <span><kbd class="bg-white border text-dark px-1.5 py-0.5 rounded">Esc</kbd> để đóng</span>
+                <span><kbd class="bg-white border text-dark px-1.5 py-0.5 rounded">Ctrl + K</kbd> mở nhanh</span>
+            </div>
         </div>
     }
 </div>
@@ -108,13 +196,31 @@
         }
     }
 
+    private void OnFocus()
+    {
+        isOpen = true;
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            CloseDropdown();
+        }
+    }
+
     private void HandleKeyUp(KeyboardEventArgs e)
     {
+        if (e.Key == "Escape")
+        {
+            CloseDropdown();
+            return;
+        }
+
         debounceTimer?.Dispose();
         if (string.IsNullOrWhiteSpace(searchKeyword) || searchKeyword.Trim().Length < 2)
         {
             searchResults = null;
-            isOpen = false;
             return;
         }
 
@@ -134,15 +240,7 @@
                     StateHasChanged();
                 }
             });
-        }, null, 300, System.Threading.Timeout.Infinite);
-    }
-
-    private void ShowResultsIfAny()
-    {
-        if (searchResults != null && searchResults.Any())
-        {
-            isOpen = true;
-        }
+        }, null, 250, System.Threading.Timeout.Infinite);
     }
 
     private void CloseDropdown()
@@ -154,7 +252,6 @@
     {
         searchKeyword = "";
         searchResults = null;
-        isOpen = false;
     }
 
     private void NavigateToItem(string url)

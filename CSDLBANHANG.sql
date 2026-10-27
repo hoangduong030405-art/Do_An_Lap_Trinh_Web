@@ -115,7 +115,13 @@ VALUES
 (N'SP009', N'Nước tăng lực Red Bull Thái Lan (Thùng 24 lon 250ml)', N'Thùng', 265000, 230000, 150, '/images/products/sp009-red-bull.svg', N'Nước tăng lực lon vàng Red Bull chính hãng'),
 (N'SP010', N'Cà phê hòa tan G7 3in1 Trung Nguyên (Thùng 24 hộp x 18 gói)', N'Thùng', 360000, 310000, 120, '/images/products/sp010-g7-coffee.svg', N'Cà phê hòa tan Trung Nguyên đậm đà'),
 (N'SP011', N'Bánh ChocoPie Orion Truyền Thống (Thùng 8 hộp x 12 cái)', N'Thùng', 230000, 195000, 160, '/images/products/sp011-chocopie.svg', N'Bánh mềm phủ socola nhân kem dẻo marshmallow'),
-(N'SP012', N'Nước mắm Nam Ngư Đệ Nhị (Thùng 15 chai 900ml)', N'Thùng', 175000, 145000, 200, '/images/products/sp012-nam-ngu.svg', N'Nước mắm Nam Ngư hương vị cá cơm thơm ngon');
+(N'SP012', N'Nước mắm Nam Ngư Đệ Nhị (Thùng 15 chai 900ml)', N'Thùng', 175000, 145000, 200, '/images/products/sp012-nam-ngu.svg', N'Nước mắm Nam Ngư hương vị cá cơm thơm ngon'),
+(N'SP013', N'Nước ngọt Pepsi lon cao (Thùng 24 lon 320ml)', N'Thùng', 205000, 180000, 160, '/images/products/sp013-pepsi.svg', N'Thùng 24 lon 320ml, vị nguyên bản sảng khoái'),
+(N'SP014', N'Bia Saigon Special (Thùng 24 lon 330ml)', N'Thùng', 355000, 315000, 110, '/images/products/sp014-saigon-special.svg', N'Bia lon rồng vàng 100% lúa mạch nguyên chất'),
+(N'SP015', N'Trà Xanh C2 Hương Chanh (Thùng 24 chai 455ml)', N'Thùng', 170000, 142000, 140, '/images/products/sp015-c2-lemon.svg', N'Trà xanh đóng chai 455ml thanh nhiệt giải độc'),
+(N'SP016', N'Hạt nêm Knorr Thịt Thăn Xương Ống (Gói 900g)', N'Gói', 78000, 64000, 125, '/images/products/sp016-knorr.svg', N'Hạt nêm đậm đà vị ngọt từ thịt thăn và tủy xương'),
+(N'SP017', N'Nước tương Chinsu Tỏi Ớt (Chai 330ml)', N'Chai', 22000, 17500, 210, '/images/products/sp017-chinsu.svg', N'Nước tương đậu nành lên men tự nhiên cay nồng tỏi ớt'),
+(N'SP018', N'Bánh quy Cosy Marie Kinh Đô (Hộp 336g)', N'Hộp', 45000, 36000, 175, '/images/products/sp018-cosy.svg', N'Bánh quy sữa giòn xốp dinh dưỡng phù hợp mọi lứa tuổi');
 
 -- 5. SEED DỮ LIỆU HÓA ĐƠN BÁN HÀNG VỚI NGÀY TƯƠNG ĐỐI (DATEADD TỪ GETDATE())
 -- Đầy đủ tất cả các ca kiểm thử tuổi nợ & thanh toán:

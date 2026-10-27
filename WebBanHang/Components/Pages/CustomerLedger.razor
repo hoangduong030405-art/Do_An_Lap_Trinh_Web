@@ -7,9 +7,11 @@
 @using WebBanHang.UseCases.DTOs
 @using WebBanHang.CoreBusiness.Entities
 @using WebBanHang.Components.Controls
+@using WebBanHang.Services
 
 @inject IViewCustomerListUseCase ViewCustomerListUseCase
 @inject IViewCustomerLedgerUseCase ViewCustomerLedgerUseCase
+@inject LedgerConfirmationStateService ConfirmationState
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Sổ Chi Tiết Công Nợ Khách Hàng</PageTitle>
@@ -64,6 +66,37 @@
             </div>
         </div>
     </div>
+
+    @if (customerConfirmation != null)
+    {
+        <div class="alert alert-success d-flex align-items-center gap-2 mb-3 shadow-xs d-print-none">
+            <i class="bi bi-patch-check-fill fs-5 text-success"></i>
+            <div>
+                <strong>Đại lý đã đối soát & xác nhận khớp số dư điện tử:</strong> Số dư nợ @customerConfirmation.EndingBalance.ToString("N0") đ đã được đại lý xác nhận khớp lúc @customerConfirmation.ConfirmedAt.ToString("HH:mm - dd/MM/yyyy").
+            </div>
+        </div>
+    }
+
+    @if (customerDisputes != null && customerDisputes.Any())
+    {
+        <div class="alert alert-warning mb-3 shadow-xs d-print-none">
+            <div class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> Có phản ánh lệch số liệu từ đại lý này:</div>
+            @foreach (var d in customerDisputes)
+            {
+                <div class="d-flex align-items-center justify-content-between p-2 rounded bg-white bg-opacity-75 border mb-1">
+                    <div class="small text-dark">
+                        <strong>[HĐ: @d.InvoiceNumber]</strong> @d.Note 
+                        <span class="text-muted ms-1">(@d.ReportedAt.ToString("HH:mm dd/MM/yyyy"))</span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-success py-0.5 px-2.5 rounded-pill fw-semibold" 
+                            style="font-size: 12px;" 
+                            @onclick="() => ResolveDispute(d)">
+                        <i class="bi bi-check2-circle me-1"></i>Đã xử lý xong
+                    </button>
+                </div>
+            }
+        </div>
+    }
 
     @if (loading)
     {
@@ -235,6 +268,8 @@
     private int selectedCustomerId = 0;
     private CustomerLedgerDto? ledger;
     private bool loading = false;
+    private CustomerLedgerConfirmation? customerConfirmation;
+    private List<CustomerLedgerDispute> customerDisputes = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -244,6 +279,21 @@
             selectedCustomerId = CustomerIdParam.Value;
             await LoadLedger();
         }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (CustomerIdParam.HasValue && CustomerIdParam.Value > 0 && CustomerIdParam.Value != selectedCustomerId)
+        {
+            selectedCustomerId = CustomerIdParam.Value;
+            await LoadLedger();
+        }
+    }
+
+    private void ResolveDispute(CustomerLedgerDispute d)
+    {
+        ConfirmationState.ResolveDispute(d.CustomerId, d.InvoiceNumber);
+        customerDisputes = ConfirmationState.GetDisputes(selectedCustomerId);
     }
 
     private async Task OnCustomerSelected(ChangeEventArgs e)
@@ -272,6 +322,8 @@
         try
         {
             ledger = await ViewCustomerLedgerUseCase.ExecuteAsync(selectedCustomerId);
+            customerConfirmation = ConfirmationState.GetConfirmation(selectedCustomerId);
+            customerDisputes = ConfirmationState.GetDisputes(selectedCustomerId);
         }
         finally
         {

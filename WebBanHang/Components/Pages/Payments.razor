@@ -218,16 +218,29 @@
                             <i class="bi bi-info-circle-fill me-1 text-primary"></i> 
                             <strong>Luật FIFO:</strong> Tiền thu được ưu tiên trừ dứt điểm từ hóa đơn <strong>cũ nhất (#1)</strong> trước, phần tiền dư tiếp tục gạch cho các hóa đơn tiếp theo.
                         </div>
+
+                        @if (paymentAmount > currentDebt && currentDebt > 0)
+                        {
+                            var unallocatedExcess = paymentAmount - currentDebt;
+                            <div class="alert alert-info py-2.5 px-4 mb-0 rounded-0 border-start-0 border-end-0 d-flex align-items-center gap-2" style="background-color: #eff6ff; border-color: #bfdbfe; color: #1e40af;">
+                                <i class="bi bi-info-circle-fill fs-5 text-primary"></i>
+                                <div>
+                                    <strong>Tiền thừa chưa phân bổ: @unallocatedExcess.ToString("N0") đ</strong> (Sẽ được ghi nhận vào Khoản khách trả trước / Dư Có TK 131)
+                                </div>
+                            </div>
+                        }
+
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-center" style="width: 100px;">Ưu Tiên</th>
-                                        <th style="min-width: 120px;">Số Hóa Đơn</th>
-                                        <th style="min-width: 130px;">Ngày HĐ / Hạn</th>
-                                        <th class="text-end" style="min-width: 120px;">Tổng HĐ</th>
-                                        <th class="text-end" style="min-width: 120px;">Đang Nợ</th>
-                                        <th class="text-end" style="min-width: 130px;">Dự Kiến Gạch</th>
+                                        <th class="text-center" style="width: 90px;">Ưu Tiên</th>
+                                        <th style="min-width: 110px;">Số Hóa Đơn</th>
+                                        <th style="min-width: 120px;">Ngày HĐ / Hạn</th>
+                                        <th class="text-end" style="min-width: 110px;">Số Nợ Hiện Tại</th>
+                                        <th class="text-end text-success fw-bold" style="min-width: 120px;">Dự Kiến Gạch</th>
+                                        <th class="text-end" style="min-width: 120px;">Dư Nợ Sau Gạch</th>
+                                        <th class="text-center" style="min-width: 110px;">Trạng Thái</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -249,48 +262,48 @@
                                             <td class="text-center">
                                                 @if (priority == 1)
                                                 {
-                                                    <span class="badge bg-danger px-2 py-1" style="font-size: 14.5px;">#1 Cũ Nhất</span>
+                                                    <span class="badge bg-danger px-2 py-1" style="font-size: 14px;">#1 Cũ Nhất</span>
                                                 }
                                                 else if (priority == 2)
                                                 {
-                                                    <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 14.5px;">#2 Tiếp Theo</span>
+                                                    <span class="badge bg-warning text-dark px-2 py-1" style="font-size: 14px;">#2 Kế Tiếp</span>
                                                 }
                                                 else
                                                 {
-                                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 14.5px;">#@priority</span>
+                                                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 14px;">#@priority</span>
                                                 }
                                             </td>
                                             <td>
-                                                <span class="fw-bold text-dark">@inv.InvoiceNumber</span>
+                                                <span class="fw-bold text-dark font-monospace">@inv.InvoiceNumber</span>
                                             </td>
                                             <td>
-                                                <div class="fw-semibold text-dark" style="font-size: 16px;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</div>
-                                                <small class="text-muted" style="font-size: 14.5px;">Hạn: @inv.DueDate.ToString("dd/MM/yyyy")</small>
-                                            </td>
-                                            <td class="text-end text-muted" style="font-size: 15px; font-variant-numeric: tabular-nums;">
-                                                @inv.TotalAmount.ToString("N0") đ
+                                                <div class="fw-semibold text-dark" style="font-size: 15px;">@inv.InvoiceDate.ToString("dd/MM/yyyy")</div>
+                                                <small class="text-muted" style="font-size: 13.5px;">Hạn: @inv.DueDate.ToString("dd/MM/yyyy")</small>
                                             </td>
                                             <td class="text-end text-danger fw-bold" style="font-size: 15px; font-variant-numeric: tabular-nums;">
                                                 @inv.Balance.ToString("N0") đ
                                             </td>
-                                            <td class="text-end">
+                                            <td class="text-end fw-bold text-success" style="font-size: 15px; font-variant-numeric: tabular-nums;">
+                                                @(willPay > 0 ? $"-{willPay:N0} đ" : "-")
+                                            </td>
+                                            <td class="text-end fw-semibold text-slate-navy" style="font-size: 15px; font-variant-numeric: tabular-nums;">
+                                                @(willPay > 0 ? $"{remainingAfterPay:N0} đ" : $"{inv.Balance:N0} đ")
+                                            </td>
+                                            <td class="text-center">
                                                 @if (willPay > 0)
                                                 {
-                                                    <span class="badge @(remainingAfterPay == 0 ? "bg-success" : "bg-warning text-dark") px-2.5 py-1" style="font-size: 14.5px;">
-                                                        -@willPay.ToString("N0") đ
-                                                    </span>
                                                     @if (remainingAfterPay == 0)
                                                     {
-                                                        <div class="small text-success fw-bold mt-0.5" style="font-size: 14.5px; font-weight: 600;">(Tất toán)</div>
+                                                        <span class="badge bg-success px-2.5 py-1">Tất toán hết</span>
                                                     }
                                                     else
                                                     {
-                                                        <div class="small text-muted mt-0.5" style="font-size: 14.5px; font-weight: 600;">(Còn: @remainingAfterPay.ToString("N0") đ)</div>
+                                                        <span class="badge bg-warning text-dark px-2.5 py-1">Thu một phần</span>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted" style="font-size: 14.5px;">-</span>
+                                                    <span class="badge bg-light text-muted border px-2 py-1">Chưa gạch</span>
                                                 }
                                             </td>
                                         </tr>

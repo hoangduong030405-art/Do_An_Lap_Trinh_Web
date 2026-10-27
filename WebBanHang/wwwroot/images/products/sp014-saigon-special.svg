@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="canBodySaigon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="25%" stop-color="#047857"/>
+      <stop offset="60%" stop-color="#10b981"/>
+      <stop offset="85%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </linearGradient>
+    <linearGradient id="goldSaigon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="40%" stop-color="#fbbf24"/>
+      <stop offset="80%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <linearGradient id="metalSaigon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="40%" stop-color="#e2e8f0"/>
+      <stop offset="70%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <filter id="shadowSaigon" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- BÓNG ĐỔ LON -->
+  <ellipse cx="200" cy="340" rx="75" ry="14" fill="#000000" opacity="0.2"/>
+
+  <!-- THÂN LON BIA SAIGON SPECIAL 330ML -->
+  <g filter="url(#shadowSaigon)">
+    <!-- Đỉnh lon kim loại -->
+    <ellipse cx="200" cy="72" rx="48" ry="10" fill="url(#metalSaigon)"/>
+    <ellipse cx="200" cy="70" rx="42" ry="7" fill="#cbd5e1"/>
+    <!-- Nắp mở lon -->
+    <ellipse cx="200" cy="69" rx="16" ry="4" fill="#64748b"/>
+    <circle cx="206" cy="69" r="3" fill="#475569"/>
+
+    <!-- Thân lon thon chuẩn 330ml -->
+    <path d="M 152 72 L 150 310 Q 150 324 168 324 L 232 324 Q 250 324 250 310 L 248 72 Z" fill="url(#canBodySaigon)"/>
+
+    <!-- Đáy lon kim loại -->
+    <path d="M 160 322 Q 200 330 240 322 L 236 332 Q 200 338 164 332 Z" fill="url(#metalSaigon)"/>
+
+    <!-- DẢI HUY HIỆU VÀNG SAIGON SPECIAL -->
+    <ellipse cx="200" cy="140" rx="36" ry="24" fill="url(#goldSaigon)" stroke="#ffffff" stroke-width="1.5"/>
+    <!-- Biểu tượng rồng vàng Sabeco cách điệu -->
+    <path d="M 185 140 Q 200 126 215 140 Q 200 134 185 140 Z" fill="#78350f"/>
+    <circle cx="200" cy="132" r="3.5" fill="#78350f"/>
+
+    <text x="200" y="152" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="900" fill="#78350f" text-anchor="middle" letter-spacing="1">SAIGON</text>
+
+    <!-- BANNER CHỮ SPECIAL IN HOA NỔI BẬT NỀN ĐỎ VIỀN VÀNG -->
+    <rect x="156" y="180" width="88" height="34" rx="4" fill="#dc2626" stroke="url(#goldSaigon)" stroke-width="2"/>
+    <text x="200" y="202" font-family="'Arial Black', Impact, sans-serif" font-size="15" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">SPECIAL</text>
+
+    <!-- HUY CHƯƠNG LÚA MẠCH 100% MALT -->
+    <g transform="translate(200, 255)">
+      <circle cx="0" cy="0" r="22" fill="#047857" stroke="url(#goldSaigon)" stroke-width="1.5"/>
+      <text x="0" y="-3" font-family="'Segoe UI', sans-serif" font-size="7" font-weight="bold" fill="url(#goldSaigon)" text-anchor="middle">100%</text>
+      <text x="0" y="7" font-family="'Segoe UI', sans-serif" font-size="6.5" font-weight="bold" fill="#ffffff" text-anchor="middle">BARLEY</text>
+      <text x="0" y="14" font-family="'Segoe UI', sans-serif" font-size="5" fill="#fef08a" text-anchor="middle">MALT</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="canBodyPepsi" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#002b80"/>
+      <stop offset="25%" stop-color="#0047cc"/>
+      <stop offset="60%" stop-color="#0066ff"/>
+      <stop offset="85%" stop-color="#0047cc"/>
+      <stop offset="100%" stop-color="#001a4d"/>
+    </linearGradient>
+    <linearGradient id="metalPepsi" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="40%" stop-color="#e2e8f0"/>
+      <stop offset="70%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <filter id="shadowPepsi" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- BÓNG ĐỔ LON -->
+  <ellipse cx="200" cy="340" rx="75" ry="14" fill="#000000" opacity="0.2"/>
+
+  <!-- THÂN LON PEPSI SLEEK 320ML -->
+  <g filter="url(#shadowPepsi)">
+    <!-- Đỉnh lon kim loại -->
+    <ellipse cx="200" cy="72" rx="48" ry="10" fill="url(#metalPepsi)"/>
+    <ellipse cx="200" cy="70" rx="42" ry="7" fill="#cbd5e1"/>
+    <!-- Nắp mở lon -->
+    <ellipse cx="200" cy="69" rx="16" ry="4" fill="#64748b"/>
+    <circle cx="206" cy="69" r="3" fill="#475569"/>
+
+    <!-- Thân lon thon cao Sleek -->
+    <path d="M 152 72 L 150 310 Q 150 324 168 324 L 232 324 Q 250 324 250 310 L 248 72 Z" fill="url(#canBodyPepsi)"/>
+
+    <!-- Đáy lon kim loại -->
+    <path d="M 160 322 Q 200 330 240 322 L 236 332 Q 200 338 164 332 Z" fill="url(#metalPepsi)"/>
+
+    <!-- LOGO PEPSI GLOBE TRÒN BIỂU TƯỢNG (ĐỎ - TRẮNG - XANH DƯƠNG) -->
+    <g transform="translate(200, 150)">
+      <!-- Viền bóng logo -->
+      <circle cx="0" cy="0" r="36" fill="#ffffff" opacity="0.95"/>
+      <!-- Nửa trên màu đỏ -->
+      <path d="M -34 0 C -34 -25 34 -25 34 0 C 20 -8 -5 -5 -34 0 Z" fill="#dc2626"/>
+      <!-- Vệt lượn sóng trắng ở giữa -->
+      <path d="M -34 0 C -5 -5 20 -8 34 0 C 34 8 5 5 -34 0 Z" fill="#ffffff"/>
+      <!-- Nửa dưới màu xanh dương -->
+      <path d="M -34 0 C 5 5 34 8 34 0 C 34 25 -34 25 -34 0 Z" fill="#0284c7"/>
+    </g>
+
+    <!-- CHỮ PEPSI NỔI BẬT IN ĐẬM DỌC THEO THÂN LON -->
+    <g transform="translate(186, 280) rotate(-90)">
+      <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-size="32" font-weight="900" fill="#ffffff" letter-spacing="2">pepsi</text>
+    </g>
+  </g>
+</svg>

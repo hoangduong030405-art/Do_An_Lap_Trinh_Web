@@ -18,12 +18,13 @@
 
 
 
+@using WebBanHang.UseCases.Customers
+
 @inject IGetDashboardDataUseCase GetDashboardDataUseCase
-
+@inject IViewCustomerListUseCase ViewCustomerListUseCase
+@inject IGetCustomerDebtUseCase GetCustomerDebtUseCase
 @inject NavigationManager Navigation
-
 @inject AuthenticationStateProvider AuthStateProvider
-
 @inject LayoutStateService LayoutState
 
 @implements IDisposable
@@ -66,7 +67,7 @@ else if (dashboard != null)
 
         <PageHeader Title="Tổng Quan Hoạt Động"
 
-                    Subtitle="Phân hệ Bán hàng & Quản trị Công nợ B2B — Bàn làm việc điều hành"
+                    Subtitle="@(isSales ? "Không gian làm việc Nhân viên Kinh doanh — Theo dõi doanh số & Hạn mức đại lý" : "Phân hệ Bán hàng & Quản trị Công nợ B2B — Bàn làm việc điều hành")"
 
                     Icon="bi-grid-fill">
 
@@ -198,13 +199,13 @@ else if (dashboard != null)
 
                           Trend="@($"{collectionRate:N1}% thu hồi")"
 
-                          Hint="Gạch nợ FIFO ↗"
+                          Hint="@(isSales ? "Lịch sử thu tiền ↗" : "Gạch nợ FIFO ↗")"
 
                           Tone="success"
 
                           Icon="bi-wallet2"
 
-                          OnClick="@(() => Navigation.NavigateTo("/payments"))" />
+                          OnClick="@(() => Navigation.NavigateTo(isSales ? "/payment-history" : "/payments"))" />
 
             </div>
 
@@ -222,13 +223,13 @@ else if (dashboard != null)
 
                           Trend="@($"{dashboard.TotalDebtorsCount}/{dashboard.TotalCustomersCount} KH")"
 
-                          Hint="Báo cáo tuổi nợ ↗"
+                          Hint="@(isSales ? "Tra cứu hạn mức KH ↗" : "Báo cáo tuổi nợ ↗")"
 
                           Tone="warning"
 
                           Icon="bi-clock-history"
 
-                          OnClick="@(() => Navigation.NavigateTo("/aging-report"))" />
+                          OnClick="@(() => Navigation.NavigateTo(isSales ? "/manage-customers" : "/aging-report"))" />
 
             </div>
 
@@ -269,8 +270,16 @@ else if (dashboard != null)
     <div class="app-announcement-bar d-flex align-items-center justify-content-between p-2.5 px-3.5 mb-3 rounded-3 shadow-xs" style="background: linear-gradient(90deg, #eff6ff 0%, #ede9fe 50%, #ecfdf5 100%) !important; border: 1.5px solid #c7d2fe !important;">
         <div class="d-flex align-items-center gap-2.5 small">
             <span class="badge text-white px-2.5 py-1 rounded-pill fw-bold" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); font-size: 14px; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);">MỚI</span>
-            <span class="fw-bold text-slate-navy" style="font-size: 16px;">Khám phá Trợ lý AI AVA Kế toán:</span>
-            <span class="text-secondary d-none d-md-inline" style="font-size: 15.5px;">Tự động phân tích sức khỏe tài chính, giám sát tuổi nợ 4 xô và cảnh báo hạn mức bán hàng</span>
+            @if (isSales)
+            {
+                <span class="fw-bold text-slate-navy" style="font-size: 16px;">Trợ lý AI Bán Hàng:</span>
+                <span class="text-secondary d-none d-md-inline" style="font-size: 15.5px;">Gợi ý đại lý còn nhiều hạn mức tín dụng để chào đơn mới</span>
+            }
+            else
+            {
+                <span class="fw-bold text-slate-navy" style="font-size: 16px;">Khám phá Trợ lý AI AVA Kế toán:</span>
+                <span class="text-secondary d-none d-md-inline" style="font-size: 15.5px;">Tự động phân tích sức khỏe tài chính, giám sát tuổi nợ 4 xô và cảnh báo hạn mức bán hàng</span>
+            }
         </div>
         <button class="btn btn-sm text-decoration-none fw-bold text-white d-flex align-items-center gap-1 shadow-xs px-3 py-1 rounded-3" 
                 style="background: linear-gradient(135deg, #059669 0%, #047857 100%); border: none; font-size: 15px;"
@@ -381,56 +390,117 @@ else if (dashboard != null)
 
     <div class="row g-3 mb-3">
 
-        <!-- CARD 1: TÌNH HÌNH TÀI CHÍNH (DOANH THU - CHI PHÍ - LỢI NHUẬN) -->
-        <div class="col-12 col-lg-4">
-            <div class="app-card" style="border-top: 4px solid #059669 !important;">
-                <div class="app-card-header">
-                    <h6 class="app-card-title">
-                        <span class="p-1 px-1.5 rounded-3 text-white me-1.5 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);"><i class="bi bi-cash-coin"></i></span> Tình hình tài chính
-                    </h6>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-light text-secondary border small">@selectedPeriodText</span>
-                        <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
-                    </div>
-                </div>
-
-                <div class="app-card-body d-flex flex-column justify-content-center">
-                    <div class="app-metric-row">
-                        <span class="text-slate-navy fw-semibold">Doanh thu thuần</span>
-                        <span class="fw-bold" style="color: #1d4ed8; font-size: 20px; font-variant-numeric: tabular-nums;">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
-                    </div>
-                    <div class="app-metric-row">
-                        <span class="text-slate-navy fw-semibold">Giá vốn hàng bán (COGS)</span>
-                        <span class="fw-bold text-danger" style="color: #dc2626 !important; font-size: 20px; font-variant-numeric: tabular-nums;">@((actualCost / 1000000m).ToString("N3"))</span>
-                    </div>
-                    <div class="app-metric-row p-2 rounded-2 my-1" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
-                        <span class="fw-bold" style="color: #065f46;">Lợi nhuận gộp thực tế</span>
-                        <span class="fw-bold" style="color: #047857; font-size: 22px; font-variant-numeric: tabular-nums;">+@((actualProfit / 1000000m).ToString("N3"))</span>
-                    </div>
-                    <div class="app-metric-row">
-                        <span class="text-slate-navy fw-semibold">Tổng vốn tồn kho đang chôn</span>
-                        <span class="fw-bold" style="color: #2563eb; font-size: 20px; font-variant-numeric: tabular-nums;">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
+        @if (isSales)
+        {
+            <!-- CARD 1 DÀNH CHO SALES: CẢNH BÁO HẠN MỨC ĐẠI LÝ PHỤ TRÁCH -->
+            <div class="col-12 col-lg-4">
+                <div class="app-card" style="border-top: 4px solid #0284c7 !important;">
+                    <div class="app-card-header">
+                        <h6 class="app-card-title">
+                            <span class="p-1 px-1.5 rounded-3 text-white me-1.5 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);"><i class="bi bi-shield-exclamation"></i></span> Cảnh báo Hạn mức Đại lý phụ trách
+                        </h6>
+                        <span class="badge bg-light text-secondary border small">@salesCustomerAlerts.Count đại lý</span>
                     </div>
 
-                    <!-- Profitability Ratio Progress Bar -->
-                    <div class="mt-3 pt-2 border-top">
-                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
-                            <span class="fw-semibold">Tỷ suất lợi nhuận gộp:</span>
-                            <span class="fw-bold" style="color: #059669; font-size: 16px;">@(profitMargin.ToString("N1"))%</span>
+                    <div class="app-card-body p-2 d-flex flex-column justify-content-between">
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="small text-muted border-bottom">
+                                    <tr>
+                                        <th>Đại lý</th>
+                                        <th class="text-end">Đã dùng / Hạn mức</th>
+                                        <th class="text-center" style="width: 75px;">Tác vụ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var c in salesCustomerAlerts)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold text-dark small text-truncate" style="max-width: 130px;" title="@c.Name">@c.Name</div>
+                                                <div class="progress mt-1" style="height: 5px; width: 95px;">
+                                                    <div class="progress-bar @(c.UtilizationRate >= 90 ? "bg-danger" : c.UtilizationRate >= 70 ? "bg-warning" : "bg-success")"
+                                                         style="width: @Math.Min(100, Math.Max(5, c.UtilizationRate))%"></div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="fw-bold @(c.UtilizationRate >= 90 ? "text-danger" : "text-dark")" style="font-size: 13.5px;">
+                                                    @c.UtilizationRate%
+                                                </div>
+                                                <small class="text-muted" style="font-size: 12px;">@((c.CurrentDebt / 1000000m).ToString("N1"))/@((c.CreditLimit / 1000000m).ToString("N0")) Tr</small>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="/create-invoice?customerId=@c.Id" class="btn btn-primary btn-sm py-0 px-2 fw-semibold" style="font-size: 12px;">
+                                                    Lập đơn
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="progress" style="height: 12px; border-radius: 8px; background: #e2e8f0;">
-                            <div class="progress-bar rounded-pill shadow-xs" style="width: @(Math.Min(100, Math.Max(5, profitMargin)))%; background: linear-gradient(90deg, #10b981 0%, #059669 100%);"></div>
-                        </div>
                     </div>
-                </div>
 
-                <div class="app-card-footer">
-                    <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
-                    <a href="javascript:void(0)" @onclick="LoadDashboard" class="text-primary fw-bold text-decoration-none">Tải lại</a>
+                    <div class="app-card-footer">
+                        <span>Giám sát trần tín dụng bán buôn</span>
+                        <a href="/manage-customers" class="text-primary fw-bold text-decoration-none">Tra cứu tất cả ↗</a>
+                    </div>
                 </div>
             </div>
+        }
+        else
+        {
+            <!-- CARD 1: TÌNH HÌNH TÀI CHÍNH (DOANH THU - CHI PHÍ - LỢI NHUẬN) -->
+            <div class="col-12 col-lg-4">
+                <div class="app-card" style="border-top: 4px solid #059669 !important;">
+                    <div class="app-card-header">
+                        <h6 class="app-card-title">
+                            <span class="p-1 px-1.5 rounded-3 text-white me-1.5 d-inline-flex align-items-center" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);"><i class="bi bi-cash-coin"></i></span> Tình hình tài chính
+                        </h6>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-light text-secondary border small">@selectedPeriodText</span>
+                            <span class="text-muted small" style="font-size: 15px;">Đvt: Trđ</span>
+                        </div>
+                    </div>
 
-        </div>
+                    <div class="app-card-body d-flex flex-column justify-content-center">
+                        <div class="app-metric-row">
+                            <span class="text-slate-navy fw-semibold">Doanh thu thuần</span>
+                            <span class="fw-bold" style="color: #1d4ed8; font-size: 20px; font-variant-numeric: tabular-nums;">@((dashboard.TotalRevenue / 1000000m).ToString("N3"))</span>
+                        </div>
+                        <div class="app-metric-row">
+                            <span class="text-slate-navy fw-semibold">Giá vốn hàng bán (COGS)</span>
+                            <span class="fw-bold text-danger" style="color: #dc2626 !important; font-size: 20px; font-variant-numeric: tabular-nums;">@((actualCost / 1000000m).ToString("N3"))</span>
+                        </div>
+                        <div class="app-metric-row p-2 rounded-2 my-1" style="background: #ecfdf5; border: 1px solid #a7f3d0;">
+                            <span class="fw-bold" style="color: #065f46;">Lợi nhuận gộp thực tế</span>
+                            <span class="fw-bold" style="color: #047857; font-size: 22px; font-variant-numeric: tabular-nums;">+@((actualProfit / 1000000m).ToString("N3"))</span>
+                        </div>
+                        <div class="app-metric-row">
+                            <span class="text-slate-navy fw-semibold">Tổng vốn tồn kho đang chôn</span>
+                            <span class="fw-bold" style="color: #2563eb; font-size: 20px; font-variant-numeric: tabular-nums;">@((dashboard.TotalInventoryCost / 1000000m).ToString("N3"))</span>
+                        </div>
+
+                        <!-- Profitability Ratio Progress Bar -->
+                        <div class="mt-3 pt-2 border-top">
+                            <div class="d-flex justify-content-between small text-muted mb-1" style="font-size: 15px;">
+                                <span class="fw-semibold">Tỷ suất lợi nhuận gộp:</span>
+                                <span class="fw-bold" style="color: #059669; font-size: 16px;">@(profitMargin.ToString("N1"))%</span>
+                            </div>
+                            <div class="progress" style="height: 12px; border-radius: 8px; background: #e2e8f0;">
+                                <div class="progress-bar rounded-pill shadow-xs" style="width: @(Math.Min(100, Math.Max(5, profitMargin)))%; background: linear-gradient(90deg, #10b981 0%, #059669 100%);"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="app-card-footer">
+                        <span>Số liệu tính đến: @lastUpdated.ToString("HH:mm")</span>
+                        <a href="javascript:void(0)" @onclick="LoadDashboard" class="text-primary fw-bold text-decoration-none">Tải lại</a>
+                    </div>
+                </div>
+
+            </div>
+        }
 
 
 
@@ -593,7 +663,14 @@ else if (dashboard != null)
 
                 <div class="app-card-footer">
                     <span>Cấn trừ tự động theo FIFO</span>
-                    <a href="/payments" class="text-primary fw-bold text-decoration-none">Thu nợ ngay ↗</a>
+                    @if (isSales)
+                    {
+                        <a href="/create-invoice" class="text-primary fw-bold text-decoration-none">Lập hóa đơn mới ↗</a>
+                    }
+                    else
+                    {
+                        <a href="/payments" class="text-primary fw-bold text-decoration-none">Thu nợ ngay ↗</a>
+                    }
                 </div>
             </div>
         </div>
@@ -1990,6 +2067,18 @@ else if (dashboard != null)
 
 
 
+    private bool isSales = false;
+    private List<SalesCustomerCreditAlertDto> salesCustomerAlerts = new();
+
+    public class SalesCustomerCreditAlertDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public decimal CreditLimit { get; set; }
+        public decimal CurrentDebt { get; set; }
+        public decimal UtilizationRate => CreditLimit > 0 ? Math.Round((CurrentDebt / CreditLimit) * 100, 1) : 0;
+    }
+
     protected override async Task OnInitializedAsync()
 
     {
@@ -2005,6 +2094,8 @@ else if (dashboard != null)
             return;
 
         }
+
+        isSales = authState.User.IsInRole("Sales");
 
 
 
@@ -2069,6 +2160,28 @@ else if (dashboard != null)
         {
 
             dashboard = await GetDashboardDataUseCase.ExecuteAsync(selectedPeriod);
+
+            if (isSales)
+            {
+                try
+                {
+                    var allCustomers = await ViewCustomerListUseCase.ExecuteAsync();
+                    var alerts = new List<SalesCustomerCreditAlertDto>();
+                    foreach (var c in allCustomers.Take(4))
+                    {
+                        var debt = await GetCustomerDebtUseCase.ExecuteAsync(c.Id);
+                        alerts.Add(new SalesCustomerCreditAlertDto
+                        {
+                            Id = c.Id,
+                            Name = c.FullName,
+                            CreditLimit = c.CreditLimit,
+                            CurrentDebt = debt
+                        });
+                    }
+                    salesCustomerAlerts = alerts;
+                }
+                catch { }
+            }
 
             lastUpdated = DateTime.Now;
 
