@@ -1,4 +1,4 @@
-USE CSDLBANHANG;
+﻿USE CSDLBANHANG;
 GO
 
 SET NOCOUNT ON;
@@ -37,7 +37,7 @@ END
 IF NOT EXISTS (SELECT 1 FROM Products WHERE ProductCode = 'SP024')
 BEGIN
     INSERT INTO Products (ProductCode, Name, Unit, UnitPrice, CostPrice, StockQuantity, ImageUrl, Description)
-    VALUES ('SP024', N'Tương ớt Chinsu đượm vị cay bùng nổ (Chai 250g)', N'Chai', 16500, 12800, 280, '/images/products/sp024-tuong-ot-chinsu.svg', N'Tương ớt đỏ tươi lên men cay nồng chấm mọi món ăn');
+    VALUES ('SP024', N'Tương ớt Chinsu đậm vị cay bùng nổ (Chai 250g)', N'Chai', 16500, 12800, 280, '/images/products/sp024-tuong-ot-chinsu.svg', N'Tương ớt đỏ tươi lên men cay nồng chấm mọi món ăn');
 END
 
 IF NOT EXISTS (SELECT 1 FROM Products WHERE ProductCode = 'SP025')

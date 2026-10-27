@@ -127,7 +127,7 @@ VALUES
 (N'SP021', N'Bia Larue Export đậm đà (Thùng 24 lon 330ml)', N'Thùng', 260000, 230000, 140, '/images/products/sp021-larue.svg', N'Bia con cọp Larue thơm nồng đậm đà truyền thống miền Trung'),
 (N'SP022', N'Mì Kokomi Đại 90g Tôm Chua Cay (Thùng 30 gói)', N'Thùng', 135000, 115000, 175, '/images/products/sp022-kokomi.svg', N'Mì gói to 90g sợi dai giòn thơm ngon đậm vị tôm chua cay'),
 (N'SP023', N'Dầu hào Maggi Đậm Đặc nguyên chất (Chai 820g)', N'Chai', 42000, 33000, 160, '/images/products/sp023-maggi.svg', N'Dầu hào tự nhiên tạo màu nâu cánh gián và hương vị đậm đà món xào'),
-(N'SP024', N'Tương ớt Chinsu đượm vị cay bùng nổ (Chai 250g)', N'Chai', 16500, 12800, 280, '/images/products/sp024-tuong-ot-chinsu.svg', N'Tương ớt đỏ tươi lên men cay nồng chấm mọi món ăn'),
+(N'SP024', N'Tương ớt Chinsu đậm vị cay bùng nổ (Chai 250g)', N'Chai', 16500, 12800, 280, '/images/products/sp024-tuong-ot-chinsu.svg', N'Tương ớt đỏ tươi lên men cay nồng chấm mọi món ăn'),
 (N'SP025', N'Sữa đặc có đường Ông Thọ nhãn đỏ (Lon 380g)', N'Lon', 26000, 21500, 250, '/images/products/sp025-ong-tho.svg', N'Sữa đặc Vinamilk béo ngọt sánh mịn chuyên pha cà phê và làm bánh'),
 (N'SP026', N'Trà Ô Long TEA+ Plus Suntory (Thùng 24 chai 450ml)', N'Thùng', 215000, 185000, 130, '/images/products/sp026-oolong-tea.svg', N'Trà ô long chứa OTPP hỗ trợ hạn chế hấp thu chất béo thanh mát'),
 (N'SP027', N'Bánh gạo giòn One One Bò Nướng Ngô (Gói 150g)', N'Gói', 28000, 22000, 220, '/images/products/sp027-one-one.svg', N'Bánh gạo nướng không chiên qua dầu giòn tan thơm lừng vị bò nướng ngô'),
